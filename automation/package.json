@@ -1,0 +1,9 @@
+{
+  "name": "bodyj4you-reorder-sync",
+  "private": true,
+  "type": "module",
+  "description": "Syncs the newest Reorder_Miami / Reorder_China sheets from the Drive output folder into each dashboard's public/data/ snapshot.",
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
