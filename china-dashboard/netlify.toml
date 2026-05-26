@@ -1,0 +1,12 @@
+# Netlify build settings for the China dashboard.
+# In the Netlify UI, set this site's "Base directory" to: china-dashboard
+# (publish path below is relative to that base directory).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback so deep links resolve to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

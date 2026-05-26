@@ -1,0 +1,16 @@
+# dependencies & build output (Netlify builds these from source)
+node_modules/
+dist/
+.vite/
+
+# env / secrets (commit .env.example, never .env)
+.env
+.env.local
+.env.*.local
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# loose data files at repo root — the bundled snapshot in <app>/public/data/ stays tracked
+/*.xlsx

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Miami Monday Reorder · 05.13.26</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background: #f5f6f8; color: #1f2937; font-size: 13px; }
+  .main { padding: 24px 32px; max-width: 1500px; margin: 0 auto; }
+  .header-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; }
+  .title-block { display: flex; align-items: baseline; gap: 12px; }
+  .title { font-weight: 600; font-size: 18px; margin: 0; }
+  .date { color: #6b7280; font-size: 12px; }
+  .source-note { color: #9ca3af; font-size: 11px; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: #4b5563; }
+  .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px; }
+  .stat { background: white; border-radius: 8px; padding: 16px 20px; border: 1px solid #e5e7eb; }
+  .stat-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-size: 28px; font-weight: 600; margin: 6px 0 2px; }
+  .stat-sub { font-size: 11px; color: #9ca3af; }
+  .v-urgent { color: #dc2626; } .v-planned { color: #eab308; } .v-uv { color: #8b5cf6; } .v-steel { color: #64748b; }
+  .filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+  .filter-label { font-size: 11px; color: #6b7280; text-transform: uppercase; margin-right: 4px; letter-spacing: 0.05em; }
+  .pill { background: white; border: 1px solid #e5e7eb; padding: 6px 14px; border-radius: 999px; font-size: 12px; cursor: pointer; color: #374151; font-family: inherit; }
+  .pill.active { background: #1f2937; color: white; border-color: #1f2937; }
+  .pill:hover:not(.active) { background: #f3f4f6; }
+  .scale-key { display: flex; align-items: center; gap: 16px; font-size: 11px; color: #6b7280; margin-bottom: 12px; padding-left: 4px; flex-wrap: wrap; }
+  .scale-key-item { display: flex; align-items: center; gap: 6px; }
+  .scale-key-swatch { width: 16px; height: 8px; border-radius: 2px; }
+  .table-wrap { background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+  thead tr.block-headers th { padding: 8px 12px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; border-bottom: none; }
+  thead tr.block-headers th.bh-product { background: #eef2ff; color: #4338ca; border-top-left-radius: 6px; }
+  thead tr.block-headers th.bh-inv     { background: #ecfdf5; color: #065f46; }
+  thead tr.block-headers th.bh-demand  { background: #fef2f2; color: #991b1b; }
+  thead tr.block-headers th.bh-meta    { background: #f3f4f6; color: #4b5563; }
+  thead tr.block-headers th.bh-action  { background: #fef3c7; color: #92400e; border-top-right-radius: 6px; }
+  thead tr.col-headers th { background: #f9fafb; text-align: left; padding: 8px 12px; font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+  thead tr.col-headers th.num-h, thead tr.col-headers th.qty-h, thead tr.col-headers th.vel-h { text-align: right; }
+  thead tr.col-headers th.days-h { text-align: left; padding-left: 14px; }
+  tbody td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; white-space: nowrap; }
+  td.blk-product { background: #fafbff; }
+  td.blk-inv     { background: #f6fdfa; }
+  td.blk-demand  { background: #fffafa; }
+  td.blk-meta    { background: #fafafa; }
+  td.blk-action  { background: #fef9c3; }
+  td.blk-start { border-left: 2px solid #e5e7eb; }
+  tbody tr.data-row:hover td.blk-product { background: #eef2ff; }
+  tbody tr.data-row:hover td.blk-inv     { background: #d1fae5; }
+  tbody tr.data-row:hover td.blk-demand  { background: #fee2e2; }
+  tbody tr.data-row:hover td.blk-meta    { background: #f3f4f6; }
+  tbody tr.data-row:hover td.blk-action  { background: #fde68a; }
+  tr.parent-boundary td { border-top: 1px solid #d1d5db; }
+  td.sku-cell { font-weight: 600; color: #111827; }
+  td.asin { color: #6b7280; font-family: ui-monospace, monospace; font-size: 11px; }
+  td.parent { color: #4338ca; font-size: 11px; font-weight: 500; }
+  td.cat { color: #6b7280; font-size: 11px; }
+  td.num { text-align: right; color: #374151; font-variant-numeric: tabular-nums; }
+  td.status-true { color: #16a34a; font-size: 11px; }
+  td.status-false { color: #dc2626; font-size: 11px; }
+  td.days-cell { min-width: 220px; max-width: 280px; padding-left: 12px; }
+  .days-cell-content { display: flex; align-items: center; gap: 10px; }
+  .days-bar-bg { position: relative; flex: 1; height: 8px; background: #f3f4f6; border-radius: 4px; overflow: visible; min-width: 90px; max-width: 130px; }
+  .days-bar-fill { height: 100%; border-radius: 4px; position: relative; z-index: 1; }
+  .days-tick { position: absolute; top: -3px; bottom: -3px; left: 50%; width: 1px; background: #9ca3af; z-index: 2; }
+  .days-big { font-size: 15px; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; min-width: 32px; text-align: right; }
+  .oos-badge { display: inline-block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }
+  td.vel-cell { text-align: right; }
+  .vel-num { font-weight: 500; color: #1f2937; font-variant-numeric: tabular-nums; }
+  td.qty-cell { text-align: right; padding: 6px 16px; min-width: 90px; }
+  .qty-num { font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums; font-size: 20px; letter-spacing: -0.01em; }
+  tr.section-row td { background: #1f2937; color: white; padding: 12px 16px; font-size: 12px; border: none; }
+  .section-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 10px; vertical-align: middle; }
+  .section-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: white; }
+  .section-count { color: #9ca3af; margin-left: 12px; font-weight: 400; }
+  .footer-note { text-align: center; color: #9ca3af; font-size: 11px; margin: 24px 0 16px; }
+</style>
+</head>
+<body>
+  <main class="main">
+    <div class="header-row">
+      <div class="title-block">
+        <h2 class="title">Miami Monday Reorder</h2>
+        <span class="date">05.13.26</span>
+      </div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:#dc2626;"></span>22 URGENT</span>
+        <span><span class="legend-dot" style="background:#eab308;"></span>2 PLANNED</span>
+        <span><span class="legend-dot" style="background:#8b5cf6;"></span>6 UV</span>
+        <span><span class="legend-dot" style="background:#64748b;"></span>8 STEEL</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Total Units</div>
+        <div class="stat-value">4,060</div>
+        <div class="stat-sub">38 SKUs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Urgent</div>
+        <div class="stat-value v-urgent">22</div>
+        <div class="stat-sub">&lt; 30 days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Planned</div>
+        <div class="stat-value v-planned">2</div>
+        <div class="stat-sub">&ge; 30 days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">UV Kits</div>
+        <div class="stat-value v-uv">6</div>
+        <div class="stat-sub">GK0486-Master</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Steel Kits</div>
+        <div class="stat-value v-steel">8</div>
+        <div class="stat-sub">GK0541 / GK0715</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      
+<button class="pill active" data-filter="all">All (38)</button>
+<button class="pill" data-filter="URGENT">URGENT (22)</button>
+<button class="pill" data-filter="PLANNED">PLANNED (2)</button>
+<button class="pill" data-filter="UV">UV (6)</button>
+<button class="pill" data-filter="STEEL">STEEL (8)</button>
+
+    </div>
+
+    <div class="scale-key">
+      <span>Days:</span>
+      <span class="scale-key-item"><span class="scale-key-swatch" style="background:#dc2626;"></span>&lt; 30 critical</span>
+      <span class="scale-key-item"><span class="scale-key-swatch" style="background:#eab308;"></span>30-45 OK</span>
+      <span class="scale-key-item"><span class="scale-key-swatch" style="background:#16a34a;"></span>45+ goal</span>
+      <span class="scale-key-item"><span class="oos-badge" style="font-size:9px; padding:1px 6px;">OUT OF STOCK</span> Available = 0 (ship 20 to revive)</span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="block-headers">
+            <th class="bh-product" colspan="4">Product</th>
+            <th class="bh-inv" colspan="3">Inventory</th>
+            <th class="bh-demand" colspan="2">Demand</th>
+            <th class="bh-meta" colspan="2">Reference</th>
+            <th class="bh-action" colspan="1">Reorder</th>
+          </tr>
+          <tr class="col-headers">
+            <th>SKU</th>
+            <th>ASIN</th>
+            <th>Parent</th>
+            <th>Cat</th>
+            <th class="num-h">Available</th>
+            <th class="num-h">Inbound</th>
+            <th class="num-h">Reserved</th>
+            <th class="days-h">Days</th>
+            <th class="vel-h">Velocity</th>
+            <th class="num-h">Min</th>
+            <th>Status</th>
+            <th class="qty-h">QTY</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr class="section-row" data-section="URGENT">
+          <td colspan="12">
+            <span class="section-dot" style="background:#dc2626;"></span>
+            <span class="section-label">URGENT FBA</span>
+            <span class="section-count">22 SKUs · 2,720 units</span>
+          </td>
+        </tr>
+        
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HS0002-2</td>
+      <td class="blk-product asin">B09RSSL9S7</td>
+      <td class="blk-product parent">HS0002-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">217</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">194</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:46.7%; background:#dc2626;"></div></div><span class="days-big">28d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">13.7</span></td>
+      <td class="blk-meta blk-start num">396</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">140</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HS0002-3</td>
+      <td class="blk-product asin">B0CQM26GGF</td>
+      <td class="blk-product parent">HS0002-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">99</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">90</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:28.3%; background:#dc2626;"></div></div><span class="days-big">17d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">9.2</span></td>
+      <td class="blk-meta blk-start num">255</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">180</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HS0002-BOX</td>
+      <td class="blk-product asin">B0997T27H8</td>
+      <td class="blk-product parent">HS0002-Bulk-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">23</td>
+      <td class="blk-inv num">9</td>
+      <td class="blk-inv blk-end num">29</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:25.0%; background:#dc2626;"></div></div><span class="days-big">15d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.9</span></td>
+      <td class="blk-meta blk-start num">68</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HB0024</td>
+      <td class="blk-product asin">B0D268LC2Z</td>
+      <td class="blk-product parent">HB0024</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">525</td>
+      <td class="blk-inv num">32</td>
+      <td class="blk-inv blk-end num">290</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:30.0%; background:#dc2626;"></div></div><span class="days-big">18d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">45.5</span></td>
+      <td class="blk-meta blk-start num">1,255</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">980</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PB-10-2</td>
+      <td class="blk-product asin">B0B789X1LY</td>
+      <td class="blk-product parent">PB-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">62</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">7</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:46.7%; background:#dc2626;"></div></div><span class="days-big">28d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.9</span></td>
+      <td class="blk-meta blk-start num">75</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HB0006</td>
+      <td class="blk-product asin">B084RXRZWM</td>
+      <td class="blk-product parent">HB0006-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">188</td>
+      <td class="blk-inv num">80</td>
+      <td class="blk-inv blk-end num">45</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:46.7%; background:#dc2626;"></div></div><span class="days-big">28d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">10.7</span></td>
+      <td class="blk-meta blk-start num">278</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">120</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">HB0016</td>
+      <td class="blk-product asin">B0BG3GN7J4</td>
+      <td class="blk-product parent">HB0006-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">64</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">3</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:43.3%; background:#dc2626;"></div></div><span class="days-big">26d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.8</span></td>
+      <td class="blk-meta blk-start num">54</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">JOJOBA-10-DB</td>
+      <td class="blk-product asin">B0CQ58JJGC</td>
+      <td class="blk-product parent">JOJOBA-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">18</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">90</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:33.3%; background:#dc2626;"></div></div><span class="days-big">20d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">4.6</span></td>
+      <td class="blk-meta blk-start num">130</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">70</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-JOJOBA-2oz_FBA</td>
+      <td class="blk-product asin">B0CF865CBW</td>
+      <td class="blk-product parent">EO-JOJOBA-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">3</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">32</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:1.0%; background:#dc2626;"></div></div><span class="days-big">1d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">4.6</span></td>
+      <td class="blk-meta blk-start num">140</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">140</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-JOJOBA-16Oz</td>
+      <td class="blk-product asin">B0FX91NNQQ</td>
+      <td class="blk-product parent">EO-JOJOBA-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">3</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:5.0%; background:#dc2626;"></div></div><span class="days-big">3d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.6</span></td>
+      <td class="blk-meta blk-start num">16</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-ROSEHIP-2oz</td>
+      <td class="blk-product asin">B0DYTSB2WN</td>
+      <td class="blk-product parent">EO-ROSEHIP-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">63</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">18</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:1.7%; background:#dc2626;"></div></div><span class="days-big">1d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">7.2</span></td>
+      <td class="blk-meta blk-start num">207</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">190</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-CASTOR-2oz-USDA</td>
+      <td class="blk-product asin">B0DDSW2T9S</td>
+      <td class="blk-product parent">EO-CASTOR-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">2</td>
+      <td class="blk-inv num">8</td>
+      <td class="blk-inv blk-end num">2</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:16.7%; background:#dc2626;"></div></div><span class="days-big">10d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">2.3</span></td>
+      <td class="blk-meta blk-start num">113</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">80</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-CASTOR-2oz-KIT</td>
+      <td class="blk-product asin">B0F2H7ZVWF</td>
+      <td class="blk-product parent">EO-CASTOR-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">1</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.3</span></td>
+      <td class="blk-meta blk-start num">68</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">50</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-FRANKINCENSE-MCT-10-RL</td>
+      <td class="blk-product asin">B0FX7MYH7F</td>
+      <td class="blk-product parent">PD-MCT-10-RL-Master</td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">27</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">2</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:20.0%; background:#dc2626;"></div></div><span class="days-big">12d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.4</span></td>
+      <td class="blk-meta blk-start num">55</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">30</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-FRANK-CASTOR-MCT-10-RL</td>
+      <td class="blk-product asin">B0FX6N2DPN</td>
+      <td class="blk-product parent">PD-MCT-10-RL-Master</td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">93</td>
+      <td class="blk-inv num">10</td>
+      <td class="blk-inv blk-end num">51</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:6.7%; background:#dc2626;"></div></div><span class="days-big">4d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">16.6</span></td>
+      <td class="blk-meta blk-start num">600</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">470</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-EUCALYPTUS-MCT-10-RL</td>
+      <td class="blk-product asin">B0FX6NTJM4</td>
+      <td class="blk-product parent">PD-MCT-10-RL-Master</td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">35</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">11</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:15.0%; background:#dc2626;"></div></div><span class="days-big">9d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">3.9</span></td>
+      <td class="blk-meta blk-start num">109</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">100</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-LEMON-MCT-10-RL</td>
+      <td class="blk-product asin">B0FX7MFNQZ</td>
+      <td class="blk-product parent">PD-MCT-10-RL-Master</td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">27</td>
+      <td class="blk-inv num">48</td>
+      <td class="blk-inv blk-end num">9</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:43.3%; background:#dc2626;"></div></div><span class="days-big">26d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">2.3</span></td>
+      <td class="blk-meta blk-start num">86</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-ROSEHIP-1.7oz-RL</td>
+      <td class="blk-product asin">B0GK4X72YF</td>
+      <td class="blk-product parent">EO-1.7oz-RL-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">8</td>
+      <td class="blk-inv num">24</td>
+      <td class="blk-inv blk-end num">36</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:21.7%; background:#dc2626;"></div></div><span class="days-big">13d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">2.3</span></td>
+      <td class="blk-meta blk-start num">80</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-JOJOBA-1.7oz-RL</td>
+      <td class="blk-product asin">B0GK6LJ56Z</td>
+      <td class="blk-product parent">EO-1.7oz-RL-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">1</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.8</span></td>
+      <td class="blk-meta blk-start num">24</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">30</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">EO-COCONUT-1.7oz-RL</td>
+      <td class="blk-product asin">B0GK711CCZ</td>
+      <td class="blk-product parent">EO-1.7oz-RL-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.0</span></td>
+      <td class="blk-meta blk-start num">0</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-6PC-SET1</td>
+      <td class="blk-product asin">B0G565921D</td>
+      <td class="blk-product parent"></td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">4</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">2</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:11.7%; background:#dc2626;"></div></div><span class="days-big">7d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.5</span></td>
+      <td class="blk-meta blk-start num">16</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="URGENT">
+      <td class="blk-product blk-start sku-cell">PD-3PC-SET2</td>
+      <td class="blk-product asin">B0G56BTRJ2</td>
+      <td class="blk-product parent"></td>
+      <td class="blk-product blk-end cat">PD</td>
+      <td class="blk-inv blk-start num">1</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">1</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:6.7%; background:#dc2626;"></div></div><span class="days-big">4d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.1</span></td>
+      <td class="blk-meta blk-start num">8</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+        <tr class="section-row" data-section="PLANNED">
+          <td colspan="12">
+            <span class="section-dot" style="background:#eab308;"></span>
+            <span class="section-label">PLANNED FBA</span>
+            <span class="section-count">2 SKUs · 50 units</span>
+          </td>
+        </tr>
+        
+    <tr class="data-row " data-section="PLANNED">
+      <td class="blk-product blk-start sku-cell">JOJOBA</td>
+      <td class="blk-product asin">B084RM4QR9</td>
+      <td class="blk-product parent">JOJOBA-Master</td>
+      <td class="blk-product blk-end cat">PA</td>
+      <td class="blk-inv blk-start num">360</td>
+      <td class="blk-inv num">50</td>
+      <td class="blk-inv blk-end num">208</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:50.0%; background:#eab308;"></div></div><span class="days-big">30d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">17.7</span></td>
+      <td class="blk-meta blk-start num">477</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">40</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="PLANNED">
+      <td class="blk-product blk-start sku-cell">EO-CASTOR-4oz-PATCH</td>
+      <td class="blk-product asin">B0FHW7GJL1</td>
+      <td class="blk-product parent">EO-CASTOR-Master</td>
+      <td class="blk-product blk-end cat">EO</td>
+      <td class="blk-inv blk-start num">38</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:100.0%; background:#16a34a;"></div></div><span class="days-big">121d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.1</span></td>
+      <td class="blk-meta blk-start num">17</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+        <tr class="section-row" data-section="UV">
+          <td colspan="12">
+            <span class="section-dot" style="background:#8b5cf6;"></span>
+            <span class="section-label">UV</span>
+            <span class="section-count">6 SKUs · 1,120 units</span>
+          </td>
+        </tr>
+        
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0487</td>
+      <td class="blk-product asin">B07DT6ZDP5</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">709</td>
+      <td class="blk-inv num">2</td>
+      <td class="blk-inv blk-end num">219</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:27.5%; background:#dc2626;"></div></div><span class="days-big">16d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">42.9</span></td>
+      <td class="blk-meta blk-start num">1,367</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">790</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0712</td>
+      <td class="blk-product asin">B0853DNCBX</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">71</td>
+      <td class="blk-inv num">6</td>
+      <td class="blk-inv blk-end num">52</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:23.3%; background:#dc2626;"></div></div><span class="days-big">14d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">7.0</span></td>
+      <td class="blk-meta blk-start num">207</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">150</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0907</td>
+      <td class="blk-product asin">B09BVWYFN3</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">203</td>
+      <td class="blk-inv num">1</td>
+      <td class="blk-inv blk-end num">54</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:55.0%; background:#eab308;"></div></div><span class="days-big">33d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">7.4</span></td>
+      <td class="blk-meta blk-start num">254</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">40</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0910</td>
+      <td class="blk-product asin">B09CDZBKQ7</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">109</td>
+      <td class="blk-inv num">15</td>
+      <td class="blk-inv blk-end num">26</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:41.7%; background:#dc2626;"></div></div><span class="days-big">25d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">4.7</span></td>
+      <td class="blk-meta blk-start num">119</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">40</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0874</td>
+      <td class="blk-product asin">B08LGHTD3N</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">9</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">2.4</span></td>
+      <td class="blk-meta blk-start num">81</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">90</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="UV">
+      <td class="blk-product blk-start sku-cell">GK0752</td>
+      <td class="blk-product asin">B086WR7VHX</td>
+      <td class="blk-product parent">GK0486-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">21</td>
+      <td class="blk-inv num">60</td>
+      <td class="blk-inv blk-end num">7</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:51.7%; background:#eab308;"></div></div><span class="days-big">31d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">2.3</span></td>
+      <td class="blk-meta blk-start num">71</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+        <tr class="section-row" data-section="STEEL">
+          <td colspan="12">
+            <span class="section-dot" style="background:#64748b;"></span>
+            <span class="section-label">STEEL</span>
+            <span class="section-count">8 SKUs · 170 units</span>
+          </td>
+        </tr>
+        
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0693_FBA</td>
+      <td class="blk-product asin">B07RYJGHLJ</td>
+      <td class="blk-product parent">GK0541-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">23</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">12</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:38.3%; background:#dc2626;"></div></div><span class="days-big">23d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.1</span></td>
+      <td class="blk-meta blk-start num">36</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0697_FBA</td>
+      <td class="blk-product asin">B07RZHBXPL</td>
+      <td class="blk-product parent">GK0541-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">9</td>
+      <td class="blk-inv num">1</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:6.7%; background:#dc2626;"></div></div><span class="days-big">4d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.0</span></td>
+      <td class="blk-meta blk-start num">50</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">30</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0694_FBA</td>
+      <td class="blk-product asin">B07RXGQ952</td>
+      <td class="blk-product parent">GK0541-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">43</td>
+      <td class="blk-inv num">1</td>
+      <td class="blk-inv blk-end num">18</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:50.0%; background:#eab308;"></div></div><span class="days-big">30d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.7</span></td>
+      <td class="blk-meta blk-start num">49</td>
+      <td class="blk-meta blk-end status-true">TRUE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+    <tr class="data-row parent-boundary" data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0843_FBA</td>
+      <td class="blk-product asin">B089N85VYV</td>
+      <td class="blk-product parent">GK0715-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.0</span></td>
+      <td class="blk-meta blk-start num">0</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0839_FBA</td>
+      <td class="blk-product asin">B089N8292Z</td>
+      <td class="blk-product parent">GK0715-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.0</span></td>
+      <td class="blk-meta blk-start num">0</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0716_FBA</td>
+      <td class="blk-product asin">B085SYYYQV</td>
+      <td class="blk-product parent">GK0715-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">3</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">4</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="days-bar-bg"><div class="days-tick"></div><div class="days-bar-fill" style="width:3.3%; background:#dc2626;"></div></div><span class="days-big">2d</span></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">1.1</span></td>
+      <td class="blk-meta blk-start num">22</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">40</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0840_FBA</td>
+      <td class="blk-product asin">B089NHG1L1</td>
+      <td class="blk-product parent">GK0715-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.2</span></td>
+      <td class="blk-meta blk-start num">19</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">10</span></td>
+    </tr>
+    
+    <tr class="data-row " data-section="STEEL">
+      <td class="blk-product blk-start sku-cell">GK0717_FBA</td>
+      <td class="blk-product asin">B085T5Z4PT</td>
+      <td class="blk-product parent">GK0715-Master</td>
+      <td class="blk-product blk-end cat">GK</td>
+      <td class="blk-inv blk-start num">0</td>
+      <td class="blk-inv num">0</td>
+      <td class="blk-inv blk-end num">0</td>
+      <td class="blk-demand blk-start days-cell"><div class="days-cell-content"><div class="oos-badge">OUT OF STOCK</div></div></td>
+      <td class="blk-demand blk-end vel-cell"><span class="vel-num">0.0</span></td>
+      <td class="blk-meta blk-start num">0</td>
+      <td class="blk-meta blk-end status-false">FALSE</td>
+      <td class="blk-action qty-cell"><span class="qty-num">20</span></td>
+    </tr>
+    
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer-note">Visualization of Reorder_Miami xlsx · 38 SKUs · 4,060 units · No data derived in dashboard</div>
+  </main>
+
+<script>
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const filter = pill.dataset.filter;
+      document.querySelectorAll('tr.data-row, tr.section-row').forEach(el => {
+        el.style.display = (filter === 'all' || el.dataset.section === filter) ? '' : 'none';
+      });
+    });
+  });
+</script>
+</body></html>
