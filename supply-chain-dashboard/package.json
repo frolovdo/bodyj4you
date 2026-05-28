@@ -1,0 +1,27 @@
+{
+  "name": "supply-chain-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "sync": "node --env-file=.env scripts/sync-from-drive.mjs",
+    "sync:ci": "node scripts/sync-from-drive.mjs"
+  },
+  "dependencies": {
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@vitejs/plugin-react": "^4.3.4",
+    "googleapis": "^144.0.0",
+    "tailwindcss": "^4.1.13",
+    "vite": "^6.3.5"
+  }
+}

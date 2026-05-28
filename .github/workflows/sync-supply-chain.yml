@@ -1,0 +1,54 @@
+name: Sync Supply Chain Dashboard
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # every 15 minutes
+  workflow_dispatch: {}    # manual run from the Actions tab
+  push:
+    branches: [main]
+    paths:
+      - 'supply-chain-dashboard/scripts/sync-from-drive.mjs'
+      - '.github/workflows/sync-supply-chain.yml'
+
+concurrency:
+  group: sync-supply-chain
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: supply-chain-dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: supply-chain-dashboard/package-lock.json
+
+      - run: npm ci
+
+      - name: Sync from Drive
+        env:
+          GDRIVE_FOLDER_ID: ${{ secrets.SUPPLY_CHAIN_GDRIVE_FOLDER_ID }}
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+        run: npm run sync:ci
+
+      - name: Commit + push if changed
+        working-directory: ${{ github.workspace }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add supply-chain-dashboard/public/data
+          if git diff --staged --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Sync Supply Chain Dashboard snapshots"
+            git push
+          fi
