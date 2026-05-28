@@ -81,12 +81,10 @@ back to `main`, which triggers Netlify (or wherever you deploy) to redeploy.
 
 ## Things you may want to edit
 
-- `src/lib/categories.js` — components have no explicit category column; categories are derived
-  by keyword. Adjust the rules to match your catalog.
 - `src/lib/format.js` — `coverage()` defines the days-covered color buckets (≤14 red, ≤30
   orange, ≤60 yellow, else green) and the OUT OF STOCK / No Demand logic.
 - `src/pdf.js` — `SUPPLIER` constant and the PO PDF layout.
-- `.github/workflows/sync.yml` — change the cron interval if 15 min is too aggressive.
+- `.github/workflows/sync-supply-chain.yml` — change the cron interval if 15 min is too aggressive.
 
 ## Architecture notes
 

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { categoryOf, CAT_TONES, buildCategories } from '../lib/categories.js'
 import { coverage, TONES, money, money3, int, vel } from '../lib/format.js'
 
 function StatusBadge({ item }) {
@@ -9,17 +8,13 @@ function StatusBadge({ item }) {
 }
 
 export default function MiamiStockView({ items, totalReorderCost, cart, addToCart }) {
-  const [filter, setFilter] = useState('All')
   const [q, setQ] = useState('')
-  const cats = useMemo(() => buildCategories(items), [items])
 
   const filtered = useMemo(() => {
-    return items.filter((it) => {
-      if (filter !== 'All' && categoryOf(it.component).cat !== filter) return false
-      if (q && !it.component.toLowerCase().includes(q.toLowerCase())) return false
-      return true
-    })
-  }, [items, filter, q])
+    if (!q) return items
+    const needle = q.toLowerCase()
+    return items.filter((it) => it.component.toLowerCase().includes(needle))
+  }, [items, q])
 
   const reorderCount = items.filter((i) => i.reorder_qty && i.reorder_qty > 0).length
 
@@ -32,21 +27,12 @@ export default function MiamiStockView({ items, totalReorderCost, cart, addToCar
         <Stat label="In PO Cart" value={int(cart.size)} tone="text-green-600" />
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-gray-500">Filter:</span>
-        <Pill active={filter === 'All'} onClick={() => setFilter('All')} className="bg-gray-100 text-gray-700 border-gray-200">
-          All <span className="opacity-60">{items.length}</span>
-        </Pill>
-        {cats.map((c) => (
-          <Pill key={c.cat} active={filter === c.cat} onClick={() => setFilter(c.cat)} className={CAT_TONES[c.tone]}>
-            {c.cat} <span className="opacity-60">{c.count}</span>
-          </Pill>
-        ))}
+      <div className="mb-3 flex items-center justify-end">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search component…"
-          className="ml-auto w-56 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+          className="w-56 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none"
         />
       </div>
 
@@ -68,14 +54,10 @@ export default function MiamiStockView({ items, totalReorderCost, cart, addToCar
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filtered.map((it) => {
-              const cat = categoryOf(it.component)
               const inCart = cart.has(it.component)
               return (
                 <tr key={it.component} className="hover:bg-gray-50">
-                  <td className="px-4 py-2.5">
-                    <div className="font-medium text-gray-900">{it.component}</div>
-                    <span className={`mt-0.5 inline-block rounded border px-1.5 py-0.5 text-[10px] ${CAT_TONES[cat.tone]}`}>{cat.cat}</span>
-                  </td>
+                  <td className="px-4 py-2.5 font-medium text-gray-900">{it.component}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-gray-700">{int(it.on_hand)}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-gray-700">{int(it.inbound_miami)}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-gray-700">{vel(it.daily_velocity)}</td>
@@ -112,18 +94,5 @@ function Stat({ label, value, tone = 'text-gray-900' }) {
       <div className="text-xs uppercase tracking-wider text-gray-400">{label}</div>
       <div className={`mt-1 text-2xl font-bold ${tone}`}>{value}</div>
     </div>
-  )
-}
-
-function Pill({ active, onClick, className, children }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-full border px-3 py-1 text-sm transition-all ${className} ${
-        active ? 'ring-2 ring-gray-300 ring-offset-1' : 'opacity-75 hover:opacity-100'
-      }`}
-    >
-      {children}
-    </button>
   )
 }
