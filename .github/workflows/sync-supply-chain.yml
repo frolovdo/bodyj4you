@@ -48,7 +48,17 @@ jobs:
           git add supply-chain-dashboard/public/data
           if git diff --staged --quiet; then
             echo "No changes."
-          else
-            git commit -m "Sync Supply Chain Dashboard snapshots"
-            git push
+            exit 0
           fi
+          git commit -m "Sync Supply Chain Dashboard snapshots"
+          # Race-resistant push: pull --rebase first in case main advanced
+          # between checkout and now (e.g. a PR merge landed). Retry on conflict.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main && git push && exit 0
+            echo "::warning::Push attempt $attempt failed, retrying after rebase..."
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          echo "::error::Failed to push after 5 attempts."
+          exit 1
