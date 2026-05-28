@@ -1,0 +1,16 @@
+{
+  "folderId": "LOCAL_SEED",
+  "syncedAt": "2026-05-27T00:00:00.000Z",
+  "latest": "Miami Warehouse - 05.25.26.xlsx",
+  "files": [
+    {
+      "filename": "Miami Warehouse - 05.25.26.xlsx",
+      "displayName": "Miami Warehouse - 05.25.26.xlsx",
+      "label": "05.25.26",
+      "snapshotDate": "2026-05-25",
+      "modifiedMs": 1748304000000,
+      "driveFileId": "local-seed",
+      "sizeBytes": 18159
+    }
+  ]
+}
