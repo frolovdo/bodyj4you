@@ -7,6 +7,8 @@ function fmtBytes(n) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`
 }
 
+// Lives in the sidebar footer. Full-width dark-themed trigger; popover opens
+// upward (sidebar footer is at the bottom of the viewport).
 export default function FileSelector({ files, selected, onSelect, syncedAt }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -24,18 +26,24 @@ export default function FileSelector({ files, selected, onSelect, syncedAt }) {
   const isLatest = current && files[0] && current.filename === files[0].filename
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs text-gray-200 hover:bg-gray-700"
+        className="flex w-full items-center justify-between gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10"
       >
-        <span className="text-gray-400">Snapshot:</span>
-        <span className="font-semibold text-white">{label}</span>
-        {isLatest && <span className="rounded bg-green-600/30 px-1.5 py-0.5 text-[10px] font-semibold text-green-300">LATEST</span>}
-        <svg className="h-3 w-3 opacity-60" viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5l4.5 4.5 4.5-4.5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <span className="flex min-w-0 flex-col text-left">
+          <span className="text-[10px] uppercase tracking-wider text-gray-500">Snapshot</span>
+          <span className="flex items-center gap-1.5 truncate font-semibold text-white">
+            {label}
+            {isLatest && <span className="rounded bg-green-500/20 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-300">Latest</span>}
+          </span>
+        </span>
+        <svg className="h-3 w-3 flex-shrink-0 opacity-60" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5.5 12.5l4.5-4.5 4.5 4.5" />
+        </svg>
       </button>
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-80 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xl">
+        <div className="absolute bottom-full left-0 z-40 mb-2 w-72 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xl">
           <div className="border-b border-gray-100 px-3 py-2 text-[10px] uppercase tracking-wider text-gray-400">
             Archive · {files.length} file{files.length === 1 ? '' : 's'}{syncedAt ? ` · synced ${new Date(syncedAt).toLocaleString()}` : ''}
           </div>

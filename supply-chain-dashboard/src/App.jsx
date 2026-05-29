@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { parseWorkbook } from './parseFile.js'
 import { loadManifest, loadSnapshot } from './driveLoader.js'
+import { countByStatus, STATUSES } from './lib/status.js'
+import Sidebar from './components/Sidebar.jsx'
 import MiamiStockView from './components/MiamiStockView.jsx'
 import InboundPOsView from './components/InboundPOsView.jsx'
 import ShipmentsByWeekView from './components/ShipmentsByWeekView.jsx'
-import POCart from './components/POCart.jsx'
+import ShipmentsView from './components/ShipmentsView.jsx'
+import NewPOView from './components/NewPOView.jsx'
 import FileSelector from './components/FileSelector.jsx'
-
-const TABS = ['Miami Stock', 'Inbound POs', 'Shipments by Week']
 
 function snapshotFrom(file, data) {
   if (file?.snapshotDate) {
@@ -29,11 +30,15 @@ export default function App() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState('')
-  const [tab, setTab] = useState('Miami Stock')
+  const [nav, setNav] = useState('Miami Stock')
 
+  // PO cart — keyed by component name, snapshot-scoped (cleared on snapshot switch).
   const [cart, setCart] = useState(new Map())
   const [notes, setNotes] = useState('')
   const [freight, setFreight] = useState('Ocean')
+
+  // Local shipments — in memory only, survives navigation, wiped on full reload.
+  const [shipments, setShipments] = useState([])
 
   // 1. Load manifest on mount.
   useEffect(() => {
@@ -44,7 +49,7 @@ export default function App() {
     return () => { cancelled = true }
   }, [])
 
-  // 2. Whenever the selected filename changes, fetch + parse that snapshot.
+  // 2. Fetch + parse on snapshot change.
   useEffect(() => {
     if (!selected) return
     let cancelled = false
@@ -53,10 +58,8 @@ export default function App() {
     loadSnapshot(selected)
       .then((buf) => {
         if (cancelled) return
-        const parsed = parseWorkbook(buf)
-        setData(parsed)
-        setCart(new Map())   // cart is snapshot-specific (unit costs may change)
-        setTab('Miami Stock')
+        setData(parseWorkbook(buf))
+        setCart(new Map())
       })
       .catch((e) => { if (!cancelled) setLoadError(e.message) })
       .finally(() => { if (!cancelled) setLoading(false) })
@@ -81,125 +84,149 @@ export default function App() {
       if (l) next.set(component, { ...l, qty })
       return next
     })
-  const remove = (component) =>
-    setCart((prev) => { const next = new Map(prev); next.delete(component); return next })
+  const remove = (component) => setCart((prev) => { const n = new Map(prev); n.delete(component); return n })
   const clear = () => setCart(new Map())
+
+  function createShipment(lines, meta) {
+    const live = lines.filter((l) => l.qty && l.qty > 0)
+    if (!live.length) { alert('Enter a ship quantity for at least one item.'); return }
+    const id = `sh_${Date.now()}`
+    const name = `Shipment ${shipments.length + 1}`
+    setShipments((prev) => [{
+      id, name, status: 'INBOUND', createdAt: Date.now(),
+      freight: meta?.freight || freight, notes: meta?.notes || notes,
+      lines: live.map((l) => ({ component: l.component, qty: l.qty, unitCost: l.unitCost })),
+    }, ...prev])
+    clear()
+    setNav('Shipments')
+  }
+  const markReceived = (id) => setShipments((prev) => prev.map((s) => (s.id === id ? { ...s, status: 'RECEIVED' } : s)))
+  const deleteShipment = (id) => setShipments((prev) => prev.filter((s) => s.id !== id))
 
   const currentFile = manifest?.files?.find((f) => f.filename === selected)
   const snapshot = snapshotFrom(currentFile, data)
+  const statusCounts = useMemo(() => (data ? countByStatus(data.miami.items) : null), [data])
 
   return (
-    <div className="flex h-screen flex-col">
-      <header className="flex items-center gap-4 bg-[#1F2937] px-6 py-3 text-white">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold">B</div>
-        <div>
-          <h1 className="text-lg font-semibold tracking-tight">BodyJ4You Supply Chain</h1>
-          <p className="text-xs text-gray-400">Miami Warehouse · Purchase Order Builder</p>
-        </div>
-        <div className="ml-auto flex items-center gap-3">
-          {manifest?.files?.length > 0 && (
+    <div className="flex h-screen">
+      <Sidebar
+        active={nav}
+        onNavigate={setNav}
+        cartCount={cart.size}
+        footer={
+          manifest?.files?.length > 0 ? (
             <FileSelector
               files={manifest.files}
               selected={selected}
               onSelect={setSelected}
               syncedAt={manifest.syncedAt}
             />
-          )}
-        </div>
-      </header>
+          ) : null
+        }
+      />
 
-      {/* Body */}
-      {manifestError ? (
-        <ManifestError message={manifestError} />
-      ) : !manifest ? (
-        <Center>Loading manifest…</Center>
-      ) : !manifest.files?.length ? (
-        <EmptyManifest folderId={manifest.folderId} />
-      ) : loading ? (
-        <Center>Loading snapshot {snapshot || selected}…</Center>
-      ) : loadError ? (
-        <Center tone="error">{loadError}</Center>
-      ) : !data ? (
-        <Center>Pick a snapshot.</Center>
-      ) : (
-        <div className="flex flex-1 overflow-hidden">
-          <main className="flex flex-1 flex-col overflow-hidden">
-            <nav className="flex gap-1 border-b border-gray-200 bg-white px-6">
-              {TABS.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  className={`-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
-                    tab === t ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-              <span className="ml-auto self-center text-xs text-gray-400">
-                {snapshot && <>Snapshot: <span className="font-semibold text-gray-700">{snapshot}</span></>}
-              </span>
-            </nav>
-            <div className="flex-1 overflow-y-auto bg-[#F8F9FA] p-6">
-              <div className="mx-auto max-w-[1600px]">
-                {tab === 'Miami Stock' && (
-                  <MiamiStockView items={data.miami.items} totalReorderCost={data.miami.totalReorderCost} cart={cart} addToCart={addToCart} />
-                )}
-                {tab === 'Inbound POs' && <InboundPOsView pos={data.inbound.pos} total={data.inbound.total} />}
-                {tab === 'Shipments by Week' && <ShipmentsByWeekView weeks={data.shipments.weeks} rows={data.shipments.rows} />}
-              </div>
-            </div>
-          </main>
-          <POCart
-            cart={cart}
-            setQty={setQty}
-            remove={remove}
-            clear={clear}
-            notes={notes}
-            setNotes={setNotes}
-            freight={freight}
-            setFreight={setFreight}
-            snapshotDate={snapshot}
-          />
+      <main className="flex flex-1 flex-col overflow-hidden bg-[#F8F9FA]">
+        <TopBar nav={nav} snapshot={snapshot} statusCounts={statusCounts} />
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-[1600px] px-6 py-5">
+            {renderBody({
+              manifest, manifestError, loading, loadError, data, nav, snapshot,
+              cart, addToCart, setQty, remove, clear, notes, setNotes, freight, setFreight,
+              shipments, createShipment, markReceived, deleteShipment,
+            })}
+          </div>
         </div>
-      )}
+      </main>
     </div>
   )
 }
 
-function Center({ children, tone }) {
-  const t = tone === 'error' ? 'text-red-600' : 'text-gray-500'
-  return <div className={`flex flex-1 items-center justify-center text-sm ${t}`}>{children}</div>
-}
-
-function ManifestError({ message }) {
+function TopBar({ nav, snapshot, statusCounts }) {
   return (
-    <div className="mx-auto max-w-lg py-16">
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-        <div className="mb-2 text-sm font-semibold text-red-700">Manifest unavailable</div>
-        <div className="text-sm text-red-600">{message}</div>
-        <div className="mt-3 text-xs text-red-500">
-          Run <code className="rounded bg-red-100 px-1 py-0.5">npm run sync</code> locally,
-          or trigger the <strong>Sync Drive</strong> GitHub Action.
-        </div>
+    <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3">
+      <div>
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Miami Warehouse</div>
+        <div className="text-base font-semibold text-gray-900">{nav}</div>
+      </div>
+      <div className="flex items-center gap-4">
+        {statusCounts && (
+          <div className="flex items-center gap-3 text-xs">
+            {['Critical', 'Urgent', 'Order'].map((k) => {
+              const s = STATUSES.find((x) => x.key === k)
+              return (
+                <span key={k} className="inline-flex items-center gap-1.5 text-gray-600">
+                  <span className={`h-2 w-2 rounded-full ${s.dot}`} />
+                  <span className="tabular-nums font-semibold text-gray-800">{statusCounts[k]}</span>
+                  <span className="text-gray-500">{s.label}</span>
+                </span>
+              )
+            })}
+          </div>
+        )}
+        {snapshot && (
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+            Snapshot: <span className="font-semibold text-gray-800">{snapshot}</span>
+          </span>
+        )}
       </div>
     </div>
   )
 }
 
-function EmptyManifest({ folderId }) {
+function renderBody(p) {
+  if (p.manifestError) return <ErrorBox title="Manifest unavailable" body={p.manifestError} hint='Run "npm run sync" locally, or trigger the Sync Drive GitHub Action.' />
+  if (!p.manifest) return <Center>Loading manifest…</Center>
+  if (!p.manifest.files?.length) return <ErrorBox title="No snapshots yet" body={`Drive folder ${p.manifest.folderId} doesn't contain any "Miami Warehouse" file.`} tone="amber" />
+  if (p.loading) return <Center>Loading snapshot {p.snapshot}…</Center>
+  if (p.loadError) return <ErrorBox title="Failed to load snapshot" body={p.loadError} />
+  if (!p.data) return <Center>Pick a snapshot.</Center>
+
+  switch (p.nav) {
+    case 'Miami Stock':
+      return <MiamiStockView items={p.data.miami.items} totalReorderCost={p.data.miami.totalReorderCost} cart={p.cart} addToCart={p.addToCart} />
+    case 'Inbound POs':
+      return <InboundPOsView pos={p.data.inbound.pos} total={p.data.inbound.total} />
+    case 'Shipments':
+      return (
+        <div className="space-y-6">
+          <ShipmentsView shipments={p.shipments} onMarkReceived={p.markReceived} onDelete={p.deleteShipment} />
+          {p.data.shipments.rows.length > 0 && (
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-gray-700">Historical shipments by week (from the file)</h3>
+              <ShipmentsByWeekView weeks={p.data.shipments.weeks} rows={p.data.shipments.rows} />
+            </div>
+          )}
+        </div>
+      )
+    case 'New PO':
+      return (
+        <NewPOView
+          cart={p.cart} setQty={p.setQty} remove={p.remove} clear={p.clear}
+          notes={p.notes} setNotes={p.setNotes}
+          freight={p.freight} setFreight={p.setFreight}
+          snapshotDate={p.snapshot}
+          onCreateShipment={p.createShipment}
+        />
+      )
+    default:
+      return null
+  }
+}
+
+function Center({ children }) { return <div className="flex items-center justify-center py-20 text-sm text-gray-500">{children}</div> }
+
+function ErrorBox({ title, body, hint, tone = 'red' }) {
+  const palettes = {
+    red:   { border: 'border-red-200',   bg: 'bg-red-50',   title: 'text-red-700',   body: 'text-red-600',   hint: 'text-red-500'   },
+    amber: { border: 'border-amber-200', bg: 'bg-amber-50', title: 'text-amber-700', body: 'text-amber-700', hint: 'text-amber-700' },
+  }
+  const p = palettes[tone] || palettes.red
   return (
     <div className="mx-auto max-w-lg py-16">
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-        <div className="mb-2 text-sm font-semibold text-amber-700">No snapshots yet</div>
-        <div className="text-sm text-amber-700">
-          The Drive folder <span className="font-mono text-xs">{folderId}</span> doesn't contain any
-          file matching <code className="rounded bg-amber-100 px-1 py-0.5">Miami Warehouse</code>.
-        </div>
-        <ol className="mt-3 list-decimal pl-5 text-xs text-amber-700">
-          <li>Drop a weekly <code className="font-mono">Miami Warehouse - MM.DD.YY.xlsx</code> into the folder.</li>
-          <li>Wait for the next scheduled sync, or run <code className="font-mono">npm run sync</code>.</li>
-        </ol>
+      <div className={`rounded-xl border p-6 ${p.border} ${p.bg}`}>
+        <div className={`mb-2 text-sm font-semibold ${p.title}`}>{title}</div>
+        <div className={`text-sm ${p.body}`}>{body}</div>
+        {hint && <div className={`mt-3 text-xs ${p.hint}`}>{hint}</div>}
       </div>
     </div>
   )
