@@ -1,8 +1,17 @@
 {
   "folderId": "1WILT2WleC0ztjwdgNo1-cvFrrBcwcK3e",
-  "syncedAt": "2026-06-01T16:27:36.150Z",
-  "latest": "Miami Warehouse - 05.27.26.xlsx",
+  "syncedAt": "2026-06-01T20:40:38.001Z",
+  "latest": "Miami Warehouse - 06.01.26.xlsx",
   "files": [
+    {
+      "filename": "Miami Warehouse - 06.01.26.xlsx",
+      "displayName": "Miami Warehouse - 06.01.26.xlsx",
+      "label": "06.01.26",
+      "snapshotDate": "2026-06-01",
+      "modifiedMs": 1780346106000,
+      "driveFileId": "1SNQXSp78hMrlwl9tlfZES_-z_mXCt76s",
+      "sizeBytes": 17829
+    },
     {
       "filename": "Miami Warehouse - 05.27.26.xlsx",
       "displayName": "Miami Warehouse - 05.27.26.xlsx",
