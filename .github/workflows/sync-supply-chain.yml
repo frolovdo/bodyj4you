@@ -2,7 +2,14 @@ name: Sync Supply Chain Dashboard
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # every 15 minutes
+    # Hourly on Mondays, 9am - 9pm America/New_York (covers EDT and EST).
+    # GitHub cron is UTC, so we span the window in two ranges:
+    #   13:00 - 23:00 UTC Mon  = 9am - 7pm EDT  /  8am - 6pm EST
+    #   00:00 - 02:00 UTC Tue  = 8pm - 10pm EDT /  7pm - 9pm EST
+    # Together this covers 9am-9pm both in EDT and EST (one extra hour on
+    # each edge for EST; harmless because no-op runs cost nothing).
+    - cron: '0 13-23 * * 1'
+    - cron: '0 0-2 * * 2'
   workflow_dispatch: {}    # manual run from the Actions tab
   push:
     branches: [main]
