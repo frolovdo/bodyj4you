@@ -1,130 +1,164 @@
-// Sync the newest Reorder_Miami / Reorder_China file from the Drive output folder
-// into each dashboard's public/data/ snapshot. Works with BOTH xlsx files (what the
-// inventory-reorder skill uploads) and native Google Sheets. Idempotent — only writes
-// when Drive has a newer file than what's already published.
+// Drive-pipeline compute step.
 //
-// Runs in GitHub Actions on a cron (see .github/workflows/sync-reorder.yml). The
-// workflow commits + pushes any changes, which makes Netlify redeploy.
+// Every cron tick:
+//   1. List the IN folder, pick the newest FBA file.
+//   2. List the Miami OUT folder, find its newest modifiedTime.
+//   3. If IN file is newer than the newest Miami output → run the skill
+//      (python reorder.py) → upload Reorder_Miami_<MM.DD.YY>.xlsx and
+//      Reorder_China_<MM.DD.YY>.xlsx to their respective OUT folders.
+//   4. Otherwise → no-op.
 //
-// Auth: a Google service account JSON in env GDRIVE_SA_KEY. The service account needs
-// read access to the Drive output folder.
+// No marker file, no retries, no double-checks. If anything fails, the next
+// cron run handles it.
+//
+// Auth: a service account JSON in env GDRIVE_SA_KEY, with Viewer on IN and
+// Editor on both OUT folders.
 
 import { google } from 'googleapis';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { mkdirSync, writeFileSync, readFileSync, createReadStream, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '..');
 
-const OUTPUT_FOLDER_ID = process.env.DRIVE_OUTPUT_FOLDER_ID || '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U';
-const SHEET_MIME = 'application/vnd.google-apps.spreadsheet';
+const IN_FOLDER     = process.env.IN_FOLDER     || '19-AoS9nM3nm702v9tw15LWQGAT2c4xQr';   // 00_IN_FBA
+const OUT_MIAMI     = process.env.OUT_MIAMI     || '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U';   // 01_OUT_MIAMI
+const OUT_CHINA     = process.env.OUT_CHINA     || '1MBGCoI4yTltZdRlnOHcpl9pg5ZaubluF';   // 02_OUT_CHINA
+const PYTHON        = process.env.PYTHON        || 'python3';
+
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-const TARGETS = [
-  { app: 'miami-dashboard', prefix: 'Reorder_Miami' },
-  { app: 'china-dashboard', prefix: 'Reorder_China' },
-];
-
-function parseLabel(title) {
-  // strip extension first so dates inside filenames parse cleanly
-  const base = title.replace(/\.xlsx$/i, '');
-  const m = base.match(/(\d{2})[._-](\d{2})[._-](\d{2,4})/);
-  if (!m) return { label: null, snapshotDate: null };
-  const yyyy = m[3].length === 2 ? `20${m[3]}` : m[3];
-  return { label: `${m[1]}.${m[2]}.${m[3]}`, snapshotDate: `${yyyy}-${m[1]}-${m[2]}` };
-}
-
-function readExistingManifest(dataDir) {
-  const p = resolve(dataDir, 'manifest.json');
-  if (!existsSync(p)) return null;
-  try { return JSON.parse(readFileSync(p, 'utf8')); } catch { return null; }
-}
-
-async function fetchBytes(drive, file) {
-  // Google Sheets need export → xlsx. Already-xlsx files use plain download.
-  if (file.mimeType === SHEET_MIME) {
-    const res = await drive.files.export(
-      { fileId: file.id, mimeType: XLSX_MIME },
-      { responseType: 'arraybuffer' },
-    );
-    return Buffer.from(res.data);
-  }
-  const res = await drive.files.get(
-    { fileId: file.id, alt: 'media' },
-    { responseType: 'arraybuffer' },
-  );
-  return Buffer.from(res.data);
-}
-
-async function main() {
+function authDrive() {
   const keyJson = process.env.GDRIVE_SA_KEY;
   if (!keyJson) throw new Error('GDRIVE_SA_KEY env var is not set.');
-
   const credentials = JSON.parse(keyJson);
   const auth = new google.auth.GoogleAuth({
     credentials,
-    scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    scopes: ['https://www.googleapis.com/auth/drive'],
   });
-  const drive = google.drive({ version: 'v3', auth });
+  return google.drive({ version: 'v3', auth });
+}
 
-  let changed = 0;
+async function newestInFolder(drive, folderId, { startsWith } = {}) {
+  const res = await drive.files.list({
+    q: `'${folderId}' in parents and trashed = false`,
+    orderBy: 'modifiedTime desc',
+    pageSize: 50,
+    fields: 'files(id,name,modifiedTime,mimeType,size)',
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+  });
+  let files = res.data.files || [];
+  if (startsWith) files = files.filter(f => f.name.startsWith(startsWith));
+  return files[0] || null;
+}
 
-  for (const t of TARGETS) {
-    // Accept BOTH xlsx and native Sheets — the skill may produce either.
-    const q = [
-      `'${OUTPUT_FOLDER_ID}' in parents`,
-      'trashed = false',
-      `(mimeType = '${XLSX_MIME}' or mimeType = '${SHEET_MIME}')`,
-      `name contains '${t.prefix}'`,
-    ].join(' and ');
+async function downloadFile(drive, file, dest) {
+  const res = await drive.files.get(
+    { fileId: file.id, alt: 'media', supportsAllDrives: true },
+    { responseType: 'arraybuffer' },
+  );
+  writeFileSync(dest, Buffer.from(res.data));
+}
 
-    const list = await drive.files.list({
-      q,
-      orderBy: 'modifiedTime desc',
-      pageSize: 20,
-      fields: 'files(id,name,modifiedTime,mimeType)',
-      supportsAllDrives: true,
-      includeItemsFromAllDrives: true,
-    });
+async function uploadFile(drive, { folderId, name, path }) {
+  const res = await drive.files.create({
+    requestBody: { name, parents: [folderId], mimeType: XLSX_MIME },
+    media: { mimeType: XLSX_MIME, body: createReadStream(path) },
+    supportsAllDrives: true,
+    fields: 'id,name,modifiedTime',
+  });
+  return res.data;
+}
 
-    // Must start with the prefix (avoid 'name contains' false matches mid-string)
-    const newest = (list.data.files || []).find(f => f.name.startsWith(t.prefix));
-    if (!newest) {
-      console.log(`[${t.app}] no "${t.prefix}*" file found in folder ${OUTPUT_FOLDER_ID}`);
-      continue;
-    }
+// Read "Inventory age snapshot date" column from the FBA csv, return MM.DD.YY.
+function fbaSnapshotLabel(csvPath) {
+  const text = readFileSync(csvPath, 'utf8').replace(/^﻿/, '');
+  const [headerLine, firstRow] = text.split('\n');
+  if (!headerLine || !firstRow) return null;
+  const headers = headerLine.split(',');
+  const idx = headers.indexOf('Inventory age snapshot date');
+  if (idx < 0) return null;
+  const cells = firstRow.split(',');
+  const iso = (cells[idx] || '').trim(); // YYYY-MM-DD
+  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return `${m[2]}.${m[3]}.${m[1].slice(2)}`;
+}
 
-    const dataDir = resolve(repoRoot, t.app, 'public', 'data');
-    const existing = readExistingManifest(dataDir);
-    const newestMs = new Date(newest.modifiedTime).getTime();
+async function main() {
+  const drive = authDrive();
 
-    if (existing && existing.driveFileId === newest.id && Number(existing.modifiedMs) >= newestMs) {
-      console.log(`[${t.app}] already up to date (${newest.name})`);
-      continue;
-    }
+  const newestIn = await newestInFolder(drive, IN_FOLDER);
+  if (!newestIn) {
+    console.log('IN folder is empty. Nothing to do.');
+    return;
+  }
+  console.log(`Newest IN file: ${newestIn.name} (${newestIn.modifiedTime})`);
 
-    const buf = await fetchBytes(drive, newest);
-
-    mkdirSync(dataDir, { recursive: true });
-    writeFileSync(resolve(dataDir, 'latest.xlsx'), buf);
-
-    const { label, snapshotDate } = parseLabel(newest.name);
-    const manifest = {
-      filename: newest.name.endsWith('.xlsx') ? newest.name : `${newest.name}.xlsx`,
-      file: 'latest.xlsx',
-      label,
-      snapshotDate,
-      modifiedMs: newestMs,
-      driveFileId: newest.id,
-      source: 'drive',
-    };
-    writeFileSync(resolve(dataDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
-    console.log(`[${t.app}] updated → ${newest.name} (${label}, ${newest.mimeType}, ${buf.length} bytes)`);
-    changed++;
+  const newestMiami = await newestInFolder(drive, OUT_MIAMI, { startsWith: 'Reorder_Miami_' });
+  if (newestMiami) {
+    console.log(`Newest Miami out: ${newestMiami.name} (${newestMiami.modifiedTime})`);
+  } else {
+    console.log('No Miami output yet.');
   }
 
-  console.log(changed ? `Done. ${changed} snapshot(s) updated.` : 'Done. No changes.');
+  const inMs    = new Date(newestIn.modifiedTime).getTime();
+  const outMs   = newestMiami ? new Date(newestMiami.modifiedTime).getTime() : 0;
+
+  if (inMs <= outMs) {
+    console.log('Nothing newer in IN than in OUT_MIAMI. Done.');
+    return;
+  }
+
+  // Download input
+  const work = mkdirSync(join(tmpdir(), 'reorder-' + Date.now()), { recursive: true }) || join(tmpdir(), 'reorder-' + Date.now());
+  const workDir = join(tmpdir(), 'reorder-' + process.pid + '-' + Date.now());
+  mkdirSync(workDir, { recursive: true });
+
+  const inputCsv = join(workDir, newestIn.name);
+  await downloadFile(drive, newestIn, inputCsv);
+  console.log('Downloaded input →', inputCsv);
+
+  // Date label from the FBA snapshot date column. Fall back to today UTC.
+  let dateLabel = fbaSnapshotLabel(inputCsv);
+  if (!dateLabel) {
+    const d = new Date();
+    dateLabel = `${String(d.getUTCMonth() + 1).padStart(2, '0')}.${String(d.getUTCDate()).padStart(2, '0')}.${String(d.getUTCFullYear()).slice(2)}`;
+  }
+  console.log('Snapshot date label:', dateLabel);
+
+  // Run the skill twice (miami-xlsx + china-xlsx)
+  const catalog = resolve(here, 'catalog.xlsx');
+  const reorderPy = resolve(here, 'reorder.py');
+  const miamiOut = join(workDir, `Reorder_Miami_${dateLabel}.xlsx`);
+  const chinaOut = join(workDir, `Reorder_China_${dateLabel}.xlsx`);
+
+  execFileSync(PYTHON, [reorderPy, catalog, inputCsv, 'miami-xlsx', miamiOut], { stdio: 'inherit' });
+  execFileSync(PYTHON, [reorderPy, catalog, inputCsv, 'china-xlsx', chinaOut], { stdio: 'inherit' });
+
+  if (!existsSync(miamiOut) || !existsSync(chinaOut)) {
+    throw new Error('Skill did not produce expected output files.');
+  }
+
+  // Upload outputs
+  const upMiami = await uploadFile(drive, {
+    folderId: OUT_MIAMI,
+    name: `Reorder_Miami_${dateLabel}.xlsx`,
+    path: miamiOut,
+  });
+  console.log(`Uploaded Miami → ${upMiami.name} (${upMiami.id})`);
+
+  const upChina = await uploadFile(drive, {
+    folderId: OUT_CHINA,
+    name: `Reorder_China_${dateLabel}.xlsx`,
+    path: chinaOut,
+  });
+  console.log(`Uploaded China → ${upChina.name} (${upChina.id})`);
+
+  console.log('Done.');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

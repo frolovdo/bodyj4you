@@ -1,51 +1,46 @@
-name: Sync reorder snapshots from Drive
+name: Reorder pipeline (Drive → skill → Drive)
 
-# Pulls the newest Reorder_Miami / Reorder_China file (xlsx or Sheet) from the Drive
-# output folder into each dashboard's public/data/ and commits any change.
-# Netlify auto-deploys after the commit lands. Idempotent: if no Drive file is newer
-# than what's already published, the job is a no-op (no commit).
+# Watches the IN folder. When a newer FBA file appears than the newest Miami
+# output, runs the skill and uploads the 2 reorder files to the OUT folders.
+# No-op otherwise.
 
 on:
-  workflow_dispatch: {}        # manual trigger from the Actions tab
+  workflow_dispatch: {}        # manual trigger
   schedule:
-    - cron: '*/30 * * * *'     # every 30 minutes
+    - cron: '*/30 * * * *'     # every 30 min
 
 permissions:
-  contents: write              # so GITHUB_TOKEN can push
+  contents: read
 
 concurrency:
-  group: sync-reorder
+  group: reorder-pipeline
   cancel-in-progress: false
 
 jobs:
-  sync:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+        with: { node-version: '20' }
 
-      - name: Install sync deps
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+
+      - name: Install Python deps
+        working-directory: automation
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Install Node deps
         working-directory: automation
         run: npm install --no-audit --no-fund
 
-      - name: Sync newest Reorder files from Drive
+      - name: Run pipeline
         working-directory: automation
         env:
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
-          DRIVE_OUTPUT_FOLDER_ID: '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U'
+          IN_FOLDER:  '19-AoS9nM3nm702v9tw15LWQGAT2c4xQr'
+          OUT_MIAMI:  '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U'
+          OUT_CHINA:  '1MBGCoI4yTltZdRlnOHcpl9pg5ZaubluF'
         run: node sync-from-drive.mjs
-
-      - name: Commit & push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add miami-dashboard/public/data china-dashboard/public/data
-          if git diff --cached --quiet; then
-            echo "No snapshot changes — nothing to deploy."
-          else
-            git commit -m "Sync reorder snapshots from Drive"
-            git push
-          fi

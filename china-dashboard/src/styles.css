@@ -283,3 +283,22 @@ tr.section-row td { background: #1f2937; color: white; padding: 14px 18px; font-
 }
 .shipment-empty h2 { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 8px; }
 .shipment-empty p { margin: 0 0 16px; font-size: 13px; }
+
+/* ---- Date picker (Drive-as-source) ---- */
+.date-picker {
+  appearance: none;
+  background: white url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%236b7280' d='M5 6L0 0h10z'/></svg>") no-repeat right 10px center;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 28px 6px 12px;
+  font-size: 12px;
+  color: #374151;
+  cursor: pointer;
+  font-family: inherit;
+  min-width: 140px;
+}
+.date-picker:hover:not(:disabled) { background-color: #f3f4f6; }
+.date-picker:disabled { opacity: 0.6; cursor: progress; }
+
+/* ---- Boot page (loading / error before first paint) ---- */
+.boot-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
