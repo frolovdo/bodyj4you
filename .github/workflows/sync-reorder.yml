@@ -1,0 +1,51 @@
+name: Sync reorder snapshots from Drive
+
+# Pulls the newest Reorder_Miami / Reorder_China file (xlsx or Sheet) from the Drive
+# output folder into each dashboard's public/data/ and commits any change.
+# Netlify auto-deploys after the commit lands. Idempotent: if no Drive file is newer
+# than what's already published, the job is a no-op (no commit).
+
+on:
+  workflow_dispatch: {}        # manual trigger from the Actions tab
+  schedule:
+    - cron: '*/30 * * * *'     # every 30 minutes
+
+permissions:
+  contents: write              # so GITHUB_TOKEN can push
+
+concurrency:
+  group: sync-reorder
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install sync deps
+        working-directory: automation
+        run: npm install --no-audit --no-fund
+
+      - name: Sync newest Reorder files from Drive
+        working-directory: automation
+        env:
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          DRIVE_OUTPUT_FOLDER_ID: '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U'
+        run: node sync-from-drive.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add miami-dashboard/public/data china-dashboard/public/data
+          if git diff --cached --quiet; then
+            echo "No snapshot changes — nothing to deploy."
+          else
+            git commit -m "Sync reorder snapshots from Drive"
+            git push
+          fi
