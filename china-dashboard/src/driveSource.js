@@ -26,6 +26,8 @@ export async function listSnapshots() {
     orderBy: 'modifiedTime desc',
     pageSize: '100',
     fields: 'files(id,name,modifiedTime,mimeType)',
+    supportsAllDrives: 'true',
+    includeItemsFromAllDrives: 'true',
     key: GAPI_KEY,
   })}`;
   const resp = await fetch(url);
