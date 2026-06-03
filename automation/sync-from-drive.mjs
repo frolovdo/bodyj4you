@@ -41,12 +41,16 @@ function authDrive() {
   return google.drive({ version: 'v3', auth });
 }
 
-async function newestInFolder(drive, folderId, { startsWith } = {}) {
+async function newestInFolder(drive, folderId, { startsWith, by = 'modifiedTime' } = {}) {
+  // `by` controls which timestamp to sort by. For IN folder use modifiedTime
+  // (so a re-uploaded file with new content is detected). For OUT comparison
+  // use createdTime — that way renaming/touching OUT files can't fool us into
+  // thinking the pipeline already ran for the latest input.
   const res = await drive.files.list({
     q: `'${folderId}' in parents and trashed = false`,
-    orderBy: 'modifiedTime desc',
+    orderBy: `${by} desc`,
     pageSize: 50,
-    fields: 'files(id,name,modifiedTime,mimeType,size)',
+    fields: 'files(id,name,modifiedTime,createdTime,mimeType,size)',
     supportsAllDrives: true,
     includeItemsFromAllDrives: true,
   });
@@ -98,15 +102,20 @@ async function main() {
   }
   console.log(`Newest IN file: ${newestIn.name} (${newestIn.modifiedTime})`);
 
-  const newestMiami = await newestInFolder(drive, OUT_MIAMI, { startsWith: 'Reorder_Miami_' });
+  const newestMiami = await newestInFolder(drive, OUT_MIAMI, {
+    startsWith: 'Reorder_Miami_',
+    by: 'createdTime',
+  });
   if (newestMiami) {
-    console.log(`Newest Miami out: ${newestMiami.name} (${newestMiami.modifiedTime})`);
+    console.log(`Newest Miami out (by createdTime): ${newestMiami.name} (created ${newestMiami.createdTime})`);
   } else {
     console.log('No Miami output yet.');
   }
 
-  const inMs    = new Date(newestIn.modifiedTime).getTime();
-  const outMs   = newestMiami ? new Date(newestMiami.modifiedTime).getTime() : 0;
+  // IN modifiedTime vs OUT createdTime. Touching/renaming OUT files can't fool
+  // this — only an actual upload of a fresh OUT advances the OUT clock.
+  const inMs  = new Date(newestIn.modifiedTime).getTime();
+  const outMs = newestMiami ? new Date(newestMiami.createdTime).getTime() : 0;
 
   if (inMs <= outMs) {
     console.log('Nothing newer in IN than in OUT_MIAMI. Done.');
