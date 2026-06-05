@@ -1,95 +1,106 @@
 {%- comment -%}
   ============================================================================
   CREATOR GIFTS — paste-in block (no app, no backend, no coupon)
+  ONE free product per creator. Mobile-first tiles. Native cart -> checkout.
+  Replace agreement_url with your Google Form responder link if it changes.
   ============================================================================
-  HOW TO USE
-  1. Online Store -> Themes -> Edit theme (Customize).
-  2. Top dropdown -> Pages -> Partnership.
-  3. Add section -> "Custom Liquid".
-  4. Paste this ENTIRE file into the Custom Liquid box and Save.
-
-  ▼▼▼  REPLACE the Google Form link below with YOUR agreement form  ▼▼▼
 {%- endcomment -%}
 
 {%- assign gift_collection = collections['creator-gifts'] -%}
-{%- assign max_items = 5 -%}
 {%- assign agreement_url = 'https://docs.google.com/forms/d/e/1FAIpQLSfRW-3NKnnzOcFAwP35nQCw08C0Fs3_qOi1o6Y4r7ej54ImeA/viewform' -%}
 
 <style>
-  .cg { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
-  .cg__head { text-align: center; margin-bottom: 1.5rem; }
-  .cg__hint { font-size: .9rem; opacity: .7; }
-  .cg__step { font-weight: 600; margin: 1.75rem 0 .5rem; }
-  .cg__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 1rem; }
-  .cg-card { border: 1px solid #ddd; border-radius: 8px; padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
-  .cg-card.is-on { border-color: #111; box-shadow: 0 0 0 2px #111 inset; }
-  .cg-card img { width: 100%; height: auto; border-radius: 6px; }
-  .cg-card__title { font-size: .95rem; margin: 0; }
-  .cg-card__price { font-weight: 700; margin: 0; }
-  .cg-card select { padding: .35rem; width: 100%; }
-  .cg-card button { margin-top: auto; padding: .5rem; cursor: pointer; border: 1px solid #111; background: #fff; border-radius: 6px; }
-  .cg-card.is-on button { background: #111; color: #fff; }
-  .cg-card button:disabled { opacity: .4; cursor: not-allowed; }
-  .cg__count { font-size: .9rem; opacity: .8; margin-top: .5rem; }
+  .cg { --cg-accent:#f5631e; --cg-accent-2:#ff8a3d; max-width: 1000px; margin: 0 auto; padding: 1.25rem; }
+  .cg__head { text-align: center; margin-bottom: 1.25rem; }
+  .cg__head h1 { font-size: 1.9rem; font-weight: 800; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  .cg__head p { margin: 0; opacity: .8; }
+  .cg__hint { font-size: .85rem; opacity: .65; }
+  .cg__step { font-weight: 800; font-size: 1.05rem; margin: 1.6rem 0 .6rem; display: flex; align-items: center; gap: .5rem; }
+  .cg__step::before { content: attr(data-n); display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--cg-accent); color: #fff; font-size: .8rem; }
 
-  .cg-form { margin-top: .5rem; display: grid; gap: .6rem; max-width: 520px; }
+  /* ---- product tiles (mobile-first: 2 across, image-dominant) ---- */
+  .cg__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+  @media (min-width: 600px) { .cg__grid { grid-template-columns: repeat(3, 1fr); gap: .9rem; } }
+  @media (min-width: 900px) { .cg__grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .cg-tile { position: relative; border-radius: 16px; overflow: hidden; background: #fff; border: 2px solid transparent; box-shadow: 0 1px 5px rgba(0,0,0,.09); cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; -webkit-tap-highlight-color: transparent; }
+  .cg-tile:active { transform: scale(.98); }
+  .cg-tile.is-on { border-color: var(--cg-accent); box-shadow: 0 6px 20px rgba(245,99,30,.32); }
+  .cg-tile__media { position: relative; aspect-ratio: 1 / 1; background: #f3f3f3; }
+  .cg-tile__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cg-tile.is-on .cg-tile__media::after { content: ""; position: absolute; inset: 0; background: rgba(245,99,30,.12); }
+  .cg-tile__badge { position: absolute; top: .5rem; left: .5rem; background: var(--cg-accent); color: #fff; font-size: .65rem; font-weight: 800; letter-spacing: .04em; padding: .2rem .5rem; border-radius: 999px; }
+  .cg-tile__check { position: absolute; top: .5rem; right: .5rem; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--cg-accent); color: #fff; display: none; align-items: center; justify-content: center; font-size: .95rem; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  .cg-tile.is-on .cg-tile__check { display: flex; }
+  .cg-tile__body { padding: .5rem .6rem .65rem; }
+  .cg-tile__title { font-size: .78rem; font-weight: 600; line-height: 1.25; display: block; }
+  .cg-tile select { margin-top: .4rem; width: 100%; font-size: .78rem; padding: .3rem; border: 1px solid #ccc; border-radius: 6px; }
+  .cg__sel { text-align: center; font-size: .9rem; margin-top: .8rem; }
+  .cg__sel strong { color: var(--cg-accent); }
+
+  /* ---- form ---- */
+  .cg-form { margin-top: .4rem; display: grid; gap: .6rem; max-width: 520px; }
   .cg-field { display: grid; gap: .25rem; }
-  .cg-field input { padding: .55rem; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
+  .cg-field input { padding: .7rem; border: 1px solid #ccc; border-radius: 10px; width: 100%; font-size: 16px; }
   .cg-field input.is-bad { border-color: #c00; }
   .cg-field input.is-good { border-color: #1a7f37; }
   .cg-field__msg { font-size: .75rem; color: #c00; display: none; }
   .cg-field.is-bad .cg-field__msg { display: block; }
 
-  .cg-agree { margin-top: 1.25rem; display: grid; gap: .6rem; max-width: 520px; }
-  .cg-agree__open { display: inline-block; padding: .5rem .9rem; border: 1px solid #111; border-radius: 6px; text-decoration: none; color: #111; font-weight: 600; width: max-content; }
+  .cg-agree { margin-top: 1.1rem; display: grid; gap: .6rem; max-width: 520px; }
+  .cg-agree__open { display: inline-flex; align-items: center; gap: .3rem; padding: .6rem 1rem; border: 2px solid var(--cg-accent); border-radius: 10px; text-decoration: none; color: var(--cg-accent); font-weight: 700; width: max-content; }
   .cg-agree__check { display: flex; gap: .5rem; align-items: flex-start; font-size: .9rem; }
+  .cg-agree__check input { margin-top: .2rem; width: 1.1rem; height: 1.1rem; }
 
-  .cg__footer { margin-top: 1.75rem; display: grid; gap: .5rem; max-width: 520px; }
+  .cg__footer { margin-top: 1.6rem; display: grid; gap: .55rem; max-width: 520px; }
   .cg__todo { font-size: .8rem; opacity: .7; }
-  .cg__cta { padding: .9rem 1.2rem; background: #111; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 700; }
-  .cg__cta:disabled { opacity: .4; cursor: not-allowed; }
+  .cg__cta { width: 100%; padding: 1.05rem; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--cg-accent), var(--cg-accent-2)); color: #fff; font-size: 1.15rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 22px rgba(245,99,30,.38); transition: transform .12s ease, opacity .12s ease; }
+  .cg__cta:active { transform: translateY(1px); }
+  .cg__cta:disabled { background: #cfcfcf; box-shadow: none; cursor: not-allowed; }
   .cg-error { color: #c00; font-size: .85rem; }
 </style>
 
 <div class="cg" id="cg-app">
   <div class="cg__head">
-    <h1>Creator Partnership</h1>
-    <p>Pick the products you'd like — everything here is free. Choose up to {{ max_items }}.</p>
+    <h1>Get your free product 🎁</h1>
+    <p>Pick <strong>one</strong> item on us — we'll ship it your way.</p>
   </div>
 
   {%- if gift_collection == blank or gift_collection.products_count == 0 -%}
     <p>No gift products are available right now. (Add products to the “Creator Gifts” collection.)</p>
   {%- else -%}
 
-    <p class="cg__step">1. Choose your products</p>
+    <p class="cg__step" data-n="1">Choose your product</p>
     <div class="cg__grid">
       {%- for product in gift_collection.products -%}
-        <div class="cg-card" data-card>
-          {%- if product.featured_image -%}
-            <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" loading="lazy" width="400">
-          {%- endif -%}
-          <h3 class="cg-card__title">{{ product.title | remove: '[Creator Gift]' | strip }}</h3>
-          <p class="cg-card__price">FREE</p>
-
-          {%- if product.variants.size > 1 -%}
-            <select data-variant>
-              {%- for v in product.variants -%}
-                <option value="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>
-                  {{ v.title }}{% unless v.available %} — Sold out{% endunless %}
-                </option>
-              {%- endfor -%}
-            </select>
-          {%- else -%}
-            <input type="hidden" data-variant value="{{ product.variants.first.id }}">
-          {%- endif -%}
-
-          <button type="button" data-toggle data-title="{{ product.title | remove: '[Creator Gift]' | strip | escape }}">Add</button>
+        <div class="cg-tile" data-tile data-title="{{ product.title | remove: '[Creator Gift]' | strip | escape }}">
+          <div class="cg-tile__media">
+            {%- if product.featured_image -%}
+              <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy" width="600">
+            {%- endif -%}
+            <span class="cg-tile__badge">FREE</span>
+            <span class="cg-tile__check" aria-hidden="true">✓</span>
+          </div>
+          <div class="cg-tile__body">
+            <span class="cg-tile__title">{{ product.title | remove: '[Creator Gift]' | strip }}</span>
+            {%- if product.variants.size > 1 -%}
+              <select data-variant>
+                {%- for v in product.variants -%}
+                  <option value="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>
+                    {{ v.title }}{% unless v.available %} — Sold out{% endunless %}
+                  </option>
+                {%- endfor -%}
+              </select>
+            {%- else -%}
+              <input type="hidden" data-variant value="{{ product.variants.first.id }}">
+            {%- endif -%}
+          </div>
         </div>
       {%- endfor -%}
     </div>
-    <p class="cg__count"><strong data-count>0</strong> selected</p>
+    <p class="cg__sel">Selected: <strong data-sel>none yet</strong></p>
 
-    <p class="cg__step">2. Where can we see your content?</p>
+    <p class="cg__step" data-n="2">Where can we see your content?</p>
     <p class="cg__hint">Add at least one — Instagram, TikTok, or YouTube.</p>
     <div class="cg-form">
       <div class="cg-field">
@@ -109,14 +120,12 @@
       </div>
     </div>
 
-    <p class="cg__step">3. Sign the agreement</p>
+    <p class="cg__step" data-n="3">Sign the agreement</p>
     <div class="cg-agree">
-      <a class="cg-agree__open" href="{{ agreement_url }}" target="_blank" rel="noopener" data-agree-open>
-        Read &amp; sign the agreement ↗
-      </a>
+      <a class="cg-agree__open" href="{{ agreement_url }}" target="_blank" rel="noopener">Read &amp; sign the agreement ↗</a>
       <label class="cg-agree__check">
         <input type="checkbox" data-agree>
-        <span>I have read, signed, and agree to the influencer agreement — I'll receive these items free in exchange for a social media post/video.</span>
+        <span>I have read, signed, and agree to the influencer agreement — I'll receive this item free in exchange for a social media post/video.</span>
       </label>
     </div>
 
@@ -133,52 +142,40 @@
   var app = document.getElementById('cg-app');
   if (!app) return;
 
-  var MAX = {{ max_items }};
-  var selected = new Map(); // variantId -> title
-  var countEl = app.querySelector('[data-count]');
+  var selEl = null, selVariant = null, selTitle = null;
+  var selOut = app.querySelector('[data-sel]');
   var checkoutBtn = app.querySelector('[data-checkout]');
   var agreeEl = app.querySelector('[data-agree]');
   var errorEl = app.querySelector('[data-error]');
   var todoEl = app.querySelector('[data-todo]');
 
-  // ---------- product selection ----------
-  app.querySelectorAll('[data-card]').forEach(function (card) {
-    var btn = card.querySelector('[data-toggle]');
-    var variant = card.querySelector('[data-variant]');
-    if (!btn || !variant) return;
+  // ---------- single product selection ----------
+  app.querySelectorAll('[data-tile]').forEach(function (tile) {
+    var variant = tile.querySelector('[data-variant]');
+    if (!variant) return;
 
-    btn.addEventListener('click', function () {
-      var id = variant.value;
-      if (card.classList.contains('is-on')) {
-        selected.delete(card.dataset.selectedId);
-        card.classList.remove('is-on');
-        card.removeAttribute('data-selected-id');
-        btn.textContent = 'Add';
+    tile.addEventListener('click', function (e) {
+      if (e.target.closest('[data-variant]')) return; // let the dropdown work
+      if (selEl === tile) {            // tap again to deselect
+        tile.classList.remove('is-on');
+        selEl = null; selVariant = null; selTitle = null;
       } else {
-        if (selected.size >= MAX) { alert('You can pick at most ' + MAX + ' items.'); return; }
-        selected.set(id, btn.getAttribute('data-title'));
-        card.dataset.selectedId = id;
-        card.classList.add('is-on');
-        btn.textContent = 'Remove';
+        if (selEl) selEl.classList.remove('is-on');
+        selEl = tile; tile.classList.add('is-on');
+        selVariant = variant.value;
+        selTitle = tile.getAttribute('data-title');
       }
       refresh();
     });
 
     if (variant.tagName === 'SELECT') {
-      variant.addEventListener('change', function () {
-        if (card.classList.contains('is-on')) {
-          selected.delete(card.dataset.selectedId);
-          selected.set(variant.value, btn.getAttribute('data-title'));
-          card.dataset.selectedId = variant.value;
-          refresh();
-        }
-      });
+      variant.addEventListener('click', function (e) { e.stopPropagation(); });
+      variant.addEventListener('change', function () { if (selEl === tile) selVariant = variant.value; });
     }
   });
 
-  // ---------- social handle validation (lenient) ----------
+  // ---------- social handle validation (lenient, must contain a letter) ----------
   function clean(v) { return v.trim().replace(/^@+/, '').replace(/\/+$/, ''); }
-  // A real-looking handle: letters/numbers/dots/underscores AND at least one letter.
   function isHandle(v, max) { return new RegExp('^[a-zA-Z0-9._]{2,' + max + '}$').test(v) && /[a-zA-Z]/.test(v); }
   var validators = {
     Instagram: function (v) { return /instagram\.com\/[a-zA-Z0-9._]{2,}/i.test(v) || isHandle(clean(v), 30); },
@@ -217,14 +214,13 @@
 
   agreeEl.addEventListener('change', refresh);
 
-  // ---------- enable/disable + guidance ----------
   function refresh() {
     var needs = [];
-    if (selected.size === 0) needs.push('pick at least 1 product');
+    if (!selVariant) needs.push('pick 1 product');
     if (!hasValidSocial()) needs.push('add a valid Instagram, TikTok, or YouTube');
     if (!agreeEl.checked) needs.push('check the agreement box');
 
-    countEl.textContent = selected.size;
+    selOut.textContent = selTitle || 'none yet';
     checkoutBtn.disabled = needs.length > 0;
     todoEl.textContent = needs.length ? 'To continue: ' + needs.join(', ') + '.' : '';
   }
@@ -233,7 +229,7 @@
   // ---------- checkout ----------
   checkoutBtn.addEventListener('click', function () {
     errorEl.hidden = true;
-    if (checkoutBtn.disabled) return;
+    if (checkoutBtn.disabled || !selVariant) return;
 
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = 'Preparing…';
@@ -243,8 +239,7 @@
       if (input.value.trim()) attributes[input.getAttribute('data-social')] = input.value.trim();
     });
 
-    var items = [];
-    selected.forEach(function (title, id) { items.push({ id: Number(id), quantity: 1 }); });
+    var items = [{ id: Number(selVariant), quantity: 1 }];
 
     fetch('/cart/clear.js', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
       .then(function () {
@@ -254,7 +249,7 @@
           body: JSON.stringify({ items: items })
         });
       })
-      .then(function (r) { if (!r.ok) throw new Error('Could not add items to the cart.'); return r.json(); })
+      .then(function (r) { if (!r.ok) throw new Error('Could not add the item to the cart.'); return r.json(); })
       .then(function () {
         return fetch('/cart/update.js', {
           method: 'POST',
