@@ -134,28 +134,29 @@
 
     btn.addEventListener('click', function () {
       var id = variant.value;
-      if (selected.has(id)) {
-        selected.delete(id);
+      if (card.classList.contains('is-on')) {
+        selected.delete(card.dataset.selectedId);
         card.classList.remove('is-on');
+        card.removeAttribute('data-selected-id');
         btn.textContent = 'Add';
       } else {
         if (selected.size >= MAX) { alert('You can pick at most ' + MAX + ' items.'); return; }
         selected.set(id, btn.getAttribute('data-title'));
+        card.dataset.selectedId = id;
         card.classList.add('is-on');
         btn.textContent = 'Remove';
       }
       refresh();
     });
 
-    // If a variant dropdown changes while selected, move the selection.
+    // If a variant dropdown changes while the card is selected, move the
+    // selection from the old variant to the newly chosen one.
     if (variant.tagName === 'SELECT') {
       variant.addEventListener('change', function () {
         if (card.classList.contains('is-on')) {
-          // remove old, add new
-          selected.forEach(function (t, key) { /* find this card's old id */ });
-          // simplest: clear this card and re-add
-          card.classList.remove('is-on');
-          btn.textContent = 'Add';
+          selected.delete(card.dataset.selectedId);
+          selected.set(variant.value, btn.getAttribute('data-title'));
+          card.dataset.selectedId = variant.value;
           refresh();
         }
       });
