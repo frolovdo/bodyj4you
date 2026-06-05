@@ -3,31 +3,23 @@
   CREATOR GIFTS — paste-in block (no app, no backend, no coupon)
   ============================================================================
   HOW TO USE
-  1. Online Store -> Themes -> Customize.
-  2. Open (or create) the page where you want this, e.g. a page using the
-     "creators" template, or any page.
+  1. Online Store -> Themes -> Edit theme (Customize).
+  2. Top dropdown -> Pages -> Partnership.
   3. Add section -> "Custom Liquid".
   4. Paste this ENTIRE file into the Custom Liquid box and Save.
 
-  WHY THIS WORKS WITH NO SERVER
-  - The products in the "Creator Gifts" collection are real products priced
-    at $0.00, so there is nothing to "overwrite" and no coupon to apply.
-  - The creator picks items -> we add them to Shopify's NATIVE cart and stash
-    their socials + agreement as cart attributes -> we send them to the normal
-    checkout, which collects shipping/contact and (because the total is $0)
-    skips payment and creates a paid order ready to fulfill.
-
-  EDIT THESE TWO LINES IF NEEDED:
+  ▼▼▼  REPLACE the Google Form link below with YOUR agreement form  ▼▼▼
 {%- endcomment -%}
 
 {%- assign gift_collection = collections['creator-gifts'] -%}
 {%- assign max_items = 5 -%}
-{%- assign agreement_url = 'https://www.bodyj4you.com/pages/influencer-agreement' -%}
+{%- assign agreement_url = 'https://forms.gle/REPLACE_WITH_YOUR_GOOGLE_FORM' -%}
 
 <style>
   .cg { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
   .cg__head { text-align: center; margin-bottom: 1.5rem; }
   .cg__hint { font-size: .9rem; opacity: .7; }
+  .cg__step { font-weight: 600; margin: 1.75rem 0 .5rem; }
   .cg__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 1rem; }
   .cg-card { border: 1px solid #ddd; border-radius: 8px; padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
   .cg-card.is-on { border-color: #111; box-shadow: 0 0 0 2px #111 inset; }
@@ -38,14 +30,24 @@
   .cg-card button { margin-top: auto; padding: .5rem; cursor: pointer; border: 1px solid #111; background: #fff; border-radius: 6px; }
   .cg-card.is-on button { background: #111; color: #fff; }
   .cg-card button:disabled { opacity: .4; cursor: not-allowed; }
-  .cg__bar { position: sticky; bottom: 0; margin-top: 1.5rem; padding: 1rem; background: #fafafa; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-  .cg__cta { margin-left: auto; padding: .6rem 1.2rem; background: #111; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+  .cg__count { font-size: .9rem; opacity: .8; margin-top: .5rem; }
+
+  .cg-form { margin-top: .5rem; display: grid; gap: .6rem; max-width: 520px; }
+  .cg-field { display: grid; gap: .25rem; }
+  .cg-field input { padding: .55rem; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
+  .cg-field input.is-bad { border-color: #c00; }
+  .cg-field input.is-good { border-color: #1a7f37; }
+  .cg-field__msg { font-size: .75rem; color: #c00; display: none; }
+  .cg-field.is-bad .cg-field__msg { display: block; }
+
+  .cg-agree { margin-top: 1.25rem; display: grid; gap: .6rem; max-width: 520px; }
+  .cg-agree__open { display: inline-block; padding: .5rem .9rem; border: 1px solid #111; border-radius: 6px; text-decoration: none; color: #111; font-weight: 600; width: max-content; }
+  .cg-agree__check { display: flex; gap: .5rem; align-items: flex-start; font-size: .9rem; }
+
+  .cg__footer { margin-top: 1.75rem; display: grid; gap: .5rem; max-width: 520px; }
+  .cg__todo { font-size: .8rem; opacity: .7; }
+  .cg__cta { padding: .9rem 1.2rem; background: #111; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 700; }
   .cg__cta:disabled { opacity: .4; cursor: not-allowed; }
-  .cg-form { margin-top: 1.5rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem; display: grid; gap: .75rem; }
-  .cg-form fieldset { border: 1px solid #eee; border-radius: 6px; padding: .75rem; display: grid; gap: .5rem; }
-  .cg-form input[type=text], .cg-form input:not([type]) { padding: .5rem; border: 1px solid #ccc; border-radius: 4px; width: 100%; }
-  .cg-form legend { font-weight: 600; }
-  .cg-agree { display: flex; gap: .5rem; align-items: flex-start; font-size: .85rem; }
   .cg-error { color: #c00; font-size: .85rem; }
 </style>
 
@@ -53,12 +55,13 @@
   <div class="cg__head">
     <h1>Creator Partnership</h1>
     <p>Pick the products you'd like — everything here is free. Choose up to {{ max_items }}.</p>
-    <p class="cg__hint">Add your favorites, fill in your details, and we'll ship them out.</p>
   </div>
 
   {%- if gift_collection == blank or gift_collection.products_count == 0 -%}
     <p>No gift products are available right now. (Add products to the “Creator Gifts” collection.)</p>
   {%- else -%}
+
+    <p class="cg__step">1. Choose your products</p>
     <div class="cg__grid">
       {%- for product in gift_collection.products -%}
         <div class="cg-card" data-card>
@@ -84,32 +87,43 @@
         </div>
       {%- endfor -%}
     </div>
+    <p class="cg__count"><strong data-count>0</strong> selected</p>
 
-    <div class="cg__bar">
-      <span><strong data-count>0</strong> selected · Total: <strong>$0.00</strong></span>
-      <button type="button" class="cg__cta" data-checkout disabled>Proceed to checkout</button>
+    <p class="cg__step">2. Where can we see your content?</p>
+    <p class="cg__hint">Add at least one — Instagram, TikTok, or YouTube.</p>
+    <div class="cg-form">
+      <div class="cg-field">
+        <input type="text" data-social="Instagram" placeholder="Instagram handle (e.g. @yourname)">
+        <span class="cg-field__msg">That doesn't look like a valid Instagram handle.</span>
+      </div>
+      <div class="cg-field">
+        <input type="text" data-social="TikTok" placeholder="TikTok handle (e.g. @yourname)">
+        <span class="cg-field__msg">That doesn't look like a valid TikTok handle.</span>
+      </div>
+      <div class="cg-field">
+        <input type="text" data-social="YouTube" placeholder="YouTube channel (@handle or link)">
+        <span class="cg-field__msg">That doesn't look like a valid YouTube channel.</span>
+      </div>
+      <div class="cg-field">
+        <input type="text" data-social="Other" placeholder="Other (optional)">
+      </div>
     </div>
 
-    <div class="cg-form">
-      <fieldset>
-        <legend>Your social media</legend>
-        <input type="text" data-social="Instagram" placeholder="Instagram handle">
-        <input type="text" data-social="TikTok" placeholder="TikTok handle">
-        <input type="text" data-social="YouTube" placeholder="YouTube channel">
-        <input type="text" data-social="Other" placeholder="Other (optional)">
-      </fieldset>
-
-      <label class="cg-agree">
-        <input type="checkbox" data-agree checked>
-        <span>
-          I agree to the influencer agreement — I'll receive these items free in
-          exchange for a social media post/video.
-          <a href="{{ agreement_url }}" target="_blank" rel="noopener">Read</a>
-        </span>
+    <p class="cg__step">3. Sign the agreement</p>
+    <div class="cg-agree">
+      <a class="cg-agree__open" href="{{ agreement_url }}" target="_blank" rel="noopener" data-agree-open>
+        Read &amp; sign the agreement ↗
+      </a>
+      <label class="cg-agree__check">
+        <input type="checkbox" data-agree>
+        <span>I have read, signed, and agree to the influencer agreement — I'll receive these items free in exchange for a social media post/video.</span>
       </label>
+    </div>
 
+    <div class="cg__footer">
       <p class="cg-error" data-error hidden></p>
-      <p class="cg__hint">Next you'll enter your shipping details at checkout.</p>
+      <p class="cg__todo" data-todo></p>
+      <button type="button" class="cg__cta" data-checkout disabled>Create &amp; ship my partner box 🎁</button>
     </div>
   {%- endif -%}
 </div>
@@ -125,8 +139,9 @@
   var checkoutBtn = app.querySelector('[data-checkout]');
   var agreeEl = app.querySelector('[data-agree]');
   var errorEl = app.querySelector('[data-error]');
+  var todoEl = app.querySelector('[data-todo]');
 
-  // ----- selection -----
+  // ---------- product selection ----------
   app.querySelectorAll('[data-card]').forEach(function (card) {
     var btn = card.querySelector('[data-toggle]');
     var variant = card.querySelector('[data-variant]');
@@ -149,8 +164,6 @@
       refresh();
     });
 
-    // If a variant dropdown changes while the card is selected, move the
-    // selection from the old variant to the newly chosen one.
     if (variant.tagName === 'SELECT') {
       variant.addEventListener('change', function () {
         if (card.classList.contains('is-on')) {
@@ -163,31 +176,74 @@
     }
   });
 
-  function refresh() {
-    countEl.textContent = selected.size;
-    checkoutBtn.disabled = selected.size === 0 || !agreeEl.checked;
+  // ---------- social handle validation (lenient) ----------
+  function clean(v) { return v.trim().replace(/^@+/, ''); }
+  var validators = {
+    Instagram: function (v) { return /instagram\.com/i.test(v) || /^[\w.]{2,30}$/.test(clean(v)); },
+    TikTok:    function (v) { return /tiktok\.com/i.test(v)    || /^[\w.]{2,24}$/.test(clean(v)); },
+    YouTube:   function (v) { return /(youtube\.com|youtu\.be)/i.test(v) || clean(v).length >= 2; }
+  };
+
+  var socialInputs = Array.prototype.slice.call(app.querySelectorAll('[data-social]'));
+  socialInputs.forEach(function (input) {
+    input.addEventListener('input', function () {
+      var type = input.getAttribute('data-social');
+      var field = input.closest('.cg-field');
+      var val = input.value.trim();
+      var check = validators[type];
+      if (!val || !check) {
+        input.classList.remove('is-bad', 'is-good');
+        if (field) field.classList.remove('is-bad');
+      } else if (check(val)) {
+        input.classList.add('is-good'); input.classList.remove('is-bad');
+        if (field) field.classList.remove('is-bad');
+      } else {
+        input.classList.add('is-bad'); input.classList.remove('is-good');
+        if (field) field.classList.add('is-bad');
+      }
+      refresh();
+    });
+  });
+
+  function hasValidSocial() {
+    return ['Instagram', 'TikTok', 'YouTube'].some(function (type) {
+      var input = app.querySelector('[data-social="' + type + '"]');
+      var val = input ? input.value.trim() : '';
+      return val && validators[type](val);
+    });
   }
+
   agreeEl.addEventListener('change', refresh);
 
-  // ----- checkout -----
+  // ---------- enable/disable + guidance ----------
+  function refresh() {
+    var needs = [];
+    if (selected.size === 0) needs.push('pick at least 1 product');
+    if (!hasValidSocial()) needs.push('add a valid Instagram, TikTok, or YouTube');
+    if (!agreeEl.checked) needs.push('check the agreement box');
+
+    countEl.textContent = selected.size;
+    checkoutBtn.disabled = needs.length > 0;
+    todoEl.textContent = needs.length ? 'To continue: ' + needs.join(', ') + '.' : '';
+  }
+  refresh();
+
+  // ---------- checkout ----------
   checkoutBtn.addEventListener('click', function () {
     errorEl.hidden = true;
-    if (selected.size === 0) { showError('Please select at least one product.'); return; }
-    if (!agreeEl.checked) { showError('Please accept the influencer agreement.'); return; }
+    if (checkoutBtn.disabled) return;
 
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = 'Preparing…';
 
-    // Collect socials + agreement as cart attributes (they show on the order).
     var attributes = { 'Creator gift': 'Yes', 'Influencer agreement': 'Accepted' };
-    app.querySelectorAll('[data-social]').forEach(function (input) {
+    socialInputs.forEach(function (input) {
       if (input.value.trim()) attributes[input.getAttribute('data-social')] = input.value.trim();
     });
 
     var items = [];
     selected.forEach(function (title, id) { items.push({ id: Number(id), quantity: 1 }); });
 
-    // Clear cart -> add gift items -> set attributes -> go to checkout.
     fetch('/cart/clear.js', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
       .then(function () {
         return fetch('/cart/add.js', {
@@ -208,7 +264,7 @@
       .catch(function (err) {
         showError(err.message || 'Something went wrong. Please try again.');
         checkoutBtn.disabled = false;
-        checkoutBtn.textContent = 'Proceed to checkout';
+        checkoutBtn.textContent = 'Create & ship my partner box 🎁';
       });
   });
 
