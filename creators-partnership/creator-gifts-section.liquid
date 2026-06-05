@@ -177,11 +177,13 @@
   });
 
   // ---------- social handle validation (lenient) ----------
-  function clean(v) { return v.trim().replace(/^@+/, ''); }
+  function clean(v) { return v.trim().replace(/^@+/, '').replace(/\/+$/, ''); }
+  // A real-looking handle: letters/numbers/dots/underscores AND at least one letter.
+  function isHandle(v, max) { return new RegExp('^[a-zA-Z0-9._]{2,' + max + '}$').test(v) && /[a-zA-Z]/.test(v); }
   var validators = {
-    Instagram: function (v) { return /instagram\.com/i.test(v) || /^[\w.]{2,30}$/.test(clean(v)); },
-    TikTok:    function (v) { return /tiktok\.com/i.test(v)    || /^[\w.]{2,24}$/.test(clean(v)); },
-    YouTube:   function (v) { return /(youtube\.com|youtu\.be)/i.test(v) || clean(v).length >= 2; }
+    Instagram: function (v) { return /instagram\.com\/[a-zA-Z0-9._]{2,}/i.test(v) || isHandle(clean(v), 30); },
+    TikTok:    function (v) { return /tiktok\.com\/@?[a-zA-Z0-9._]{2,}/i.test(v) || isHandle(clean(v), 24); },
+    YouTube:   function (v) { return /(youtube\.com|youtu\.be)\/.+/i.test(v) || (isHandle(clean(v), 30) && clean(v).length >= 3); }
   };
 
   var socialInputs = Array.prototype.slice.call(app.querySelectorAll('[data-social]'));
