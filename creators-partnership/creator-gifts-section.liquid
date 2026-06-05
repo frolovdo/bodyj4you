@@ -1,0 +1,216 @@
+{%- comment -%}
+  ============================================================================
+  CREATOR GIFTS — paste-in block (no app, no backend, no coupon)
+  ============================================================================
+  HOW TO USE
+  1. Online Store -> Themes -> Customize.
+  2. Open (or create) the page where you want this, e.g. a page using the
+     "creators" template, or any page.
+  3. Add section -> "Custom Liquid".
+  4. Paste this ENTIRE file into the Custom Liquid box and Save.
+
+  WHY THIS WORKS WITH NO SERVER
+  - The products in the "Creator Gifts" collection are real products priced
+    at $0.00, so there is nothing to "overwrite" and no coupon to apply.
+  - The creator picks items -> we add them to Shopify's NATIVE cart and stash
+    their socials + agreement as cart attributes -> we send them to the normal
+    checkout, which collects shipping/contact and (because the total is $0)
+    skips payment and creates a paid order ready to fulfill.
+
+  EDIT THESE TWO LINES IF NEEDED:
+{%- endcomment -%}
+
+{%- assign gift_collection = collections['creator-gifts'] -%}
+{%- assign max_items = 5 -%}
+{%- assign agreement_url = 'https://www.bodyj4you.com/pages/influencer-agreement' -%}
+
+<style>
+  .cg { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+  .cg__head { text-align: center; margin-bottom: 1.5rem; }
+  .cg__hint { font-size: .9rem; opacity: .7; }
+  .cg__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 1rem; }
+  .cg-card { border: 1px solid #ddd; border-radius: 8px; padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
+  .cg-card.is-on { border-color: #111; box-shadow: 0 0 0 2px #111 inset; }
+  .cg-card img { width: 100%; height: auto; border-radius: 6px; }
+  .cg-card__title { font-size: .95rem; margin: 0; }
+  .cg-card__price { font-weight: 700; margin: 0; }
+  .cg-card select { padding: .35rem; width: 100%; }
+  .cg-card button { margin-top: auto; padding: .5rem; cursor: pointer; border: 1px solid #111; background: #fff; border-radius: 6px; }
+  .cg-card.is-on button { background: #111; color: #fff; }
+  .cg-card button:disabled { opacity: .4; cursor: not-allowed; }
+  .cg__bar { position: sticky; bottom: 0; margin-top: 1.5rem; padding: 1rem; background: #fafafa; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .cg__cta { margin-left: auto; padding: .6rem 1.2rem; background: #111; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+  .cg__cta:disabled { opacity: .4; cursor: not-allowed; }
+  .cg-form { margin-top: 1.5rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem; display: grid; gap: .75rem; }
+  .cg-form fieldset { border: 1px solid #eee; border-radius: 6px; padding: .75rem; display: grid; gap: .5rem; }
+  .cg-form input[type=text], .cg-form input:not([type]) { padding: .5rem; border: 1px solid #ccc; border-radius: 4px; width: 100%; }
+  .cg-form legend { font-weight: 600; }
+  .cg-agree { display: flex; gap: .5rem; align-items: flex-start; font-size: .85rem; }
+  .cg-error { color: #c00; font-size: .85rem; }
+</style>
+
+<div class="cg" id="cg-app">
+  <div class="cg__head">
+    <h1>Creator Partnership</h1>
+    <p>Pick the products you'd like — everything here is free. Choose up to {{ max_items }}.</p>
+    <p class="cg__hint">Add your favorites, fill in your details, and we'll ship them out.</p>
+  </div>
+
+  {%- if gift_collection == blank or gift_collection.products_count == 0 -%}
+    <p>No gift products are available right now. (Add products to the “Creator Gifts” collection.)</p>
+  {%- else -%}
+    <div class="cg__grid">
+      {%- for product in gift_collection.products -%}
+        <div class="cg-card" data-card>
+          {%- if product.featured_image -%}
+            <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" loading="lazy" width="400">
+          {%- endif -%}
+          <h3 class="cg-card__title">{{ product.title | remove: '[Creator Gift]' | strip }}</h3>
+          <p class="cg-card__price">FREE</p>
+
+          {%- if product.variants.size > 1 -%}
+            <select data-variant>
+              {%- for v in product.variants -%}
+                <option value="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>
+                  {{ v.title }}{% unless v.available %} — Sold out{% endunless %}
+                </option>
+              {%- endfor -%}
+            </select>
+          {%- else -%}
+            <input type="hidden" data-variant value="{{ product.variants.first.id }}">
+          {%- endif -%}
+
+          <button type="button" data-toggle data-title="{{ product.title | remove: '[Creator Gift]' | strip | escape }}">Add</button>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="cg__bar">
+      <span><strong data-count>0</strong> selected · Total: <strong>$0.00</strong></span>
+      <button type="button" class="cg__cta" data-checkout disabled>Proceed to checkout</button>
+    </div>
+
+    <div class="cg-form">
+      <fieldset>
+        <legend>Your social media</legend>
+        <input type="text" data-social="Instagram" placeholder="Instagram handle">
+        <input type="text" data-social="TikTok" placeholder="TikTok handle">
+        <input type="text" data-social="YouTube" placeholder="YouTube channel">
+        <input type="text" data-social="Other" placeholder="Other (optional)">
+      </fieldset>
+
+      <label class="cg-agree">
+        <input type="checkbox" data-agree checked>
+        <span>
+          I agree to the influencer agreement — I'll receive these items free in
+          exchange for a social media post/video.
+          <a href="{{ agreement_url }}" target="_blank" rel="noopener">Read</a>
+        </span>
+      </label>
+
+      <p class="cg-error" data-error hidden></p>
+      <p class="cg__hint">Next you'll enter your shipping details at checkout.</p>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+(function () {
+  var app = document.getElementById('cg-app');
+  if (!app) return;
+
+  var MAX = {{ max_items }};
+  var selected = new Map(); // variantId -> title
+  var countEl = app.querySelector('[data-count]');
+  var checkoutBtn = app.querySelector('[data-checkout]');
+  var agreeEl = app.querySelector('[data-agree]');
+  var errorEl = app.querySelector('[data-error]');
+
+  // ----- selection -----
+  app.querySelectorAll('[data-card]').forEach(function (card) {
+    var btn = card.querySelector('[data-toggle]');
+    var variant = card.querySelector('[data-variant]');
+    if (!btn || !variant) return;
+
+    btn.addEventListener('click', function () {
+      var id = variant.value;
+      if (selected.has(id)) {
+        selected.delete(id);
+        card.classList.remove('is-on');
+        btn.textContent = 'Add';
+      } else {
+        if (selected.size >= MAX) { alert('You can pick at most ' + MAX + ' items.'); return; }
+        selected.set(id, btn.getAttribute('data-title'));
+        card.classList.add('is-on');
+        btn.textContent = 'Remove';
+      }
+      refresh();
+    });
+
+    // If a variant dropdown changes while selected, move the selection.
+    if (variant.tagName === 'SELECT') {
+      variant.addEventListener('change', function () {
+        if (card.classList.contains('is-on')) {
+          // remove old, add new
+          selected.forEach(function (t, key) { /* find this card's old id */ });
+          // simplest: clear this card and re-add
+          card.classList.remove('is-on');
+          btn.textContent = 'Add';
+          refresh();
+        }
+      });
+    }
+  });
+
+  function refresh() {
+    countEl.textContent = selected.size;
+    checkoutBtn.disabled = selected.size === 0 || !agreeEl.checked;
+  }
+  agreeEl.addEventListener('change', refresh);
+
+  // ----- checkout -----
+  checkoutBtn.addEventListener('click', function () {
+    errorEl.hidden = true;
+    if (selected.size === 0) { showError('Please select at least one product.'); return; }
+    if (!agreeEl.checked) { showError('Please accept the influencer agreement.'); return; }
+
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Preparing…';
+
+    // Collect socials + agreement as cart attributes (they show on the order).
+    var attributes = { 'Creator gift': 'Yes', 'Influencer agreement': 'Accepted' };
+    app.querySelectorAll('[data-social]').forEach(function (input) {
+      if (input.value.trim()) attributes[input.getAttribute('data-social')] = input.value.trim();
+    });
+
+    var items = [];
+    selected.forEach(function (title, id) { items.push({ id: Number(id), quantity: 1 }); });
+
+    // Clear cart -> add gift items -> set attributes -> go to checkout.
+    fetch('/cart/clear.js', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+      .then(function () {
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: items })
+        });
+      })
+      .then(function (r) { if (!r.ok) throw new Error('Could not add items to the cart.'); return r.json(); })
+      .then(function () {
+        return fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ attributes: attributes })
+        });
+      })
+      .then(function () { window.location.href = '/checkout'; })
+      .catch(function (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = 'Proceed to checkout';
+      });
+  });
+
+  function showError(msg) { errorEl.textContent = msg; errorEl.hidden = false; }
+})();
+</script>

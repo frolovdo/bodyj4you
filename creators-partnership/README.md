@@ -1,92 +1,73 @@
-# Creators Partnership Page (Shopify)
+# Creator Gifts page (Shopify — no app, no backend, no coupon)
 
-A native Shopify flow where creators pick free products from your real catalog,
-fill in shipping + social info, accept an influencer agreement, and get a normal
-**$0, already-paid order** that goes out with your standard fulfillment.
+Creators pick free products, fill in their socials + agreement, and check out
+through Shopify's normal checkout. They get a **$0, paid, ready-to-fulfill order**.
 
 ## How it works
+The products in the **Creator Gifts** collection are real products priced at
+**$0.00** (clones of catalog items). So there's nothing to "overwrite" and no
+coupon needed:
 
 ```
-Storefront page (theme)                      Backend app (Admin API)
-─────────────────────────                    ─────────────────────────────
-creators-partnership.liquid   ──POST──►       POST /apps/creators/order
- (grid from a collection)      (App Proxy)      1. upsert customer + socials  (metafields)
- select 1–5 → form                              2. draftOrderCreate  (100% off each line = $0)
- shipping + socials + agree                     3. draftOrderComplete(paymentPending:false)
-                              ◄─orderName──         → real PAID $0 order → fulfillment
+Creator page (one Custom Liquid block)
+   pick items  ──►  add to NATIVE cart  +  stash socials/agreement as cart attributes
+                         │
+                         ▼
+              Shopify's normal /checkout
+              collects shipping/contact, total is $0
+                         │
+                         ▼
+              Paid $0 order, ready to fulfill (you approve/ship)
 ```
 
-**Why a backend?** Overwriting prices to $0 and creating a paid order requires
-the Admin API, whose token must stay secret (never in the browser). The
-storefront reaches it through a **Shopify App Proxy**, so the creator stays on
-your own domain (`/apps/creators/...`) and the request is signed by Shopify.
+No server, no secret token, no Shopify app. Everything runs on Shopify's native
+storefront cart + checkout.
 
-**Why no coupon?** Each draft-order line gets a server-applied 100% discount.
-The creator never sees or types a code — the price is simply overwritten. Lines
-still reference real catalog variants, so inventory and fulfillment behave
-exactly like a normal order.
+## What's already set up in your store
+- Collection: **Creator Gifts** (`creator-gifts`)
+- 3 demo $0 clone products in it:
+  - `[Creator Gift] Hypochlorous Acid Face Spray - 4 Fl Oz`
+  - `[Creator Gift] Piercing Aftercare Kit, Saline Drops + Bump Oil`
+  - `[Creator Gift] Ear Stretching Balm`
 
-## Setup
+Add more gifts anytime: duplicate a catalog product, set its price to `$0.00`,
+tag it `creator-gift`, and add it to the **Creator Gifts** collection. The page
+updates automatically — no code changes.
 
-### 1. Backend
-```bash
-cd creators-partnership/backend
-cp .env.example .env      # fill in your values
-npm install
-npm start
-```
-Deploy it anywhere that can run Node (Render, Railway, Fly, a small VM, etc.)
-and note its public HTTPS URL.
+## Install the page (2 minutes)
+1. **Online Store → Themes → Customize.**
+2. Create/open the page you want (or add a new Page in admin first, e.g. "Creators").
+3. **Add section → Custom Liquid.**
+4. Paste the entire contents of `creator-gifts-section.liquid` into the box. **Save.**
 
-Create a **custom app** in Shopify admin (Settings → Apps → Develop apps) with
-Admin API scopes: `read_customers`, `write_customers`, `write_draft_orders`,
-`write_orders`, `read_products`. Copy the **Admin API access token** and **API
-secret key** into `.env`.
+That's it. (Custom Liquid keeps the `<script>` intact — pasting into a normal
+page's rich-text editor would strip it, so use the Custom Liquid section.)
 
-### 2. App Proxy (makes `/apps/creators/...` work)
-In your app config → **App proxy**:
-- Subpath prefix: `apps`
-- Subpath: `creators`
-- Proxy URL: `https://YOUR-BACKEND-URL`
+Optional tweaks at the top of the file:
+- `max_items` — how many products a creator can pick (default 5).
+- `agreement_url` — link behind the "Read" link (point it at a Page with your
+  influencer agreement text).
 
-Now storefront calls to `/apps/creators/order` are forwarded (and signed) to
-your backend's `POST /apps/creators/order`.
+## Where the creator's info lands
+- **Shipping/contact:** collected by Shopify's normal checkout → on the order.
+- **Socials + agreement:** saved as **cart attributes**, visible on the order under
+  "Additional details" (Instagram, TikTok, YouTube, Other, Influencer agreement,
+  and a `Creator gift: Yes` marker).
 
-### 3. Theme
-Copy into your theme (Online Store 2.0):
-- `theme/sections/creators-partnership.liquid` → `sections/`
-- `theme/assets/creators-partnership.js` → `assets/`
-- `theme/assets/creators-partnership.css` → `assets/`
-- `theme/templates/page.creators.json` → `templates/`
-
-### 4. The page + product list
-- Create a **collection** (e.g. "Creator Gifts") and add the products you want
-  to offer. These are your normal catalog products — no duplicates needed.
-- Create a **Page** in admin and assign it the **"creators"** template.
-- Open the page in the theme editor and set **Gift collection** to the one above
-  (plus heading, max items, and the agreement link).
+## Good to know / tradeoffs
+- **Inventory is separate.** The $0 clones are their own products, so they don't
+  share stock with the original catalog items. Since you approve/fulfill manually,
+  you manage this by hand.
+- **Discoverability.** The clones are ACTIVE so they can be added to the cart. They
+  aren't linked in your nav, but a determined visitor could find them. For tighter
+  control later, options include: hiding them from search, gating the page, or
+  moving to a server-side flow. Fine for a soft launch with manual approval.
+- **Tag orders automatically (optional).** Set up a free Shopify **Flow**: "Order
+  created → if has attribute `Creator gift = Yes` → add order tag `creator-gift`",
+  so these orders are easy to filter.
 
 ## Files
 | File | Purpose |
 |------|---------|
-| `backend/server.js` | Express endpoint: verify → validate → create order |
-| `backend/shopify.js` | Admin GraphQL ops (customer, draft order, complete) |
-| `theme/sections/creators-partnership.liquid` | The page UI (grid + form) |
-| `theme/assets/creators-partnership.js` | Selection, cart, submit |
-| `theme/assets/creators-partnership.css` | Minimal styling |
-| `theme/templates/page.creators.json` | Page template wiring the section |
-
-## Where the data lands
-- **Customer**: a normal account, tagged `creator` / `creator-gift`, with
-  metafields under the `creator` namespace (`instagram`, `tiktok`, `youtube`,
-  `other`, `agreement_accepted`, `agreement_accepted_at`).
-- **Order**: $0 total, financial status **Paid**, tagged `creator-gift`, with the
-  socials + agreement mirrored into the order's custom attributes/note so your
-  fulfillment team sees them at a glance.
-
-## Notes / later
-- Design is intentionally minimal — function first.
-- Consider rate-limiting / a basic anti-abuse check before going public, since
-  the endpoint creates free orders.
-- The real influencer agreement copy can live behind the "Read" link
-  (`agreement_url` setting).
+| `creator-gifts-section.liquid` | The whole page — paste into a Custom Liquid section |
+| `CONTINUE_HERE.md` | Status + next steps |
