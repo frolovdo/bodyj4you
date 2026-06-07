@@ -476,10 +476,13 @@ def build_china_xlsx(rows, output_path):
     ws.title = "China Reorder"
 
     def display_days(r):
+        # OUR number, always: Available ÷ Velocity. Amazon's days is a separate
+        # reference column ("Amazon Days") — never substituted into Display Days.
         if r["available"] <= 0:
             return 0, True
-        if r["days"] == 0 and r["velocity"] > 0:
+        if r["velocity"] > 0:
             return round(r["available"] / r["velocity"], 1), False
+        # No velocity (and not OOS) → no demand signal; fall back to Amazon.
         return r["days"], False
 
     headers = [
@@ -811,10 +814,13 @@ def build_miami_xlsx(rows, output_path):
     # Compute display days (real days when Amazon reports 0 but velocity > 0)
     # and OUT OF STOCK flag (Available == 0).
     def display_days(r):
+        # OUR number, always: Available ÷ Velocity. Amazon's days is a separate
+        # reference column ("Amazon Days") — never substituted into Display Days.
         if r["available"] <= 0:
             return 0, True
-        if r["days"] == 0 and r["velocity"] > 0:
+        if r["velocity"] > 0:
             return round(r["available"] / r["velocity"], 1), False
+        # No velocity (and not OOS) → no demand signal; fall back to Amazon.
         return r["days"], False
 
     headers = [
