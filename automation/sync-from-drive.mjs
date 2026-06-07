@@ -87,8 +87,10 @@ function fbaSnapshotLabel(csvPath) {
   const lines = text.split(/\r?\n/);
   if (lines.length < 2) throw new Error('FBA file has no data rows.');
 
-  const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
-  const firstRow = lines[1].split(',');
+  // Strip CSV quoting and BOM so 'snapshot-date' and '"snapshot-date"' both match.
+  const clean = (s) => s.replace(/^﻿/, '').replace(/^"(.*)"$/, '$1').trim();
+  const headers  = lines[0].split(',').map((h) => clean(h).toLowerCase());
+  const firstRow = lines[1].split(',').map(clean);
 
   const candidates = ['snapshot-date', 'date', 'snapshot date', 'inventory age snapshot date'];
   let idx = -1;
@@ -103,7 +105,7 @@ function fbaSnapshotLabel(csvPath) {
       `Looked for: ${candidates.join(', ')}. Headers: ${headers.slice(0, 8).join(',')}…`
     );
   }
-  const raw = (firstRow[idx] || '').trim();
+  const raw = firstRow[idx] || '';
   if (!raw) throw new Error(`Snapshot-date column "${matched}" is empty in the first row.`);
 
   // YYYY-MM-DD
