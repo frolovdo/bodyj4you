@@ -77,19 +77,48 @@ async function uploadFile(drive, { folderId, name, path }) {
   return res.data;
 }
 
-// Read "Inventory age snapshot date" column from the FBA csv, return MM.DD.YY.
+// Read the snapshot date from the FBA csv. The file is the source of truth — we
+// never substitute today's date or anything else. Returns MM.DD.YY, or throws.
+// Handles both Sellerboard exports (column `date` / `snapshot-date`, format
+// M/D/YYYY) and the original Amazon FBA Inventory export (column
+// `Inventory age snapshot date`, format YYYY-MM-DD).
 function fbaSnapshotLabel(csvPath) {
   const text = readFileSync(csvPath, 'utf8').replace(/^﻿/, '');
-  const [headerLine, firstRow] = text.split('\n');
-  if (!headerLine || !firstRow) return null;
-  const headers = headerLine.split(',');
-  const idx = headers.indexOf('Inventory age snapshot date');
-  if (idx < 0) return null;
-  const cells = firstRow.split(',');
-  const iso = (cells[idx] || '').trim(); // YYYY-MM-DD
-  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (!m) return null;
-  return `${m[2]}.${m[3]}.${m[1].slice(2)}`;
+  const lines = text.split(/\r?\n/);
+  if (lines.length < 2) throw new Error('FBA file has no data rows.');
+
+  const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
+  const firstRow = lines[1].split(',');
+
+  const candidates = ['snapshot-date', 'date', 'snapshot date', 'inventory age snapshot date'];
+  let idx = -1;
+  let matched;
+  for (const c of candidates) {
+    idx = headers.indexOf(c);
+    if (idx >= 0) { matched = c; break; }
+  }
+  if (idx < 0) {
+    throw new Error(
+      `Could not find a snapshot-date column in the FBA file. ` +
+      `Looked for: ${candidates.join(', ')}. Headers: ${headers.slice(0, 8).join(',')}…`
+    );
+  }
+  const raw = (firstRow[idx] || '').trim();
+  if (!raw) throw new Error(`Snapshot-date column "${matched}" is empty in the first row.`);
+
+  // YYYY-MM-DD
+  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[2]}.${m[3]}.${m[1].slice(2)}`;
+
+  // M/D/YYYY  or MM/DD/YYYY
+  m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return `${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}.${m[3].slice(2)}`;
+
+  // M/D/YY
+  m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+  if (m) return `${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}.${m[3]}`;
+
+  throw new Error(`Couldn't parse snapshot date "${raw}" from column "${matched}".`);
 }
 
 async function main() {
@@ -131,9 +160,9 @@ async function main() {
   await downloadFile(drive, newestIn, inputCsv);
   console.log('Downloaded input →', inputCsv);
 
-  // Date label from the FBA snapshot date column. Fall back to today UTC.
+  // Date label from the FBA snapshot date column. The file is the source of truth.
   let dateLabel = fbaSnapshotLabel(inputCsv);
-  if (!dateLabel) {
+  if (!dateLabel) { // (kept for legacy null-returns; the new code throws instead)
     const d = new Date();
     dateLabel = `${String(d.getUTCMonth() + 1).padStart(2, '0')}.${String(d.getUTCDate()).padStart(2, '0')}.${String(d.getUTCFullYear()).slice(2)}`;
   }
