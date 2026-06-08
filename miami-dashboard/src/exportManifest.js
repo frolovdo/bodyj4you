@@ -1,39 +1,62 @@
 import * as XLSX from 'xlsx';
 
 // Build the Amazon "Send to Amazon" manifest xlsx for the Miami shipment.
-// Critical (and identical to the China side):
-//   - Sheet name uses an en-dash (U+2013) between "workflow" and "template",
-//     NOT a hyphen.
-//   - Header row is row 6 (1-indexed). Data starts at row 7.
-//   - Column A = Merchant SKU, Column B = Quantity.
+//
+// We DO NOT generate the workbook from scratch. We load the official Amazon
+// template (ManifestFileUpload_Template_MPL.xlsx — copy provided by the user,
+// served as a static asset from /) and only write the Merchant SKU + Quantity
+// values into the "Create workflow – template" sheet starting at row 7.
+// Every other sheet (Instructions, Data definitions, Create workflow – example)
+// and every other cell stays byte-equivalent to the source template.
+//
 // For Miami, the SKU we write into column A is item.sku — the skill already
 // substituted the FBA kit SKU for STEEL items before writing the spreadsheet,
 // so the cart's `sku` field is the right thing to ship.
 
-const SHEET_NAME = 'Create workflow – template'; // U+2013 en-dash
+const TEMPLATE_PATH = `${import.meta.env.BASE_URL}ManifestFileUpload_Template_MPL.xlsx`;
+const SHEET_NAME = 'Create workflow – template'; // U+2013 en-dash, exact match required
 
-export function buildManifestWorkbook(cart) {
-  const rows = [];
-  rows[0] = ['Send to Amazon manifest — generated from Miami Monday Reorder'];
-  rows[1] = [];
-  rows[2] = [];
-  rows[3] = [];
-  rows[4] = [];
-  rows[5] = ['Merchant SKU', 'Quantity'];
-  cart.forEach((item, i) => {
-    rows[6 + i] = [item.sku, Number(item.quantity) || 0];
-  });
+export async function buildManifestWorkbook(cart) {
+  const res = await fetch(TEMPLATE_PATH);
+  if (!res.ok) {
+    throw new Error(`Could not load manifest template (${res.status}). Expected at ${TEMPLATE_PATH}`);
+  }
+  const buf = await res.arrayBuffer();
+  const wb = XLSX.read(buf, { type: 'array' });
 
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, SHEET_NAME);
+  const ws = wb.Sheets[SHEET_NAME];
+  if (!ws) {
+    throw new Error(`Template is missing the "${SHEET_NAME}" sheet. Found: ${wb.SheetNames.join(', ')}`);
+  }
+
+  // Row 6 (1-indexed) holds the headers "Merchant SKU" / "Quantity".
+  // We write our data starting at row 7 — origin 'A7'.
+  const dataRows = cart.map((item) => [item.sku, Number(item.quantity) || 0]);
+  XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A7' });
+
   return wb;
 }
 
-export function exportManifest(cart) {
-  const wb = buildManifestWorkbook(cart);
+export async function exportManifest(cart) {
+  const wb = await buildManifestWorkbook(cart);
+  const out = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  const blob = new Blob([out], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
   const date = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `Miami_FBA_Shipment_${date}.xlsx`);
+  triggerDownload(blob, `Miami_FBA_Shipment_${date}.xlsx`);
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // Give the browser a tick to start the download before revoking.
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export { SHEET_NAME as MANIFEST_SHEET_NAME };

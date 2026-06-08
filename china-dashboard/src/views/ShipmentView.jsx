@@ -5,9 +5,13 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
   const skus = cart.length;
   const units = totalUnits(cart);
 
-  function clickExport() {
+  async function clickExport() {
     if (cart.length === 0) return;
-    exportManifest(cart);
+    try {
+      await exportManifest(cart);
+    } catch (e) {
+      window.alert(`Could not export manifest: ${e.message || e}`);
+    }
   }
 
   function clickClear() {
