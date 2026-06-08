@@ -12,10 +12,25 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .source-note strong { color: #6b7280; font-weight: 500; }
 .header-right { display: flex; align-items: center; gap: 8px; }
 
-.swap-btn, .toggle-btn { background: white; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; color: #374151; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
-.swap-btn:hover, .toggle-btn:hover { background: #f3f4f6; }
+.swap-btn, .toggle-btn, .cart-btn, .back-btn {
+  background: white; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 6px;
+  font-size: 12px; cursor: pointer; color: #374151; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.swap-btn:hover, .toggle-btn:hover, .cart-btn:hover, .back-btn:hover { background: #f3f4f6; }
 .toggle-btn.on { background: #1f2937; color: white; border-color: #1f2937; }
 .toggle-btn.on:hover { background: #111827; }
+
+.cart-btn { font-weight: 600; }
+.cart-btn.has-items { background: #1f2937; color: white; border-color: #1f2937; }
+.cart-btn.has-items:hover { background: #111827; }
+.cart-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: #db2777; color: white; font-size: 10px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.cart-btn.has-items .cart-badge { background: white; color: #1f2937; }
 
 /* ---- Hero ---- */
 .hero-row { display: grid; grid-template-columns: minmax(280px, 1fr) 2.4fr; gap: 16px; margin-bottom: 20px; }
@@ -89,6 +104,10 @@ tr.data-row.row-oos:hover td.blk-inv,
 tr.data-row.row-oos:hover td.blk-demand,
 tr.data-row.row-oos:hover td.blk-meta { background: #fee2e2; }
 
+/* Added row accent (in cart) */
+tr.data-row.row-added td.blk-action { background: #ecfdf5; }
+tr.data-row.row-added:hover td.blk-action { background: #d1fae5; }
+
 /* ---- Cell typography ---- */
 td.sku-cell { font-weight: 600; color: #111827; }
 td.asin { color: #6b7280; font-family: ui-monospace, monospace; font-size: 11px; }
@@ -127,7 +146,35 @@ td.vel-cell { text-align: right; }
 .vel-num { font-weight: 500; color: #1f2937; font-variant-numeric: tabular-nums; }
 .vel-unit { color: #9ca3af; font-size: 10px; margin-left: 2px; }
 
-/* ---- QTY (the action) ---- */
+/* ---- Action cell (qty input + Add btn) ---- */
+td.action-cell {
+  text-align: right; padding: 8px 12px; min-width: 220px;
+}
+.action-row { display: inline-flex; align-items: center; gap: 6px; }
+.qty-input {
+  width: 70px; padding: 6px 8px;
+  border: 1px solid #d1d5db; border-radius: 5px;
+  font-family: inherit; font-size: 16px; font-weight: 700;
+  color: #92400e; font-variant-numeric: tabular-nums;
+  text-align: right; background: white;
+  letter-spacing: -0.01em;
+}
+.qty-input:focus { outline: 2px solid #f59e0b; outline-offset: 0; border-color: #f59e0b; }
+
+.add-btn {
+  background: #1f2937; color: white; border: none;
+  padding: 7px 12px; border-radius: 5px;
+  font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.add-btn:hover { background: #111827; }
+.add-btn.added { background: #16a34a; }
+.add-btn.added:hover { background: #15803d; }
+.add-btn.update { background: #4338ca; }
+.add-btn.update:hover { background: #3730a3; }
+
+/* ---- Detail-mode QTY display ---- */
 td.qty-cell { text-align: right; padding: 6px 16px; min-width: 90px; }
 .qty-num { font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums; font-size: 20px; letter-spacing: -0.01em; }
 .mode-compact td.qty-cell { padding: 6px 22px; min-width: 110px; }
@@ -189,3 +236,68 @@ tr.section-row td { background: #1f2937; color: white; padding: 14px 18px; font-
 
 /* ---- Boot page (loading / error before first paint) ---- */
 .boot-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+/* ---- Shipment view ---- */
+.shipment-summary {
+  background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 18px 22px; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.shipment-summary-left { display: flex; flex-direction: column; gap: 4px; }
+.shipment-summary-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+.shipment-summary-value { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.shipment-summary-value .hero-unit { font-size: 14px; }
+.shipment-summary-sub { font-size: 12px; color: #6b7280; }
+.shipment-summary-sub strong { color: #111827; font-weight: 600; }
+.shipment-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.btn-primary {
+  background: #92400e; color: white; border: none;
+  padding: 12px 22px; border-radius: 6px;
+  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover:not(:disabled) { background: #78350f; }
+.btn-primary:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
+.btn-secondary {
+  background: white; color: #b91c1c; border: 1px solid #fecaca;
+  padding: 12px 16px; border-radius: 6px;
+  font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+}
+.btn-secondary:hover:not(:disabled) { background: #fef2f2; }
+
+.ship-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+.ship-table thead th {
+  background: #f9fafb; text-align: left; padding: 10px 12px;
+  font-size: 11px; color: #6b7280; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+}
+.ship-table thead th.num-h, .ship-table thead th.action-h { text-align: right; }
+.ship-table tbody td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
+.ship-table tbody tr:hover td { background: #fafbff; }
+.ship-display-sku { font-weight: 600; color: #111827; }
+.ship-fba-sku { font-family: ui-monospace, monospace; color: #1f2937; font-size: 12px; font-weight: 500; }
+.ship-asin { font-family: ui-monospace, monospace; color: #6b7280; font-size: 11px; }
+.ship-cat { color: #6b7280; font-size: 11px; }
+.ship-qty-cell { text-align: right; }
+.ship-qty-input {
+  width: 80px; padding: 6px 8px;
+  border: 1px solid #d1d5db; border-radius: 5px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  color: #111827; font-variant-numeric: tabular-nums; text-align: right;
+}
+.ship-qty-input:focus { outline: 2px solid #92400e; outline-offset: 0; border-color: #92400e; }
+.ship-remove-btn {
+  background: none; border: none; color: #9ca3af;
+  cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 4px;
+  font-family: inherit;
+}
+.ship-remove-btn:hover { background: #fee2e2; color: #b91c1c; }
+.ship-action-cell { text-align: right; width: 1%; }
+
+.shipment-empty {
+  background: white; border: 1px dashed #d1d5db; border-radius: 12px;
+  padding: 60px 40px; text-align: center; color: #6b7280;
+}
+.shipment-empty h2 { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 8px; }
+.shipment-empty p { margin: 0 0 16px; font-size: 13px; }

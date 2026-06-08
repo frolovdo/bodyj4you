@@ -1,16 +1,11 @@
 import { useMemo, useState } from 'react';
-import StatCards from './StatCards.jsx';
-import FilterPills from './FilterPills.jsx';
-import ScaleKey from './ScaleKey.jsx';
-import ReorderTable from './ReorderTable.jsx';
+import StatCards from '../components/StatCards.jsx';
+import FilterPills from '../components/FilterPills.jsx';
+import ScaleKey from '../components/ScaleKey.jsx';
+import ReorderTable from '../components/ReorderTable.jsx';
+import CartButton from '../components/CartButton.jsx';
+import { SECTION_LABEL_TO_KEY } from '../sections.js';
 import { APP_TITLE } from '../config.js';
-
-const SECTION_LABEL_TO_KEY = {
-  'URGENT FBA': 'URGENT',
-  'PLANNED FBA': 'PLANNED',
-  'UV': 'UV',
-  'STEEL': 'STEEL',
-};
 
 function summaryByKey(summary) {
   const map = {};
@@ -21,7 +16,10 @@ function summaryByKey(summary) {
   return map;
 }
 
-export default function Dashboard({ data, summary, snapshots, selected, onPick, loading, error }) {
+export default function DashboardView({
+  data, summary, snapshots, selected, onPick, loading, error,
+  cart, onAdd, onOpenShipment,
+}) {
   const [filter, setFilter] = useState('all');
   const [detail, setDetail] = useState(true);
 
@@ -40,6 +38,7 @@ export default function Dashboard({ data, summary, snapshots, selected, onPick, 
           )}
         </div>
         <div className="header-right">
+          <CartButton cart={cart} onOpen={onOpenShipment} />
           {snapshots.length > 0 && (
             <select
               className="date-picker"
@@ -85,10 +84,17 @@ export default function Dashboard({ data, summary, snapshots, selected, onPick, 
 
       <ScaleKey />
 
-      <ReorderTable data={data} summaryMap={summaryMap} filter={filter} detail={detail} />
+      <ReorderTable
+        data={data}
+        summaryMap={summaryMap}
+        filter={filter}
+        detail={detail}
+        cart={cart}
+        onAdd={onAdd}
+      />
 
       <div className="footer-note">
-        Live from Google Drive · {summaryMap['GRAND TOTAL']?.count ?? 0} SKUs · {(summaryMap['GRAND TOTAL']?.units ?? 0).toLocaleString()} units
+        Live from Google Drive · {summaryMap['GRAND TOTAL']?.count ?? 0} SKUs · {(summaryMap['GRAND TOTAL']?.units ?? 0).toLocaleString()} suggested units · Manifest uses the SKU column (which already accounts for STEEL kit FBA SKUs)
       </div>
     </main>
   );

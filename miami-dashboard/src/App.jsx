@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { listSnapshots, fetchSnapshot } from './driveSource.js';
-import Dashboard from './components/Dashboard.jsx';
+import DashboardView from './views/DashboardView.jsx';
+import ShipmentView from './views/ShipmentView.jsx';
+import { addToCart as cartAdd, updateQuantity as cartUpdate, removeFromCart as cartRemove } from './cart.js';
 
 export default function App() {
-  const [snapshots, setSnapshots] = useState([]); // listed Drive files
-  const [selected, setSelected] = useState(null); // currently-viewed file
+  const [snapshots, setSnapshots] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [parsed, setParsed] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState([]);
+  const [view, setView] = useState('dashboard'); // 'dashboard' | 'shipment'
 
-  // On open: list folder, auto-load newest.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -40,18 +43,31 @@ export default function App() {
 
   async function onPick(file) {
     if (!file || file.id === selected?.id) return;
+    if (cart.length > 0) {
+      const ok = window.confirm(
+        `You have ${cart.length} item(s) in your shipment cart. Changing the snapshot will clear the cart. Continue?`
+      );
+      if (!ok) return;
+      setCart([]);
+    }
     setSelected(file);
     setLoading(true);
     setError(null);
     try {
       const p = await fetchSnapshot(file);
       setParsed(p);
+      setView('dashboard');
     } catch (e) {
       setError(e.message || String(e));
     } finally {
       setLoading(false);
     }
   }
+
+  function handleAdd(item) { setCart((cur) => cartAdd(cur, item)); }
+  function handleUpdateQty(sku, quantity) { setCart((cur) => cartUpdate(cur, sku, quantity)); }
+  function handleRemove(sku) { setCart((cur) => cartRemove(cur, sku)); }
+  function handleClearCart() { setCart([]); }
 
   if (loading && !parsed) {
     return (
@@ -75,8 +91,20 @@ export default function App() {
     );
   }
 
+  if (view === 'shipment') {
+    return (
+      <ShipmentView
+        cart={cart}
+        onUpdateQty={handleUpdateQty}
+        onRemove={handleRemove}
+        onClear={handleClearCart}
+        onBack={() => setView('dashboard')}
+      />
+    );
+  }
+
   return (
-    <Dashboard
+    <DashboardView
       data={parsed.data}
       summary={parsed.summary}
       snapshots={snapshots}
@@ -84,6 +112,9 @@ export default function App() {
       onPick={onPick}
       loading={loading}
       error={error}
+      cart={cart}
+      onAdd={handleAdd}
+      onOpenShipment={() => setView('shipment')}
     />
   );
 }
