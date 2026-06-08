@@ -67,7 +67,8 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
             <table className="ship-table">
               <thead>
                 <tr>
-                  <th>SKU (Merchant SKU)</th>
+                  <th>Display SKU</th>
+                  <th>FBA SKU (Merchant SKU)</th>
                   <th>ASIN</th>
                   <th>Category</th>
                   <th className="num-h">Quantity</th>
@@ -76,8 +77,9 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
               </thead>
               <tbody>
                 {cart.map(item => (
-                  <tr key={item.sku}>
-                    <td><span className="ship-fba-sku">{item.sku}</span></td>
+                  <tr key={item.fbaSku}>
+                    <td><span className="ship-display-sku">{item.displaySku}</span></td>
+                    <td><span className="ship-fba-sku">{item.fbaSku}</span></td>
                     <td><span className="ship-asin">{item.asin}</span></td>
                     <td><span className="ship-cat">{item.category}</span></td>
                     <td className="ship-qty-cell">
@@ -89,7 +91,7 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
                         step={1}
                         onChange={(e) => {
                           const v = e.target.value === '' ? 0 : Number(e.target.value);
-                          onUpdateQty(item.sku, v);
+                          onUpdateQty(item.fbaSku, v);
                         }}
                         onFocus={(e) => e.target.select()}
                       />
@@ -98,9 +100,9 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
                       <button
                         type="button"
                         className="ship-remove-btn"
-                        onClick={() => onRemove(item.sku)}
-                        title={`Remove ${item.sku}`}
-                        aria-label={`Remove ${item.sku}`}
+                        onClick={() => onRemove(item.fbaSku)}
+                        title={`Remove ${item.displaySku}`}
+                        aria-label={`Remove ${item.displaySku}`}
                       >
                         ×
                       </button>
@@ -112,7 +114,7 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
           </div>
 
           <div className="footer-note">
-            Manifest export will use the <strong>SKU</strong> in column A (Merchant SKU) and the quantity above in column B.
+            Manifest export will use the <strong>FBA SKU</strong> in column A (Merchant SKU) and the quantity above in column B.
             Sheet name: <code>Create workflow – template</code> · Header on row 6 · Data from row 7.
           </div>
         </>

@@ -830,7 +830,7 @@ def build_miami_xlsx(rows, output_path):
         return r["days"], False
 
     headers = [
-        "Section", "SKU", "ASIN", "Parent ASIN", "Category",
+        "Section", "SKU", "FBA SKU", "ASIN", "Parent ASIN", "Category",
         "Available", "Inbound", "Reserved",
         "Amazon Days", "Display Days", "Out Of Stock",
         "Weighted Velocity", "Min Level", "Status", "QTY",
@@ -855,24 +855,28 @@ def build_miami_xlsx(rows, output_path):
         days_val, is_oos = display_days(r)
         ws.cell(row_n, 1, section_labels[section])
         ws.cell(row_n, 2, display_sku(r, "miami_reorder"))
-        ws.cell(row_n, 3, r["asin"])
-        ws.cell(row_n, 4, r["parent"] or "")
-        ws.cell(row_n, 5, r["category"] or "")
-        ws.cell(row_n, 6, int(r["available"]))
-        ws.cell(row_n, 7, int(r["inbound"]))
-        ws.cell(row_n, 8, int(r["reserved"]))
-        ws.cell(row_n, 9, int(r["days"]))      # Raw Amazon days
-        ws.cell(row_n, 10, days_val)            # Computed/displayed days
-        ws.cell(row_n, 11, is_oos)              # Out of stock flag
-        ws.cell(row_n, 12, round(r["velocity"], 2))
-        ws.cell(row_n, 13, int(r["min_level"]))
-        ws.cell(row_n, 14, r["status"])
-        ws.cell(row_n, 15, q)
+        # FBA SKU is the actual Merchant SKU used on Amazon — pulled from catalog.
+        # For non-STEEL items it may differ from the display SKU we use in
+        # reports; the manifest export needs this value, not the display SKU.
+        ws.cell(row_n, 3, r.get("fba_sku") or display_sku(r, "miami_reorder"))
+        ws.cell(row_n, 4, r["asin"])
+        ws.cell(row_n, 5, r["parent"] or "")
+        ws.cell(row_n, 6, r["category"] or "")
+        ws.cell(row_n, 7, int(r["available"]))
+        ws.cell(row_n, 8, int(r["inbound"]))
+        ws.cell(row_n, 9, int(r["reserved"]))
+        ws.cell(row_n, 10, int(r["days"]))      # Raw Amazon days
+        ws.cell(row_n, 11, days_val)            # Computed/displayed days
+        ws.cell(row_n, 12, is_oos)              # Out of stock flag
+        ws.cell(row_n, 13, round(r["velocity"], 2))
+        ws.cell(row_n, 14, int(r["min_level"]))
+        ws.cell(row_n, 15, r["status"])
+        ws.cell(row_n, 16, q)
         row_n += 1
         section_totals[section] += q
         section_counts[section] += 1
 
-    widths = [13, 27, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 10, 8, 8]
+    widths = [13, 27, 22, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 10, 8, 8]
     for c, w in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(c)].width = w
     ws.freeze_panes = "A2"

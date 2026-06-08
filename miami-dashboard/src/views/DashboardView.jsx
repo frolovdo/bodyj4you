@@ -94,7 +94,7 @@ export default function DashboardView({
       />
 
       <div className="footer-note">
-        Live from Google Drive · {summaryMap['GRAND TOTAL']?.count ?? 0} SKUs · {(summaryMap['GRAND TOTAL']?.units ?? 0).toLocaleString()} suggested units · Manifest uses the SKU column (which already accounts for STEEL kit FBA SKUs)
+        Live from Google Drive · {summaryMap['GRAND TOTAL']?.count ?? 0} SKUs · {(summaryMap['GRAND TOTAL']?.units ?? 0).toLocaleString()} suggested units · Manifest uses FBA SKU, not display SKU
       </div>
     </main>
   );

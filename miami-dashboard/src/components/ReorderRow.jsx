@@ -35,16 +35,19 @@ function StatusDot({ status }) {
 }
 
 export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowStyle }) {
-  const sku = row.SKU;
+  // FBA SKU is the Merchant SKU we send to Amazon. The skill writes it from
+  // catalog.xlsx. Fall back to row.SKU only for older snapshots that pre-date
+  // the FBA SKU column — once those age out, this fallback can be removed.
+  const fbaSku = row['FBA SKU'] || row.SKU;
+  const displaySku = row.SKU;
   const isOos = asBool(row['Out Of Stock']);
   const status = asBool(row.Status);
 
-  const cartItem = findCartItem(cart, sku);
+  const cartItem = findCartItem(cart, fbaSku);
   const inCart = !!cartItem;
   const [qty, setQty] = useState(() => Number(row.QTY) || 0);
 
-  // Keep the input in sync if the cart entry's qty is edited elsewhere
-  // (e.g. on the shipment page).
+  // If the cart entry changes (e.g. edited on shipment page), keep input in sync.
   useEffect(() => {
     if (inCart) setQty(cartItem.quantity);
   }, [cartItem?.quantity]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -57,7 +60,8 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
     const q = Number(qty) || 0;
     if (q <= 0) return;
     onAdd({
-      sku,
+      fbaSku,
+      displaySku,
       asin: row.ASIN,
       category: row.Category,
       quantity: q,
@@ -72,7 +76,8 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
   if (detail) {
     return (
       <tr className={trCls.join(' ')} style={rowStyle}>
-        <td className="blk-product blk-start sku-cell">{sku}</td>
+        <td className="blk-product blk-start sku-cell">{displaySku}</td>
+        <td className="blk-product fba-sku-cell">{fbaSku}</td>
         <td className="blk-product asin">{row.ASIN}</td>
         <td className="blk-product parent">{row['Parent ASIN']}</td>
         <td className="blk-product cat">{row.Category}</td>
@@ -101,9 +106,10 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
     <tr className={trCls.join(' ')} style={rowStyle}>
       <td className="blk-product blk-start sku-cell sku-compact">
         <StatusDot status={status} />
-        <span className="sku-name">{sku}</span>
+        <span className="sku-name">{displaySku}</span>
         <span className="sku-asin">{row.ASIN}</span>
       </td>
+      <td className="blk-product fba-sku-cell">{fbaSku}</td>
       <td className="blk-inv blk-start stock-cell">
         <span className="stock-avail">{fmtNum(row.Available)}</span>
         {Number(row.Inbound) > 0 && (

@@ -1,12 +1,11 @@
-// Miami cart item shape:
-//   { sku, asin, category, quantity }
-// Cart is keyed by `sku` — re-adding the same SKU updates the existing entry's
-// quantity. The Miami spreadsheet's "SKU" column already contains the FBA-ready
-// SKU (the skill substitutes the kit FBA SKU for STEEL items via display_sku),
-// so no separate fbaSku tracking is needed here.
+// Miami shipment cart, keyed by fbaSku (the Merchant SKU Amazon expects).
+// Item shape: { fbaSku, displaySku, asin, category, quantity }
+// The skill writes the FBA SKU into the "FBA SKU" column of the Miami xlsx,
+// sourced from catalog.xlsx. For non-STEEL items it may differ from the
+// display SKU we show in reports, so the manifest export MUST use fbaSku.
 
 export function addToCart(cart, item) {
-  const idx = cart.findIndex((c) => c.sku === item.sku);
+  const idx = cart.findIndex((c) => c.fbaSku === item.fbaSku);
   if (idx >= 0) {
     const next = cart.slice();
     next[idx] = { ...next[idx], quantity: item.quantity };
@@ -15,16 +14,16 @@ export function addToCart(cart, item) {
   return [...cart, item];
 }
 
-export function updateQuantity(cart, sku, quantity) {
-  return cart.map((c) => (c.sku === sku ? { ...c, quantity } : c));
+export function updateQuantity(cart, fbaSku, quantity) {
+  return cart.map((c) => (c.fbaSku === fbaSku ? { ...c, quantity } : c));
 }
 
-export function removeFromCart(cart, sku) {
-  return cart.filter((c) => c.sku !== sku);
+export function removeFromCart(cart, fbaSku) {
+  return cart.filter((c) => c.fbaSku !== fbaSku);
 }
 
-export function findCartItem(cart, sku) {
-  return cart.find((c) => c.sku === sku);
+export function findCartItem(cart, fbaSku) {
+  return cart.find((c) => c.fbaSku === fbaSku);
 }
 
 export function totalUnits(cart) {

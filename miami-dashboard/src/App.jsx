@@ -65,8 +65,8 @@ export default function App() {
   }
 
   function handleAdd(item) { setCart((cur) => cartAdd(cur, item)); }
-  function handleUpdateQty(sku, quantity) { setCart((cur) => cartUpdate(cur, sku, quantity)); }
-  function handleRemove(sku) { setCart((cur) => cartRemove(cur, sku)); }
+  function handleUpdateQty(fbaSku, quantity) { setCart((cur) => cartUpdate(cur, fbaSku, quantity)); }
+  function handleRemove(fbaSku) { setCart((cur) => cartRemove(cur, fbaSku)); }
   function handleClearCart() { setCart([]); }
 
   if (loading && !parsed) {
