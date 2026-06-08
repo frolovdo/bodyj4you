@@ -8,7 +8,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
     if (bySection[row.Section]) bySection[row.Section].push(row);
   }
 
-  const colSpan = detail ? 13 : 6;
+  const colSpan = detail ? 12 : 5;
 
   return (
     <div className="table-wrap">
@@ -17,7 +17,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
           {detail ? (
             <>
               <tr className="block-headers">
-                <th className="bh-product" colSpan={5}>Product</th>
+                <th className="bh-product" colSpan={4}>Product</th>
                 <th className="bh-inv" colSpan={3}>Inventory</th>
                 <th className="bh-demand" colSpan={2}>Demand</th>
                 <th className="bh-meta" colSpan={2}>Reference</th>
@@ -25,7 +25,6 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
               </tr>
               <tr className="col-headers">
                 <th>SKU</th>
-                <th>FBA SKU</th>
                 <th>ASIN</th>
                 <th>Parent</th>
                 <th>Cat</th>
@@ -42,7 +41,6 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
           ) : (
             <tr className="col-headers col-headers-compact">
               <th>SKU</th>
-              <th>FBA SKU</th>
               <th className="num-h">Stock</th>
               <th className="vel-h">Velocity</th>
               <th className="days-h">Days</th>

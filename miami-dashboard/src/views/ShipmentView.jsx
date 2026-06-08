@@ -67,8 +67,7 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
             <table className="ship-table">
               <thead>
                 <tr>
-                  <th>Display SKU</th>
-                  <th>FBA SKU (Merchant SKU)</th>
+                  <th>SKU</th>
                   <th>ASIN</th>
                   <th>Category</th>
                   <th className="num-h">Quantity</th>
@@ -79,7 +78,6 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
                 {cart.map(item => (
                   <tr key={item.fbaSku}>
                     <td><span className="ship-display-sku">{item.displaySku}</span></td>
-                    <td><span className="ship-fba-sku">{item.fbaSku}</span></td>
                     <td><span className="ship-asin">{item.asin}</span></td>
                     <td><span className="ship-cat">{item.category}</span></td>
                     <td className="ship-qty-cell">
@@ -114,7 +112,7 @@ export default function ShipmentView({ cart, onUpdateQty, onRemove, onClear, onB
           </div>
 
           <div className="footer-note">
-            Manifest export will use the <strong>FBA SKU</strong> in column A (Merchant SKU) and the quantity above in column B.
+            Manifest export will look up each SKU's <strong>FBA SKU</strong> from the catalog and write it as the Merchant SKU in column A of the Amazon template.
             Sheet name: <code>Create workflow – template</code> · Header on row 6 · Data from row 7.
           </div>
         </>
