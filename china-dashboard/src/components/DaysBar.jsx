@@ -13,14 +13,17 @@ export default function DaysBar({ days, amazonDays, isOos }) {
   const hasAmazon = amazonDays !== '' && amazonDays !== null && amazonDays !== undefined && Number.isFinite(Number(amazonDays));
   const amz = hasAmazon ? Math.round(Number(amazonDays)) : null;
   const title = hasAmazon
-    ? `Display Days ${d.toFixed(1)}d (Available ÷ Velocity) · Amazon Days ${amz}d`
-    : `Display Days ${d.toFixed(1)}d (Available ÷ Velocity)`;
+    ? `Display Days ${d.toFixed(1)}d ((Available + Inbound) ÷ Velocity) · Amazon Days ${amz}d`
+    : `Display Days ${d.toFixed(1)}d ((Available + Inbound) ÷ Velocity)`;
 
   return (
     <div className="days-cell-content" title={title}>
       <div className="days-bar-bg">
         <div className="days-tick" />
-        <div className="days-bar-fill" style={{ width: `${pct.toFixed(1)}%`, background: color }} />
+        <div
+          className="days-bar-fill"
+          style={{ width: `${pct.toFixed(1)}%`, background: color }}
+        />
       </div>
       <span className="days-big-wrap">
         <span className="days-big">{Math.round(d)}d</span>

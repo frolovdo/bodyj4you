@@ -476,12 +476,15 @@ def build_china_xlsx(rows, output_path):
     ws.title = "China Reorder"
 
     def display_days(r):
-        # OUR number, always: Available ÷ Velocity. Amazon's days is a separate
-        # reference column ("Amazon Days") — never substituted into Display Days.
+        # OUR number, always: (Available + Inbound) ÷ Velocity. Inbound counts —
+        # a SKU with 5 on hand and 179 incoming has ~26d of cover, not 1d.
+        # OUT OF STOCK is still flagged when Available == 0 (no shelf stock now)
+        # but the days math itself reflects the full incoming pipeline.
         if r["available"] <= 0:
             return 0, True
         if r["velocity"] > 0:
-            return round(r["available"] / r["velocity"], 1), False
+            cover = (r["available"] + r["inbound"]) / r["velocity"]
+            return round(cover, 1), False
         # No velocity (and not OOS) → no demand signal; fall back to Amazon.
         return r["days"], False
 
@@ -814,12 +817,15 @@ def build_miami_xlsx(rows, output_path):
     # Compute display days (real days when Amazon reports 0 but velocity > 0)
     # and OUT OF STOCK flag (Available == 0).
     def display_days(r):
-        # OUR number, always: Available ÷ Velocity. Amazon's days is a separate
-        # reference column ("Amazon Days") — never substituted into Display Days.
+        # OUR number, always: (Available + Inbound) ÷ Velocity. Inbound counts —
+        # a SKU with 5 on hand and 179 incoming has ~26d of cover, not 1d.
+        # OUT OF STOCK is still flagged when Available == 0 (no shelf stock now)
+        # but the days math itself reflects the full incoming pipeline.
         if r["available"] <= 0:
             return 0, True
         if r["velocity"] > 0:
-            return round(r["available"] / r["velocity"], 1), False
+            cover = (r["available"] + r["inbound"]) / r["velocity"]
+            return round(cover, 1), False
         # No velocity (and not OOS) → no demand signal; fall back to Amazon.
         return r["days"], False
 

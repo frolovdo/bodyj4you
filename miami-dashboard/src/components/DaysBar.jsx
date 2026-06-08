@@ -13,8 +13,8 @@ export default function DaysBar({ days, amazonDays, isOos }) {
   const hasAmazon = amazonDays !== '' && amazonDays !== null && amazonDays !== undefined && Number.isFinite(Number(amazonDays));
   const amz = hasAmazon ? Math.round(Number(amazonDays)) : null;
   const title = hasAmazon
-    ? `Display Days ${d.toFixed(1)}d (Available ÷ Velocity) · Amazon Days ${amz}d`
-    : `Display Days ${d.toFixed(1)}d (Available ÷ Velocity)`;
+    ? `Display Days ${d.toFixed(1)}d ((Available + Inbound) ÷ Velocity) · Amazon Days ${amz}d`
+    : `Display Days ${d.toFixed(1)}d ((Available + Inbound) ÷ Velocity)`;
 
   return (
     <div className="days-cell-content" title={title}>
