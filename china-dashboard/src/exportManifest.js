@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import { loadCatalogMap, resolveFbaSku } from './catalogMapping.js';
 
 // Build the Amazon "Send to Amazon" manifest xlsx for the China shipment.
 //
@@ -16,11 +17,14 @@ const TEMPLATE_PATH = `${import.meta.env.BASE_URL}ManifestFileUpload_Template_MP
 const SHEET_NAME = 'Create workflow – template'; // U+2013 en-dash, exact match required
 
 export async function buildManifestWorkbook(cart) {
-  const res = await fetch(TEMPLATE_PATH);
-  if (!res.ok) {
-    throw new Error(`Could not load manifest template (${res.status}). Expected at ${TEMPLATE_PATH}`);
+  const [templateRes, catalogMap] = await Promise.all([
+    fetch(TEMPLATE_PATH),
+    loadCatalogMap(),
+  ]);
+  if (!templateRes.ok) {
+    throw new Error(`Could not load manifest template (${templateRes.status}). Expected at ${TEMPLATE_PATH}`);
   }
-  const buf = await res.arrayBuffer();
+  const buf = await templateRes.arrayBuffer();
   const wb = XLSX.read(buf, { type: 'array' });
 
   const ws = wb.Sheets[SHEET_NAME];
@@ -29,8 +33,16 @@ export async function buildManifestWorkbook(cart) {
   }
 
   // Row 6 (1-indexed) holds the headers "Merchant SKU" / "Quantity".
-  // We write our data starting at row 7 — origin 'A7'.
-  const dataRows = cart.map((item) => [item.fbaSku, Number(item.quantity) || 0]);
+  // We write our data starting at row 7 — origin 'A7'. Prefer the catalog
+  // mapping resolved at export time over the cart's stored fbaSku, so a
+  // fresh deploy of catalog.xlsx flows through immediately.
+  const dataRows = cart.map((item) => {
+    const merchantSku =
+      resolveFbaSku(item.displaySku, catalogMap) ||
+      item.fbaSku ||
+      item.displaySku;
+    return [merchantSku, Number(item.quantity) || 0];
+  });
   XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A7' });
 
   return wb;
