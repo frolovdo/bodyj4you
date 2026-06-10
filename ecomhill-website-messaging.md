@@ -41,26 +41,42 @@ instantly recognizable ("that's *my* error"). Then show the live outcome.
 
 Format: **`[Exact Amazon error code + message]  →  [listing live on Amazon]`**
 
+Below are the **verified, real Amazon error strings** (researched from Seller Central help,
+the seller forums, and Amazon's own listing-error guides). These are the exact words sellers
+search.
+
 | The error the seller sees / searches (State 1) | Live on Amazon (State 2) |
 |---|---|
-| **Error 5665** — "you don't have permission to add products to this brand" | Brand approved; listing live on every ASIN. |
-| **Error 8541** — "your data conflicts with the ASIN" | Conflict cleared; correct detail page live. |
-| **Error 5461** — "you're not authorized to list this product" | Authorization fixed; new ASIN live. |
-| **Error 8572** — "the update conflicts with the existing detail page" | Detail page corrected and live. |
-| **"This listing is currently suppressed"** | Suppression cleared; ASIN back in search. |
-| **"Your ASIN isn't eligible for advertising"** | PPC eligibility restored; ads running. |
-| **"Account Health Rating: At Risk"** | Violation resolved; account healthy. |
-| **Flat-file / feed processing error codes** | Codes translated into the fix; feed processes. |
-| **"Invalid UPC"** / GTIN mismatch | GS1-valid barcode mapped; listing live. |
-| **"A GTIN exemption is required"** | Exemption granted; list without barcodes. |
-| **Variation / parentage errors** (e.g. 90057) | Variation family built; sizes/colors live together. |
-| **Broken parent-child relationship** | Re-attached; variations and reviews consolidated. |
-| **Wrong category / browse node** | Moved to the node buyers use; found in search. |
+| **Error 5665** — "You are trying to add a product under a brand that is not recognized by Amazon" | Brand approved; listing live on every ASIN. |
+| **Error 5461** — "You may not create new ASINs for the brand [X]" | Catalog authorization granted; new ASIN created and live. |
+| **Error 8541** — "[matching error] your Product ID (UPC/EAN) matches an existing ASIN / your data doesn't match Amazon's catalog" | Conflict resolved; the correct detail page goes live. |
+| **Error 8572** — "You are using UPCs, EANs, ISBNs, ASINs, or JAN codes that do not match the products you are trying to list" | GS1/UPC authorized; listing live under your barcode. |
+| **Error 8560** — "[inventory template] invalid values, missing fields, or product IDs that don't match any ASIN" | Flat file debugged; the feed uploads clean. |
+| **Error 90057** — "The variation-theme field contains an invalid value" | Variation family built; sizes/colors live together. |
+| **Error 8008** — "[parent SKU] the parent SKU for your variation can't be found" | Parent-child re-attached; variations consolidate. |
+| **"This listing is currently suppressed" / Search Suppressed** | Suppression cleared; ASIN back in search results. |
+| **"Your offer is not eligible for advertising" / Ineligible** | PPC eligibility restored; ads run again. |
+| **"Account Health Rating: At Risk — your account is at risk of deactivation"** | Violations appealed; rating back to Healthy. |
+| **"A GTIN exemption is required to list without a barcode"** | Exemption granted; list without UPC/GTIN. |
 
-> **Action for Denis:** swap in the *exact* error strings and codes from your own case
-> history — you know the real wording better than anyone, and matching it word-for-word is what
-> makes a seller's search land here. Drop the `HIGH/MEDIUM/LOW` severity pills entirely; the
-> error code *is* the label.
+> **Notes:**
+> - These strings are paraphrased-but-accurate from public Amazon sources; **confirm the
+>   word-for-word wording against a live error in your own Seller Central** before publishing,
+>   since Amazon tweaks copy and some messages are account/category-specific.
+> - For any problem where Amazon doesn't surface a clean coded message (e.g. some account-health
+>   or browse-node issues), **lead with the plain problem instead** ("listing in the wrong
+>   browse node — buyers can't find it") rather than inventing a code.
+> - Drop the `HIGH / MEDIUM / LOW` severity pills entirely — the error code *is* the label.
+
+**Sources (for verification):**
+[Error 5665 (Goat Consulting)](https://www.goatconsulting.com/blog/how-to-list-a-product-on-amazon-without-brand-registry-5665-error-code) ·
+[Error 5461 (EasyChannel)](https://www.easychannel.com/listing-errors/amazon-listing-error-5461-you-may-not-create-new-asins-for-the-brand-xxx) ·
+[Error 8541 (My Amazon Guy)](https://myamazonguy.com/amazon/amazon-error-8541-what-it-is-and-how-to-fix-it/) ·
+[Error 90057 (Seller Central)](https://sellercentral.amazon.com/help/hub/reference/external/G200712430) ·
+[Error 8560 (Seller forums)](https://sellercentral.amazon.com/seller-forums/discussions/t/b5cc07a4-88f1-495b-af98-5c0812e3cec2) ·
+[Search Suppressed (SupplyKick)](https://www.supplykick.com/blog/why-is-my-amazon-listing-suppressed-and-how-do-i-fix-it) ·
+[Ad ineligibility (Acadia)](https://acadia.io/troubleshooting-amazon-ppc-eligibility-issues/) ·
+[Account Health Rating (Seller Central)](https://sellercentral.amazon.com/gp/help/external/GR786P4BPEVKTBAG)
 
 ---
 
