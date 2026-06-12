@@ -1,0 +1,12 @@
+api_version = "2025-01"
+
+[[extensions]]
+name = "Creator gift validation"
+handle = "creator-gift-validation"
+type = "function"
+description = "Blocks abuse of the free creator gift products at checkout (qty 1, gift-only cart, required socials + agreement)."
+
+  [[extensions.targeting]]
+  target = "purchase.validation.run"
+  input_query = "src/run.graphql"
+  export = "run"
