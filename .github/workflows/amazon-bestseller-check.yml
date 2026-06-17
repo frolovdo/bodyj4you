@@ -1,0 +1,50 @@
+name: Amazon Best Seller Badge Checker
+
+on:
+  workflow_dispatch: {}        # manual trigger for testing
+  schedule:
+    - cron: '0 9 * * *'        # every day at 09:00 UTC
+
+permissions:
+  contents: write              # needed to commit updated history file
+
+concurrency:
+  group: bestseller-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main             # always read/write history on main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install --no-cache-dir playwright beautifulsoup4
+
+      - name: Install Playwright Chromium browser
+        run: playwright install chromium --with-deps
+
+      - name: Run bestseller check
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL: denis@bodyj4you.com
+        run: python automation/amazon_bestseller_check.py
+
+      - name: Commit updated history
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/bestseller_history.json
+          if git diff --cached --quiet; then
+            echo "No changes to history file."
+          else
+            git commit -m "chore: update bestseller history $(date -u +%Y-%m-%d)"
+            git push
+          fi
