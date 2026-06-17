@@ -4,6 +4,7 @@ import FilterPills from '../components/FilterPills.jsx';
 import ScaleKey from '../components/ScaleKey.jsx';
 import ReorderTable from '../components/ReorderTable.jsx';
 import CartButton from '../components/CartButton.jsx';
+import RefreshButton from '../components/RefreshButton.jsx';
 import { SECTION_LABEL_TO_KEY } from '../sections.js';
 import { APP_TITLE } from '../config.js';
 
@@ -17,7 +18,7 @@ function summaryByKey(summary) {
 }
 
 export default function DashboardView({
-  data, summary, snapshots, selected, onPick, loading, error,
+  data, summary, snapshots, selected, onPick, onRefresh, loading, error,
   cart, onAdd, onOpenShipment,
 }) {
   const [filter, setFilter] = useState('all');
@@ -39,6 +40,7 @@ export default function DashboardView({
         </div>
         <div className="header-right">
           <CartButton cart={cart} onOpen={onOpenShipment} />
+          <RefreshButton onRefresh={onRefresh} previousNewestId={selected?.id} />
           {snapshots.length > 0 && (
             <select
               className="date-picker"

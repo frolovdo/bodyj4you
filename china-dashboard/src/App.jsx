@@ -64,6 +64,24 @@ export default function App() {
     }
   }
 
+  async function refreshSnapshots() {
+    const list = await listSnapshots();
+    setSnapshots(list);
+    if (list.length === 0) return null;
+    const newest = list[0];
+    if (!selected || newest.id !== selected.id) {
+      setSelected(newest);
+      setLoading(true);
+      try {
+        const p = await fetchSnapshot(newest);
+        setParsed(p);
+      } finally {
+        setLoading(false);
+      }
+    }
+    return newest;
+  }
+
   function handleAdd(item) { setCart((cur) => cartAdd(cur, item)); }
   function handleUpdateQty(fbaSku, quantity) { setCart((cur) => cartUpdate(cur, fbaSku, quantity)); }
   function handleRemove(fbaSku) { setCart((cur) => cartRemove(cur, fbaSku)); }
@@ -110,6 +128,7 @@ export default function App() {
       snapshots={snapshots}
       selected={selected}
       onPick={onPick}
+      onRefresh={refreshSnapshots}
       loading={loading}
       error={error}
       cart={cart}
