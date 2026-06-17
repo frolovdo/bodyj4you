@@ -1,0 +1,41 @@
+name: Amazon Best Seller Badge Check
+
+on:
+  schedule:
+    - cron: '0 10 * * *'   # daily at 10:00 AM UTC (6 AM ET / 3 AM PT)
+  workflow_dispatch: {}     # allow manual runs from GitHub UI
+
+permissions:
+  contents: write           # needed to commit the updated history file
+
+concurrency:
+  group: bestseller-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir requests
+
+      - name: Run Best Seller checker
+        env:
+          GMAIL_USER:         ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL:    denis@bodyj4you.com
+        run: python automation/amazon_bestseller_check.py
+
+      - name: Commit updated history
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automation/bestseller_history.json
+          git diff --staged --quiet || git commit -m "bestseller history $(date -u +%Y-%m-%d)"
+          git push
