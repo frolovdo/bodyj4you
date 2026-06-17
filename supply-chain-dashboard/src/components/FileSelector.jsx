@@ -9,7 +9,7 @@ function fmtBytes(n) {
 
 // Lives in the sidebar footer. Full-width dark-themed trigger; popover opens
 // upward (sidebar footer is at the bottom of the viewport).
-export default function FileSelector({ files, selected, onSelect, syncedAt }) {
+export default function FileSelector({ files, selected, onSelect, syncedAt, onRefresh, refreshing }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -27,21 +27,36 @@ export default function FileSelector({ files, selected, onSelect, syncedAt }) {
 
   return (
     <div ref={ref} className="relative w-full">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10"
-      >
-        <span className="flex min-w-0 flex-col text-left">
-          <span className="text-[10px] uppercase tracking-wider text-gray-500">Snapshot</span>
-          <span className="flex items-center gap-1.5 truncate font-semibold text-white">
-            {label}
-            {isLatest && <span className="rounded bg-green-500/20 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-300">Latest</span>}
+      <div className="flex w-full gap-1.5">
+        <button
+          onClick={() => setOpen((o) => !o)}
+          className="flex min-w-0 flex-1 items-center justify-between gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs text-gray-200 hover:bg-white/10"
+        >
+          <span className="flex min-w-0 flex-col text-left">
+            <span className="text-[10px] uppercase tracking-wider text-gray-500">Snapshot</span>
+            <span className="flex items-center gap-1.5 truncate font-semibold text-white">
+              {label}
+              {isLatest && <span className="rounded bg-green-500/20 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-300">Latest</span>}
+            </span>
           </span>
-        </span>
-        <svg className="h-3 w-3 flex-shrink-0 opacity-60" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5.5 12.5l4.5-4.5 4.5 4.5" />
-        </svg>
-      </button>
+          <svg className="h-3 w-3 flex-shrink-0 opacity-60" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5.5 12.5l4.5-4.5 4.5 4.5" />
+          </svg>
+        </button>
+        {onRefresh && (
+          <button
+            onClick={onRefresh}
+            disabled={refreshing}
+            title="Check for new file"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-gray-200 transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <svg className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5" />
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5" />
+            </svg>
+          </button>
+        )}
+      </div>
       {open && (
         <div className="absolute bottom-full left-0 z-40 mb-2 w-72 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xl">
           <div className="border-b border-gray-100 px-3 py-2 text-[10px] uppercase tracking-wider text-gray-400">

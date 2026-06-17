@@ -13,7 +13,9 @@ const PATH = 'data/supply-chain'
 const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${PATH}`
 
 export async function loadManifest() {
-  const url = `${RAW}/manifest.json`
+  // ?t=<timestamp> busts both the browser cache and GitHub's Fastly edge cache,
+  // so a freshly-pushed manifest is visible immediately to the refresh button.
+  const url = `${RAW}/manifest.json?t=${Date.now()}`
   const r = await fetch(url, { cache: 'no-store' })
   if (!r.ok) throw new Error(`manifest.json not found (${r.status}) at ${url}`)
   return r.json()

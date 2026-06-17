@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { parseWorkbook } from './parseFile.js'
 import { loadManifest, loadSnapshot } from './driveLoader.js'
 import { countByStatus, STATUSES } from './lib/status.js'
@@ -40,14 +40,28 @@ export default function App() {
   // Local shipments — in memory only, survives navigation, wiped on full reload.
   const [shipments, setShipments] = useState([])
 
-  // 1. Load manifest on mount.
-  useEffect(() => {
-    let cancelled = false
-    loadManifest()
-      .then((m) => { if (!cancelled) { setManifest(m); setSelected(m.latest || (m.files?.[0]?.filename ?? '')) } })
-      .catch((e) => { if (!cancelled) setManifestError(e.message) })
-    return () => { cancelled = true }
+  // Refresh button state.
+  const [refreshing, setRefreshing] = useState(false)
+
+  // Manifest load — reusable between mount and the manual refresh button. When
+  // a newer `latest` lands, we auto-switch to it (effect at line below will
+  // fetch + parse the new snapshot).
+  const reloadManifest = useCallback(async () => {
+    setRefreshing(true)
+    try {
+      const m = await loadManifest()
+      setManifest(m)
+      setManifestError('')
+      setSelected((prev) => (m.latest && (!prev || m.latest !== prev) ? m.latest : prev))
+    } catch (e) {
+      setManifestError(e.message)
+    } finally {
+      setRefreshing(false)
+    }
   }, [])
+
+  // 1. Load manifest on mount.
+  useEffect(() => { reloadManifest() }, [reloadManifest])
 
   // 2. Fetch + parse on snapshot change.
   useEffect(() => {
@@ -120,6 +134,8 @@ export default function App() {
               selected={selected}
               onSelect={setSelected}
               syncedAt={manifest.syncedAt}
+              onRefresh={reloadManifest}
+              refreshing={refreshing}
             />
           ) : null
         }
