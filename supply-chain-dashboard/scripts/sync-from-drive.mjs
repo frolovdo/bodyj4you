@@ -25,9 +25,16 @@ const SHEET_MIME = 'application/vnd.google-apps.spreadsheet'
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 const NAME_CONTAINS = 'Miami Warehouse'
 
+// Data lives OUTSIDE the React app subfolder, at the monorepo root in
+// `data/supply-chain/`. This is the whole point: the app is built and
+// deployed once, and the browser fetches manifest + xlsx straight from
+// raw.githubusercontent.com. Drive drops update only this folder, which
+// the Netlify ignore rule on supply-chain-dashboard treats as "no
+// changes here" — Netlify skips the build entirely. Zero build cost
+// per Drive drop.
 const here = dirname(fileURLToPath(import.meta.url))
-const repoRoot = resolve(here, '..')
-const dataDir = resolve(repoRoot, 'public', 'data')
+const monorepoRoot = resolve(here, '..', '..')
+const dataDir = resolve(monorepoRoot, 'data', 'supply-chain')
 const archiveDir = resolve(dataDir, 'archive')
 
 // Parse MM.DD.YY (or MM-DD-YY / MM_DD_YY) anywhere in the filename.

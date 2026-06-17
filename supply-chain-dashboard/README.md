@@ -21,18 +21,31 @@ npm run build     # production bundle into dist/
 npm run preview   # serve the production build
 ```
 
-The repo ships with a seed snapshot in `public/data/archive/` so the dashboard renders
-immediately on `npm run dev` — the first real sync will replace the seed manifest with the
-live one.
+Local dev shows production data: `src/driveLoader.js` always fetches from
+`raw.githubusercontent.com/frolovdo/bodyj4you/main/data/supply-chain/`, so
+`npm run dev` works without any local data files.
 
 ## How it works
 
-1. **Drive sync** (`scripts/sync-from-drive.mjs`) — runs on a schedule via GitHub Actions.
-   It lists every file in the configured Drive folder whose name contains `Miami Warehouse`
-   (either `.xlsx` or a Google Sheet), downloads them into `public/data/archive/`, and writes
-   `public/data/manifest.json`. Files removed from Drive are pruned locally.
-2. **Manifest** (`public/data/manifest.json`) — single source of truth for what snapshots exist.
-   The app's `src/driveLoader.js` fetches it at runtime.
+The architecture is intentionally split into two pieces that update independently:
+
+- **The React app** lives in `supply-chain-dashboard/` and is built + deployed by
+  Netlify whenever its own code changes. Drive drops never touch this folder, so
+  weekly file uploads do **not** trigger Netlify builds.
+- **The data** lives at the monorepo root in `data/supply-chain/` (NOT inside this
+  React subfolder). The browser fetches it directly from GitHub's raw CDN, which is
+  CORS-open for public repos and has a 5-minute cache (fine for an hourly cadence).
+
+Flow:
+
+1. **Drive sync** (`scripts/sync-from-drive.mjs`) — runs hourly via the GitHub Action
+   `.github/workflows/sync-supply-chain.yml`. Lists every file in the Drive folder
+   whose name contains `Miami Warehouse`, downloads new/changed ones into
+   `data/supply-chain/archive/`, writes `data/supply-chain/manifest.json`, prunes
+   files no longer in Drive, commits + pushes back to `main`.
+2. **Manifest** (`data/supply-chain/manifest.json`) — single source of truth for what
+   snapshots exist. The app's `src/driveLoader.js` fetches it at runtime via
+   `https://raw.githubusercontent.com/frolovdo/bodyj4you/main/data/supply-chain/manifest.json`.
 3. **App** (`src/App.jsx`) — on mount, loads the manifest, defaults to `manifest.latest`,
    fetches the chosen file's xlsx, parses it with `src/parseFile.js`, and renders three tabs:
    **Miami Stock**, **Inbound POs**, **Shipments by Week**.
