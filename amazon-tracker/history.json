@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-06-17",
+    "results": [
+      {
+        "name": "GK0486-Master",
+        "url": "https://www.amazon.com/dp/B08L8VZHKR/ref=twister_B07DT6KJWQ?_encoding=UTF8&th=1",
+        "best_seller": "ERROR: www.amazon.com blocked — add to network egress allowlist"
+      },
+      {
+        "name": "PN10-Master",
+        "url": "https://www.amazon.com/dp/B004MZMBC4?th=1",
+        "best_seller": "ERROR: www.amazon.com blocked — add to network egress allowlist"
+      },
+      {
+        "name": "PL6328-Master",
+        "url": "https://www.amazon.com/dp/B0785J3B94?th=1&psc=1",
+        "best_seller": "ERROR: www.amazon.com blocked — add to network egress allowlist"
+      }
+    ]
+  }
+]
