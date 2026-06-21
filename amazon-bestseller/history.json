@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "date": "2026-06-21",
+      "results": [
+        {
+          "name": "GK0486-Master",
+          "url": "https://www.amazon.com/dp/B08L8VZHKR",
+          "has_badge": null,
+          "error": "HTTP 403"
+        },
+        {
+          "name": "PN10-Master",
+          "url": "https://www.amazon.com/dp/B004MZMBC4",
+          "has_badge": null,
+          "error": "HTTP 403"
+        },
+        {
+          "name": "PL6328-Master",
+          "url": "https://www.amazon.com/dp/B0785J3B94",
+          "has_badge": null,
+          "error": "HTTP 403"
+        }
+      ]
+    },
+    {
+      "date": "2026-06-21",
+      "results": [
+        {
+          "name": "GK0486-Master",
+          "url": "https://www.amazon.com/dp/B08L8VZHKR",
+          "has_badge": null,
+          "error": "Could not fetch page (blocked by Amazon). Set SCRAPERAPI_KEY env var."
+        },
+        {
+          "name": "PN10-Master",
+          "url": "https://www.amazon.com/dp/B004MZMBC4",
+          "has_badge": null,
+          "error": "Could not fetch page (blocked by Amazon). Set SCRAPERAPI_KEY env var."
+        },
+        {
+          "name": "PL6328-Master",
+          "url": "https://www.amazon.com/dp/B0785J3B94",
+          "has_badge": null,
+          "error": "Could not fetch page (blocked by Amazon). Set SCRAPERAPI_KEY env var."
+        }
+      ]
+    }
+  ]
+}
