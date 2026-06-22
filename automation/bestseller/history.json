@@ -1,0 +1,32 @@
+[
+  {
+    "name": "GK0486-Master",
+    "url": "https://www.amazon.com/dp/B08L8VZHKR?th=1",
+    "status": "BLOCKED",
+    "hasBestSeller": null,
+    "title": null,
+    "snippet": null,
+    "error": "Network egress blocked — add www.amazon.com to allowlist",
+    "date": "2026-06-22"
+  },
+  {
+    "name": "PN10-Master",
+    "url": "https://www.amazon.com/dp/B004MZMBC4?th=1",
+    "status": "BLOCKED",
+    "hasBestSeller": null,
+    "title": null,
+    "snippet": null,
+    "error": "Network egress blocked — add www.amazon.com to allowlist",
+    "date": "2026-06-22"
+  },
+  {
+    "name": "PL6328-Master",
+    "url": "https://www.amazon.com/dp/B0785J3B94?th=1",
+    "status": "BLOCKED",
+    "hasBestSeller": null,
+    "title": null,
+    "snippet": null,
+    "error": "Network egress blocked — add www.amazon.com to allowlist",
+    "date": "2026-06-22"
+  }
+]
