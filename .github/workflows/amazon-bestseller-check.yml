@@ -1,0 +1,57 @@
+name: Amazon Best Seller Badge Checker
+
+on:
+  schedule:
+    # 9:00 AM UTC every day (adjust if you want a different timezone/time)
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}   # allows a manual run from the Actions tab
+
+concurrency:
+  group: amazon-bestseller-check
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install playwright
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+      - name: Run Best Seller checker
+        env:
+          GMAIL_FROM: ${{ secrets.BESTSELLER_GMAIL_FROM }}
+          GMAIL_APP_PASSWORD: ${{ secrets.BESTSELLER_GMAIL_APP_PASSWORD }}
+        run: python automation/amazon_bestseller.py
+
+      - name: Commit updated history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/bestseller-history/history.json
+          if git diff --staged --quiet; then
+            echo "History unchanged, nothing to commit."
+            exit 0
+          fi
+          git commit -m "Bestseller check $(date -u +%Y-%m-%d)"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main && git push && exit 0
+            echo "Push attempt $attempt failed, retrying..."
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 2))
+          done
+          echo "::error::Failed to push after 4 attempts."
+          exit 1
