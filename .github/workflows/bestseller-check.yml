@@ -1,0 +1,54 @@
+name: Daily Best Seller Check
+
+on:
+  schedule:
+    # Runs at 8:05 AM UTC daily
+    - cron: "5 8 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run Best Seller check
+        id: check
+        run: |
+          python check_bestseller.py
+          echo "today=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Commit updated history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bestseller_history.json
+          git diff --staged --quiet || git commit -m "chore: bestseller check $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Send email report
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "Amazon Best Seller Report — ${{ steps.check.outputs.today }}"
+          to: denis@bodyj4you.com
+          from: "Best Seller Bot <${{ secrets.GMAIL_USERNAME }}>"
+          html_body: file://email_body.html
+          body: file://email_body.txt
