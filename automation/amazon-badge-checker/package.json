@@ -1,0 +1,14 @@
+{
+  "name": "amazon-badge-checker",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "node check-badges.js",
+    "send":  "node send-email.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16",
+    "playwright": "^1.53.1"
+  }
+}

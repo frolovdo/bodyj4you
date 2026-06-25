@@ -1,0 +1,53 @@
+name: Amazon Best Seller Badge Check
+
+on:
+  schedule:
+    - cron: '7 13 * * *'   # 9:07 AM ET (UTC-4 summer / UTC-5 winter) daily
+  workflow_dispatch: {}     # allows manual "Run workflow" from the Actions tab
+
+permissions:
+  contents: write           # needed to commit history.json back to the repo
+
+concurrency:
+  group: amazon-badge-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: automation/amazon-badge-checker
+        run: npm install --no-audit --no-fund
+
+      - name: Install Playwright browser
+        working-directory: automation/amazon-badge-checker
+        run: npx playwright install chromium --with-deps
+
+      - name: Check Amazon best seller badges
+        working-directory: automation/amazon-badge-checker
+        run: node check-badges.js
+
+      - name: Send email report
+        working-directory: automation/amazon-badge-checker
+        env:
+          GMAIL_USER:         ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SEND_TO:            denis@bodyj4you.com
+        run: node send-email.js
+
+      - name: Commit updated history
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automation/amazon-badge-checker/history.json
+          git diff --staged --quiet && echo "history unchanged" || \
+            git commit -m "chore: badge history $(date -u +'%Y-%m-%d')"
+          git push
