@@ -1,0 +1,62 @@
+name: Amazon Best Seller Daily Check
+
+on:
+  workflow_dispatch: {}        # manual trigger for testing
+  schedule:
+    - cron: '0 13 * * *'      # 9 AM ET / 1 PM UTC every day
+
+permissions:
+  contents: write              # needed to commit updated history.json
+
+concurrency:
+  group: amazon-bestseller
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Node dependencies
+        working-directory: scripts/amazon
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Playwright Chromium
+        working-directory: scripts/amazon
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Best Seller check
+        id: check
+        working-directory: scripts/amazon
+        run: |
+          output=$(node check_bestseller.js 2>&1)
+          echo "$output"
+          echo "results<<EOF" >> $GITHUB_OUTPUT
+          echo "$output" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send email report
+        working-directory: scripts/amazon
+        env:
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          python3 send_email.py "${{ steps.check.outputs.results }}"
+
+      - name: Commit updated history
+        run: |
+          git config user.name  "Amazon Best Seller Bot"
+          git config user.email "frolovdo@gmail.com"
+          git add scripts/amazon/history.json
+          git diff --staged --quiet || git commit -m "chore: update Amazon best seller history $(date -u +%Y-%m-%d)"
+          git push

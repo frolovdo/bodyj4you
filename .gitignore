@@ -14,3 +14,6 @@ Thumbs.db
 
 # loose data files at repo root — the bundled snapshot in <app>/public/data/ stays tracked
 /*.xlsx
+
+# Amazon best seller check — generated artifacts
+scripts/amazon/report.html
