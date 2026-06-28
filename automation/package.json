@@ -4,6 +4,8 @@
   "type": "module",
   "description": "Syncs the newest Reorder_Miami / Reorder_China sheets from the Drive output folder into each dashboard's public/data/ snapshot.",
   "dependencies": {
-    "googleapis": "^144.0.0"
+    "googleapis": "^144.0.0",
+    "nodemailer": "^6.10.1",
+    "playwright": "^1.61.1"
   }
 }
