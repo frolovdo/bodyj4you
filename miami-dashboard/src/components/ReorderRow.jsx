@@ -91,6 +91,7 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
         <td className="blk-demand vel-cell">
           <span className="vel-num">{fmtVel(row['Weighted Velocity'])}</span>
         </td>
+        <td className="blk-demand num">{fmtNum(row['Sales 30d'])}</td>
         <td className="blk-meta blk-start num">{fmtNum(row['Min Level'])}</td>
         <td className={`blk-meta ${status ? 'status-true' : 'status-false'}`}>
           {status ? 'TRUE' : 'FALSE'}
@@ -120,6 +121,7 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
         <span className="vel-num">{fmtVel(row['Weighted Velocity'])}</span>
         <span className="vel-unit">/d</span>
       </td>
+      <td className="blk-demand num">{fmtNum(row['Sales 30d'])}</td>
       <td className="blk-demand days-cell">
         <DaysBar days={row['Display Days']} amazonDays={row['Amazon Days']} isOos={isOos} />
       </td>

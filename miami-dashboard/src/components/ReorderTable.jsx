@@ -8,7 +8,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
     if (bySection[row.Section]) bySection[row.Section].push(row);
   }
 
-  const colSpan = detail ? 12 : 5;
+  const colSpan = detail ? 13 : 6;
 
   return (
     <div className="table-wrap">
@@ -19,7 +19,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
               <tr className="block-headers">
                 <th className="bh-product" colSpan={4}>Product</th>
                 <th className="bh-inv" colSpan={3}>Inventory</th>
-                <th className="bh-demand" colSpan={2}>Demand</th>
+                <th className="bh-demand" colSpan={3}>Demand</th>
                 <th className="bh-meta" colSpan={2}>Reference</th>
                 <th className="bh-action" colSpan={1}>Shipment</th>
               </tr>
@@ -33,6 +33,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
                 <th className="num-h">Reserved</th>
                 <th className="days-h">Days</th>
                 <th className="vel-h">Velocity</th>
+                <th className="num-h">Sales 30d</th>
                 <th className="num-h">Min</th>
                 <th>Status</th>
                 <th className="qty-h">Qty + Add</th>
@@ -43,6 +44,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
               <th>SKU</th>
               <th className="num-h">Stock</th>
               <th className="vel-h">Velocity</th>
+              <th className="num-h">Sales 30d</th>
               <th className="days-h">Days</th>
               <th className="qty-h">Add to shipment</th>
             </tr>
