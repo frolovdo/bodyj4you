@@ -1,23 +1,30 @@
 import * as XLSX from 'xlsx';
+import { loadCatalogMap, resolveFbaSku } from './catalogMapping.js';
 
-// Fill the official Amazon "Send to Amazon" manifest xlsx for the China
-// shipment.
+// Build the Amazon "Send to Amazon" manifest xlsx for the China shipment.
 //
-// Read-only viewer principle: the SKU written into the manifest is the
-// "FBA SKU" column from the file (via the cart's item.fbaSku, which was
-// read straight from row['FBA SKU'] when the user clicked Add). No catalog
-// lookup, no mapping, no fallback logic. If the file has the value, we use
-// it; if it doesn't, we write nothing.
+// We DO NOT generate the workbook from scratch. We load the official Amazon
+// template (ManifestFileUpload_Template_MPL.xlsx — copy provided by the user,
+// served as a static asset from /) and only write the Merchant SKU + Quantity
+// values into the "Create workflow – template" sheet starting at row 7.
+// Every other sheet (Instructions, Data definitions, Create workflow – example)
+// and every other cell stays byte-equivalent to the source template.
+//
+// Column A = Merchant SKU (the FBA SKU from the cart), Column B = Quantity.
+// The manifest must NEVER contain the display SKU.
 
 const TEMPLATE_PATH = `${import.meta.env.BASE_URL}ManifestFileUpload_Template_MPL.xlsx`;
 const SHEET_NAME = 'Create workflow – template'; // U+2013 en-dash, exact match required
 
 export async function buildManifestWorkbook(cart) {
-  const res = await fetch(TEMPLATE_PATH);
-  if (!res.ok) {
-    throw new Error(`Could not load manifest template (${res.status}). Expected at ${TEMPLATE_PATH}`);
+  const [templateRes, catalogMap] = await Promise.all([
+    fetch(TEMPLATE_PATH),
+    loadCatalogMap(),
+  ]);
+  if (!templateRes.ok) {
+    throw new Error(`Could not load manifest template (${templateRes.status}). Expected at ${TEMPLATE_PATH}`);
   }
-  const buf = await res.arrayBuffer();
+  const buf = await templateRes.arrayBuffer();
   const wb = XLSX.read(buf, { type: 'array' });
 
   const ws = wb.Sheets[SHEET_NAME];
@@ -25,7 +32,17 @@ export async function buildManifestWorkbook(cart) {
     throw new Error(`Template is missing the "${SHEET_NAME}" sheet. Found: ${wb.SheetNames.join(', ')}`);
   }
 
-  const dataRows = cart.map((item) => [item.fbaSku, Number(item.quantity) || 0]);
+  // Row 6 (1-indexed) holds the headers "Merchant SKU" / "Quantity".
+  // We write our data starting at row 7 — origin 'A7'. Prefer the catalog
+  // mapping resolved at export time over the cart's stored fbaSku, so a
+  // fresh deploy of catalog.xlsx flows through immediately.
+  const dataRows = cart.map((item) => {
+    const merchantSku =
+      resolveFbaSku(item.displaySku, catalogMap) ||
+      item.fbaSku ||
+      item.displaySku;
+    return [merchantSku, Number(item.quantity) || 0];
+  });
   XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A7' });
 
   return wb;
