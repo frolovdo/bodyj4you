@@ -34,7 +34,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
                 <th className="num-h">Reserved</th>
                 <th className="days-h">Days</th>
                 <th className="vel-h">Velocity</th>
-                <th className="num-h">Sales 30d</th>
+                <th className="num-h">Sales 30 Days</th>
                 <th className="num-h">Min</th>
                 <th>Status</th>
                 <th className="qty-h">Qty + Add</th>
@@ -46,7 +46,7 @@ export default function ReorderTable({ data, summaryMap, filter, detail, cart, o
               <th>FBA SKU</th>
               <th className="num-h">Stock</th>
               <th className="vel-h">Velocity</th>
-              <th className="num-h">Sales 30d</th>
+              <th className="num-h">Sales 30 Days</th>
               <th className="days-h">Days</th>
               <th className="qty-h">Add to shipment</th>
             </tr>
