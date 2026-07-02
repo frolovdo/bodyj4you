@@ -163,6 +163,36 @@ td.vel-cell { text-align: right; }
 .vel-num { font-weight: 500; color: #1f2937; font-variant-numeric: tabular-nums; }
 .vel-unit { color: #9ca3af; font-size: 10px; margin-left: 2px; }
 
+/* Detail-mode Demand emphasis: velocity + sales 30d are the two key demand signals */
+td.vel-cell .vel-big,
+td.sales-cell .sales-big {
+  font-size: 16px; font-weight: 700; color: #111827;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+td.sales-cell { text-align: right; }
+
+/* Days-critical alert (< 14 days, not OOS) */
+.days-alert {
+  display: inline-block;
+  color: #dc2626;
+  font-weight: 700;
+  margin-right: 4px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* QTY explanation note below the scale key */
+.qty-note {
+  font-size: 11px;
+  color: #4b5563;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  padding: 7px 12px;
+  margin-bottom: 12px;
+}
+.qty-note strong { color: #92400e; font-weight: 700; }
+
 /* ---- Action cell (qty input + Add btn) ---- */
 td.action-cell {
   text-align: right; padding: 8px 12px; min-width: 220px;

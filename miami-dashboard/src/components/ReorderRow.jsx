@@ -89,12 +89,10 @@ export default function ReorderRow({ row, cart, onAdd, detail, isBoundary, rowSt
           <DaysBar days={row['Display Days']} amazonDays={row['Amazon Days']} isOos={isOos} />
         </td>
         <td className="blk-demand vel-cell">
-          <span className="vel-num">{fmtVel(row['Weighted Velocity'])}</span>
+          <span className="vel-big">{fmtVel(row['Weighted Velocity'])}</span>
         </td>
-        <td className="blk-demand num">{fmtNum(row['Sales 30 Days'])}</td>
-        <td className="blk-meta blk-start num">{fmtNum(row['Min Level'])}</td>
-        <td className={`blk-meta ${status ? 'status-true' : 'status-false'}`}>
-          {status ? 'TRUE' : 'FALSE'}
+        <td className="blk-demand sales-cell">
+          <span className="sales-big">{fmtNum(row['Sales 30 Days'])}</span>
         </td>
         <td className="blk-action action-cell">
           <ActionInput qty={qty} setQty={setQty} buttonClass={buttonClass} buttonText={buttonText} clickAdd={clickAdd} />

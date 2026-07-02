@@ -9,6 +9,7 @@ export default function DaysBar({ days, amazonDays, isOos }) {
   const d = Number(days) || 0;
   const pct = Math.min(100, (d / 60) * 100);
   const color = d < 30 ? '#dc2626' : d < 45 ? '#eab308' : '#16a34a';
+  const critical = d > 0 && d < 14;
 
   const hasAmazon = amazonDays !== '' && amazonDays !== null && amazonDays !== undefined && Number.isFinite(Number(amazonDays));
   const amz = hasAmazon ? Math.round(Number(amazonDays)) : null;
@@ -26,7 +27,10 @@ export default function DaysBar({ days, amazonDays, isOos }) {
         />
       </div>
       <span className="days-big-wrap">
-        <span className="days-big">{Math.round(d)}d</span>
+        <span className="days-big">
+          {critical && <span className="days-alert" title="Below 14 days — critical" aria-label="Critical: less than 14 days">⚠</span>}
+          {Math.round(d)}d
+        </span>
         {hasAmazon && <span className="days-amazon">Amazon {amz}d</span>}
       </span>
     </div>
