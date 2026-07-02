@@ -39,9 +39,6 @@ PULL_COMPONENTS = [
     "GK0279", "GK0220-Gold", "BJGK0183", "GK0315",
 ]
 
-# Velocity weights: T7*0.4 + T30*0.3 + T60*0.2 + T90*0.1, denom = 38.2
-VEL_DENOM = 7 * 0.4 + 30 * 0.3 + 60 * 0.2 + 90 * 0.1  # = 38.2
-
 # Bony China monthly blocks
 CHINA_MONTHLY_BLOCK_ORDER = ["GK", "PL6328", "PJ_FJ", "NC"]
 CHINA_MONTHLY_BLOCK_LABELS = {
@@ -273,12 +270,13 @@ def compute_row(cat_item, fba_record):
             **cat_item,
             "available": 0, "inbound": 0, "reserved": 0,
             "days": 0, "velocity": 0, "min_level": 0,
+            "t30": 0,
             "status": False,
             "in_fba": False,
         }
-    # Weighted velocity
-    velocity = (fba_record["t7"] * 0.4 + fba_record["t30"] * 0.3 +
-                fba_record["t60"] * 0.2 + fba_record["t90"] * 0.1) / VEL_DENOM
+    # Weighted velocity: convert each window to a daily rate, then blend.
+    velocity = (fba_record["t7"] / 7 * 0.4 + fba_record["t30"] / 30 * 0.3 +
+                fba_record["t60"] / 60 * 0.2 + fba_record["t90"] / 90 * 0.1)
     # Status: True if pipeline >= min level
     pipeline = fba_record["available"] + fba_record["inbound"] + fba_record["reserved"]
     status = pipeline >= fba_record["min_level"]
@@ -290,6 +288,7 @@ def compute_row(cat_item, fba_record):
         "days": fba_record["days"],
         "velocity": velocity,
         "min_level": fba_record["min_level"],
+        "t30": fba_record["t30"],
         "status": status,
         "in_fba": True,
     }
@@ -476,23 +475,19 @@ def build_china_xlsx(rows, output_path):
     ws.title = "China Reorder"
 
     def display_days(r):
-        # OUR number, always: (Available + Inbound) ÷ Velocity. Inbound counts —
-        # a SKU with 5 on hand and 179 incoming has ~26d of cover, not 1d.
-        # OUT OF STOCK is still flagged when Available == 0 (no shelf stock now)
-        # but the days math itself reflects the full incoming pipeline.
-        if r["available"] <= 0:
-            return 0, True
+        # OUT OF STOCK flag reflects on-hand only (Available == 0).
+        is_oos = r["available"] <= 0
+        # Our days of coverage: (Available + Inbound) / velocity whenever velocity
+        # is known. Fall back to Amazon's raw days-of-supply only when velocity = 0.
         if r["velocity"] > 0:
-            cover = (r["available"] + r["inbound"]) / r["velocity"]
-            return round(cover, 1), False
-        # No velocity (and not OOS) → no demand signal; fall back to Amazon.
-        return r["days"], False
+            return round((r["available"] + r["inbound"]) / r["velocity"], 1), is_oos
+        return r["days"], is_oos
 
     headers = [
         "Section", "SKU", "FBA SKU", "ASIN", "Parent ASIN", "Category",
         "Available", "Inbound", "Reserved",
         "Amazon Days", "Display Days", "Out Of Stock",
-        "Weighted Velocity", "Min Level", "Status", "QTY",
+        "Weighted Velocity", "Sales 30 Days", "Min Level", "Status", "QTY",
     ]
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill("solid", start_color="305496")
@@ -524,14 +519,15 @@ def build_china_xlsx(rows, output_path):
         ws.cell(row_n, 11, days_val)
         ws.cell(row_n, 12, is_oos)
         ws.cell(row_n, 13, round(r["velocity"], 2))
-        ws.cell(row_n, 14, int(r["min_level"]))
-        ws.cell(row_n, 15, r["status"])
-        ws.cell(row_n, 16, q)
+        ws.cell(row_n, 14, int(r["t30"]))
+        ws.cell(row_n, 15, int(r["min_level"]))
+        ws.cell(row_n, 16, r["status"])
+        ws.cell(row_n, 17, q)
         row_n += 1
         block_totals[label] = block_totals.get(label, 0) + q
         block_counts[label] = block_counts.get(label, 0) + 1
 
-    widths = [22, 22, 22, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 10, 8, 8]
+    widths = [22, 22, 22, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 13, 10, 8, 8]
     for c, w in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(c)].width = w
     ws.freeze_panes = "A2"
@@ -814,26 +810,20 @@ def build_miami_xlsx(rows, output_path):
     ws = wb.active
     ws.title = "Miami Reorder"
 
-    # Compute display days (real days when Amazon reports 0 but velocity > 0)
-    # and OUT OF STOCK flag (Available == 0).
+    # Display Days = our days of coverage: (Available + Inbound) / velocity when
+    # velocity > 0; fall back to Amazon's raw days-of-supply only when velocity = 0.
+    # OUT OF STOCK flag = Available == 0 (on-hand only).
     def display_days(r):
-        # OUR number, always: (Available + Inbound) ÷ Velocity. Inbound counts —
-        # a SKU with 5 on hand and 179 incoming has ~26d of cover, not 1d.
-        # OUT OF STOCK is still flagged when Available == 0 (no shelf stock now)
-        # but the days math itself reflects the full incoming pipeline.
-        if r["available"] <= 0:
-            return 0, True
+        is_oos = r["available"] <= 0
         if r["velocity"] > 0:
-            cover = (r["available"] + r["inbound"]) / r["velocity"]
-            return round(cover, 1), False
-        # No velocity (and not OOS) → no demand signal; fall back to Amazon.
-        return r["days"], False
+            return round((r["available"] + r["inbound"]) / r["velocity"], 1), is_oos
+        return r["days"], is_oos
 
     headers = [
         "Section", "SKU", "FBA SKU", "ASIN", "Parent ASIN", "Category",
         "Available", "Inbound", "Reserved",
         "Amazon Days", "Display Days", "Out Of Stock",
-        "Weighted Velocity", "Min Level", "Status", "QTY",
+        "Weighted Velocity", "Sales 30 Days", "Min Level", "Status", "QTY",
     ]
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill("solid", start_color="305496")
@@ -855,10 +845,7 @@ def build_miami_xlsx(rows, output_path):
         days_val, is_oos = display_days(r)
         ws.cell(row_n, 1, section_labels[section])
         ws.cell(row_n, 2, display_sku(r, "miami_reorder"))
-        # FBA SKU is the actual Merchant SKU used on Amazon — pulled from catalog.
-        # For non-STEEL items it may differ from the display SKU we use in
-        # reports; the manifest export needs this value, not the display SKU.
-        ws.cell(row_n, 3, r.get("fba_sku") or display_sku(r, "miami_reorder"))
+        ws.cell(row_n, 3, r["fba_sku"] or r["sku"])
         ws.cell(row_n, 4, r["asin"])
         ws.cell(row_n, 5, r["parent"] or "")
         ws.cell(row_n, 6, r["category"] or "")
@@ -869,14 +856,15 @@ def build_miami_xlsx(rows, output_path):
         ws.cell(row_n, 11, days_val)            # Computed/displayed days
         ws.cell(row_n, 12, is_oos)              # Out of stock flag
         ws.cell(row_n, 13, round(r["velocity"], 2))
-        ws.cell(row_n, 14, int(r["min_level"]))
-        ws.cell(row_n, 15, r["status"])
-        ws.cell(row_n, 16, q)
+        ws.cell(row_n, 14, int(r["t30"]))       # Raw 30-day units shipped
+        ws.cell(row_n, 15, int(r["min_level"]))
+        ws.cell(row_n, 16, r["status"])
+        ws.cell(row_n, 17, q)
         row_n += 1
         section_totals[section] += q
         section_counts[section] += 1
 
-    widths = [13, 27, 22, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 10, 8, 8]
+    widths = [13, 27, 22, 13, 19, 9, 10, 10, 10, 11, 12, 12, 16, 13, 10, 8, 8]
     for c, w in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(c)].width = w
     ws.freeze_panes = "A2"
