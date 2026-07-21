@@ -320,6 +320,142 @@ def load_combined(catalog_path, fba_path):
 
 
 # ============================================================================
+# Velocity lock + daily refresh
+#
+# The weekly FBA file is the ONLY thing that carries sales history (t7/t30/
+# t60/t90) — that's what velocity is computed from. Helium10's daily snapshot
+# gives us live Available + Inbound but NO sales history. So:
+#
+#   - When a weekly FBA file is processed, we freeze the demand numbers
+#     (velocity, sales-30d, min level, reserved) into a velocity_lock.json,
+#     keyed by ASIN.
+#   - Each day, a scheduled task pulls fresh Available + Inbound from Helium10
+#     and re-runs the report with the FROZEN demand numbers from the lock.
+#
+# Velocity never recalibrates on its own — only the next FBA upload re-locks
+# it. This trades a little velocity freshness for a daily-current view of
+# actual inventory movement and days-of-cover.
+# ============================================================================
+
+def write_velocity_lock(rows, output_path, snapshot_label=""):
+    """
+    Freeze per-ASIN demand numbers from a full FBA computation into JSON.
+    Written by the weekly flow; read by the daily flow.
+    """
+    import json
+
+    by_asin = {}
+    for r in rows:
+        asin = r.get("asin")
+        if not asin:
+            continue
+        by_asin[asin] = {
+            "sku": r.get("sku"),
+            "velocity": round(float(r.get("velocity") or 0), 4),
+            "t30": int(r.get("t30") or 0),
+            "min_level": int(r.get("min_level") or 0),
+            "reserved": int(r.get("reserved") or 0),
+            "days": int(r.get("days") or 0),  # Amazon days-of-supply (reference)
+            "in_fba": bool(r.get("in_fba")),
+        }
+    payload = {"snapshot": snapshot_label, "by_asin": by_asin}
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=0)
+    return output_path
+
+
+def load_fresh_inventory(inventory_path):
+    """
+    Read a normalized daily inventory snapshot (from Helium10), keyed by ASIN.
+
+    Accepts JSON in either shape:
+      {"by_asin": {"B0...": {"available": 10, "inbound": 5, "reserved": 2}}}
+      {"B0...": {"available": 10, "inbound": 5}}
+    'reserved' is optional per row; when absent the lock's frozen reserved is
+    used instead. Sibling SKUs must already be summed into one row per ASIN.
+    """
+    import json
+
+    with open(inventory_path, "r", encoding="utf-8-sig") as f:
+        data = json.load(f)
+    if isinstance(data, dict) and "by_asin" in data:
+        data = data["by_asin"]
+
+    def num(v):
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return 0.0
+
+    out = {}
+    for asin, row in (data or {}).items():
+        out[asin] = {
+            "available": num(row.get("available")),
+            "inbound": num(row.get("inbound", row.get("inbound_quantity"))),
+            "reserved": (num(row["reserved"]) if "reserved" in row and row["reserved"] is not None else None),
+        }
+    return out
+
+
+def load_daily_combined(catalog_path, lock_path, inventory_path):
+    """
+    Build computed rows for the DAILY refresh: fresh Available + Inbound from
+    Helium10, everything else (velocity, sales-30d, min, reserved, Amazon days)
+    frozen from the velocity lock. Same row shape as load_combined, so the
+    existing build_miami_xlsx / build_china_xlsx work unchanged.
+    """
+    import json
+
+    catalog_list = load_catalog(catalog_path)
+    with open(lock_path, "r", encoding="utf-8-sig") as f:
+        lock = json.load(f)
+    lock_by_asin = lock.get("by_asin", lock) if isinstance(lock, dict) else {}
+    fresh = load_fresh_inventory(inventory_path)
+
+    out = []
+    for item in catalog_list:
+        asin = item["asin"]
+        locked = lock_by_asin.get(asin) or {}
+        inv = fresh.get(asin)
+
+        velocity = float(locked.get("velocity") or 0)
+        t30 = int(locked.get("t30") or 0)
+        min_level = float(locked.get("min_level") or 0)
+        amazon_days = float(locked.get("days") or 0)
+        locked_reserved = float(locked.get("reserved") or 0)
+
+        if inv is not None:
+            available = inv["available"]
+            inbound = inv["inbound"]
+            # Use fresh reserved if Helium10 provided it, else the frozen value.
+            reserved = inv["reserved"] if inv["reserved"] is not None else locked_reserved
+            in_fba = True
+        else:
+            # ASIN not in today's Helium10 snapshot: treat as no shelf stock,
+            # keep frozen demand so revival logic can still fire.
+            available = 0
+            inbound = 0
+            reserved = locked_reserved
+            in_fba = bool(locked.get("in_fba"))
+
+        pipeline = available + inbound + reserved
+        status = pipeline >= min_level
+        out.append({
+            **item,
+            "available": available,
+            "inbound": inbound,
+            "reserved": reserved,
+            "days": amazon_days,
+            "velocity": velocity,
+            "min_level": min_level,
+            "t30": t30,
+            "status": status,
+            "in_fba": in_fba,
+        })
+    return out
+
+
+# ============================================================================
 # Calculations
 # ============================================================================
 
@@ -911,10 +1047,28 @@ def build_miami_xlsx(rows, output_path):
 # ============================================================================
 
 def main():
+    # ---- Daily refresh: fresh Helium10 inventory + frozen velocity lock ----
+    # Usage: python reorder.py daily <catalog.xlsx> <lock.json> <inventory.json>
+    #                                <miami_out.xlsx> <china_out.xlsx>
+    if len(sys.argv) >= 2 and sys.argv[1].lower() == "daily":
+        if len(sys.argv) < 7:
+            print("Usage: python reorder.py daily <catalog.xlsx> <lock.json> "
+                  "<inventory.json> <miami_out.xlsx> <china_out.xlsx>")
+            sys.exit(1)
+        catalog_path, lock_path, inventory_path = sys.argv[2], sys.argv[3], sys.argv[4]
+        miami_out, china_out = sys.argv[5], sys.argv[6]
+        rows = load_daily_combined(catalog_path, lock_path, inventory_path)
+        _, s_m = build_miami_xlsx(rows, miami_out)
+        print(s_m)
+        print("\n" + "=" * 80 + "\n")
+        _, s_c = build_china_xlsx(rows, china_out)
+        print(s_c)
+        return
+
     if len(sys.argv) < 4:
         print("Usage: python reorder.py <catalog.xlsx> <fba_inventory.xlsx> "
-              "<miami|miami-xlsx|china|china-xlsx|monthly|fba|factory|pull|china-monthly|all> "
-              "[output_path]")
+              "<miami|miami-xlsx|china|china-xlsx|monthly|fba|factory|pull|china-monthly|"
+              "velocity-lock|all> [output_path]")
         sys.exit(1)
 
     catalog_path = sys.argv[1]
@@ -948,6 +1102,12 @@ def main():
         out = output_path or "/mnt/user-data/outputs/REORDER_CHINA.xlsx"
         _, s = build_china_monthly_xlsx(rows, out)
         print(s)
+    elif mode == "velocity-lock":
+        out = output_path or "/mnt/user-data/outputs/velocity_lock.json"
+        write_velocity_lock(rows, out)
+        locked = sum(1 for r in rows if r.get("in_fba"))
+        print(f"# Velocity lock written\n  {locked} ASINs with live FBA data, "
+              f"{len(rows)} catalog rows total\n  File: {out}")
     elif mode == "all":
         print(build_miami_text(rows))
         print("\n" + "=" * 80 + "\n")
