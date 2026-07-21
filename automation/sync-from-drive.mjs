@@ -29,6 +29,8 @@ const OUT_CHINA     = process.env.OUT_CHINA     || '1MBGCoI4yTltZdRlnOHcpl9pg5Za
 const PYTHON        = process.env.PYTHON        || 'python3';
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const JSON_MIME = 'application/json';
+const LOCK_NAME = 'velocity_lock.json';   // lives in OUT_MIAMI, read by the daily job
 
 function authDrive() {
   const keyJson = process.env.GDRIVE_SA_KEY;
@@ -75,6 +77,36 @@ async function uploadFile(drive, { folderId, name, path }) {
     fields: 'id,name,modifiedTime',
   });
   return res.data;
+}
+
+// Upload the velocity lock, replacing the existing one in place so the daily
+// job always finds it at a stable (folder, name). The lock is what freezes
+// velocity: it is written ONLY here (weekly FBA processing), never by the
+// daily Helium10 refresh.
+async function uploadOrReplaceLock(drive, { folderId, name, path, mimeType }) {
+  const listed = await drive.files.list({
+    q: `'${folderId}' in parents and name = '${name}' and trashed = false`,
+    fields: 'files(id,name)',
+    supportsAllDrives: true,
+    includeItemsFromAllDrives: true,
+  });
+  const existing = (listed.data.files || [])[0];
+  if (existing) {
+    const res = await drive.files.update({
+      fileId: existing.id,
+      media: { mimeType, body: createReadStream(path) },
+      supportsAllDrives: true,
+      fields: 'id,name,modifiedTime',
+    });
+    return { ...res.data, replaced: true };
+  }
+  const res = await drive.files.create({
+    requestBody: { name, parents: [folderId], mimeType },
+    media: { mimeType, body: createReadStream(path) },
+    supportsAllDrives: true,
+    fields: 'id,name,modifiedTime',
+  });
+  return { ...res.data, replaced: false };
 }
 
 // Read the snapshot date from the FBA csv. The file is the source of truth — we
@@ -175,11 +207,15 @@ async function main() {
   const reorderPy = resolve(here, 'reorder.py');
   const miamiOut = join(workDir, `Reorder_Miami_${dateLabel}.xlsx`);
   const chinaOut = join(workDir, `Reorder_China_${dateLabel}.xlsx`);
+  const lockOut  = join(workDir, LOCK_NAME);
 
   execFileSync(PYTHON, [reorderPy, catalog, inputCsv, 'miami-xlsx', miamiOut], { stdio: 'inherit' });
   execFileSync(PYTHON, [reorderPy, catalog, inputCsv, 'china-xlsx', chinaOut], { stdio: 'inherit' });
+  // Freeze velocity for the daily Helium10 refresh. This is the ONLY place the
+  // lock is (re)written — a full recount happens only on FBA upload.
+  execFileSync(PYTHON, [reorderPy, catalog, inputCsv, 'velocity-lock', lockOut], { stdio: 'inherit' });
 
-  if (!existsSync(miamiOut) || !existsSync(chinaOut)) {
+  if (!existsSync(miamiOut) || !existsSync(chinaOut) || !existsSync(lockOut)) {
     throw new Error('Skill did not produce expected output files.');
   }
 
@@ -197,6 +233,14 @@ async function main() {
     path: chinaOut,
   });
   console.log(`Uploaded China → ${upChina.name} (${upChina.id})`);
+
+  const upLock = await uploadOrReplaceLock(drive, {
+    folderId: OUT_MIAMI,
+    name: LOCK_NAME,
+    path: lockOut,
+    mimeType: JSON_MIME,
+  });
+  console.log(`${upLock.replaced ? 'Replaced' : 'Created'} velocity lock → ${upLock.name} (${upLock.id})`);
 
   console.log('Done.');
 }
