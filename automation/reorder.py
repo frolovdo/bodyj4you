@@ -489,13 +489,41 @@ def monthly_qty(row):
     return roundup_monthly(row["velocity"] * row["monthly_days"])
 
 
+def display_days_value(row):
+    """
+    OUR days of coverage — the single source of truth for "days" everywhere in
+    the report (classification, sorting, flags, display).
+
+      velocity > 0             -> (Available + Inbound) / velocity
+                                  (inbound counts, so 0 on-hand with units
+                                  incoming shows real coverage, not a false 0)
+      velocity == 0, stock > 0 -> 999  (indefinite coverage, nothing selling)
+      velocity == 0, no stock  -> 0
+
+    Amazon's raw days-of-supply is NEVER used here, not even as a fallback. It
+    is unreliable near FBA minimum levels and is reference-only.
+    """
+    if row["velocity"] > 0:
+        return round((row["available"] + row["inbound"]) / row["velocity"], 1)
+    if row["available"] > 0:
+        return 999
+    return 0
+
+
+def is_out_of_stock(row):
+    """On-hand only. Independent of Display Days, so an OOS row with inbound
+    still reports its true inbound coverage."""
+    return row["available"] <= 0
+
+
 def classify_miami_section(row):
     """URGENT/PLANNED/UV/STEEL for Miami weekly list."""
     if row["parent"] in UV_PARENTS:
         return "UV"
     if row["parent"] in STEEL_PARENTS:
         return "STEEL"
-    if row["days"] < URGENT_DAYS_THRESHOLD:
+    # URGENT is decided by OUR computed coverage, never Amazon Days.
+    if display_days_value(row) < URGENT_DAYS_THRESHOLD:
         return "URGENT"
     return "PLANNED"
 
@@ -521,7 +549,7 @@ def format_tsv_row(row, qty, context):
     return (
         f"{display_sku(row, context)}\t{row['asin']}\t{row['parent']}\t{row['category']}\t"
         f"{int(row['available'])}\t{int(row['inbound'])}\t{int(row['reserved'])}\t"
-        f"{int(row['days'])}\t{row['velocity']:.2f}\t{int(row['min_level'])}\t"
+        f"{display_days_value(row)}\t{row['velocity']:.2f}\t{int(row['min_level'])}\t"
         f"{row['status']}\t{qty}"
     )
 
@@ -611,13 +639,9 @@ def build_china_xlsx(rows, output_path):
     ws.title = "China Reorder"
 
     def display_days(r):
-        # OUT OF STOCK flag reflects on-hand only (Available == 0).
-        is_oos = r["available"] <= 0
-        # Our days of coverage: (Available + Inbound) / velocity whenever velocity
-        # is known. Fall back to Amazon's raw days-of-supply only when velocity = 0.
-        if r["velocity"] > 0:
-            return round((r["available"] + r["inbound"]) / r["velocity"], 1), is_oos
-        return r["days"], is_oos
+        # Single source of truth — see display_days_value(). Amazon Days is
+        # written to its own column as reference only, never used here.
+        return display_days_value(r), is_out_of_stock(r)
 
     headers = [
         "Section", "SKU", "FBA SKU", "ASIN", "Parent ASIN", "Category",
@@ -946,14 +970,10 @@ def build_miami_xlsx(rows, output_path):
     ws = wb.active
     ws.title = "Miami Reorder"
 
-    # Display Days = our days of coverage: (Available + Inbound) / velocity when
-    # velocity > 0; fall back to Amazon's raw days-of-supply only when velocity = 0.
-    # OUT OF STOCK flag = Available == 0 (on-hand only).
+    # Single source of truth — see display_days_value(). Amazon Days is written
+    # to its own column as reference only, never used here.
     def display_days(r):
-        is_oos = r["available"] <= 0
-        if r["velocity"] > 0:
-            return round((r["available"] + r["inbound"]) / r["velocity"], 1), is_oos
-        return r["days"], is_oos
+        return display_days_value(r), is_out_of_stock(r)
 
     headers = [
         "Section", "SKU", "FBA SKU", "ASIN", "Parent ASIN", "Category",
