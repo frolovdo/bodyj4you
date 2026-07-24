@@ -29,6 +29,12 @@ URGENT_DAYS_THRESHOLD = 30  # Days < 30 = URGENT
 COVER_DAYS = 30  # Weekly ship target: 30 days at FBA before lead time buffer
 REORDER_HORIZON_DAYS = 45  # Default monthly horizon
 
+# Canonical lead time by Group, used to fill a blank Lead Time Override only
+# when the catalog itself has nothing to learn from (e.g. an export wiped the
+# whole column). Group 1 = Miami-produced (7), Group 2 = kits/bundles (10),
+# Group 3 = China direct (30). Explicit catalog values always override this.
+CANONICAL_LEAD_BY_GROUP = {1: 7, 2: 10, 3: 30}
+
 # Miami section parent SKUs
 UV_PARENTS = {"GK0486-Master"}
 STEEL_PARENTS = {"GK0541-Master", "GK0715-Master"}
@@ -123,7 +129,65 @@ def load_catalog(catalog_path):
             "monthly_days": ws.cell(r, headers["Monthly Days of Cover"]).value or 45,
             "bom_str": ws.cell(r, headers["BOM Contributes To"]).value or "",
         })
+    infer_missing_lead_times(catalog)
     catalog.sort(key=lambda x: x["order"])
+    return catalog
+
+
+def infer_missing_lead_times(catalog):
+    """
+    Fill any blank Lead Time Override from the pattern the catalog already
+    follows, so a SKU with no explicit lead time gets a sensible value instead
+    of a flat warehouse default. This runs on every load, so it doesn't matter
+    whether an uploaded catalog populated the column — the pipeline always ends
+    up with a lead time per SKU.
+
+    Resolution order for a blank lead time:
+      1. most common lead time among SKUs sharing its (Group, Category)
+      2. most common among its Group
+      3. canonical lead by Group (CANONICAL_LEAD_BY_GROUP) — the layer that
+         still works when an export wiped the WHOLE column, leaving nothing to
+         learn from
+      4. warehouse default (China 30, Miami 10)
+    Explicit catalog values always win over all of this. Mutates in place.
+    """
+    from collections import Counter
+
+    def is_blank(v):
+        return v in (None, "")
+
+    by_gc = {}
+    by_g = {}
+    for it in catalog:
+        if is_blank(it["lead_time"]):
+            continue
+        try:
+            lt = int(it["lead_time"])
+        except (TypeError, ValueError):
+            continue
+        by_gc.setdefault((it["group"], it["category"]), Counter())[lt] += 1
+        by_g.setdefault(it["group"], Counter())[lt] += 1
+
+    def mode(counter):
+        return counter.most_common(1)[0][0] if counter else None
+
+    def canon(group):
+        try:
+            return CANONICAL_LEAD_BY_GROUP.get(int(group))
+        except (TypeError, ValueError):
+            return None
+
+    for it in catalog:
+        if not is_blank(it["lead_time"]):
+            continue
+        val = mode(by_gc.get((it["group"], it["category"])))
+        if val is None:
+            val = mode(by_g.get(it["group"]))
+        if val is None:
+            val = canon(it["group"])
+        if val is None:
+            val = 30 if it["warehouse"] == "China" else 10
+        it["lead_time"] = val
     return catalog
 
 
