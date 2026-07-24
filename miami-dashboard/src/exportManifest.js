@@ -37,10 +37,14 @@ export async function buildManifestWorkbook(cart) {
   // Row 6 (1-indexed) holds the headers "Merchant SKU" / "Quantity".
   // We write our data starting at row 7 — origin 'A7'.
   const dataRows = cart.map((item) => {
-    // Prefer the catalog mapping. Fall back to cart's fbaSku, then displaySku.
+    // item.fbaSku is the xlsx "FBA SKU" column — the clean Amazon merchant SKU
+    // for every row (e.g. "GK0715_FBA"), so prefer it. The displayed SKU can be
+    // annotated for readability (STEEL shows "GK0715_FBA (GK0078)") and must
+    // NEVER reach the manifest. Catalog lookup / displaySku are fallbacks only
+    // for older snapshots that pre-date the FBA SKU column.
     const merchantSku =
-      resolveFbaSku(item.displaySku, catalogMap) ||
       item.fbaSku ||
+      resolveFbaSku(item.displaySku, catalogMap) ||
       item.displaySku;
     return [merchantSku, Number(item.quantity) || 0];
   });

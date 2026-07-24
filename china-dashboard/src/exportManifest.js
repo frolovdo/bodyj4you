@@ -37,9 +37,12 @@ export async function buildManifestWorkbook(cart) {
   // mapping resolved at export time over the cart's stored fbaSku, so a
   // fresh deploy of catalog.xlsx flows through immediately.
   const dataRows = cart.map((item) => {
+    // Prefer item.fbaSku — the xlsx "FBA SKU" column, the clean Amazon merchant
+    // SKU for every row. The displayed SKU may be annotated for readability and
+    // must never reach the manifest. Catalog lookup / displaySku are fallbacks.
     const merchantSku =
-      resolveFbaSku(item.displaySku, catalogMap) ||
       item.fbaSku ||
+      resolveFbaSku(item.displaySku, catalogMap) ||
       item.displaySku;
     return [merchantSku, Number(item.quantity) || 0];
   });

@@ -592,13 +592,32 @@ def classify_miami_section(row):
     return "PLANNED"
 
 
+def steel_core_gauge(row):
+    """
+    For a STEEL kit row, the core gauge SKU the catalog annotates inside the
+    regular SKU, e.g. 'GK0715 (GK0078)' -> 'GK0078'. None if not annotated.
+    """
+    s = str(row.get("sku") or "")
+    if "(" in s and ")" in s:
+        return s[s.index("(") + 1:s.index(")")].strip() or None
+    return None
+
+
 def display_sku(row, context):
     """
-    miami_reorder / fba_shipment: STEEL uses FBA kit SKU, else regular SKU.
-    china_reorder / monthly: always regular SKU.
+    miami_reorder: STEEL shows the FBA kit SKU with the core gauge appended for
+                   readability, e.g. 'GK0715_FBA (GK0078)'. Everything else the
+                   regular SKU. This is a DISPLAY value only.
+    fba_shipment:  STEEL uses the clean FBA kit SKU (Amazon needs the exact
+                   merchant SKU — never the annotated form). Else regular SKU.
+    china_reorder / monthly: always the regular SKU.
     """
-    if context in ("miami_reorder", "fba_shipment") and row["parent"] in STEEL_PARENTS:
-        return row["fba_sku"]
+    if row["parent"] in STEEL_PARENTS:
+        if context == "miami_reorder":
+            core = steel_core_gauge(row)
+            return f"{row['fba_sku']} ({core})" if core else row["fba_sku"]
+        if context == "fba_shipment":
+            return row["fba_sku"]
     return row["sku"]
 
 
