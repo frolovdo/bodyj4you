@@ -106,7 +106,11 @@ tbody tr.data-row:hover td.blk-inv     { background: #d1fae5; }
 tbody tr.data-row:hover td.blk-demand  { background: #fee2e2; }
 tbody tr.data-row:hover td.blk-meta    { background: #f3f4f6; }
 tbody tr.data-row:hover td.blk-action  { background: #fde68a; }
-tr.parent-boundary td { border-top: 1px solid #d1d5db; }
+/* Variation group divider — rows sharing a Parent ASIN are variations of one
+   product and sit flush together; a new parent opens a clear break. Neutral
+   slate only (green/red/amber all carry meaning elsewhere in this table): a
+   chunky trough separates groups, far heavier than the 1px intra-group lines. */
+tr.parent-boundary td { border-top: 6px solid #c7cfdb; }
 
 /* OOS row accent — pale red wash + 3px left stripe via :first-child border */
 tr.data-row.row-oos td.blk-product { background: #fef2f2; box-shadow: inset 3px 0 0 #dc2626; }
