@@ -1,0 +1,16 @@
+# Netlify build settings for the BodyJ4You Return Dashboard.
+# In the Netlify UI, set this site's "Base directory" to: bodyj4you-return-dashboard
+# (publish path below is relative to that base directory).
+[build]
+  command = "npm run build"
+  publish = "dist"
+  # Skip the build when nothing inside this subfolder changed (e.g. when a
+  # commit only touched a sibling dashboard or the repo root). Saves Netlify
+  # compute minutes. https://docs.netlify.com/configure-builds/ignore-builds/
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
+
+# SPA fallback so deep links resolve to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
