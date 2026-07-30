@@ -40,8 +40,7 @@ export default function App() {
       .catch((e) => setError(e.message));
   }, []);
 
-  const toggle = (fam) =>
-    setExpanded((e) => ({ ...e, [fam]: e[fam] === undefined ? false : !e[fam] }));
+  const toggle = (fam) => setExpanded((e) => ({ ...e, [fam]: !e[fam] }));
 
   const onAck = (family) => {
     const note = window.prompt('Optional note (what are you doing about it?)', '') ?? '';
@@ -50,7 +49,11 @@ export default function App() {
   const onUnack = (family) => setAcks(clearAck(family));
 
   const onJump = (family) => {
-    document.getElementById(`fam-${family}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Clicking an alert card opens that family's variations and scrolls to it.
+    setExpanded((e) => ({ ...e, [family]: true }));
+    setTimeout(() => {
+      document.getElementById(`fam-${family}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   };
 
   const parents = useMemo(() => (data ? data.parents : []), [data]);

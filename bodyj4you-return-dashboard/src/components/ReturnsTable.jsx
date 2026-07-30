@@ -29,11 +29,11 @@ function ChildRow({ c, cat, isDriver }) {
         <AsinLink asin={c.asin} />
         {isDriver && <span className="driver-badge">Driver</span>}
       </div>
-      <div className="col-num">{usd0(c.s7)}</div>
-      <div className="col-num">{usd0(c.r7)}</div>
       <div className="col-rate">
         <RateCompare rate7={c.rate7} rate30={c.rate30} delta={c.delta} />
       </div>
+      <div className="col-num">{usd0(c.s7)}</div>
+      <div className="col-num">{usd0(c.r7)}</div>
     </div>
   );
 }
@@ -65,11 +65,11 @@ function ParentRow({ p, expanded, onToggle }) {
             </span>
           </span>
         </div>
+        <div className="col-rate">
+          <RateCompare rate7={p.rate7} rate30={p.rate30} delta={p.delta} tier={p.tier} big />
+        </div>
         <div className="col-num strong">{usd0(p.s7)}</div>
         <div className="col-num">{usd0(p.r7)}</div>
-        <div className="col-rate">
-          <RateCompare rate7={p.rate7} rate30={p.rate30} delta={p.delta} tier={p.tier} />
-        </div>
       </div>
       {expanded && hasChildren && (
         <div className="children">
@@ -86,15 +86,15 @@ function Header() {
   return (
     <div className="row head-row">
       <div className="col-product">Product</div>
+      <div className="col-rate">Refund rate<span className="col-sub">last 7d vs 30d avg</span></div>
       <div className="col-num">Sales<span className="col-sub">7d</span></div>
       <div className="col-num">Refunds<span className="col-sub">7d</span></div>
-      <div className="col-rate">Refund rate<span className="col-sub">7d vs 30d avg</span></div>
     </div>
   );
 }
 
-// Alerted families first (auto-expanded, driver tinted). Healthy families sit
-// behind one summary line, collapsed by default — problems only, per the CEO.
+// Alerted families first (driver tinted when opened). All variations are
+// collapsed by default; healthy families sit behind one summary line.
 export default function ReturnsTable({ parents, expanded, toggle }) {
   const [showHealthy, setShowHealthy] = useState(false);
   const alerted = parents.filter((p) => p.tier);
@@ -104,7 +104,7 @@ export default function ReturnsTable({ parents, expanded, toggle }) {
     <div className="table">
       <Header />
       {alerted.map((p) => (
-        <ParentRow key={p.family} p={p} expanded={expanded[p.family] !== false} onToggle={() => toggle(p.family)} />
+        <ParentRow key={p.family} p={p} expanded={!!expanded[p.family]} onToggle={() => toggle(p.family)} />
       ))}
       {healthy.length > 0 && (
         <button className="healthy-toggle" onClick={() => setShowHealthy((s) => !s)}>
