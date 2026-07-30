@@ -3,6 +3,7 @@ import Kpis from './components/Kpis.jsx';
 import AlertStrip from './components/AlertStrip.jsx';
 import ReturnsTable from './components/ReturnsTable.jsx';
 import { usd0, shortDate, loadAcks, saveAck, clearAck } from './lib/format.js';
+import { External } from './components/icons.jsx';
 
 const DATA_URL = `${import.meta.env.BASE_URL}data/returns.json`;
 
@@ -72,9 +73,29 @@ export default function App() {
           <span className="brand-sep">/</span>
           <span className="brand-app">Return Dashboard</span>
         </div>
-        <div className="freshness">
-          <span className={`dot-live ${liveAlerts.length ? 'dot-bad' : ''}`} />
-          Helium 10 · {new Date(data.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+        <div className="topbar-right">
+          <nav className="sc-links" aria-label="Dig deeper in Seller Central">
+            <a
+              className="sc-link"
+              href="https://sellercentral.amazon.com/voice-of-the-customer"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Voice of Customer <External width={9} height={9} />
+            </a>
+            <a
+              className="sc-link"
+              href="https://sellercentral.amazon.com/rr-central/return-insights"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Return Insights <External width={9} height={9} />
+            </a>
+          </nav>
+          <div className="freshness">
+            <span className={`dot-live ${liveAlerts.length ? 'dot-bad' : ''}`} />
+            Helium 10 · {new Date(data.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          </div>
         </div>
       </header>
 
