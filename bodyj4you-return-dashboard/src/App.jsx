@@ -10,7 +10,7 @@ export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  const [sort, setSort] = useState('rate7');
+  const [sort, setSort] = useState('s7');
   const [cat, setCat] = useState('ALL');
   const [flaggedOnly, setFlaggedOnly] = useState(false);
   const [query, setQuery] = useState('');
@@ -44,7 +44,7 @@ export default function App() {
       }
       return true;
     });
-    const val = (p) => (sort === 'delta' ? p.delta : sort === 'r7' ? p.r7 : p.rate7);
+    const val = (p) => (sort === 'delta' ? p.delta : sort === 'rate30' ? p.rate30 : p.s7);
     rows = [...rows].sort((a, b) => {
       const av = val(a), bv = val(b);
       if (av == null) return 1;
@@ -108,9 +108,10 @@ export default function App() {
           <div>
             <h1 className="page-title">Returns &amp; Refunds</h1>
             <p className="page-sub">
-              Refund rate by parent — last week ({shortDate(w.d7.from)}–{shortDate(w.d7.to)}) vs the
-              30-day average ({shortDate(w.d30.from)}–{shortDate(w.d30.to)}). Amazon {data.marketplace}.
-              Expand any product to see each variation.
+              Top sellers first by last-week revenue ({shortDate(w.d7.from)}–{shortDate(w.d7.to)}).
+              Sales &amp; refunds are last 7 days; refund rate is the 30-day average
+              ({shortDate(w.d30.from)}–{shortDate(w.d30.to)}). Amazon {data.marketplace}. Expand a
+              product to see each selling variation.
             </p>
           </div>
           <div className="freshness">
@@ -136,11 +137,13 @@ export default function App() {
         <ReturnsTable parents={parents} expanded={effExpanded} toggle={toggle} />
 
         <footer className="foot">
-          Refund rate = refunded $ ÷ sales $. Only parents with ≥{data.thresholds.minUnits30d} units
-          over the last 30 days are shown. A product is flagged when its last-week rate is ≥
-          {data.thresholds.flagRate7d}% and up ≥{data.thresholds.flagDeltaPp} pp vs its 30-day average.
-          Source: Helium 10 · Amazon Profits (P&L). Units-returned is excluded (Amazon FBA
-          return-to-stock lag makes it unreliable); refund dollars are the ground truth.
+          Refund rate = refunded $ ÷ sales $ (30-day average). Only families with ≥ $
+          {data.thresholds.minSales7d.toLocaleString()} in last-week sales are shown, and only
+          variations that sold last week — everything not selling is hidden to keep the list
+          actionable. Flagged = 30-day rate ≥ {data.thresholds.flagRate30d}% and up ≥
+          {data.thresholds.flagDeltaPp} pp last week. ASINs link to Amazon. Source: Helium 10 ·
+          Amazon Profits (P&L); units-returned is excluded (FBA return-to-stock lag), refund
+          dollars are the ground truth.
         </footer>
       </main>
     </div>

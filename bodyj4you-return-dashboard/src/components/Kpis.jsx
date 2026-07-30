@@ -15,13 +15,13 @@ export default function Kpis({ k }) {
   return (
     <div className="kpi-row">
       <Kpi
-        label="Refund rate · last 7 days"
-        value={pct(k.blendedRate7)}
-        sub={`${pp(k.blendedDelta)} vs 30-day avg (${pct(k.blendedRate30)})`}
+        label="Refund rate · 30-day avg"
+        value={pct(k.blendedRate30)}
+        sub={`last week ${pct(k.blendedRate7)} (${pp(k.blendedDelta)})`}
         subDir={dir}
       />
-      <Kpi label="Refunds · last 7 days" value={usd0(k.refund7)} sub={`of ${usd0(k.sales7)} sales`} />
-      <Kpi label="Parents tracked" value={int(k.parents)} sub="with significant sales" />
+      <Kpi label="Sales · last 7 days" value={usd0(k.sales7)} sub={`${usd0(k.refund7)} refunded`} />
+      <Kpi label="Products tracked" value={int(k.parents)} sub="top sellers only" />
       <Kpi
         label="Flagged"
         value={int(k.flagged)}
