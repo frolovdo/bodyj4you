@@ -60,6 +60,15 @@ button { font-family: inherit; }
 .brand-mark { font-weight: 600; letter-spacing: -0.01em; font-size: 14px; }
 .brand-sep { color: var(--text-faint); }
 .brand-app { color: var(--text-soft); font-size: 13px; }
+.topbar-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.sc-links { display: inline-flex; gap: 6px; }
+.sc-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11.5px; font-weight: 500; color: var(--text-soft); text-decoration: none;
+  padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg-elev);
+}
+.sc-link:hover { color: var(--text); border-color: var(--text-faint); background: var(--bg-hover); }
+.sc-link svg { opacity: 0.55; }
 .freshness {
   display: inline-flex; align-items: center; gap: 7px;
   font-family: var(--t-mono); font-size: 10.5px; color: var(--text-mute);
