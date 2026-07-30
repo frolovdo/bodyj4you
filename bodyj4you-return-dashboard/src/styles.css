@@ -128,11 +128,11 @@ body {
 }
 .row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) 78px 92px 96px 148px 76px 118px;
+  grid-template-columns: minmax(260px, 1fr) 116px 116px 150px 120px;
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  min-width: 780px;
+  min-width: 760px;
 }
 .head-row {
   height: 40px; border-bottom: 1px solid var(--border); background: #fbfbfc;
@@ -181,6 +181,15 @@ body {
   border: 1px solid var(--border); border-radius: 5px; padding: 0 5px; white-space: nowrap;
 }
 .sku-chip-sm { font-size: 10px; padding: 0 4px; }
+.thumb-sm { width: 26px; height: 26px; border-radius: 6px; font-size: 9px; }
+
+.asin-link {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px; color: var(--accent); text-decoration: none;
+  border-bottom: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+  white-space: nowrap;
+}
+.asin-link:hover { border-bottom-style: solid; }
 .product-name {
   font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 340px;
@@ -201,9 +210,9 @@ body {
 
 /* child rows */
 .children { background: #fcfcfd; }
-.child-row { min-height: 40px; border-top: 1px dashed var(--border); }
-.child-product { padding-left: 22px; }
-.child-tick { width: 6px; height: 6px; border-left: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); margin-right: 8px; flex: none; }
+.child-row { min-height: 42px; border-top: 1px dashed var(--border); }
+.child-product { padding-left: 16px; gap: 8px; }
+.child-tick { width: 6px; height: 6px; border-left: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong); flex: none; }
 .child-label { font-size: 12.5px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .child-asin { font-size: 10.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 

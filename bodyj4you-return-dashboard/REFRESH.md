@@ -65,9 +65,10 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    cd bodyj4you-return-dashboard && python3 scripts/build_catalog.py   # -> data/asin_map.json
    ```
    If the ASIN introduces a **new family**, add a `families` entry to
-   `data/parent_meta.json` (`name`, `image` = Amazon media id). Optionally add a
-   short `data/variant_labels.json` entry for the child. Both are display-only;
-   missing entries fall back to the SKU.
+   `data/parent_meta.json` (`name`, `image` = Amazon media id). Also add the
+   ASIN's `image_url` media id to `data/asin_images.json` (the per-variation
+   thumbnail). Both are display-only; missing entries fall back to a category
+   tile / the SKU.
 
 5. **Rebuild** the dashboard JSON:
    ```bash

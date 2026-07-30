@@ -12,17 +12,18 @@ nothing is run by hand.
 
 ## What the Returns & Refunds view shows
 
-- **Grouped by parent, expandable to each child variation.** Rows are parent
-  ASINs; click one to reveal every variation (size, scent, color, gauge) beneath
-  it with its own numbers.
-- **Last week vs 30-day average.** The headline is each parent's refund rate for
-  the last 7 days, with the trend (Δ in percentage points) against its own
-  30-day average.
-- **Only products with significant sales.** Parents below `minUnits30d`
-  (default **50 units / 30 days**) are hidden so low-volume noise never floats to
-  the top.
-- **Flagging.** A parent is flagged when last-week refund rate ≥ 5% **and** it
-  rose ≥ 1 pp vs its 30-day average **and** it refunded ≥ $25 last week.
+- **Grouped by catalog family, expandable to each variation.** Each parent shows
+  its title, parent SKU (catalog master) and flagship ASIN; expand to reveal
+  every variation as **SKU + ASIN** (ASINs link to Amazon) with its own numbers.
+- **Revenue-ordered.** Parents and variations are sorted by last-week sales,
+  biggest first — regardless of refund rate.
+- **Columns.** Sales = last 7 days, Refunds = last 7 days, **Refund rate =
+  30-day average**, plus the trend (Δ pp, last week vs the 30-day average).
+- **Substantial sellers only.** A family is hidden unless it did ≥ `minSales7d`
+  (default **$1,500**) in last-week sales, and any variation that didn't sell
+  last week is hidden — so the list stays short and actionable.
+- **Flagging.** A family is flagged when its 30-day rate ≥ 5% **and** it rose
+  ≥ 1 pp last week **and** it refunded ≥ $25 last week.
 
 ### The metric — why refund $, not "units returned"
 
@@ -59,9 +60,9 @@ merges but Amazon splits (e.g. both Tea Tree parent ASINs → `PD-TEATREE-MCT`).
 - **`data/asin_map.json`** — generated from `automation/catalog.xlsx` by
   `scripts/build_catalog.py`: every ASIN → `{sku, family, cat, order}`. The
   single source of truth for grouping. Regenerate when the catalog changes.
-- **`data/parent_meta.json`** — display name + main image (Amazon media id) per
-  family. **`data/variant_labels.json`** — short label per child ASIN. Both are
-  display-only; anything missing falls back to the SKU.
+- **`data/parent_meta.json`** — title + main image (Amazon media id) per family.
+  **`data/asin_images.json`** — per-variation thumbnail (media id) per child
+  ASIN. Display-only; anything missing falls back to a category tile.
 - **`data/raw/pnl_30d.json`, `pnl_7d.json`** — ASIN-level P&L pulled from
   Helium 10 (`get_product_profit_and_loss_breakdown`, `product_level=asin`, US)
   for the two windows. `u`=units, `s`=sales $, `r`=refunded $ (abs).

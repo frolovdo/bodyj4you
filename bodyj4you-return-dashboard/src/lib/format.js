@@ -13,6 +13,8 @@ export const pct = (n) => (n == null ? '—' : `${n.toFixed(2)}%`);
 export const pp = (n) =>
   n == null ? '—' : `${n > 0 ? '+' : ''}${n.toFixed(2)} pp`;
 
+export const amazonUrl = (asin) => `https://www.amazon.com/dp/${asin}`;
+
 export const shortDate = (iso) => {
   if (!iso) return '';
   const [y, m, d] = iso.split('-');

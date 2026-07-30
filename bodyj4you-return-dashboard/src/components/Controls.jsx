@@ -1,9 +1,9 @@
 import { CATS } from '../lib/format.js';
 
 const SORTS = [
-  { key: 'rate7', label: 'Refund rate' },
+  { key: 's7', label: 'Revenue' },
+  { key: 'rate30', label: 'Refund rate' },
   { key: 'delta', label: 'Trend' },
-  { key: 'r7', label: 'Refund $' },
 ];
 
 export default function Controls({
