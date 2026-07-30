@@ -1,94 +1,65 @@
 import { useEffect, useMemo, useState } from 'react';
 import Kpis from './components/Kpis.jsx';
-import Controls from './components/Controls.jsx';
+import AlertStrip from './components/AlertStrip.jsx';
 import ReturnsTable from './components/ReturnsTable.jsx';
-import { shortDate } from './lib/format.js';
+import { usd0, shortDate, loadAcks, saveAck, clearAck } from './lib/format.js';
 
 const DATA_URL = `${import.meta.env.BASE_URL}data/returns.json`;
+
+// Headline: the one sentence the CEO asked for. Red when money is burning,
+// green when the page can be closed.
+function Headline({ data, acks }) {
+  const live = data.alerts.filter((a) => !acks[a.family]);
+  const total = live.reduce((s, a) => s + a.r7, 0);
+  if (live.length === 0) {
+    return (
+      <h1 className="headline headline-ok">
+        Nothing needs attention — refunds in line with baseline.
+      </h1>
+    );
+  }
+  return (
+    <h1 className="headline headline-bad">
+      {live.length} product{live.length > 1 ? 's' : ''} need{live.length > 1 ? '' : 's'} attention —{' '}
+      {usd0(total)} refunded last week.
+    </h1>
+  );
+}
 
 export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-
-  const [sort, setSort] = useState('s7');
-  const [cat, setCat] = useState('ALL');
-  const [flaggedOnly, setFlaggedOnly] = useState(false);
-  const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState({});
+  const [acks, setAcks] = useState({});
 
   useEffect(() => {
+    setAcks(loadAcks());
     fetch(DATA_URL)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(setData)
       .catch((e) => setError(e.message));
   }, []);
 
-  const parents = useMemo(() => {
-    if (!data) return [];
-    const q = query.trim().toLowerCase();
-    let rows = data.parents.filter((p) => {
-      if (cat !== 'ALL' && p.cat !== cat) return false;
-      if (flaggedOnly && !p.flagged) return false;
-      if (q) {
-        const inParent =
-          p.name.toLowerCase().includes(q) ||
-          (p.sku || '').toLowerCase().includes(q) ||
-          (p.family || '').toLowerCase().includes(q);
-        const inChild = p.children.some(
-          (c) =>
-            c.label.toLowerCase().includes(q) ||
-            c.asin.toLowerCase().includes(q) ||
-            (c.sku || '').toLowerCase().includes(q),
-        );
-        if (!inParent && !inChild) return false;
-      }
-      return true;
-    });
-    const val = (p) => (sort === 'delta' ? p.delta : sort === 'rate30' ? p.rate30 : p.s7);
-    rows = [...rows].sort((a, b) => {
-      const av = val(a), bv = val(b);
-      if (av == null) return 1;
-      if (bv == null) return -1;
-      return bv - av;
-    });
-    return rows;
-  }, [data, sort, cat, flaggedOnly, query]);
+  const toggle = (fam) =>
+    setExpanded((e) => ({ ...e, [fam]: e[fam] === undefined ? false : !e[fam] }));
 
-  const effExpanded = useMemo(() => {
-    if (query.trim()) {
-      const all = {};
-      parents.forEach((p) => (all[p.family] = true));
-      return all;
-    }
-    return expanded;
-  }, [query, parents, expanded]);
-
-  const allExpanded = parents.length > 0 && parents.every((p) => effExpanded[p.family]);
-
-  const toggle = (asin) => setExpanded((e) => ({ ...e, [asin]: !e[asin] }));
-  const expandAll = () => {
-    const all = {};
-    parents.forEach((p) => (all[p.family] = true));
-    setExpanded(all);
+  const onAck = (family) => {
+    const note = window.prompt('Optional note (what are you doing about it?)', '') ?? '';
+    setAcks(saveAck(family, note.trim()));
   };
-  const collapseAll = () => setExpanded({});
+  const onUnack = (family) => setAcks(clearAck(family));
 
-  if (error) {
-    return (
-      <div className="main">
-        <div className="empty">Could not load data: {error}</div>
-      </div>
-    );
-  }
-  if (!data) {
-    return (
-      <div className="main">
-        <div className="empty">Loading…</div>
-      </div>
-    );
-  }
+  const onJump = (family) => {
+    document.getElementById(`fam-${family}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const parents = useMemo(() => (data ? data.parents : []), [data]);
+
+  if (error) return <div className="main"><div className="empty">Could not load data: {error}</div></div>;
+  if (!data) return <div className="main"><div className="empty">Loading…</div></div>;
 
   const w = data.windows;
+  const liveAlerts = data.alerts.filter((a) => !acks[a.family]);
 
   return (
     <div className="app">
@@ -98,52 +69,43 @@ export default function App() {
           <span className="brand-sep">/</span>
           <span className="brand-app">Return Dashboard</span>
         </div>
-        <nav className="subnav">
-          <span className="nav-item active">Returns &amp; Refunds</span>
-        </nav>
+        <div className="freshness">
+          <span className={`dot-live ${liveAlerts.length ? 'dot-bad' : ''}`} />
+          Helium 10 · {new Date(data.generatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+        </div>
       </header>
 
       <main className="main">
-        <div className="page-head">
-          <div>
-            <h1 className="page-title">Returns &amp; Refunds</h1>
-            <p className="page-sub">
-              Top sellers first by last-week revenue ({shortDate(w.d7.from)}–{shortDate(w.d7.to)}).
-              Sales &amp; refunds are last 7 days; refund rate is the 30-day average
-              ({shortDate(w.d30.from)}–{shortDate(w.d30.to)}). Amazon {data.marketplace}. Expand a
-              product to see each selling variation.
-            </p>
+        <div className="hero">
+          <div className="eyebrow">
+            RETURNS &amp; REFUNDS · {shortDate(w.d7.from)}–{shortDate(w.d7.to)} · AMAZON {data.marketplace}
           </div>
-          <div className="freshness">
-            <span className="dot-live" /> Auto-synced from Helium 10
-            <span className="freshness-time">
-              {new Date(data.generatedAt).toLocaleString('en-US', {
-                month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
-              })}
-            </span>
-          </div>
+          <Headline data={data} acks={acks} />
+          <p className="page-sub">
+            Sales &amp; refunds are last 7 days; each product is judged against its own 30-day
+            baseline. Top sellers first, only substantial movers alert.
+          </p>
         </div>
 
-        <Kpis k={data.kpis} />
+        <AlertStrip alerts={data.alerts} acks={acks} onAck={onAck} onUnack={onUnack} onJump={onJump} />
 
-        <Controls
-          sort={sort} setSort={setSort}
-          cat={cat} setCat={setCat}
-          flaggedOnly={flaggedOnly} setFlaggedOnly={setFlaggedOnly}
-          query={query} setQuery={setQuery}
-          onExpandAll={expandAll} onCollapseAll={collapseAll} allExpanded={allExpanded}
-        />
+        <section className="section">
+          <div className="eyebrow">{data.alerts.length ? '02' : '01'} / OVERVIEW</div>
+          <Kpis k={data.kpis} />
+        </section>
 
-        <ReturnsTable parents={parents} expanded={effExpanded} toggle={toggle} />
+        <section className="section">
+          <div className="eyebrow">{data.alerts.length ? '03' : '02'} / PRODUCTS · BIGGEST REVENUE FIRST</div>
+          <ReturnsTable parents={parents} expanded={expanded} toggle={toggle} />
+        </section>
 
         <footer className="foot">
-          Refund rate = refunded $ ÷ sales $ (30-day average). Only families with ≥ $
-          {data.thresholds.minSales7d.toLocaleString()} in last-week sales are shown, and only
-          variations that sold last week — everything not selling is hidden to keep the list
-          actionable. Flagged = 30-day rate ≥ {data.thresholds.flagRate30d}% and up ≥
-          {data.thresholds.flagDeltaPp} pp last week. ASINs link to Amazon. Source: Helium 10 ·
-          Amazon Profits (P&L); units-returned is excluded (FBA return-to-stock lag), refund
-          dollars are the ground truth.
+          Refund rate = refunded $ ÷ sales $. Critical = ≥{usd0(data.thresholds.critical.r7)} refunded/wk,
+          up ≥{data.thresholds.critical.delta}pp vs its own 30-day baseline and ≥{data.thresholds.critical.rate7}%.
+          Watch = ≥{usd0(data.thresholds.watch.r7)}/wk and rising ≥{data.thresholds.watch.delta}pp (or 2× baseline).
+          Families under ${data.thresholds.minSales7d.toLocaleString()} weekly sales and variations with zero
+          sales are hidden. Source: Helium 10 · Amazon Profits (P&L); refund dollars are the ground truth
+          (units-returned lags FBA restock). Acknowledged alerts mute for 30 days on this device.
         </footer>
       </main>
     </div>

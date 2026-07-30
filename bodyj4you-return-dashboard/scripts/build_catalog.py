@@ -1,43 +1,47 @@
 #!/usr/bin/env python3
 """
-Generate bodyj4you-return-dashboard/data/asin_map.json from the authoritative Monday-brief
-catalog (automation/catalog.xlsx, sheet "Catalog").
+Generate data/asin_map.json from the catalog workbook committed at
+bodyj4you-return-dashboard/data/catalog.xlsx (sheet "Active").
+
+Catalog format (Catalog_MM.DD.YYYY.xlsx from Denis):
+  SKU | ASIN | (Parent) ASIN | Category | FBA SKU | Warehouse
 
 This is the single source of truth for grouping: every child ASIN -> its SKU,
-its parent family (the catalog's "Parent ASIN" master, e.g. HS0002-Master), the
-category, and the catalog Order (used to pick each family's base/primary item).
+its parent family (the "(Parent) ASIN" master, e.g. HS0002-Master), the
+category, and its row order (first row of a family = flagship/base item).
 
-Run this whenever automation/catalog.xlsx changes. It needs openpyxl:
-    pip install openpyxl
-The committed asin_map.json lets build_returns.py run without openpyxl.
+Run whenever the catalog changes (drop the new file over data/catalog.xlsx).
+Needs openpyxl (pip install openpyxl). The committed asin_map.json lets
+build_returns.py run without openpyxl.
 """
 import json
 from pathlib import Path
 import openpyxl
 
-ROOT = Path(__file__).resolve().parent.parent.parent          # repo root
-XLSX = ROOT / "automation" / "catalog.xlsx"
-OUT = ROOT / "bodyj4you-return-dashboard" / "data" / "asin_map.json"
+DATA = Path(__file__).resolve().parent.parent / "data"
+XLSX = DATA / "catalog.xlsx"
+OUT = DATA / "asin_map.json"
 
 
 def main():
     wb = openpyxl.load_workbook(XLSX, read_only=True, data_only=True)
-    ws = wb["Catalog"]
+    ws = wb["Active"]
     rows = list(ws.iter_rows(values_only=True))
     hdr = list(rows[0])
     col = {h: i for i, h in enumerate(hdr)}
+    parent_col = "(Parent) ASIN" if "(Parent) ASIN" in col else "Parent ASIN"
 
     out = {}
-    for r in rows[1:]:
+    for order, r in enumerate(rows[1:], start=1):
         asin = r[col["ASIN"]]
         if not asin:
             continue
-        family = r[col["Parent ASIN"]] or asin
-        out[str(asin)] = {
-            "sku": r[col["SKU"]],
-            "family": str(family),
-            "cat": r[col["Category"]],
-            "order": r[col["Order"]],
+        family = r[col[parent_col]] or asin
+        out[str(asin).strip()] = {
+            "sku": str(r[col["SKU"]]).strip() if r[col["SKU"]] else str(asin),
+            "family": str(family).strip(),
+            "cat": (r[col["Category"]] or "").strip(),
+            "order": order,          # sheet order; first of a family = flagship
         }
 
     OUT.write_text(json.dumps(out, indent=2))
