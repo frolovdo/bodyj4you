@@ -8,10 +8,28 @@ committing to the deploy branch triggers the Netlify build.
 This file is both the human runbook **and** the instruction set the scheduled
 session follows. Keep them identical.
 
+## One-time setup — create the Routine in the claude.ai UI
+
+The refresh must run in a Claude session that has the **Helium 10** connector,
+so create it from **claude.ai → Routines** (that's where your connectors live):
+
+1. New Routine → schedule **Weekly, Monday ~9:00 AM** (cron `0 13 * * 1` UTC).
+2. Enable connectors: **Helium 10** and **GitHub**.
+3. Mode: start a **new session** each run (fresh session per fire).
+4. Paste this as the prompt:
+
+   > Refresh the BodyJ4You SEO Dashboard "Returns & Refunds" data in the
+   > `frolovdo/bodyj4you` repo by following `seo-dashboard/REFRESH.md` exactly.
+   > Work on `main`, change only the data files (raw pulls, catalog.json,
+   > public/data/returns.json), commit, and push — do not open a PR or touch app
+   > code. If the Helium 10 pull returns nothing, skip the commit and report it.
+
+That's it — after that it is fully hands-off. To pause it, disable the Routine.
+
 ## Preconditions (available in the scheduled session's environment)
 
-- The `Helium10-MCP` connector (same one used to build the seed data).
-- The `github` connector / write access to `frolovdo/bodyj4you`.
+- The **Helium 10** connector (same one used to build the seed data).
+- The **GitHub** connector / write access to `frolovdo/bodyj4you`.
 
 ## Procedure
 
