@@ -40,26 +40,35 @@ refund rate = refunded $ / sales $   (share of revenue refunded)
 ## Architecture
 
 ```
+automation/catalog.xlsx ─►(build_catalog.py)─► data/asin_map.json   (SKU↔ASIN↔family)
 Helium 10 MCP  ──►  data/raw/pnl_30d.json      (agent pulls, weekly)
                     data/raw/pnl_7d.json
-        │
+        │                data/parent_meta.json (name + main image per family)
+        │                data/variant_labels.json
         ▼
-scripts/build_returns.py  (pure, deterministic)  +  data/catalog.json
+scripts/build_returns.py  (pure, deterministic)
         │
         ▼
 public/data/returns.json  ──►  Vite/React app  ──►  Netlify (auto-deploy on push)
 ```
 
-- **`data/raw/pnl_30d.json`, `pnl_7d.json`** — ASIN-level P&L breakdown pulled
-  from Helium 10 (`get_product_profit_and_loss_breakdown`, `product_level=asin`,
-  US) for the two windows. `u`=units, `s`=sales $, `r`=refunded $ (abs).
-- **`data/catalog.json`** — hand-curated parent names, category tags
-  (PA / EO / NC / GK / PJ) and short variation labels. Extend it when a new
-  parent or child appears in the pull.
-- **`scripts/build_returns.py`** — joins the two windows to the catalog, rolls
-  children up to parents, computes rates + trend, applies the significant-sales
-  gate, and writes `public/data/returns.json`. No network calls; same inputs →
-  same output. Thresholds live at the top of the file.
+Grouping is driven by the **Monday-brief catalog** (`automation/catalog.xlsx`),
+so parents match exactly what the brief uses — including families the brief
+merges but Amazon splits (e.g. both Tea Tree parent ASINs → `PD-TEATREE-MCT`).
+
+- **`data/asin_map.json`** — generated from `automation/catalog.xlsx` by
+  `scripts/build_catalog.py`: every ASIN → `{sku, family, cat, order}`. The
+  single source of truth for grouping. Regenerate when the catalog changes.
+- **`data/parent_meta.json`** — display name + main image (Amazon media id) per
+  family. **`data/variant_labels.json`** — short label per child ASIN. Both are
+  display-only; anything missing falls back to the SKU.
+- **`data/raw/pnl_30d.json`, `pnl_7d.json`** — ASIN-level P&L pulled from
+  Helium 10 (`get_product_profit_and_loss_breakdown`, `product_level=asin`, US)
+  for the two windows. `u`=units, `s`=sales $, `r`=refunded $ (abs).
+- **`scripts/build_returns.py`** — rolls children up to their catalog family,
+  computes rates + trend, applies the significant-sales gate, and writes
+  `public/data/returns.json`. No network calls; same inputs → same output.
+  Every parent carries its base SKU and main image; each child carries its SKU.
 - **React app** (`src/`) — reads `public/data/returns.json` and renders it. Plain
   CSS, no UI framework, ~49 KB gzipped.
 

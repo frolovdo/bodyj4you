@@ -56,21 +56,30 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    - `r` = **absolute value** of the `Refunded Amount` sub-metric inside
      `refund.metrics` (not the net `refund.value`).
 
-4. **Update the catalog if needed.** For any ASIN in the pull that is not in
-   `seo-dashboard/data/catalog.json`, add it: a `variants` entry
-   (`parent`, `label`) and, if it introduces a new parent, a `parents` entry
-   (`name`, `cat` ∈ PA/EO/NC/GK/PJ, `image`). Use the `parent_asin` field from
-   the pull to map children to parents.
+4. **Grouping comes from the Monday-brief catalog** (`automation/catalog.xlsx`),
+   not from Amazon's `parent_asin`. For any ASIN in the pull that is **not**
+   already in that catalog, add a row to the `Catalog` sheet (SKU, ASIN, Parent
+   ASIN / family, Category) so it groups correctly, then regenerate the map:
+   ```bash
+   pip install openpyxl
+   cd seo-dashboard && python3 scripts/build_catalog.py   # -> data/asin_map.json
+   ```
+   If the ASIN introduces a **new family**, add a `families` entry to
+   `data/parent_meta.json` (`name`, `image` = Amazon media id). Optionally add a
+   short `data/variant_labels.json` entry for the child. Both are display-only;
+   missing entries fall back to the SKU.
 
 5. **Rebuild** the dashboard JSON:
    ```bash
    cd seo-dashboard && python3 scripts/build_returns.py
    ```
-   This regenerates `public/data/returns.json` deterministically.
+   This joins the pulls to `asin_map.json` + `parent_meta.json` +
+   `variant_labels.json` and regenerates `public/data/returns.json`
+   deterministically.
 
 6. **Commit & push** to the deploy branch (`main`) so Netlify redeploys:
    ```
-   git add seo-dashboard/data/raw seo-dashboard/data/catalog.json seo-dashboard/public/data/returns.json
+   git add seo-dashboard/data seo-dashboard/public/data/returns.json
    git commit -m "Refresh Returns & Refunds data (<7d from>–<7d to>)"
    git push
    ```

@@ -1,0 +1,33 @@
+{
+  "note": "Display name + main image per catalog family (the 'Parent ASIN' master from automation/catalog.xlsx). image = Amazon media id; the builder expands it via imageBase. Add a family here when it first appears in the dashboard; if omitted, the builder falls back to the base SKU. Category comes from the catalog, not here.",
+  "imageBase": "https://m.media-amazon.com/images/I/",
+  "families": {
+    "HS0002-Master": { "name": "Piercing Aftercare Saline Spray", "image": "61A+a5naUAL.jpg" },
+    "HB0024": { "name": "Piercing Hole Cleaner Spray", "image": "71mZ3GlUcYL.jpg" },
+    "PB-Master": { "name": "Keloid Bump Removal Oil", "image": "614UqWHm23L.jpg" },
+    "HB0005-Master": { "name": "Ear Stretching Balm", "image": "71a5eedi2bL.jpg" },
+    "HB0006-Master": { "name": "Piercing Aftercare Balm Kit", "image": "71NAirbcH3L.jpg" },
+    "JOJOBA-Master": { "name": "Jojoba Piercing Aftercare Oil", "image": "61ECxZ365+L.jpg" },
+    "EO-JOJOBA-Master": { "name": "Jojoba Oil", "image": "41VLkegEw9L.jpg" },
+    "EO-ROSEHIP-Master": { "name": "Rosehip Oil", "image": "71uToWygncL.jpg" },
+    "EO-CASTOR-Master": { "name": "Organic Castor Oil", "image": "716u3d0yLPL.jpg" },
+    "PD-TEATREE-MCT-Master": { "name": "Tea Tree Oil (Pre-Diluted)", "image": "71hc5qpI6mL.jpg" },
+    "PD-LAVENDER-MCT-Master": { "name": "Lavender Essential Oil Blend", "image": "611+lky5rnL.jpg" },
+    "PD-MCT-10-RL-Master": { "name": "Essential Oil Roll-Ons", "image": "81ekfPEgdFL.jpg" },
+    "GK0486-Master": { "name": "54PC Ear Stretching Kit", "image": "81Pvab5mJCL.jpg" },
+    "GK0541-Master": { "name": "37PC Ear Stretching Kit (Silver)", "image": "51P4ZVBd0pL.jpg" },
+    "GK0715-Master": { "name": "37PC Ear Stretching Kit (Beginner)", "image": "51cFg3KOFRL.jpg" },
+    "GK0184-Master": { "name": "36PC Ear Stretching Kit (Gold)", "image": "51BhgYzVEXL.jpg" },
+    "GK0858-Master": { "name": "36PC Big Gauge Kit", "image": "41ZOWHEPg3L.jpg" },
+    "KT8002-Master": { "name": "24PC Big Gauge Kit", "image": "51ETkLmrFlL.jpg" },
+    "KT8153-Master": { "name": "156PC Body Piercing Kit", "image": "71HVlg56pML.jpg" },
+    "KT8100-Master": { "name": "120PC Piercing Jewelry Kit", "image": "71ofJ4UMa3L.jpg" },
+    "PN10-Master": { "name": "10PC Piercing Needles", "image": "61ezmem+otL.jpg" },
+    "NC4058-Master": { "name": "12PC Tattoo Choker Set", "image": "61Ff1YYaJDL.jpg" },
+    "NC4059-Master": { "name": "12PC Choker (Pride / Boho)", "image": "814-2dLub7L.jpg" },
+    "NC4085-Master": { "name": "24PC Tattoo Choker", "image": "81TOUVFCjfL.jpg" },
+    "NC4256-Master": { "name": "3PC Choker Set + Bracelet/Ring", "image": "71lmzNquC+L.jpg" },
+    "NC4285-Master": { "name": "2PC Tattoo Choker Sets", "image": "71mgBuFFFfL.jpg" },
+    "NC4329-Master": { "name": "Velvet Tattoo Choker", "image": "71MsrZ8pKOL.jpg" }
+  }
+}

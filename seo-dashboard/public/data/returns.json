@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T20:43:16+00:00",
+  "generatedAt": "2026-07-30T21:12:55+00:00",
   "marketplace": "US",
   "windows": {
     "d30": {
@@ -17,7 +17,7 @@
     "flagDeltaPp": 1.0
   },
   "kpis": {
-    "parents": 30,
+    "parents": 27,
     "flagged": 3,
     "sales30": 582948.05,
     "refund30": 20260.61,
@@ -27,37 +27,39 @@
     "blendedRate7": 4.13,
     "blendedDelta": 0.65,
     "worstMover": {
-      "asin": "B0FFT2G9HQ",
-      "name": "2PC Tattoo Choker Sets",
-      "delta": 5.49
+      "family": "NC4058-Master",
+      "name": "12PC Tattoo Choker Set",
+      "delta": 3.08
     },
     "bestMover": {
-      "asin": "B0DFLJ93YC",
+      "family": "NC4059-Master",
       "name": "12PC Choker (Pride / Boho)",
       "delta": -2.17
     }
   },
   "parents": [
     {
-      "asin": "B0FFT2G9HQ",
+      "family": "NC4285-Master",
+      "sku": "NC4285",
       "name": "2PC Tattoo Choker Sets",
       "cat": "NC",
       "catName": "Choker Necklaces",
       "image": "https://m.media-amazon.com/images/I/71mgBuFFFfL.jpg",
-      "childCount": 7,
-      "u30": 3489,
-      "s30": 35623.27,
-      "r30": 4532.8,
-      "rate30": 12.72,
-      "u7": 608,
-      "s7": 6482.96,
-      "r7": 1180.83,
-      "rate7": 18.21,
-      "delta": 5.49,
+      "childCount": 8,
+      "u30": 3939,
+      "s30": 39786.77,
+      "r30": 4602.73,
+      "rate30": 11.57,
+      "u7": 885,
+      "s7": 8973.19,
+      "r7": 1230.78,
+      "rate7": 13.72,
+      "delta": 2.15,
       "flagged": true,
       "children": [
         {
           "asin": "B08Q2WMF25",
+          "sku": "NC4285",
           "label": "Butterfly",
           "u30": 1703,
           "s30": 17869.09,
@@ -71,6 +73,7 @@
         },
         {
           "asin": "B09826V9Z8",
+          "sku": "NC4297",
           "label": "Yin Yang (Silver)",
           "u30": 1017,
           "s30": 10136.91,
@@ -84,6 +87,7 @@
         },
         {
           "asin": "B0DGWDSSKW",
+          "sku": "NC4290-1",
           "label": "Rainbow Unicorn",
           "u30": 314,
           "s30": 3095.43,
@@ -97,6 +101,7 @@
         },
         {
           "asin": "B0BZB723JD",
+          "sku": "NC4367",
           "label": "Black Moon",
           "u30": 169,
           "s30": 1685.66,
@@ -109,7 +114,22 @@
           "delta": -1.85
         },
         {
+          "asin": "B0H3QBP4XW",
+          "sku": "NC4390",
+          "label": "Black 2PC",
+          "u30": 450,
+          "s30": 4163.5,
+          "r30": 69.93,
+          "rate30": 1.68,
+          "u7": 277,
+          "s7": 2490.23,
+          "r7": 49.95,
+          "rate7": 2.01,
+          "delta": 0.33
+        },
+        {
           "asin": "B09825SRFQ",
+          "sku": "NC4303",
           "label": "Red Cherries",
           "u30": 106,
           "s30": 1048.95,
@@ -123,6 +143,7 @@
         },
         {
           "asin": "B0BKKQ79FB",
+          "sku": "NC4364",
           "label": "Gold Yin Yang",
           "u30": 86,
           "s30": 849.15,
@@ -136,6 +157,7 @@
         },
         {
           "asin": "B09825NYCX",
+          "sku": "NC4298",
           "label": "Shooting Star",
           "u30": 94,
           "s30": 938.08,
@@ -150,25 +172,27 @@
       ]
     },
     {
-      "asin": "B082L68NLX",
+      "family": "NC4058-Master",
+      "sku": "NC4058",
       "name": "12PC Tattoo Choker Set",
       "cat": "NC",
       "catName": "Choker Necklaces",
       "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
-      "childCount": 3,
-      "u30": 3379,
-      "s30": 59523.37,
-      "r30": 4643.62,
-      "rate30": 7.8,
-      "u7": 586,
-      "s7": 11686.25,
-      "r7": 1366.76,
-      "rate7": 11.7,
-      "delta": 3.9,
+      "childCount": 4,
+      "u30": 3935,
+      "s30": 67784.01,
+      "r30": 4941.39,
+      "rate30": 7.29,
+      "u7": 739,
+      "s7": 13964.73,
+      "r7": 1447.7,
+      "rate7": 10.37,
+      "delta": 3.08,
       "flagged": true,
       "children": [
         {
           "asin": "B01HSJ3T6M",
+          "sku": "NC4058",
           "label": "Pink/Blue/White/Green/Black",
           "u30": 3109,
           "s30": 54436.06,
@@ -182,6 +206,7 @@
         },
         {
           "asin": "B093FX1RJJ",
+          "sku": "NC4293",
           "label": "Boho Beads",
           "u30": 166,
           "s30": 3152.34,
@@ -194,7 +219,22 @@
           "delta": 4.58
         },
         {
+          "asin": "B07YCX7ZF4",
+          "sku": "NC4250",
+          "label": "Gothic Black",
+          "u30": 556,
+          "s30": 8260.64,
+          "r30": 297.77,
+          "rate30": 3.6,
+          "u7": 153,
+          "s7": 2278.48,
+          "r7": 80.94,
+          "rate7": 3.55,
+          "delta": -0.05
+        },
+        {
           "asin": "B0CCRK55BW",
+          "sku": "NC4377",
           "label": "Flower/Rainbow (Kids)",
           "u30": 104,
           "s30": 1934.97,
@@ -209,7 +249,8 @@
       ]
     },
     {
-      "asin": "B0F12ZQ1TX",
+      "family": "NC4329-Master",
+      "sku": "NC4329",
       "name": "Velvet Tattoo Choker",
       "cat": "NC",
       "catName": "Choker Necklaces",
@@ -228,6 +269,7 @@
       "children": [
         {
           "asin": "B0DGWFF5QS",
+          "sku": "NC4386-1",
           "label": "Black Velvet",
           "u30": 184,
           "s30": 1828.17,
@@ -242,7 +284,8 @@
       ]
     },
     {
-      "asin": "B0DFLJ93YC",
+      "family": "NC4059-Master",
+      "sku": "NC4059",
       "name": "12PC Choker (Pride / Boho)",
       "cat": "NC",
       "catName": "Choker Necklaces",
@@ -261,6 +304,7 @@
       "children": [
         {
           "asin": "B07WNRW3SV",
+          "sku": "NC4084-1",
           "label": "Disco Ball",
           "u30": 120,
           "s30": 2378.32,
@@ -274,6 +318,7 @@
         },
         {
           "asin": "B0DDT2L7FL",
+          "sku": "NC4059-1",
           "label": "Pride Rainbow",
           "u30": 197,
           "s30": 3917.55,
@@ -287,6 +332,7 @@
         },
         {
           "asin": "B0988741SV",
+          "sku": "NC4305",
           "label": "Boho Daisy",
           "u30": 172,
           "s30": 3337.84,
@@ -301,7 +347,8 @@
       ]
     },
     {
-      "asin": "B0GT1WTBJT",
+      "family": "PD-MCT-10-RL-Master",
+      "sku": "PD-MCT-10-RL",
       "name": "Essential Oil Roll-Ons",
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
@@ -320,6 +367,7 @@
       "children": [
         {
           "asin": "B0FX86N6HR",
+          "sku": "PD-PEPPERMINT-MCT-10-RL",
           "label": "Peppermint",
           "u30": 359,
           "s30": 3355.71,
@@ -333,6 +381,7 @@
         },
         {
           "asin": "B0FX6N2DPN",
+          "sku": "PD-FRANK-CASTOR-MCT-10-RL",
           "label": "Frankincense (Face)",
           "u30": 595,
           "s30": 5335.51,
@@ -346,6 +395,7 @@
         },
         {
           "asin": "B0FX7MFNQZ",
+          "sku": "PD-LEMON-MCT-10-RL",
           "label": "Lemon",
           "u30": 125,
           "s30": 1239.86,
@@ -359,6 +409,7 @@
         },
         {
           "asin": "B0FX6NTJM4",
+          "sku": "PD-EUCALYPTUS-MCT-10-RL",
           "label": "Eucalyptus",
           "u30": 147,
           "s30": 1379.02,
@@ -372,6 +423,7 @@
         },
         {
           "asin": "B0FX7MYH7F",
+          "sku": "PD-FRANKINCENSE-MCT-10-RL",
           "label": "Frankincense (Calm)",
           "u30": 120,
           "s30": 1187.26,
@@ -385,6 +437,7 @@
         },
         {
           "asin": "B0FX71YSCR",
+          "sku": "PD-TEATREE-MCT-10-RL",
           "label": "Tea Tree",
           "u30": 524,
           "s30": 5258.86,
@@ -398,6 +451,7 @@
         },
         {
           "asin": "B0FX6Y9CP3",
+          "sku": "PD-LAVENDER-MCT-10-RL",
           "label": "Lavender",
           "u30": 613,
           "s30": 5700.9,
@@ -412,73 +466,8 @@
       ]
     },
     {
-      "asin": "B0H6ZWKZ1H",
-      "name": "Tea Tree Oil (Melaleuca)",
-      "cat": "EO",
-      "catName": "Essential & Carrier Oils",
-      "image": "https://m.media-amazon.com/images/I/71et92SJPsL.jpg",
-      "childCount": 1,
-      "u30": 112,
-      "s30": 1025.89,
-      "r30": 9.99,
-      "rate30": 0.97,
-      "u7": 31,
-      "s7": 278.69,
-      "r7": 9.99,
-      "rate7": 3.58,
-      "delta": 2.61,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B0H6ZWKZ1H",
-          "label": "Melaleuca",
-          "u30": 112,
-          "s30": 1025.89,
-          "r30": 9.99,
-          "rate30": 0.97,
-          "u7": 31,
-          "s7": 278.69,
-          "r7": 9.99,
-          "rate7": 3.58,
-          "delta": 2.61
-        }
-      ]
-    },
-    {
-      "asin": "B07YCX7ZF4",
-      "name": "12PC Choker (Gothic Black)",
-      "cat": "NC",
-      "catName": "Choker Necklaces",
-      "image": "https://m.media-amazon.com/images/I/71LaFcayKfL.jpg",
-      "childCount": 1,
-      "u30": 556,
-      "s30": 8260.64,
-      "r30": 297.77,
-      "rate30": 3.6,
-      "u7": 153,
-      "s7": 2278.48,
-      "r7": 80.94,
-      "rate7": 3.55,
-      "delta": -0.05,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B07YCX7ZF4",
-          "label": "Gothic Black",
-          "u30": 556,
-          "s30": 8260.64,
-          "r30": 297.77,
-          "rate30": 3.6,
-          "u7": 153,
-          "s7": 2278.48,
-          "r7": 80.94,
-          "rate7": 3.55,
-          "delta": -0.05
-        }
-      ]
-    },
-    {
-      "asin": "B0CSKFKGWW",
+      "family": "HS0002-Master",
+      "sku": "HS0002",
       "name": "Piercing Aftercare Saline Spray",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -497,6 +486,7 @@
       "children": [
         {
           "asin": "B0CQM26GGF",
+          "sku": "HS0002-3",
           "label": "2 Fl Oz (Pack of 3)",
           "u30": 265,
           "s30": 5496.37,
@@ -510,6 +500,7 @@
         },
         {
           "asin": "B09RSSL9S7",
+          "sku": "HS0002-2",
           "label": "2 Fl Oz (Pack of 2)",
           "u30": 445,
           "s30": 7167.86,
@@ -523,6 +514,7 @@
         },
         {
           "asin": "B08S3JCTKC",
+          "sku": "HS0002",
           "label": "2 Fl Oz Fine Mist",
           "u30": 16901,
           "s30": 158980.19,
@@ -537,7 +529,8 @@
       ]
     },
     {
-      "asin": "B08NDR5ZWK",
+      "family": "HB0005-Master",
+      "sku": "HB0005",
       "name": "Ear Stretching Balm",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -556,6 +549,7 @@
       "children": [
         {
           "asin": "B01B1Y48AG",
+          "sku": "HB0005",
           "label": "Pack of 1",
           "u30": 135,
           "s30": 1321.48,
@@ -570,7 +564,8 @@
       ]
     },
     {
-      "asin": "B0FBSPBMNN",
+      "family": "EO-ROSEHIP-Master",
+      "sku": "EO-ROSEHIP",
       "name": "Rosehip Oil",
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
@@ -589,6 +584,7 @@
       "children": [
         {
           "asin": "B0DYTSB2WN",
+          "sku": "EO-ROSEHIP-2oz",
           "label": "2 Fl Oz",
           "u30": 281,
           "s30": 3937.69,
@@ -602,6 +598,7 @@
         },
         {
           "asin": "B0DYTYPPJZ",
+          "sku": "EO-ROSEHIP-4oz",
           "label": "4 Fl Oz",
           "u30": 456,
           "s30": 8381.54,
@@ -615,6 +612,7 @@
         },
         {
           "asin": "B0FBYTKGD6",
+          "sku": "EO-ROSEHIP-1oz_FBA",
           "label": "1 Fl Oz",
           "u30": 2331,
           "s30": 23065.31,
@@ -628,6 +626,7 @@
         },
         {
           "asin": "B0FX8YXSHZ",
+          "sku": "EO-ROSEHIP-16oz",
           "label": "16 Fl Oz",
           "u30": 243,
           "s30": 6869.08,
@@ -642,7 +641,8 @@
       ]
     },
     {
-      "asin": "B0B7CMYRX6",
+      "family": "PB-Master",
+      "sku": "PB",
       "name": "Keloid Bump Removal Oil",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -661,6 +661,7 @@
       "children": [
         {
           "asin": "B0B57PWJW2",
+          "sku": "PB-10",
           "label": "0.33 Fl Oz",
           "u30": 2575,
           "s30": 25591.6,
@@ -675,7 +676,8 @@
       ]
     },
     {
-      "asin": "B07K4WPNH6",
+      "family": "KT8153-Master",
+      "sku": "KT8153",
       "name": "156PC Body Piercing Kit",
       "cat": "PJ",
       "catName": "Piercing Jewelry",
@@ -694,6 +696,7 @@
       "children": [
         {
           "asin": "B07FT1LP8R",
+          "sku": "KT8153",
           "label": "Silvertone Mix",
           "u30": 124,
           "s30": 2438.78,
@@ -708,7 +711,85 @@
       ]
     },
     {
-      "asin": "B0863C6PQS",
+      "family": "PD-TEATREE-MCT-Master",
+      "sku": "PD-TEATREE-MCT",
+      "name": "Tea Tree Oil (Pre-Diluted)",
+      "cat": "EO",
+      "catName": "Essential & Carrier Oils",
+      "image": "https://m.media-amazon.com/images/I/71hc5qpI6mL.jpg",
+      "childCount": 4,
+      "u30": 5431,
+      "s30": 56510.16,
+      "r30": 1078.24,
+      "rate30": 1.91,
+      "u7": 1042,
+      "s7": 11406.78,
+      "r7": 244.23,
+      "rate7": 2.14,
+      "delta": 0.23,
+      "flagged": false,
+      "children": [
+        {
+          "asin": "B0GYX699C8",
+          "sku": "PD-TEATREE-MCT-16oz",
+          "label": "Tea Tree \u00b7 16 Fl Oz Bulk",
+          "u30": 345,
+          "s30": 9622.57,
+          "r30": 203.93,
+          "rate30": 2.12,
+          "u7": 62,
+          "s7": 1826.39,
+          "r7": 89.97,
+          "rate7": 4.93,
+          "delta": 2.81
+        },
+        {
+          "asin": "B0H6ZWKZ1H",
+          "sku": "PD-TEATREE-MCT-1oz",
+          "label": "Tea Tree \u00b7 Melaleuca 2 Fl Oz",
+          "u30": 112,
+          "s30": 1025.89,
+          "r30": 9.99,
+          "rate30": 0.97,
+          "u7": 31,
+          "s7": 278.69,
+          "r7": 9.99,
+          "rate7": 3.58,
+          "delta": 2.61
+        },
+        {
+          "asin": "B0FZHS9TB6",
+          "sku": "PD-TEATREE-MCT-2oz",
+          "label": "Tea Tree \u00b7 2 Fl Oz",
+          "u30": 4974,
+          "s30": 45861.7,
+          "r30": 864.32,
+          "rate30": 1.88,
+          "u7": 908,
+          "s7": 8482.11,
+          "r7": 144.27,
+          "rate7": 1.7,
+          "delta": -0.18
+        },
+        {
+          "asin": "B0GYX9C3DW",
+          "sku": "PD-TEATREE-MCT-4oz",
+          "label": "Tea Tree \u00b7 4 Oz Family",
+          "u30": 0,
+          "s30": 0.0,
+          "r30": 0.0,
+          "rate30": 0.0,
+          "u7": 41,
+          "s7": 819.59,
+          "r7": 0,
+          "rate7": 0.0,
+          "delta": 0.0
+        }
+      ]
+    },
+    {
+      "family": "GK0715-Master",
+      "sku": "GK0715",
       "name": "37PC Ear Stretching Kit (Beginner)",
       "cat": "GK",
       "catName": "Gauge / Stretching Kits",
@@ -727,6 +808,7 @@
       "children": [
         {
           "asin": "B085SYXFDV",
+          "sku": "GK0715 (GK0078)",
           "label": "Beginner Steel",
           "u30": 203,
           "s30": 4037.58,
@@ -741,99 +823,8 @@
       ]
     },
     {
-      "asin": "B0GYX25YQ7",
-      "name": "Tea Tree Oil (Pre-Diluted)",
-      "cat": "EO",
-      "catName": "Essential & Carrier Oils",
-      "image": "https://m.media-amazon.com/images/I/71hc5qpI6mL.jpg",
-      "childCount": 3,
-      "u30": 5319,
-      "s30": 55484.27,
-      "r30": 1068.25,
-      "rate30": 1.93,
-      "u7": 1011,
-      "s7": 11128.09,
-      "r7": 234.24,
-      "rate7": 2.1,
-      "delta": 0.17,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B0GYX699C8",
-          "label": "16 Fl Oz Bulk",
-          "u30": 345,
-          "s30": 9622.57,
-          "r30": 203.93,
-          "rate30": 2.12,
-          "u7": 62,
-          "s7": 1826.39,
-          "r7": 89.97,
-          "rate7": 4.93,
-          "delta": 2.81
-        },
-        {
-          "asin": "B0FZHS9TB6",
-          "label": "2 Fl Oz",
-          "u30": 4974,
-          "s30": 45861.7,
-          "r30": 864.32,
-          "rate30": 1.88,
-          "u7": 908,
-          "s7": 8482.11,
-          "r7": 144.27,
-          "rate7": 1.7,
-          "delta": -0.18
-        },
-        {
-          "asin": "B0GYX9C3DW",
-          "label": "4 Oz Family",
-          "u30": 0,
-          "s30": 0.0,
-          "r30": 0.0,
-          "rate30": 0.0,
-          "u7": 41,
-          "s7": 819.59,
-          "r7": 0,
-          "rate7": 0.0,
-          "delta": 0.0
-        }
-      ]
-    },
-    {
-      "asin": "B0H3QBP4XW",
-      "name": "2PC Black Choker Set",
-      "cat": "NC",
-      "catName": "Choker Necklaces",
-      "image": "https://m.media-amazon.com/images/I/71isXxcV70L.jpg",
-      "childCount": 1,
-      "u30": 450,
-      "s30": 4163.5,
-      "r30": 69.93,
-      "rate30": 1.68,
-      "u7": 277,
-      "s7": 2490.23,
-      "r7": 49.95,
-      "rate7": 2.01,
-      "delta": 0.33,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B0H3QBP4XW",
-          "label": "Black 2PC",
-          "u30": 450,
-          "s30": 4163.5,
-          "r30": 69.93,
-          "rate30": 1.68,
-          "u7": 277,
-          "s7": 2490.23,
-          "r7": 49.95,
-          "rate7": 2.01,
-          "delta": 0.33
-        }
-      ]
-    },
-    {
-      "asin": "B0GYWXZ973",
+      "family": "PD-LAVENDER-MCT-Master",
+      "sku": "PD-LAVENDER-MCT",
       "name": "Lavender Essential Oil Blend",
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
@@ -852,6 +843,7 @@
       "children": [
         {
           "asin": "B0GK8C9WFZ",
+          "sku": "PD-LAVENDER-MCT-2oz",
           "label": "2 Fl Oz Dropper",
           "u30": 585,
           "s30": 5776.66,
@@ -866,7 +858,8 @@
       ]
     },
     {
-      "asin": "B0B781QSH6",
+      "family": "PN10-Master",
+      "sku": "PN10",
       "name": "10PC Piercing Needles",
       "cat": "PJ",
       "catName": "Piercing Jewelry",
@@ -885,6 +878,7 @@
       "children": [
         {
           "asin": "B009HX6Q5E",
+          "sku": "PN20G-10",
           "label": "20G Curved",
           "u30": 263,
           "s30": 1167.79,
@@ -898,6 +892,7 @@
         },
         {
           "asin": "B004MZMB74",
+          "sku": "PN16G-10",
           "label": "16G",
           "u30": 673,
           "s30": 3834.71,
@@ -911,6 +906,7 @@
         },
         {
           "asin": "B004MZMB3S",
+          "sku": "PN18G-10",
           "label": "18G",
           "u30": 956,
           "s30": 4667.8,
@@ -924,6 +920,7 @@
         },
         {
           "asin": "B004MZMBC4",
+          "sku": "PN14G-10",
           "label": "14G",
           "u30": 234,
           "s30": 1164.76,
@@ -938,7 +935,8 @@
       ]
     },
     {
-      "asin": "B095YP4V34",
+      "family": "JOJOBA-Master",
+      "sku": "JOJOBA",
       "name": "Jojoba Piercing Aftercare Oil",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -957,6 +955,7 @@
       "children": [
         {
           "asin": "B084RM4QR9",
+          "sku": "JOJOBA",
           "label": "0.17 Fl Oz",
           "u30": 551,
           "s30": 4356.54,
@@ -970,6 +969,7 @@
         },
         {
           "asin": "B0CQ58JJGC",
+          "sku": "JOJOBA-10-DB",
           "label": "0.33 Fl Oz",
           "u30": 166,
           "s30": 1491.44,
@@ -984,7 +984,8 @@
       ]
     },
     {
-      "asin": "B0DJBNM8RF",
+      "family": "EO-CASTOR-Master",
+      "sku": "EO-CASTOR",
       "name": "Organic Castor Oil",
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
@@ -1003,6 +1004,7 @@
       "children": [
         {
           "asin": "B0CZD3ZL5S",
+          "sku": "EO-CASTOR-1oz",
           "label": "1 Fl Oz",
           "u30": 866,
           "s30": 6637.62,
@@ -1016,6 +1018,7 @@
         },
         {
           "asin": "B0DDT7GP79",
+          "sku": "EO-CASTOR-4oz-USDA",
           "label": "4 Oz Lash Kit",
           "u30": 913,
           "s30": 8743.41,
@@ -1030,7 +1033,8 @@
       ]
     },
     {
-      "asin": "B0B7RC5ZX5",
+      "family": "HB0006-Master",
+      "sku": "HB0006",
       "name": "Piercing Aftercare Balm Kit",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -1049,6 +1053,7 @@
       "children": [
         {
           "asin": "B084RXRZWM",
+          "sku": "HB0006",
           "label": "Balm Kit",
           "u30": 257,
           "s30": 3825.64,
@@ -1063,7 +1068,8 @@
       ]
     },
     {
-      "asin": "B0D268LC2Z",
+      "family": "HB0024",
+      "sku": "HB0024",
       "name": "Piercing Hole Cleaner Spray",
       "cat": "PA",
       "catName": "Piercing Aftercare",
@@ -1082,7 +1088,8 @@
       "children": [
         {
           "asin": "B0D268LC2Z",
-          "label": "Hole Cleaner Kit",
+          "sku": "HB0024",
+          "label": "HB0024",
           "u30": 1101,
           "s30": 20002.5,
           "r30": 382.62,
@@ -1096,7 +1103,8 @@
       ]
     },
     {
-      "asin": "B0CQZL389H",
+      "family": "EO-JOJOBA-Master",
+      "sku": "EO-JOJOBA",
       "name": "Jojoba Oil",
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
@@ -1115,6 +1123,7 @@
       "children": [
         {
           "asin": "B0CQTMBRZT",
+          "sku": "EO-JOJOBA-4oz-SP",
           "label": "4 Fl Oz Spray Cap",
           "u30": 497,
           "s30": 5295.85,
@@ -1128,6 +1137,7 @@
         },
         {
           "asin": "B0DRML3ZMM",
+          "sku": "EO-JOJOBA-1oz",
           "label": "1 Fl Oz",
           "u30": 3488,
           "s30": 27637.8,
@@ -1142,7 +1152,8 @@
       ]
     },
     {
-      "asin": "B08VFBQDPF",
+      "family": "GK0541-Master",
+      "sku": "GK0541",
       "name": "37PC Ear Stretching Kit (Silver)",
       "cat": "GK",
       "catName": "Gauge / Stretching Kits",
@@ -1161,6 +1172,7 @@
       "children": [
         {
           "asin": "B07N8MNWYK",
+          "sku": "GK0541 (GK0078)",
           "label": "Silvertone",
           "u30": 398,
           "s30": 7912.75,
@@ -1175,7 +1187,8 @@
       ]
     },
     {
-      "asin": "B07DT6KJWQ",
+      "family": "GK0486-Master",
+      "sku": "GK0486",
       "name": "54PC Ear Stretching Kit",
       "cat": "GK",
       "catName": "Gauge / Stretching Kits",
@@ -1194,6 +1207,7 @@
       "children": [
         {
           "asin": "B0853DNCBX",
+          "sku": "GK0712",
           "label": "Aurora",
           "u30": 260,
           "s30": 4617.1,
@@ -1207,6 +1221,7 @@
         },
         {
           "asin": "B07DT6ZDP5",
+          "sku": "GK0487",
           "label": "Black",
           "u30": 914,
           "s30": 15182.28,
@@ -1220,6 +1235,7 @@
         },
         {
           "asin": "B09BVWYFN3",
+          "sku": "GK0907",
           "label": "Splatter",
           "u30": 138,
           "s30": 2433.48,
@@ -1234,40 +1250,8 @@
       ]
     },
     {
-      "asin": "B08CX1D4R3",
-      "name": "36PC Big Gauge Kit",
-      "cat": "GK",
-      "catName": "Gauge / Stretching Kits",
-      "image": "https://m.media-amazon.com/images/I/41ZOWHEPg3L.jpg",
-      "childCount": 1,
-      "u30": 124,
-      "s30": 3651.54,
-      "r30": 89.97,
-      "rate30": 2.46,
-      "u7": 0,
-      "s7": 0.0,
-      "r7": 0.0,
-      "rate7": null,
-      "delta": null,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B08HJS4G9R",
-          "label": "00G-25mm",
-          "u30": 124,
-          "s30": 3651.54,
-          "r30": 89.97,
-          "rate30": 2.46,
-          "u7": 0,
-          "s7": 0.0,
-          "r7": 0.0,
-          "rate7": 0.0,
-          "delta": -2.46
-        }
-      ]
-    },
-    {
-      "asin": "B07D1WLHTG",
+      "family": "KT8002-Master",
+      "sku": "KT8002",
       "name": "24PC Big Gauge Kit",
       "cat": "GK",
       "catName": "Gauge / Stretching Kits",
@@ -1286,6 +1270,7 @@
       "children": [
         {
           "asin": "B006P2VUF6",
+          "sku": "KT8002-BK",
           "label": "00G-20mm",
           "u30": 95,
           "s30": 1893.38,
@@ -1300,16 +1285,17 @@
       ]
     },
     {
-      "asin": "B0B9QZCJQZ",
-      "name": "36PC Ear Stretching Kit (Gold)",
+      "family": "GK0858-Master",
+      "sku": "GK0858",
+      "name": "36PC Big Gauge Kit",
       "cat": "GK",
       "catName": "Gauge / Stretching Kits",
-      "image": "https://m.media-amazon.com/images/I/51BhgYzVEXL.jpg",
+      "image": "https://m.media-amazon.com/images/I/41ZOWHEPg3L.jpg",
       "childCount": 1,
-      "u30": 107,
-      "s30": 1923.94,
-      "r30": 35.96,
-      "rate30": 1.87,
+      "u30": 124,
+      "s30": 3651.54,
+      "r30": 89.97,
+      "rate30": 2.46,
       "u7": 0,
       "s7": 0.0,
       "r7": 0.0,
@@ -1318,55 +1304,24 @@
       "flagged": false,
       "children": [
         {
-          "asin": "B00PSRXKMA",
-          "label": "Goldtone",
-          "u30": 107,
-          "s30": 1923.94,
-          "r30": 35.96,
-          "rate30": 1.87,
+          "asin": "B08HJS4G9R",
+          "sku": "GK0858",
+          "label": "00G-25mm",
+          "u30": 124,
+          "s30": 3651.54,
+          "r30": 89.97,
+          "rate30": 2.46,
           "u7": 0,
           "s7": 0.0,
           "r7": 0.0,
           "rate7": 0.0,
-          "delta": -1.87
+          "delta": -2.46
         }
       ]
     },
     {
-      "asin": "B0CYQ1NCCC",
-      "name": "3PC Choker Set + Bracelet/Ring",
-      "cat": "NC",
-      "catName": "Choker Necklaces",
-      "image": "https://m.media-amazon.com/images/I/71lmzNquC+L.jpg",
-      "childCount": 1,
-      "u30": 88,
-      "s30": 878.62,
-      "r30": 109.88,
-      "rate30": 12.51,
-      "u7": 0,
-      "s7": 0.0,
-      "r7": 0.0,
-      "rate7": null,
-      "delta": null,
-      "flagged": false,
-      "children": [
-        {
-          "asin": "B0CYLGPQVS",
-          "label": "Black/Multicolor",
-          "u30": 88,
-          "s30": 878.62,
-          "r30": 109.88,
-          "rate30": 12.51,
-          "u7": 0,
-          "s7": 0.0,
-          "r7": 0.0,
-          "rate7": 0.0,
-          "delta": -12.51
-        }
-      ]
-    },
-    {
-      "asin": "B082MV956V",
+      "family": "NC4085-Master",
+      "sku": "NC4085",
       "name": "24PC Tattoo Choker",
       "cat": "NC",
       "catName": "Choker Necklaces",
@@ -1385,6 +1340,7 @@
       "children": [
         {
           "asin": "B0DDT2TSPK",
+          "sku": "NC4085-1",
           "label": "Pride Rainbow",
           "u30": 90,
           "s30": 2071.6,
@@ -1399,7 +1355,78 @@
       ]
     },
     {
-      "asin": "B0F7QKYY9L",
+      "family": "GK0184-Master",
+      "sku": "GK0184",
+      "name": "36PC Ear Stretching Kit (Gold)",
+      "cat": "GK",
+      "catName": "Gauge / Stretching Kits",
+      "image": "https://m.media-amazon.com/images/I/51BhgYzVEXL.jpg",
+      "childCount": 1,
+      "u30": 107,
+      "s30": 1923.94,
+      "r30": 35.96,
+      "rate30": 1.87,
+      "u7": 0,
+      "s7": 0.0,
+      "r7": 0.0,
+      "rate7": null,
+      "delta": null,
+      "flagged": false,
+      "children": [
+        {
+          "asin": "B00PSRXKMA",
+          "sku": "GK0220-Gold",
+          "label": "Goldtone",
+          "u30": 107,
+          "s30": 1923.94,
+          "r30": 35.96,
+          "rate30": 1.87,
+          "u7": 0,
+          "s7": 0.0,
+          "r7": 0.0,
+          "rate7": 0.0,
+          "delta": -1.87
+        }
+      ]
+    },
+    {
+      "family": "NC4256-Master",
+      "sku": "NC4256",
+      "name": "3PC Choker Set + Bracelet/Ring",
+      "cat": "NC",
+      "catName": "Choker Necklaces",
+      "image": "https://m.media-amazon.com/images/I/71lmzNquC+L.jpg",
+      "childCount": 1,
+      "u30": 88,
+      "s30": 878.62,
+      "r30": 109.88,
+      "rate30": 12.51,
+      "u7": 0,
+      "s7": 0.0,
+      "r7": 0.0,
+      "rate7": null,
+      "delta": null,
+      "flagged": false,
+      "children": [
+        {
+          "asin": "B0CYLGPQVS",
+          "sku": "NC4388",
+          "label": "Black/Multicolor",
+          "u30": 88,
+          "s30": 878.62,
+          "r30": 109.88,
+          "rate30": 12.51,
+          "u7": 0,
+          "s7": 0.0,
+          "r7": 0.0,
+          "rate7": 0.0,
+          "delta": -12.51
+        }
+      ]
+    },
+    {
+      "family": "KT8100-Master",
+      "sku": "KT8100",
       "name": "120PC Piercing Jewelry Kit",
       "cat": "PJ",
       "catName": "Piercing Jewelry",
@@ -1418,6 +1445,7 @@
       "children": [
         {
           "asin": "B0742QYGGN",
+          "sku": "KT8100",
           "label": "Silvertone Bulk",
           "u30": 88,
           "s30": 1493.42,

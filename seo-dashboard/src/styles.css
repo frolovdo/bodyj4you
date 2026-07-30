@@ -159,9 +159,28 @@ body {
 .col-product { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .caret { color: var(--ink-3); width: 12px; flex: none; font-size: 11px; }
 .caret.hidden { visibility: hidden; }
-.thumb { width: 34px; height: 34px; border-radius: 7px; object-fit: cover; background: #eef0f4; border: 1px solid var(--border); flex: none; }
-.thumb-blank { display: inline-block; }
-.product-meta { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.thumb {
+  width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
+  background: #fff; border: 1px solid var(--border); flex: none;
+}
+.thumb-fallback {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.02em; color: var(--ink-2);
+  background: #eef0f4;
+}
+.thumb-fallback.cat-PA { background: #e9f1fe; color: #2563a8; }
+.thumb-fallback.cat-EO { background: #e7f4ee; color: #1c7a4d; }
+.thumb-fallback.cat-NC { background: #f4ecfb; color: #7c3a9c; }
+.thumb-fallback.cat-GK { background: #fdeede; color: #b5670c; }
+.thumb-fallback.cat-PJ { background: #eef0f4; color: #4b5563; }
+.product-meta { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+
+.sku-chip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px; color: var(--ink-2); background: #f1f2f5;
+  border: 1px solid var(--border); border-radius: 5px; padding: 0 5px; white-space: nowrap;
+}
+.sku-chip-sm { font-size: 10px; padding: 0 4px; }
 .product-name {
   font-weight: 600; font-size: 13px; color: var(--ink); white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 340px;

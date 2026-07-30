@@ -1,31 +1,30 @@
 #!/usr/bin/env python3
 """
-Build seo-dashboard/public/data/returns.json from the Helium 10 P&L pulls.
+Build seo-dashboard/public/data/returns.json from the Helium 10 P&L pulls,
+grouped by the authoritative Monday-brief catalog.
 
-Inputs  (all under seo-dashboard/data/):
-  catalog.json      parent + variant display metadata (hand-curated)
-  raw/pnl_30d.json  30-day ASIN-level P&L breakdown from Helium 10 MCP
-  raw/pnl_7d.json   last-7-day ASIN-level P&L breakdown from Helium 10 MCP
+Inputs (all under seo-dashboard/data/):
+  asin_map.json       ASIN -> {sku, family, cat, order}  (generated from
+                      automation/catalog.xlsx by build_catalog.py) — the
+                      single source of truth for grouping.
+  parent_meta.json    family -> {name, image}            (display name + main
+                      image per parent family).
+  variant_labels.json ASIN -> short variation label.
+  raw/pnl_30d.json    30-day ASIN-level P&L from Helium 10 MCP.
+  raw/pnl_7d.json     last-7-day ASIN-level P&L from Helium 10 MCP.
 
 Output:
-  public/data/returns.json  the shape the React app renders.
+  public/data/returns.json
 
-Metric notes
-------------
-Amazon's `units_returned` from Profits lags heavily (FBA return-to-stock) and
-reads ~0, so it is NOT used. The reliable return/refund signal is the
-`Refunded Amount` refund sub-metric (gross customer refund $), captured as `r`
-in the raw files. The headline metric is therefore:
+Grouping: children roll up to their catalog **family** (the catalog's
+"Parent ASIN" master, e.g. HS0002-Master), NOT Amazon's parent_asin — so the
+dashboard matches the Monday brief exactly (it even merges families that Amazon
+splits into separate parent ASINs).
 
-    refund rate = refunded $ / sales $   (share of revenue refunded)
-
-Trend = last-week refund rate  vs  30-day average refund rate (delta in pp).
-Only parents with "significant sales" (>= MIN_UNITS_30D units over 30 days)
-are shown, so low-volume noise never floats to the top.
-
-This script is pure/deterministic: same inputs -> same output. It performs no
-network calls. Refreshing the dashboard = refresh the two raw/*.json pulls
-(via the Helium 10 MCP) and re-run this script.
+Metric: refund rate = refunded $ / sales $. Amazon units_returned is excluded
+(FBA return-to-stock lag makes it read ~0); the Refunded Amount sub-metric is
+the ground truth. Trend = last-week rate vs 30-day-average rate (delta in pp).
+Only families with significant sales (>= MIN_UNITS_30D units / 30d) are shown.
 """
 
 import json
@@ -33,9 +32,9 @@ import datetime
 from pathlib import Path
 
 # ---- tunable thresholds -----------------------------------------------------
-MIN_UNITS_30D = 50      # "significant sales" gate, at the parent level
-FLAG_RATE_7D = 5.0      # a parent is flagged if last-week refund rate >= this %
-FLAG_DELTA_PP = 1.0     # ...and it rose at least this many points vs 30-day avg
+MIN_UNITS_30D = 50      # "significant sales" gate, at the family level
+FLAG_RATE_7D = 5.0      # flag if last-week refund rate >= this %
+FLAG_DELTA_PP = 1.0     # ...and it rose at least this many pp vs 30-day avg
 FLAG_MIN_REFUND_7D = 25 # ...and refunded at least this many $ last week
 # -----------------------------------------------------------------------------
 
@@ -48,6 +47,7 @@ CAT_NAMES = {
     "GK": "Gauge / Stretching Kits",
     "NC": "Choker Necklaces",
     "PJ": "Piercing Jewelry",
+    "FJ": "Fashion Jewelry",
 }
 
 
@@ -60,38 +60,37 @@ def rate(refund, sales):
 
 
 def main():
-    catalog = load("catalog.json")
+    asin_map = load("asin_map.json")
+    meta = load("parent_meta.json")
+    fam_meta = meta["families"]
+    img_base = meta["imageBase"]
+    labels = load("variant_labels.json")["labels"]
     w30 = load(Path("raw") / "pnl_30d.json")
     w7 = load(Path("raw") / "pnl_7d.json")
 
-    parents_meta = catalog["parents"]
-    variants = catalog["variants"]
-    img_base = catalog["imageBase"]
-
-    by30 = {row["a"]: row for row in w30["rows"]}
-    by7 = {row["a"]: row for row in w7["rows"]}
+    by30 = {r["a"]: r for r in w30["rows"]}
+    by7 = {r["a"]: r for r in w7["rows"]}
     all_asins = set(by30) | set(by7)
 
-    # Resolve every ASIN to its parent (fall back to the ASIN itself).
-    def parent_of(asin):
-        if asin in variants:
-            return variants[asin]["parent"]
-        return asin
-
-    # Group children under parents.
+    # Group every ASIN under its catalog family.
     groups = {}
     for asin in all_asins:
-        p = parent_of(asin)
-        groups.setdefault(p, []).append(asin)
+        info = asin_map.get(asin, {"sku": asin, "family": asin, "cat": "", "order": 9999})
+        groups.setdefault(info["family"], []).append(asin)
 
     parents_out = []
     kpi = {"s30": 0.0, "r30": 0.0, "s7": 0.0, "r7": 0.0}
 
-    for pasin, children in groups.items():
-        meta = parents_meta.get(pasin, {})
-        pname = meta.get("name", pasin)
-        cat = meta.get("cat", "")
-        image = img_base + meta["image"] if meta.get("image") else None
+    for family, children in groups.items():
+        # Primary/base item = lowest catalog Order (the canonical listing).
+        children.sort(key=lambda a: asin_map.get(a, {}).get("order", 9999))
+        primary = children[0]
+        cat = asin_map.get(primary, {}).get("cat", "")
+        fmeta = fam_meta.get(family, {})
+        base_sku = family[:-7] if family.endswith("-Master") else \
+            asin_map.get(primary, {}).get("sku", family)
+        name = fmeta.get("name") or asin_map.get(primary, {}).get("sku") or family
+        image = img_base + fmeta["image"] if fmeta.get("image") else None
 
         agg = {"u30": 0, "s30": 0.0, "r30": 0.0, "u7": 0, "s7": 0.0, "r7": 0.0}
         child_rows = []
@@ -100,10 +99,11 @@ def main():
             r7 = by7.get(asin, {"u": 0, "s": 0.0, "r": 0.0})
             agg["u30"] += r30["u"]; agg["s30"] += r30["s"]; agg["r30"] += r30["r"]
             agg["u7"] += r7["u"];  agg["s7"] += r7["s"];  agg["r7"] += r7["r"]
-            vlabel = variants.get(asin, {}).get("label", asin)
+            info = asin_map.get(asin, {})
             child_rows.append({
                 "asin": asin,
-                "label": vlabel,
+                "sku": info.get("sku", asin),
+                "label": labels.get(asin) or info.get("sku") or asin,
                 "u30": r30["u"], "s30": round(r30["s"], 2), "r30": round(r30["r"], 2),
                 "rate30": rate(r30["r"], r30["s"]),
                 "u7": r7["u"], "s7": round(r7["s"], 2), "r7": round(r7["r"], 2),
@@ -111,7 +111,6 @@ def main():
                 "delta": round(rate(r7["r"], r7["s"]) - rate(r30["r"], r30["s"]), 2),
             })
 
-        # "significant sales" gate
         if agg["u30"] < MIN_UNITS_30D:
             continue
 
@@ -125,12 +124,12 @@ def main():
             and agg["r7"] >= FLAG_MIN_REFUND_7D
         )
 
-        # Sort children worst-first by last-week rate, then 30-day rate.
         child_rows.sort(key=lambda c: (c["rate7"], c["rate30"]), reverse=True)
 
         parents_out.append({
-            "asin": pasin,
-            "name": pname,
+            "family": family,
+            "sku": base_sku,
+            "name": name,
             "cat": cat,
             "catName": CAT_NAMES.get(cat, cat),
             "image": image,
@@ -147,7 +146,6 @@ def main():
         kpi["s30"] += agg["s30"]; kpi["r30"] += agg["r30"]
         kpi["s7"] += agg["s7"];  kpi["r7"] += agg["r7"]
 
-    # Default sort: worst last-week refund rate first (problems on top).
     parents_out.sort(key=lambda p: (p["rate7"] is None, -(p["rate7"] or 0)))
 
     blended30 = rate(kpi["r30"], kpi["s30"])
@@ -157,8 +155,7 @@ def main():
     best = min(movers, key=lambda p: p["delta"], default=None)
 
     out = {
-        "generatedAt": datetime.datetime.now(datetime.timezone.utc)
-        .isoformat(timespec="seconds"),
+        "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "marketplace": w30.get("marketplace", "US"),
         "windows": {
             "d30": {"from": w30["from"], "to": w30["to"]},
@@ -179,15 +176,15 @@ def main():
             "refund7": round(kpi["r7"], 2),
             "blendedRate7": blended7,
             "blendedDelta": round(blended7 - blended30, 2),
-            "worstMover": {"asin": worst["asin"], "name": worst["name"], "delta": worst["delta"]} if worst else None,
-            "bestMover": {"asin": best["asin"], "name": best["name"], "delta": best["delta"]} if best else None,
+            "worstMover": {"family": worst["family"], "name": worst["name"], "delta": worst["delta"]} if worst else None,
+            "bestMover": {"family": best["family"], "name": best["name"], "delta": best["delta"]} if best else None,
         },
         "parents": parents_out,
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, indent=2))
-    print(f"Wrote {OUT} — {len(parents_out)} significant parents, "
+    print(f"Wrote {OUT} — {len(parents_out)} families, "
           f"blended refund rate {blended7}% (7d) vs {blended30}% (30d avg).")
 
 

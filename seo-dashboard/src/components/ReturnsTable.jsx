@@ -1,5 +1,6 @@
 import RateCell from './RateCell.jsx';
 import TrendBadge from './TrendBadge.jsx';
+import ProductImage from './ProductImage.jsx';
 import { usd0, int, pct } from '../lib/format.js';
 
 function ChildRow({ c }) {
@@ -8,7 +9,7 @@ function ChildRow({ c }) {
       <div className="col-product child-product">
         <span className="child-tick" />
         <span className="child-label">{c.label}</span>
-        <span className="child-asin">{c.asin}</span>
+        <span className="sku-chip sku-chip-sm">{c.sku}</span>
       </div>
       <div className="col-num">{int(c.u7)}</div>
       <div className="col-num">{usd0(c.s7)}</div>
@@ -30,11 +31,7 @@ function ParentRow({ p, expanded, onToggle }) {
       >
         <div className="col-product">
           <span className={`caret ${hasChildren ? '' : 'hidden'}`}>{expanded ? '▾' : '▸'}</span>
-          {p.image ? (
-            <img className="thumb" src={p.image} alt="" loading="lazy" />
-          ) : (
-            <span className="thumb thumb-blank" />
-          )}
+          <ProductImage src={p.image} cat={p.cat} alt={p.name} />
           <span className="product-meta">
             <span className="product-name">
               {p.name}
@@ -42,6 +39,7 @@ function ParentRow({ p, expanded, onToggle }) {
             </span>
             <span className="product-tags">
               <span className={`cat-pill cat-${p.cat}`}>{p.cat}</span>
+              <span className="sku-chip">{p.sku}</span>
               {hasChildren && <span className="child-count">{p.childCount} variations</span>}
             </span>
           </span>
@@ -77,10 +75,10 @@ export default function ReturnsTable({ parents, expanded, toggle }) {
       {parents.length === 0 && <div className="empty">No products match these filters.</div>}
       {parents.map((p) => (
         <ParentRow
-          key={p.asin}
+          key={p.family}
           p={p}
-          expanded={!!expanded[p.asin]}
-          onToggle={() => toggle(p.asin)}
+          expanded={!!expanded[p.family]}
+          onToggle={() => toggle(p.family)}
         />
       ))}
     </div>

@@ -30,9 +30,15 @@ export default function App() {
       if (cat !== 'ALL' && p.cat !== cat) return false;
       if (flaggedOnly && !p.flagged) return false;
       if (q) {
-        const inParent = p.name.toLowerCase().includes(q) || p.asin.toLowerCase().includes(q);
+        const inParent =
+          p.name.toLowerCase().includes(q) ||
+          (p.sku || '').toLowerCase().includes(q) ||
+          (p.family || '').toLowerCase().includes(q);
         const inChild = p.children.some(
-          (c) => c.label.toLowerCase().includes(q) || c.asin.toLowerCase().includes(q),
+          (c) =>
+            c.label.toLowerCase().includes(q) ||
+            c.asin.toLowerCase().includes(q) ||
+            (c.sku || '').toLowerCase().includes(q),
         );
         if (!inParent && !inChild) return false;
       }
@@ -51,18 +57,18 @@ export default function App() {
   const effExpanded = useMemo(() => {
     if (query.trim()) {
       const all = {};
-      parents.forEach((p) => (all[p.asin] = true));
+      parents.forEach((p) => (all[p.family] = true));
       return all;
     }
     return expanded;
   }, [query, parents, expanded]);
 
-  const allExpanded = parents.length > 0 && parents.every((p) => effExpanded[p.asin]);
+  const allExpanded = parents.length > 0 && parents.every((p) => effExpanded[p.family]);
 
   const toggle = (asin) => setExpanded((e) => ({ ...e, [asin]: !e[asin] }));
   const expandAll = () => {
     const all = {};
-    parents.forEach((p) => (all[p.asin] = true));
+    parents.forEach((p) => (all[p.family] = true));
     setExpanded(all);
   };
   const collapseAll = () => setExpanded({});
