@@ -18,8 +18,8 @@ so create it from **claude.ai → Routines** (that's where your connectors live)
 3. Mode: start a **new session** each run (fresh session per fire).
 4. Paste this as the prompt:
 
-   > Refresh the BodyJ4You SEO Dashboard "Returns & Refunds" data in the
-   > `frolovdo/bodyj4you` repo by following `seo-dashboard/REFRESH.md` exactly.
+   > Refresh the BodyJ4You Return Dashboard "Returns & Refunds" data in the
+   > `frolovdo/bodyj4you` repo by following `bodyj4you-return-dashboard/REFRESH.md` exactly.
    > Work on `main`, change only the data files (raw pulls, catalog.json,
    > public/data/returns.json), commit, and push — do not open a PR or touch app
    > code. If the Helium 10 pull returns nothing, skip the commit and report it.
@@ -47,7 +47,7 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    10 rows **or** `units_sold` drops below ~30 (the long tail is immaterial to a
    significant-sales view). ~6 pages covers the catalog.
 
-3. **Write the raw files** `seo-dashboard/data/raw/pnl_30d.json` and
+3. **Write the raw files** `bodyj4you-return-dashboard/data/raw/pnl_30d.json` and
    `pnl_7d.json`, keeping the existing shape: `window`, `from`, `to`,
    `marketplace`, and `rows: [{a, u, s, r}]` where
    - `a` = ASIN,
@@ -62,7 +62,7 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    ASIN / family, Category) so it groups correctly, then regenerate the map:
    ```bash
    pip install openpyxl
-   cd seo-dashboard && python3 scripts/build_catalog.py   # -> data/asin_map.json
+   cd bodyj4you-return-dashboard && python3 scripts/build_catalog.py   # -> data/asin_map.json
    ```
    If the ASIN introduces a **new family**, add a `families` entry to
    `data/parent_meta.json` (`name`, `image` = Amazon media id). Optionally add a
@@ -71,7 +71,7 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
 
 5. **Rebuild** the dashboard JSON:
    ```bash
-   cd seo-dashboard && python3 scripts/build_returns.py
+   cd bodyj4you-return-dashboard && python3 scripts/build_returns.py
    ```
    This joins the pulls to `asin_map.json` + `parent_meta.json` +
    `variant_labels.json` and regenerates `public/data/returns.json`
@@ -79,7 +79,7 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
 
 6. **Commit & push** to the deploy branch (`main`) so Netlify redeploys:
    ```
-   git add seo-dashboard/data seo-dashboard/public/data/returns.json
+   git add bodyj4you-return-dashboard/data bodyj4you-return-dashboard/public/data/returns.json
    git commit -m "Refresh Returns & Refunds data (<7d from>–<7d to>)"
    git push
    ```

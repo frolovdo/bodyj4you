@@ -96,13 +96,10 @@ export default function App() {
         <div className="brand">
           <span className="brand-mark">BodyJ4You</span>
           <span className="brand-sep">/</span>
-          <span className="brand-app">SEO Dashboard</span>
+          <span className="brand-app">Return Dashboard</span>
         </div>
         <nav className="subnav">
           <span className="nav-item active">Returns &amp; Refunds</span>
-          <span className="nav-item disabled">Keyword Rank</span>
-          <span className="nav-item disabled">Traffic</span>
-          <span className="nav-item disabled">Listing Health</span>
         </nav>
       </header>
 

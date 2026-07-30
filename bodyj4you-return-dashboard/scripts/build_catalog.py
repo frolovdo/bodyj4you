@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate seo-dashboard/data/asin_map.json from the authoritative Monday-brief
+Generate bodyj4you-return-dashboard/data/asin_map.json from the authoritative Monday-brief
 catalog (automation/catalog.xlsx, sheet "Catalog").
 
 This is the single source of truth for grouping: every child ASIN -> its SKU,
@@ -17,7 +17,7 @@ import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent.parent          # repo root
 XLSX = ROOT / "automation" / "catalog.xlsx"
-OUT = ROOT / "seo-dashboard" / "data" / "asin_map.json"
+OUT = ROOT / "bodyj4you-return-dashboard" / "data" / "asin_map.json"
 
 
 def main():

@@ -1,8 +1,8 @@
-# BodyJ4You — SEO Dashboard
+# BodyJ4You — Return Dashboard
 
-A clean, minimalistic dashboard page for BodyJ4You's Amazon SEO/operations. The
-first (and currently only) section is **Returns & Refunds**; the layout is built
-so more SEO sections (Keyword Rank, Traffic, Listing Health) can slot in as tabs.
+A clean, minimalistic dashboard for tracking BodyJ4You's Amazon **returns &
+refunds** — refund rate by parent, expandable to each child variation, last week
+vs the 30-day average, for products with significant sales.
 
 Live data is sourced entirely from the **Helium 10 MCP** (Amazon Profits / P&L),
 the site is hosted on **Netlify**, and the data refresh is **fully automated** —
@@ -77,7 +77,7 @@ merges but Amazon splits (e.g. both Tea Tree parent ASINs → `PD-TEATREE-MCT`).
 ## Local development
 
 ```bash
-cd seo-dashboard
+cd bodyj4you-return-dashboard
 npm install
 npm run data     # rebuild public/data/returns.json from data/raw + catalog
 npm run dev      # http://localhost:5173
@@ -86,11 +86,11 @@ npm run build    # production build -> dist/
 
 ## Netlify setup (one time)
 
-Create a new site from this repo and set **Base directory = `seo-dashboard`**
+Create a new site from this repo and set **Base directory = `bodyj4you-return-dashboard`**
 (the same per-folder pattern as the Miami / China / Supply-Chain sites in this
 repo). `netlify.toml` handles the rest: build `npm run build`, publish `dist`,
 skip builds when only sibling folders changed, and SPA redirects. Every push
-that touches `seo-dashboard/` triggers a deploy.
+that touches `bodyj4you-return-dashboard/` triggers a deploy.
 
 ## Automated weekly refresh
 

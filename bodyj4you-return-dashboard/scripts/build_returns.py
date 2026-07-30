@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Build seo-dashboard/public/data/returns.json from the Helium 10 P&L pulls,
+Build bodyj4you-return-dashboard/public/data/returns.json from the Helium 10 P&L pulls,
 grouped by the authoritative Monday-brief catalog.
 
-Inputs (all under seo-dashboard/data/):
+Inputs (all under bodyj4you-return-dashboard/data/):
   asin_map.json       ASIN -> {sku, family, cat, order}  (generated from
                       automation/catalog.xlsx by build_catalog.py) — the
                       single source of truth for grouping.
