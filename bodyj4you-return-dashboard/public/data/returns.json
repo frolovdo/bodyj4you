@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T21:54:32+00:00",
+  "generatedAt": "2026-07-30T22:07:46+00:00",
   "marketplace": "US",
   "windows": {
     "d30": {
@@ -13,23 +13,100 @@
   },
   "thresholds": {
     "minSales7d": 1500,
-    "flagRate30d": 5.0,
-    "flagDeltaPp": 1.0
+    "critical": {
+      "r7": 250,
+      "delta": 2.0,
+      "rate7": 8.0
+    },
+    "watch": {
+      "r7": 100,
+      "delta": 1.5,
+      "ratio": 2.0
+    }
   },
   "kpis": {
     "parents": 14,
-    "flagged": 2,
+    "healthy": 11,
+    "critical": 2,
+    "watch": 1,
+    "alertRefund7": 2855.29,
     "sales7": 118613.59,
     "refund7": 4957.49,
     "blendedRate30": 3.46,
     "blendedRate7": 4.18,
     "blendedDelta": 0.72,
-    "worstMover": {
-      "family": "NC4058-Master",
-      "name": "12PC Tattoo Choker Set",
-      "delta": 3.08
+    "excessTotal": 1027.27,
+    "nc": {
+      "rate7": 11.68,
+      "rate30": 8.87,
+      "refundShare7": 54.0
+    },
+    "rest": {
+      "rate7": 2.38
     }
   },
+  "alerts": [
+    {
+      "family": "NC4058-Master",
+      "name": "12PC Tattoo Choker Set",
+      "sku": "NC4058-Master",
+      "asin": "B01HSJ3T6M",
+      "cat": "NC",
+      "tier": "critical",
+      "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
+      "rate7": 10.37,
+      "rate30": 7.29,
+      "delta": 3.08,
+      "r7": 1447.7,
+      "excess7": 430.11,
+      "driver": {
+        "sku": "NC4058",
+        "asin": "B01HSJ3T6M",
+        "rate7": 12.04,
+        "r7": 1312.82
+      }
+    },
+    {
+      "family": "NC4285-Master",
+      "name": "2PC Tattoo Choker Sets",
+      "sku": "NC4285-Master",
+      "asin": "B09826V9Z8",
+      "cat": "NC",
+      "tier": "critical",
+      "image": "https://m.media-amazon.com/images/I/71mgBuFFFfL.jpg",
+      "rate7": 13.72,
+      "rate30": 11.57,
+      "delta": 2.15,
+      "r7": 1230.78,
+      "excess7": 192.92,
+      "driver": {
+        "sku": "NC4285",
+        "asin": "B08Q2WMF25",
+        "rate7": 31.93,
+        "r7": 823.19
+      }
+    },
+    {
+      "family": "PD-MCT-10-RL-Master",
+      "name": "Essential Oil Roll-Ons",
+      "sku": "PD-MCT-10-RL-Master",
+      "asin": "B0FX6Y9CP3",
+      "cat": "EO",
+      "tier": "watch",
+      "image": "https://m.media-amazon.com/images/I/81ekfPEgdFL.jpg",
+      "rate7": 3.95,
+      "rate30": 1.92,
+      "delta": 2.03,
+      "r7": 176.81,
+      "excess7": 90.91,
+      "driver": {
+        "sku": "PD-PEPPERMINT-MCT-10-RL",
+        "asin": "B0FX86N6HR",
+        "rate7": 9.34,
+        "r7": 55.94
+      }
+    }
+  ],
   "parents": [
     {
       "family": "HS0002-Master",
@@ -47,7 +124,9 @@
       "rate30": 2.44,
       "rate7": 2.96,
       "delta": 0.52,
-      "flagged": false,
+      "excess7": 174.85,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B08S3JCTKC",
@@ -97,7 +176,14 @@
       "rate30": 7.29,
       "rate7": 10.37,
       "delta": 3.08,
-      "flagged": true,
+      "excess7": 430.11,
+      "tier": "critical",
+      "driver": {
+        "sku": "NC4058",
+        "asin": "B01HSJ3T6M",
+        "rate7": 12.04,
+        "r7": 1312.82
+      },
       "children": [
         {
           "asin": "B01HSJ3T6M",
@@ -147,7 +233,9 @@
       "rate30": 1.91,
       "rate7": 2.14,
       "delta": 0.23,
-      "flagged": false,
+      "excess7": 26.24,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0FZHS9TB6",
@@ -207,7 +295,9 @@
       "rate30": 2.14,
       "rate7": 2.83,
       "delta": 0.69,
-      "flagged": false,
+      "excess7": 62.84,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0FBYTKGD6",
@@ -267,7 +357,14 @@
       "rate30": 11.57,
       "rate7": 13.72,
       "delta": 2.15,
-      "flagged": true,
+      "excess7": 192.92,
+      "tier": "critical",
+      "driver": {
+        "sku": "NC4285",
+        "asin": "B08Q2WMF25",
+        "rate7": 31.93,
+        "r7": 823.19
+      },
       "children": [
         {
           "asin": "B09826V9Z8",
@@ -337,7 +434,9 @@
       "rate30": 1.36,
       "rate7": 1.33,
       "delta": -0.03,
-      "flagged": false,
+      "excess7": -2.64,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0DRML3ZMM",
@@ -377,7 +476,9 @@
       "rate30": 1.91,
       "rate7": 1.37,
       "delta": -0.54,
-      "flagged": false,
+      "excess7": -35.85,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0D268LC2Z",
@@ -407,7 +508,9 @@
       "rate30": 1.79,
       "rate7": 1.16,
       "delta": -0.63,
-      "flagged": false,
+      "excess7": -37.95,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B07DT6ZDP5",
@@ -457,7 +560,9 @@
       "rate30": 2.24,
       "rate7": 2.79,
       "delta": 0.55,
-      "flagged": false,
+      "excess7": 30.33,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0B57PWJW2",
@@ -487,7 +592,14 @@
       "rate30": 1.92,
       "rate7": 3.95,
       "delta": 2.03,
-      "flagged": false,
+      "excess7": 90.91,
+      "tier": "watch",
+      "driver": {
+        "sku": "PD-PEPPERMINT-MCT-10-RL",
+        "asin": "B0FX86N6HR",
+        "rate7": 9.34,
+        "r7": 55.94
+      },
       "children": [
         {
           "asin": "B0FX71YSCR",
@@ -577,7 +689,9 @@
       "rate30": 2.45,
       "rate7": 1.63,
       "delta": -0.82,
-      "flagged": false,
+      "excess7": -28.54,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0DDT7GP79",
@@ -617,7 +731,9 @@
       "rate30": 2.03,
       "rate7": 1.96,
       "delta": -0.07,
-      "flagged": false,
+      "excess7": -2.06,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B004MZMB3S",
@@ -677,7 +793,9 @@
       "rate30": 1.03,
       "rate7": 1.99,
       "delta": 0.96,
-      "flagged": false,
+      "excess7": 19.07,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0GK8C9WFZ",
@@ -707,7 +825,9 @@
       "rate30": 2.02,
       "rate7": 1.2,
       "delta": -0.82,
-      "flagged": false,
+      "excess7": -13.68,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B07N8MNWYK",

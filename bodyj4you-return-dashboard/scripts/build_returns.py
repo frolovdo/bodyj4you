@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Build bodyj4you-return-dashboard/public/data/returns.json from the Helium 10
-P&L pulls, grouped by the authoritative Monday-brief catalog.
+P&L pulls, grouped by the catalog (data/catalog.xlsx -> asin_map.json).
 
 Inputs (all under bodyj4you-return-dashboard/data/):
   asin_map.json       ASIN -> {sku, family, cat, order}  (from build_catalog.py)
@@ -10,19 +10,22 @@ Inputs (all under bodyj4you-return-dashboard/data/):
   raw/pnl_30d.json    30-day ASIN-level P&L from Helium 10 MCP
   raw/pnl_7d.json     last-7-day ASIN-level P&L from Helium 10 MCP
 
-Output:
-  public/data/returns.json
+Output: public/data/returns.json
 
-Design (per Denis's spec):
-  * Group by catalog family (the "Parent ASIN" master, e.g. NC4285-Master).
-  * Parent row = title + parent SKU (the family master) + parent ASIN (the
-    flagship/base listing, linked to Amazon).
-  * A variation is shown only if it SOLD last week (7-day units > 0).
-  * A family is shown only if its last-week sales are substantial
-    (>= MIN_SALES_7D) — keep the list short and actionable.
-  * Order: by last-week revenue (7-day sales), biggest first — parents and
-    variations alike, regardless of refund rate.
-  * Columns: Sales = 7d, Refunds = 7d, Refund rate = 30-day average.
+Triage design (design-council spec — PM / data analyst / CEO):
+  * Group by catalog family; parent = title + family SKU + flagship ASIN.
+  * Show only variations that sold last week; only families >= MIN_SALES_7D.
+  * Order by last-week revenue. Alerted families surface via `tier`.
+  * Two alert tiers, evaluated at family level, ranked by refund dollars:
+      CRITICAL  r7 >= $250  AND delta >= +2.0pp AND rate7 >= 8%
+      WATCH     r7 >= $100  AND (delta >= +1.5pp OR rate7 >= 2x rate30)
+    The dollar floors keep 2-3-unit noise out; the delta condition measures
+    each product against its OWN 30-day baseline (so chokers' naturally high
+    rates don't cry wolf, and a clean product that doubles gets caught).
+  * Each alert names the `driver` — the child with the most refund $.
+  * `excess7` = (rate7 - rate30)/100 * s7 — the extra dollars last week vs the
+    product's own baseline; the KPI row totals it.
+  * Category rollup: NC (chokers) vs rest, incl. NC share of refund dollars.
 
 Metric: refund rate = refunded $ / sales $. Amazon units_returned is excluded
 (FBA return-to-stock lag); the Refunded Amount sub-metric is the ground truth.
@@ -33,10 +36,13 @@ import datetime
 from pathlib import Path
 
 # ---- tunable thresholds -----------------------------------------------------
-MIN_SALES_7D = 1500     # a family must have at least this much 7-day revenue
-FLAG_RATE_30D = 5.0     # flag if 30-day refund rate >= this %
-FLAG_DELTA_PP = 1.0     # ...and last week rose at least this many pp vs 30-day
-FLAG_MIN_REFUND_7D = 25 # ...and it refunded at least this many $ last week
+MIN_SALES_7D = 1500        # a family must have >= this much 7-day revenue
+CRIT_R7 = 250              # CRITICAL: refunded $ last week
+CRIT_DELTA = 2.0           #   and rise vs own 30d baseline (pp)
+CRIT_RATE7 = 8.0           #   and absolute last-week rate (%)
+WATCH_R7 = 100             # WATCH: refunded $ last week
+WATCH_DELTA = 1.5          #   and rise vs own 30d baseline (pp) ...
+WATCH_RATIO = 2.0          #   ... or last-week rate >= 2x its 30d baseline
 # -----------------------------------------------------------------------------
 
 DATA = Path(__file__).resolve().parent.parent / "data"
@@ -58,6 +64,14 @@ def load(name):
 
 def rate(refund, sales):
     return round(refund / sales * 100, 2) if sales else 0.0
+
+
+def tier_for(r7, rate7, rate30, delta):
+    if r7 >= CRIT_R7 and delta >= CRIT_DELTA and rate7 >= CRIT_RATE7:
+        return "critical"
+    if r7 >= WATCH_R7 and (delta >= WATCH_DELTA or (rate30 > 0 and rate7 >= WATCH_RATIO * rate30)):
+        return "watch"
+    return None
 
 
 def main():
@@ -83,10 +97,11 @@ def main():
 
     parents_out = []
     kpi = {"s30": 0.0, "r30": 0.0, "s7": 0.0, "r7": 0.0}
+    cat_agg = {}
 
     for family, children in groups.items():
         children.sort(key=lambda a: asin_map.get(a, {}).get("order", 9999))
-        primary = children[0]                         # flagship / base listing
+        primary = children[0]
         cat = asin_map.get(primary, {}).get("cat", "")
         fmeta = fam_meta.get(family, {})
         name = fmeta.get("name") or asin_map.get(primary, {}).get("sku") or family
@@ -97,10 +112,8 @@ def main():
         for asin in children:
             r30 = by30.get(asin, {"u": 0, "s": 0.0, "r": 0.0})
             r7 = by7.get(asin, {"u": 0, "s": 0.0, "r": 0.0})
-            # Aggregate the family from everything (so the 30-day rate is whole)...
             agg["s30"] += r30["s"]; agg["r30"] += r30["r"]
             agg["s7"] += r7["s"];  agg["r7"] += r7["r"]
-            # ...but only SHOW variations that sold last week.
             if r7["u"] <= 0:
                 continue
             info = asin_map.get(asin, {})
@@ -114,25 +127,26 @@ def main():
                 "delta": round(rate(r7["r"], r7["s"]) - rate(r30["r"], r30["s"]), 2),
             })
 
-        # Substantial-sellers only.
         if not child_rows or agg["s7"] < MIN_SALES_7D:
             continue
 
         rate30 = rate(agg["r30"], agg["s30"])
-        rate7 = rate(agg["r7"], agg["s7"]) if agg["s7"] else None
-        delta = round(rate7 - rate30, 2) if rate7 is not None else None
-        flagged = bool(
-            rate30 >= FLAG_RATE_30D
-            and delta is not None and delta >= FLAG_DELTA_PP
-            and agg["r7"] >= FLAG_MIN_REFUND_7D
-        )
+        rate7 = rate(agg["r7"], agg["s7"])
+        delta = round(rate7 - rate30, 2)
+        excess7 = round((rate7 - rate30) / 100 * agg["s7"], 2)
+        tier = tier_for(agg["r7"], rate7, rate30, delta)
 
-        child_rows.sort(key=lambda c: c["s7"], reverse=True)   # revenue first
+        child_rows.sort(key=lambda c: c["s7"], reverse=True)
+        driver = None
+        if tier:
+            worst = max(child_rows, key=lambda c: c["r7"])
+            driver = {"sku": worst["sku"], "asin": worst["asin"],
+                      "rate7": worst["rate7"], "r7": worst["r7"]}
 
         parents_out.append({
             "family": family,
-            "sku": family,                 # parent SKU = catalog master
-            "asin": primary,               # flagship ASIN (links to Amazon)
+            "sku": family,
+            "asin": primary,
             "name": name,
             "cat": cat,
             "catName": CAT_NAMES.get(cat, cat),
@@ -140,23 +154,40 @@ def main():
             "childCount": len(child_rows),
             "s7": round(agg["s7"], 2), "r7": round(agg["r7"], 2),
             "s30": round(agg["s30"], 2), "r30": round(agg["r30"], 2),
-            "rate30": rate30,
-            "rate7": rate7,
-            "delta": delta,
-            "flagged": flagged,
+            "rate30": rate30, "rate7": rate7, "delta": delta,
+            "excess7": excess7,
+            "tier": tier,
+            "driver": driver,
             "children": child_rows,
         })
 
         kpi["s30"] += agg["s30"]; kpi["r30"] += agg["r30"]
         kpi["s7"] += agg["s7"];  kpi["r7"] += agg["r7"]
+        c = cat_agg.setdefault(cat, {"s7": 0.0, "r7": 0.0, "s30": 0.0, "r30": 0.0})
+        c["s7"] += agg["s7"]; c["r7"] += agg["r7"]
+        c["s30"] += agg["s30"]; c["r30"] += agg["r30"]
 
-    # Default order: biggest last-week revenue first.
     parents_out.sort(key=lambda p: -p["s7"])
 
     blended30 = rate(kpi["r30"], kpi["s30"])
     blended7 = rate(kpi["r7"], kpi["s7"])
-    movers = [p for p in parents_out if p["delta"] is not None]
-    worst = max(movers, key=lambda p: p["delta"], default=None)
+    excess_total = round(sum(max(0.0, p["excess7"]) for p in parents_out), 2)
+
+    tier_rank = {"critical": 0, "watch": 1}
+    alerts = sorted(
+        (p for p in parents_out if p["tier"]),
+        key=lambda p: (tier_rank[p["tier"]], -p["r7"]),
+    )
+    alerts_out = [{
+        "family": p["family"], "name": p["name"], "sku": p["sku"], "asin": p["asin"],
+        "cat": p["cat"], "tier": p["tier"], "image": p["image"],
+        "rate7": p["rate7"], "rate30": p["rate30"], "delta": p["delta"],
+        "r7": p["r7"], "excess7": p["excess7"], "driver": p["driver"],
+    } for p in alerts]
+
+    nc = cat_agg.get("NC", {"s7": 0.0, "r7": 0.0, "s30": 0.0, "r30": 0.0})
+    rest_s7 = kpi["s7"] - nc["s7"]
+    rest_r7 = kpi["r7"] - nc["r7"]
 
     out = {
         "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -167,26 +198,37 @@ def main():
         },
         "thresholds": {
             "minSales7d": MIN_SALES_7D,
-            "flagRate30d": FLAG_RATE_30D,
-            "flagDeltaPp": FLAG_DELTA_PP,
+            "critical": {"r7": CRIT_R7, "delta": CRIT_DELTA, "rate7": CRIT_RATE7},
+            "watch": {"r7": WATCH_R7, "delta": WATCH_DELTA, "ratio": WATCH_RATIO},
         },
         "kpis": {
             "parents": len(parents_out),
-            "flagged": len([p for p in parents_out if p["flagged"]]),
+            "healthy": len(parents_out) - len(alerts_out),
+            "critical": sum(1 for a in alerts_out if a["tier"] == "critical"),
+            "watch": sum(1 for a in alerts_out if a["tier"] == "watch"),
+            "alertRefund7": round(sum(a["r7"] for a in alerts_out), 2),
             "sales7": round(kpi["s7"], 2),
             "refund7": round(kpi["r7"], 2),
             "blendedRate30": blended30,
             "blendedRate7": blended7,
             "blendedDelta": round(blended7 - blended30, 2),
-            "worstMover": {"family": worst["family"], "name": worst["name"], "delta": worst["delta"]} if worst else None,
+            "excessTotal": excess_total,
+            "nc": {
+                "rate7": rate(nc["r7"], nc["s7"]),
+                "rate30": rate(nc["r30"], nc["s30"]),
+                "refundShare7": round(nc["r7"] / kpi["r7"] * 100, 1) if kpi["r7"] else 0,
+            },
+            "rest": {"rate7": rate(rest_r7, rest_s7)},
         },
+        "alerts": alerts_out,
         "parents": parents_out,
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, indent=2))
-    print(f"Wrote {OUT} — {len(parents_out)} families (>= ${MIN_SALES_7D} 7d sales), "
-          f"blended 30d refund rate {blended30}%.")
+    print(f"Wrote {OUT} — {len(parents_out)} families, "
+          f"{out['kpis']['critical']} critical / {out['kpis']['watch']} watch, "
+          f"excess ${excess_total:,.0f}/wk above baseline.")
 
 
 if __name__ == "__main__":

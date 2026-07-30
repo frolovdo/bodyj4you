@@ -22,8 +22,13 @@ nothing is run by hand.
 - **Substantial sellers only.** A family is hidden unless it did ≥ `minSales7d`
   (default **$1,500**) in last-week sales, and any variation that didn't sell
   last week is hidden — so the list stays short and actionable.
-- **Flagging.** A family is flagged when its 30-day rate ≥ 5% **and** it rose
-  ≥ 1 pp last week **and** it refunded ≥ $25 last week.
+- **Alerts (2 tiers), ranked by dollars.** CRITICAL = ≥$250 refunded/wk AND
+  up ≥2pp vs its own 30-day baseline AND ≥8% last-week rate. WATCH = ≥$100/wk
+  AND rising ≥1.5pp (or 2× its baseline). Each alert names the child variation
+  driving it. Alerts can be acknowledged (muted 30 days, per device).
+- **Triage layout.** Headline sentence in dollars → alert cards with Amazon
+  listing/reviews links → 3 KPIs → table with healthy products collapsed
+  behind one line. Dark theme matching the CEO dashboard family.
 
 ### The metric — why refund $, not "units returned"
 
@@ -41,7 +46,7 @@ refund rate = refunded $ / sales $   (share of revenue refunded)
 ## Architecture
 
 ```
-automation/catalog.xlsx ─►(build_catalog.py)─► data/asin_map.json   (SKU↔ASIN↔family)
+data/catalog.xlsx ─►(build_catalog.py)─► data/asin_map.json   (SKU↔ASIN↔family)
 Helium 10 MCP  ──►  data/raw/pnl_30d.json      (agent pulls, weekly)
                     data/raw/pnl_7d.json
         │                data/parent_meta.json (name + main image per family)
@@ -53,11 +58,11 @@ scripts/build_returns.py  (pure, deterministic)
 public/data/returns.json  ──►  Vite/React app  ──►  Netlify (auto-deploy on push)
 ```
 
-Grouping is driven by the **Monday-brief catalog** (`automation/catalog.xlsx`),
+Grouping is driven by the **catalog** (`data/catalog.xlsx`, sheet `Active`),
 so parents match exactly what the brief uses — including families the brief
 merges but Amazon splits (e.g. both Tea Tree parent ASINs → `PD-TEATREE-MCT`).
 
-- **`data/asin_map.json`** — generated from `automation/catalog.xlsx` by
+- **`data/asin_map.json`** — generated from `data/catalog.xlsx` by
   `scripts/build_catalog.py`: every ASIN → `{sku, family, cat, order}`. The
   single source of truth for grouping. Regenerate when the catalog changes.
 - **`data/parent_meta.json`** — title + main image (Amazon media id) per family.

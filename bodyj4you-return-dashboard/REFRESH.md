@@ -56,9 +56,10 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    - `r` = **absolute value** of the `Refunded Amount` sub-metric inside
      `refund.metrics` (not the net `refund.value`).
 
-4. **Grouping comes from the Monday-brief catalog** (`automation/catalog.xlsx`),
-   not from Amazon's `parent_asin`. For any ASIN in the pull that is **not**
-   already in that catalog, add a row to the `Catalog` sheet (SKU, ASIN, Parent
+4. **Grouping comes from the catalog** committed at
+   `bodyj4you-return-dashboard/data/catalog.xlsx` (sheet `Active`; drop Denis's
+   latest `Catalog_MM.DD.YYYY.xlsx` over it), not from Amazon's `parent_asin`. For any ASIN in the pull that is **not**
+   already in that catalog, add a row to the `Active` sheet (SKU, ASIN, Parent
    ASIN / family, Category) so it groups correctly, then regenerate the map:
    ```bash
    pip install openpyxl
@@ -75,8 +76,8 @@ That's it — after that it is fully hands-off. To pause it, disable the Routine
    cd bodyj4you-return-dashboard && python3 scripts/build_returns.py
    ```
    This joins the pulls to `asin_map.json` + `parent_meta.json` +
-   `variant_labels.json` and regenerates `public/data/returns.json`
-   deterministically.
+   `asin_images.json`, computes the alert tiers (critical/watch) and drivers,
+   and regenerates `public/data/returns.json` deterministically.
 
 6. **Commit & push** to the deploy branch (`main`) so Netlify redeploys:
    ```
