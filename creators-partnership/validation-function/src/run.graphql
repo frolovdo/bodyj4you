@@ -1,0 +1,22 @@
+query RunInput {
+  cart {
+    lines {
+      quantity
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          product {
+            creatorGift: metafield(namespace: "custom", key: "creator_gift") {
+              value
+            }
+          }
+        }
+      }
+    }
+    instagram: attribute(key: "Instagram") { value }
+    tiktok: attribute(key: "TikTok") { value }
+    youtube: attribute(key: "YouTube") { value }
+    agreement: attribute(key: "Influencer agreement") { value }
+  }
+}
