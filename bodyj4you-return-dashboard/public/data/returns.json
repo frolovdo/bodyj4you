@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-30T16:10:56+00:00",
+  "generatedAt": "2026-08-31T16:09:17+00:00",
   "marketplace": "US",
   "windows": {
     "d30": {
-      "from": "2026-07-31",
-      "to": "2026-08-29"
+      "from": "2026-08-01",
+      "to": "2026-08-30"
     },
     "d7": {
-      "from": "2026-08-23",
-      "to": "2026-08-29"
+      "from": "2026-08-24",
+      "to": "2026-08-30"
     }
   },
   "thresholds": {
@@ -25,48 +25,27 @@
     }
   },
   "kpis": {
-    "parents": 16,
+    "parents": 15,
     "healthy": 15,
     "critical": 0,
-    "watch": 1,
-    "alertRefund7": 246.23,
-    "sales7": 91235.1,
-    "refund7": 3274.84,
-    "blendedRate30": 4.15,
-    "blendedRate7": 3.59,
-    "blendedDelta": -0.56,
-    "excessTotal": 225.26,
+    "watch": 0,
+    "alertRefund7": 0,
+    "sales7": 89966.55,
+    "refund7": 3011.09,
+    "blendedRate30": 4.14,
+    "blendedRate7": 3.35,
+    "blendedDelta": -0.79,
+    "excessTotal": 195.58,
     "nc": {
-      "rate7": 10.47,
-      "rate30": 11.97,
-      "refundShare7": 44.8
+      "rate7": 9.98,
+      "rate30": 11.9,
+      "refundShare7": 45.3
     },
     "rest": {
-      "rate7": 2.34
+      "rate7": 2.16
     }
   },
-  "alerts": [
-    {
-      "family": "EO-ROSEHIP-Master",
-      "name": "Rosehip Oil",
-      "sku": "EO-ROSEHIP-Master",
-      "asin": "B0H6KQX56N",
-      "cat": "EO",
-      "tier": "watch",
-      "image": "https://m.media-amazon.com/images/I/71uToWygncL.jpg",
-      "rate7": 3.63,
-      "rate30": 2.04,
-      "delta": 1.59,
-      "r7": 246.23,
-      "excess7": 107.83,
-      "driver": {
-        "sku": "EO-ROSEHIP-1oz_FBA",
-        "asin": "B0FBYTKGD6",
-        "rate7": 4.25,
-        "r7": 154.8
-      }
-    }
-  ],
+  "alerts": [],
   "parents": [
     {
       "family": "HS0002-Master",
@@ -77,14 +56,14 @@
       "catName": "Piercing Aftercare",
       "image": "https://m.media-amazon.com/images/I/61A+a5naUAL.jpg",
       "childCount": 3,
-      "s7": 28090.47,
-      "r7": 928.64,
-      "s30": 132605.14,
-      "r30": 4029.09,
-      "rate30": 3.04,
-      "rate7": 3.31,
-      "delta": 0.27,
-      "excess7": 75.84,
+      "s7": 27929.64,
+      "r7": 914.66,
+      "s30": 133009.29,
+      "r30": 3970.15,
+      "rate30": 2.98,
+      "rate7": 3.27,
+      "delta": 0.29,
+      "excess7": 81.0,
       "tier": null,
       "driver": null,
       "children": [
@@ -92,31 +71,31 @@
           "asin": "B08S3JCTKC",
           "sku": "HS0002",
           "image": "https://m.media-amazon.com/images/I/61A+a5naUAL.jpg",
-          "s7": 25545.75,
-          "r7": 867.07,
-          "rate30": 3.06,
-          "rate7": 3.39,
-          "delta": 0.33
+          "s7": 25255.02,
+          "r7": 853.09,
+          "rate30": 3.01,
+          "rate7": 3.38,
+          "delta": 0.37
         },
         {
           "asin": "B0CQM26GGF",
           "sku": "HS0002-3",
           "image": "https://m.media-amazon.com/images/I/51nULQFAMNL.jpg",
-          "s7": 1627.26,
+          "s7": 1451.34,
           "r7": 61.57,
-          "rate30": 3.24,
-          "rate7": 3.78,
-          "delta": 0.54
+          "rate30": 3.26,
+          "rate7": 4.24,
+          "delta": 0.98
         },
         {
           "asin": "B09RSSL9S7",
           "sku": "HS0002-2",
           "image": "https://m.media-amazon.com/images/I/71JjVPJf4-L.jpg",
-          "s7": 917.46,
+          "s7": 1223.28,
           "r7": 0,
-          "rate30": 1.67,
+          "rate30": 1.53,
           "rate7": 0.0,
-          "delta": -1.67
+          "delta": -1.53
         }
       ]
     },
@@ -128,15 +107,15 @@
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
       "image": "https://m.media-amazon.com/images/I/71hc5qpI6mL.jpg",
-      "childCount": 4,
-      "s7": 8386.39,
-      "r7": 109.77,
-      "s30": 30504.24,
-      "r30": 800.86,
-      "rate30": 2.63,
-      "rate7": 1.31,
-      "delta": -1.32,
-      "excess7": -110.7,
+      "childCount": 5,
+      "s7": 9178.98,
+      "r7": 91.77,
+      "s30": 31347.75,
+      "r30": 765.02,
+      "rate30": 2.44,
+      "rate7": 1.0,
+      "delta": -1.44,
+      "excess7": -132.18,
       "tier": null,
       "driver": null,
       "children": [
@@ -144,21 +123,21 @@
           "asin": "B0FZHS9TB6",
           "sku": "PD-TEATREE-MCT-2oz",
           "image": "https://m.media-amazon.com/images/I/71hc5qpI6mL.jpg",
-          "s7": 5777.45,
+          "s7": 6196.35,
           "r7": 82.78,
-          "rate30": 2.78,
-          "rate7": 1.43,
-          "delta": -1.35
+          "rate30": 2.57,
+          "rate7": 1.34,
+          "delta": -1.23
         },
         {
           "asin": "B0GYX699C8",
           "sku": "PD-TEATREE-MCT-16oz",
           "image": "https://m.media-amazon.com/images/I/716jBGrU+6L.jpg",
-          "s7": 1469.51,
-          "r7": 26.99,
-          "rate30": 2.01,
-          "rate7": 1.84,
-          "delta": -0.17
+          "s7": 1589.47,
+          "r7": 0,
+          "rate30": 2.06,
+          "rate7": 0.0,
+          "delta": -2.06
         },
         {
           "asin": "B0HFMFM9BD",
@@ -174,11 +153,21 @@
           "asin": "B0GYX9C3DW",
           "sku": "PD-TEATREE-MCT-4oz",
           "image": "https://m.media-amazon.com/images/I/71hc5qpI6mL.jpg",
-          "s7": 519.74,
+          "s7": 539.73,
           "r7": 0,
-          "rate30": 1.22,
+          "rate30": 1.28,
           "rate7": 0.0,
-          "delta": -1.22
+          "delta": -1.28
+        },
+        {
+          "asin": "B0H6ZWKZ1H",
+          "sku": "PD-TEATREE-MCT-1oz",
+          "image": "https://m.media-amazon.com/images/I/71et92SJPsL.jpg",
+          "s7": 233.74,
+          "r7": 8.99,
+          "rate30": 4.57,
+          "rate7": 3.85,
+          "delta": -0.72
         }
       ]
     },
@@ -190,15 +179,15 @@
       "cat": "EO",
       "catName": "Essential & Carrier Oils",
       "image": "https://m.media-amazon.com/images/I/41VLkegEw9L.jpg",
-      "childCount": 3,
-      "s7": 8122.03,
-      "r7": 104.88,
-      "s30": 34145.83,
-      "r30": 678.65,
-      "rate30": 1.99,
-      "rate7": 1.29,
-      "delta": -0.7,
-      "excess7": -56.85,
+      "childCount": 2,
+      "s7": 7614.58,
+      "r7": 86.9,
+      "s30": 34117.43,
+      "r30": 608.52,
+      "rate30": 1.78,
+      "rate7": 1.14,
+      "delta": -0.64,
+      "excess7": -48.73,
       "tier": null,
       "driver": null,
       "children": [
@@ -206,83 +195,21 @@
           "asin": "B0DRML3ZMM",
           "sku": "EO-JOJOBA-1oz",
           "image": "https://m.media-amazon.com/images/I/41VLkegEw9L.jpg",
-          "s7": 6880.83,
-          "r7": 80.9,
-          "rate30": 1.83,
-          "rate7": 1.18,
-          "delta": -0.65
-        },
-        {
-          "asin": "B0FX91NNQQ",
-          "sku": "EO-JOJOBA-16Oz",
-          "image": null,
-          "s7": 701.74,
-          "r7": 0,
-          "rate30": 1.07,
-          "rate7": 0.0,
-          "delta": -1.07
+          "s7": 6933.24,
+          "r7": 62.92,
+          "rate30": 1.68,
+          "rate7": 0.91,
+          "delta": -0.77
         },
         {
           "asin": "B0CQTMBRZT",
           "sku": "EO-JOJOBA-4oz-SP",
           "image": "https://m.media-amazon.com/images/I/71G1tf5zaCL.jpg",
-          "s7": 539.46,
+          "s7": 681.34,
           "r7": 23.98,
-          "rate30": 3.67,
-          "rate7": 4.45,
-          "delta": 0.78
-        }
-      ]
-    },
-    {
-      "family": "NC4058-Master",
-      "sku": "NC4058-Master",
-      "asin": "B01HSJ3T6M",
-      "name": "12PC Tattoo Choker Set",
-      "cat": "NC",
-      "catName": "Choker Necklaces",
-      "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
-      "childCount": 3,
-      "s7": 7100.61,
-      "r7": 696.51,
-      "s30": 40095.9,
-      "r30": 4969.61,
-      "rate30": 12.39,
-      "rate7": 9.81,
-      "delta": -2.58,
-      "excess7": -183.2,
-      "tier": null,
-      "driver": null,
-      "children": [
-        {
-          "asin": "B01HSJ3T6M",
-          "sku": "NC4058",
-          "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
-          "s7": 4912.41,
-          "r7": 631.56,
-          "rate30": 15.29,
-          "rate7": 12.86,
-          "delta": -2.43
-        },
-        {
-          "asin": "B07YCX7ZF4",
-          "sku": "NC4250",
-          "image": "https://m.media-amazon.com/images/I/71LaFcayKfL.jpg",
-          "s7": 1703.43,
-          "r7": 64.95,
-          "rate30": 4.39,
-          "rate7": 3.81,
-          "delta": -0.58
-        },
-        {
-          "asin": "B0CCRK55BW",
-          "sku": "NC4377",
-          "image": "https://m.media-amazon.com/images/I/616Vr2KL5ZL.jpg",
-          "s7": 484.77,
-          "r7": 0,
-          "rate30": 8.41,
-          "rate7": 0.0,
-          "delta": -8.41
+          "rate30": 3.63,
+          "rate7": 3.52,
+          "delta": -0.11
         }
       ]
     },
@@ -295,61 +222,56 @@
       "catName": "Essential & Carrier Oils",
       "image": "https://m.media-amazon.com/images/I/71uToWygncL.jpg",
       "childCount": 4,
-      "s7": 6781.5,
-      "r7": 246.23,
-      "s30": 36249.46,
-      "r30": 739.98,
-      "rate30": 2.04,
-      "rate7": 3.63,
-      "delta": 1.59,
-      "excess7": 107.83,
-      "tier": "watch",
-      "driver": {
-        "sku": "EO-ROSEHIP-1oz_FBA",
-        "asin": "B0FBYTKGD6",
-        "rate7": 4.25,
-        "r7": 154.8
-      },
+      "s7": 6940.42,
+      "r7": 227.28,
+      "s30": 36335.99,
+      "r30": 736.01,
+      "rate30": 2.03,
+      "rate7": 3.27,
+      "delta": 1.24,
+      "excess7": 86.06,
+      "tier": null,
+      "driver": null,
       "children": [
         {
           "asin": "B0FBYTKGD6",
           "sku": "EO-ROSEHIP-1oz_FBA",
           "image": "https://m.media-amazon.com/images/I/71uToWygncL.jpg",
-          "s7": 3644.35,
-          "r7": 154.8,
-          "rate30": 2.26,
-          "rate7": 4.25,
-          "delta": 1.99
+          "s7": 3653.34,
+          "r7": 126.84,
+          "rate30": 2.21,
+          "rate7": 3.47,
+          "delta": 1.26
         },
         {
           "asin": "B0FX8YXSHZ",
           "sku": "EO-ROSEHIP-16oz",
           "image": "https://m.media-amazon.com/images/I/71JCURWEfPL.jpg",
-          "s7": 1887.87,
-          "r7": 26.99,
-          "rate30": 1.16,
-          "rate7": 1.43,
-          "delta": 0.27
+          "s7": 1947.85,
+          "r7": 53.98,
+          "rate30": 1.4,
+          "rate7": 2.77,
+          "delta": 1.37
         },
         {
           "asin": "B0DYTYPPJZ",
           "sku": "EO-ROSEHIP-4oz",
           "image": "https://m.media-amazon.com/images/I/71i3iGExFEL.jpg",
-          "s7": 679.66,
-          "r7": 35.96,
-          "rate30": 3.32,
-          "rate7": 5.29,
-          "delta": 1.97
+          "s7": 739.63,
+          "r7": 17.98,
+          "rate30": 2.91,
+          "rate7": 2.43,
+          "delta": -0.48
         },
         {
           "asin": "B0DYTSB2WN",
           "sku": "EO-ROSEHIP-2oz",
           "image": "https://m.media-amazon.com/images/I/61cDc-rzhcL.jpg",
-          "s7": 569.62,
+          "s7": 599.6,
           "r7": 28.48,
-          "rate30": 1.16,
-          "rate7": 5.0,
-          "delta": 3.84
+          "rate30": 1.13,
+          "rate7": 4.75,
+          "delta": 3.62
         }
       ]
     },
@@ -362,14 +284,14 @@
       "catName": "Gauge / Stretching Kits",
       "image": "https://m.media-amazon.com/images/I/81Pvab5mJCL.jpg",
       "childCount": 4,
-      "s7": 6325.5,
-      "r7": 84.9,
-      "s30": 34263.1,
-      "r30": 673.57,
-      "rate30": 1.97,
-      "rate7": 1.34,
-      "delta": -0.63,
-      "excess7": -39.85,
+      "s7": 6421.59,
+      "r7": 67.92,
+      "s30": 34761.0,
+      "r30": 655.59,
+      "rate30": 1.89,
+      "rate7": 1.06,
+      "delta": -0.83,
+      "excess7": -53.3,
       "tier": null,
       "driver": null,
       "children": [
@@ -377,11 +299,11 @@
           "asin": "B07DT6ZDP5",
           "sku": "GK0487",
           "image": "https://m.media-amazon.com/images/I/81Pvab5mJCL.jpg",
-          "s7": 4076.75,
-          "r7": 84.9,
+          "s7": 4262.79,
+          "r7": 67.92,
           "rate30": 1.7,
-          "rate7": 2.08,
-          "delta": 0.38
+          "rate7": 1.59,
+          "delta": -0.11
         },
         {
           "asin": "B0853DNCBX",
@@ -389,19 +311,9 @@
           "image": "https://m.media-amazon.com/images/I/51l7mxL7tiL.jpg",
           "s7": 1025.43,
           "r7": 0,
-          "rate30": 4.01,
+          "rate30": 3.58,
           "rate7": 0.0,
-          "delta": -4.01
-        },
-        {
-          "asin": "B09CDZBKQ7",
-          "sku": "GK0910",
-          "image": null,
-          "s7": 647.64,
-          "r7": 0,
-          "rate30": 1.59,
-          "rate7": 0.0,
-          "delta": -1.59
+          "delta": -3.58
         },
         {
           "asin": "B09BVWYFN3",
@@ -412,6 +324,100 @@
           "rate30": 0.0,
           "rate7": 0.0,
           "delta": 0.0
+        },
+        {
+          "asin": "B09CDZBKQ7",
+          "sku": "GK0910",
+          "image": null,
+          "s7": 557.69,
+          "r7": 0,
+          "rate30": 1.56,
+          "rate7": 0.0,
+          "delta": -1.56
+        }
+      ]
+    },
+    {
+      "family": "NC4058-Master",
+      "sku": "NC4058-Master",
+      "asin": "B01HSJ3T6M",
+      "name": "12PC Tattoo Choker Set",
+      "cat": "NC",
+      "catName": "Choker Necklaces",
+      "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
+      "childCount": 2,
+      "s7": 6036.72,
+      "r7": 626.55,
+      "s30": 40239.83,
+      "r30": 5006.58,
+      "rate30": 12.44,
+      "rate7": 10.38,
+      "delta": -2.06,
+      "excess7": -124.36,
+      "tier": null,
+      "driver": null,
+      "children": [
+        {
+          "asin": "B01HSJ3T6M",
+          "sku": "NC4058",
+          "image": "https://m.media-amazon.com/images/I/61Ff1YYaJDL.jpg",
+          "s7": 4492.75,
+          "r7": 535.62,
+          "rate30": 15.2,
+          "rate7": 11.92,
+          "delta": -3.28
+        },
+        {
+          "asin": "B07YCX7ZF4",
+          "sku": "NC4250",
+          "image": "https://m.media-amazon.com/images/I/71LaFcayKfL.jpg",
+          "s7": 1543.97,
+          "r7": 90.93,
+          "rate30": 4.56,
+          "rate7": 5.89,
+          "delta": 1.33
+        }
+      ]
+    },
+    {
+      "family": "PB-Master",
+      "sku": "PB-Master",
+      "asin": "B0B57PWJW2",
+      "name": "Keloid Bump Removal Oil",
+      "cat": "PA",
+      "catName": "Piercing Aftercare",
+      "image": "https://m.media-amazon.com/images/I/614UqWHm23L.jpg",
+      "childCount": 2,
+      "s7": 5885.52,
+      "r7": 79.9,
+      "s30": 22443.63,
+      "r30": 474.51,
+      "rate30": 2.11,
+      "rate7": 1.36,
+      "delta": -0.75,
+      "excess7": -44.14,
+      "tier": null,
+      "driver": null,
+      "children": [
+        {
+          "asin": "B0B57PWJW2",
+          "sku": "PB-10",
+          "image": "https://m.media-amazon.com/images/I/614UqWHm23L.jpg",
+          "s7": 5548.27,
+          "r7": 79.9,
+          "rate30": 2.15,
+          "rate7": 1.44,
+          "delta": -0.71
+        },
+        {
+          "asin": "B0B789X1LY",
+          "sku": "PB-10-2",
+          "image": null,
+          "s7": 337.25,
+          "r7": 0,
+          "rate30": 1.37,
+          "rate7": 0.0,
+          "delta": -1.37
         }
       ]
     },
@@ -424,108 +430,76 @@
       "catName": "Choker Necklaces",
       "image": "https://m.media-amazon.com/images/I/71mgBuFFFfL.jpg",
       "childCount": 6,
-      "s7": 5379.92,
-      "r7": 711.4,
-      "s30": 31826.25,
-      "r30": 4664.5,
-      "rate30": 14.66,
-      "rate7": 13.22,
-      "delta": -1.44,
-      "excess7": -77.47,
+      "s7": 5700.16,
+      "r7": 676.43,
+      "s30": 31727.83,
+      "r30": 4588.57,
+      "rate30": 14.46,
+      "rate7": 11.87,
+      "delta": -2.59,
+      "excess7": -147.63,
       "tier": null,
       "driver": null,
       "children": [
         {
-          "asin": "B08Q2WMF25",
-          "sku": "NC4285",
-          "image": "https://m.media-amazon.com/images/I/71mgBuFFFfL.jpg",
-          "s7": 1637.38,
-          "r7": 191.34,
-          "rate30": 25.53,
-          "rate7": 11.69,
-          "delta": -13.84
-        },
-        {
           "asin": "B0H3QBP4XW",
           "sku": "NC4390",
           "image": "https://m.media-amazon.com/images/I/71isXxcV70L.jpg",
-          "s7": 1428.42,
-          "r7": 164.42,
-          "rate30": 10.28,
-          "rate7": 11.51,
-          "delta": 1.23
+          "s7": 1717.09,
+          "r7": 174.41,
+          "rate30": 10.02,
+          "rate7": 10.16,
+          "delta": 0.14
+        },
+        {
+          "asin": "B08Q2WMF25",
+          "sku": "NC4285",
+          "image": "https://m.media-amazon.com/images/I/71mgBuFFFfL.jpg",
+          "s7": 1697.32,
+          "r7": 155.37,
+          "rate30": 23.91,
+          "rate7": 9.15,
+          "delta": -14.76
         },
         {
           "asin": "B09826V9Z8",
           "sku": "NC4297",
           "image": "https://m.media-amazon.com/images/I/51VOIEVn3JS.jpg",
-          "s7": 1107.91,
-          "r7": 286.71,
-          "rate30": 17.32,
-          "rate7": 25.88,
-          "delta": 8.56
+          "s7": 1137.88,
+          "r7": 297.7,
+          "rate30": 18.03,
+          "rate7": 26.16,
+          "delta": 8.13
         },
         {
           "asin": "B0DGWDSSKW",
           "sku": "NC4290-1",
           "image": "https://m.media-amazon.com/images/I/71QUeDxAo2L.jpg",
-          "s7": 489.02,
-          "r7": 28.97,
-          "rate30": 9.88,
-          "rate7": 5.92,
-          "delta": -3.96
+          "s7": 479.03,
+          "r7": 18.98,
+          "rate30": 10.01,
+          "rate7": 3.96,
+          "delta": -6.05
         },
         {
           "asin": "B0BZB723JD",
           "sku": "NC4367",
           "image": "https://m.media-amazon.com/images/I/61pQUpRXq6L.jpg",
-          "s7": 387.52,
+          "s7": 369.14,
           "r7": 29.97,
-          "rate30": 7.07,
-          "rate7": 7.73,
-          "delta": 0.66
+          "rate30": 7.27,
+          "rate7": 8.12,
+          "delta": 0.85
         },
         {
           "asin": "B0CDBRW16Q",
           "sku": "NC4379",
           "image": null,
-          "s7": 329.67,
-          "r7": 9.99,
-          "rate30": 4.59,
-          "rate7": 3.03,
-          "delta": -1.56
-        }
-      ]
-    },
-    {
-      "family": "PB-Master",
-      "sku": "PB-Master",
-      "asin": "B0B57PWJW2",
-      "name": "Keloid Bump Removal Oil",
-      "cat": "PA",
-      "catName": "Piercing Aftercare",
-      "image": "https://m.media-amazon.com/images/I/614UqWHm23L.jpg",
-      "childCount": 1,
-      "s7": 5347.78,
-      "r7": 99.89,
-      "s30": 22244.9,
-      "r30": 464.53,
-      "rate30": 2.09,
-      "rate7": 1.87,
-      "delta": -0.22,
-      "excess7": -11.77,
-      "tier": null,
-      "driver": null,
-      "children": [
-        {
-          "asin": "B0B57PWJW2",
-          "sku": "PB-10",
-          "image": "https://m.media-amazon.com/images/I/614UqWHm23L.jpg",
-          "s7": 5347.78,
-          "r7": 99.89,
-          "rate30": 2.12,
-          "rate7": 1.87,
-          "delta": -0.25
+          "s7": 299.7,
+          "r7": 0,
+          "rate30": 4.63,
+          "rate7": 0.0,
+          "delta": -4.63
         }
       ]
     },
@@ -538,14 +512,14 @@
       "catName": "Piercing Aftercare",
       "image": "https://m.media-amazon.com/images/I/71mZ3GlUcYL.jpg",
       "childCount": 1,
-      "s7": 3818.09,
-      "r7": 56.94,
-      "s30": 17997.79,
-      "r30": 235.74,
-      "rate30": 1.31,
-      "rate7": 1.49,
-      "delta": 0.18,
-      "excess7": 6.87,
+      "s7": 3638.18,
+      "r7": 36.96,
+      "s30": 17677.95,
+      "r30": 218.76,
+      "rate30": 1.24,
+      "rate7": 1.02,
+      "delta": -0.22,
+      "excess7": -8.0,
       "tier": null,
       "driver": null,
       "children": [
@@ -553,11 +527,11 @@
           "asin": "B0D268LC2Z",
           "sku": "HB0024",
           "image": "https://m.media-amazon.com/images/I/71mZ3GlUcYL.jpg",
-          "s7": 3818.09,
-          "r7": 56.94,
-          "rate30": 1.31,
-          "rate7": 1.49,
-          "delta": 0.18
+          "s7": 3638.18,
+          "r7": 36.96,
+          "rate30": 1.24,
+          "rate7": 1.02,
+          "delta": -0.22
         }
       ]
     },
@@ -570,14 +544,14 @@
       "catName": "Piercing Jewelry",
       "image": "https://m.media-amazon.com/images/I/61ezmem+otL.jpg",
       "childCount": 4,
-      "s7": 1913.89,
-      "r7": 66.87,
-      "s30": 12312.64,
-      "r30": 281.37,
-      "rate30": 2.29,
-      "rate7": 3.49,
-      "delta": 1.2,
-      "excess7": 22.97,
+      "s7": 2026.63,
+      "r7": 72.86,
+      "s30": 12383.66,
+      "r30": 277.38,
+      "rate30": 2.24,
+      "rate7": 3.6,
+      "delta": 1.36,
+      "excess7": 27.56,
       "tier": null,
       "driver": null,
       "children": [
@@ -585,73 +559,83 @@
           "asin": "B004MZMB74",
           "sku": "PN16G-10",
           "image": "https://m.media-amazon.com/images/I/71WDOcSjxSL.jpg",
-          "s7": 776.41,
-          "r7": 35.94,
+          "s7": 854.23,
+          "r7": 41.93,
           "rate30": 2.04,
-          "rate7": 4.63,
-          "delta": 2.59
+          "rate7": 4.91,
+          "delta": 2.87
         },
         {
           "asin": "B004MZMB3S",
           "sku": "PN18G-10",
           "image": "https://m.media-amazon.com/images/I/61ezmem+otL.jpg",
-          "s7": 506.01,
+          "s7": 510.03,
           "r7": 9.98,
-          "rate30": 1.89,
-          "rate7": 1.97,
-          "delta": 0.08
+          "rate30": 1.82,
+          "rate7": 1.96,
+          "delta": 0.14
         },
         {
           "asin": "B004MZMBC4",
           "sku": "PN14G-10",
           "image": "https://m.media-amazon.com/images/I/61ezmem+otL.jpg",
-          "s7": 368.13,
+          "s7": 391.05,
           "r7": 4.99,
-          "rate30": 1.88,
-          "rate7": 1.36,
-          "delta": -0.52
+          "rate30": 1.47,
+          "rate7": 1.28,
+          "delta": -0.19
         },
         {
           "asin": "B009HX6Q5E",
           "sku": "PN20G-10",
           "image": "https://m.media-amazon.com/images/I/41hxrAa7PrL.jpg",
-          "s7": 263.34,
+          "s7": 271.32,
           "r7": 15.96,
           "rate30": 3.04,
-          "rate7": 6.06,
-          "delta": 3.02
+          "rate7": 5.88,
+          "delta": 2.84
         }
       ]
     },
     {
-      "family": "GK0541-Master",
-      "sku": "GK0541-Master",
-      "asin": "B07N8MNWYK",
-      "name": "37PC Ear Stretching Kit (Silver)",
-      "cat": "GK",
-      "catName": "Gauge / Stretching Kits",
-      "image": "https://m.media-amazon.com/images/I/51P4ZVBd0pL.jpg",
-      "childCount": 1,
-      "s7": 1798.7,
-      "r7": 39.96,
-      "s30": 18005.81,
-      "r30": 351.5,
-      "rate30": 1.95,
-      "rate7": 2.22,
-      "delta": 0.27,
-      "excess7": 4.86,
+      "family": "NC4059-Master",
+      "sku": "NC4059-Master",
+      "asin": "B0DDT2L7FL",
+      "name": "12PC Choker (Pride / Boho)",
+      "cat": "NC",
+      "catName": "Choker Necklaces",
+      "image": "https://m.media-amazon.com/images/I/814-2dLub7L.jpg",
+      "childCount": 2,
+      "s7": 1918.55,
+      "r7": 59.94,
+      "s30": 13183.79,
+      "r30": 539.46,
+      "rate30": 4.09,
+      "rate7": 3.12,
+      "delta": -0.97,
+      "excess7": -18.61,
       "tier": null,
       "driver": null,
       "children": [
         {
-          "asin": "B07N8MNWYK",
-          "sku": "GK0541 (GK0078)",
-          "image": "https://m.media-amazon.com/images/I/51P4ZVBd0pL.jpg",
-          "s7": 1798.7,
-          "r7": 39.96,
-          "rate30": 1.26,
-          "rate7": 2.22,
-          "delta": 0.96
+          "asin": "B0988741SV",
+          "sku": "NC4305",
+          "image": "https://m.media-amazon.com/images/I/71vxn6+M47L.jpg",
+          "s7": 1378.82,
+          "r7": 59.94,
+          "rate30": 3.26,
+          "rate7": 4.35,
+          "delta": 1.09
+        },
+        {
+          "asin": "B07WNRW3SV",
+          "sku": "NC4084-1",
+          "image": "https://m.media-amazon.com/images/I/81bZRLTOXYL.jpg",
+          "s7": 539.73,
+          "r7": 0,
+          "rate30": 5.88,
+          "rate7": 0.0,
+          "delta": -5.88
         }
       ]
     },
@@ -664,14 +648,14 @@
       "catName": "Essential & Carrier Oils",
       "image": "https://m.media-amazon.com/images/I/716u3d0yLPL.jpg",
       "childCount": 2,
-      "s7": 1766.88,
-      "r7": 52.93,
-      "s30": 12949.33,
-      "r30": 338.13,
-      "rate30": 2.61,
-      "rate7": 3.0,
-      "delta": 0.39,
-      "excess7": 6.89,
+      "s7": 1760.88,
+      "r7": 25.97,
+      "s30": 12740.9,
+      "r30": 358.11,
+      "rate30": 2.81,
+      "rate7": 1.47,
+      "delta": -1.34,
+      "excess7": -23.6,
       "tier": null,
       "driver": null,
       "children": [
@@ -679,21 +663,53 @@
           "asin": "B0DDT7GP79",
           "sku": "EO-CASTOR-4oz-USDA",
           "image": "https://m.media-amazon.com/images/I/61KiVlqS-eL.jpg",
-          "s7": 914.26,
-          "r7": 28.96,
-          "rate30": 3.66,
-          "rate7": 3.17,
-          "delta": -0.49
+          "s7": 884.29,
+          "r7": 9.99,
+          "rate30": 3.69,
+          "rate7": 1.13,
+          "delta": -2.56
         },
         {
           "asin": "B0CZD3ZL5S",
           "sku": "EO-CASTOR-1oz",
           "image": "https://m.media-amazon.com/images/I/71VRYI1FsQL.jpg",
-          "s7": 852.62,
-          "r7": 23.97,
-          "rate30": 1.81,
-          "rate7": 2.81,
-          "delta": 1.0
+          "s7": 876.59,
+          "r7": 15.98,
+          "rate30": 1.85,
+          "rate7": 1.82,
+          "delta": -0.03
+        }
+      ]
+    },
+    {
+      "family": "GK0541-Master",
+      "sku": "GK0541-Master",
+      "asin": "B07N8MNWYK",
+      "name": "37PC Ear Stretching Kit (Silver)",
+      "cat": "GK",
+      "catName": "Gauge / Stretching Kits",
+      "image": "https://m.media-amazon.com/images/I/51P4ZVBd0pL.jpg",
+      "childCount": 1,
+      "s7": 1678.76,
+      "r7": 19.98,
+      "s30": 18489.6,
+      "r30": 373.49,
+      "rate30": 2.02,
+      "rate7": 1.19,
+      "delta": -0.83,
+      "excess7": -13.93,
+      "tier": null,
+      "driver": null,
+      "children": [
+        {
+          "asin": "B07N8MNWYK",
+          "sku": "GK0541 (GK0078)",
+          "image": "https://m.media-amazon.com/images/I/51P4ZVBd0pL.jpg",
+          "s7": 1678.76,
+          "r7": 19.98,
+          "rate30": 1.28,
+          "rate7": 1.19,
+          "delta": -0.09
         }
       ]
     },
@@ -706,14 +722,14 @@
       "catName": "Piercing Aftercare",
       "image": "https://m.media-amazon.com/images/I/71NAirbcH3L.jpg",
       "childCount": 1,
-      "s7": 1766.64,
+      "s7": 1636.74,
       "r7": 0.0,
-      "s30": 7027.08,
+      "s30": 7024.21,
       "r30": 42.97,
       "rate30": 0.61,
       "rate7": 0.0,
       "delta": -0.61,
-      "excess7": -10.78,
+      "excess7": -9.98,
       "tier": null,
       "driver": null,
       "children": [
@@ -721,53 +737,11 @@
           "asin": "B084RXRZWM",
           "sku": "HB0006",
           "image": "https://m.media-amazon.com/images/I/71NAirbcH3L.jpg",
-          "s7": 1766.64,
+          "s7": 1636.74,
           "r7": 0,
           "rate30": 0.7,
           "rate7": 0.0,
           "delta": -0.7
-        }
-      ]
-    },
-    {
-      "family": "KT8002-Master",
-      "sku": "KT8002-Master",
-      "asin": "B006P2VUF6",
-      "name": "24PC Big Gauge Kit",
-      "cat": "GK",
-      "catName": "Gauge / Stretching Kits",
-      "image": "https://m.media-amazon.com/images/I/51ETkLmrFlL.jpg",
-      "childCount": 2,
-      "s7": 1553.25,
-      "r7": 0.0,
-      "s30": 5882.57,
-      "r30": 19.98,
-      "rate30": 0.34,
-      "rate7": 0.0,
-      "delta": -0.34,
-      "excess7": -5.28,
-      "tier": null,
-      "driver": null,
-      "children": [
-        {
-          "asin": "B006P2VUF6",
-          "sku": "KT8002-BK",
-          "image": "https://m.media-amazon.com/images/I/51ETkLmrFlL.jpg",
-          "s7": 959.52,
-          "r7": 0,
-          "rate30": 0.51,
-          "rate7": 0.0,
-          "delta": -0.51
-        },
-        {
-          "asin": "B071RNFB3B",
-          "sku": "GK0363",
-          "image": null,
-          "s7": 593.73,
-          "r7": 0,
-          "rate30": 0.0,
-          "rate7": 0.0,
-          "delta": 0.0
         }
       ]
     },
@@ -780,14 +754,14 @@
       "catName": "Piercing Aftercare",
       "image": "https://m.media-amazon.com/images/I/61ECxZ365+L.jpg",
       "childCount": 2,
-      "s7": 1544.71,
-      "r7": 15.98,
-      "s30": 6666.57,
-      "r30": 87.9,
-      "rate30": 1.32,
-      "rate7": 1.03,
-      "delta": -0.29,
-      "excess7": -4.48,
+      "s7": 1599.2,
+      "r7": 23.97,
+      "s30": 6672.06,
+      "r30": 95.89,
+      "rate30": 1.44,
+      "rate7": 1.5,
+      "delta": 0.06,
+      "excess7": 0.96,
       "tier": null,
       "driver": null,
       "children": [
@@ -795,53 +769,21 @@
           "asin": "B084RM4QR9",
           "sku": "JOJOBA",
           "image": "https://m.media-amazon.com/images/I/41FFzjffpXL.jpg",
-          "s7": 1176.12,
-          "r7": 15.98,
-          "rate30": 1.02,
-          "rate7": 1.36,
-          "delta": 0.34
+          "s7": 1167.68,
+          "r7": 23.97,
+          "rate30": 1.2,
+          "rate7": 2.05,
+          "delta": 0.85
         },
         {
           "asin": "B0CQ58JJGC",
           "sku": "JOJOBA-10-DB",
           "image": "https://m.media-amazon.com/images/I/61ECxZ365+L.jpg",
-          "s7": 368.59,
+          "s7": 431.52,
           "r7": 0,
-          "rate30": 1.83,
+          "rate30": 1.8,
           "rate7": 0.0,
-          "delta": -1.83
-        }
-      ]
-    },
-    {
-      "family": "NC4059-Master",
-      "sku": "NC4059-Master",
-      "asin": "B0DDT2L7FL",
-      "name": "12PC Choker (Pride / Boho)",
-      "cat": "NC",
-      "catName": "Choker Necklaces",
-      "image": "https://m.media-amazon.com/images/I/814-2dLub7L.jpg",
-      "childCount": 1,
-      "s7": 1538.74,
-      "r7": 59.94,
-      "s30": 13223.77,
-      "r30": 559.44,
-      "rate30": 4.23,
-      "rate7": 3.9,
-      "delta": -0.33,
-      "excess7": -5.08,
-      "tier": null,
-      "driver": null,
-      "children": [
-        {
-          "asin": "B0988741SV",
-          "sku": "NC4305",
-          "image": "https://m.media-amazon.com/images/I/71vxn6+M47L.jpg",
-          "s7": 1538.74,
-          "r7": 59.94,
-          "rate30": 3.36,
-          "rate7": 3.9,
-          "delta": 0.54
+          "delta": -1.8
         }
       ]
     }
