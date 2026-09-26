@@ -1,93 +1,45 @@
-# BodyJ4You — Daily Reorder Refresh (runbook for the 7am scheduled task)
+# BodyJ4You — Daily Reorder Refresh (7am)
 
-You are an automated agent running once each morning. Your job: refresh the
-Miami + China reorder dashboards with **today's live Helium10 inventory**,
-while keeping **velocity frozen** from the last weekly FBA upload. Follow these
-steps exactly. Do not improvise the reorder math — it all lives in reorder.py.
+**Since 2026-09-25, velocity is rebuilt fresh on every run** from Amazon's units
+sold in the last 7 / 30 / 60 / 90 days. The old daily mode that froze velocity in
+`velocity_lock.json` and only refreshed inventory is retired. `reorder.py daily`
+still exists, but nothing calls it on a schedule anymore.
 
-## Invariant (do not break)
-- **Velocity is never recomputed here.** You only READ it from
-  `velocity_lock.json`. The lock is rewritten only when a human uploads an FBA
-  file (a separate GitHub Action handles that). If you ever find yourself
-  computing velocity from sales history, stop — that's the weekly job, not this.
-- You refresh **Available + Inbound** (live from Helium10). Days-of-cover and
-  ship QTY recompute from that fresh inventory ÷ the frozen velocity.
+## What runs
+The Claude desktop app runs the local scheduled task `bodyj4you-daily-reorder` at 7am.
+It drives one runner on Denis's machine:
+`C:\Users\Admin\Projects\ceo-dashboard-build\reorder-miami-china\daily_reorder_run.py`
+(`prepare` → `existing` → `b64` + Drive `create_file` + `verify` → `report`).
+
+1. **Code.** Fetch `automation/reorder.py` + `automation/catalog.xlsx` from this repo
+   (raw GitHub), so the math is always what's committed here.
+2. **Amazon data.** Pull the FBA Inventory Planning report (`GET_FBA_INVENTORY_PLANNING_DATA`)
+   with the SP-API Reports API into `fba_planning.csv`. It has the same columns as the
+   manual Seller Central FBA inventory CSV: `units-shipped-t7/t30/t60/t90`, `available`,
+   `inbound-quantity`, `Total Reserved Quantity`, `days-of-supply`,
+   `fba-minimum-inventory-level`, `snapshot-date`.
+3. **Full recount.** Same as a weekly FBA upload. The date label is the report's `snapshot-date`:
+   ```bash
+   python reorder.py catalog.xlsx fba_planning.csv miami-xlsx Reorder_Miami_<MM.DD.YY>.xlsx
+   python reorder.py catalog.xlsx fba_planning.csv china-xlsx Reorder_China_<MM.DD.YY>.xlsx
+   ```
+4. **Sanity checks.** If any of these fail, nothing is uploaded:
+   - the report has at least 500 SKUs, more than 10k available units and more than 1k units sold in 30 days;
+   - the snapshot is no more than 3 days old;
+   - Miami has fewer than 100 URGENT SKUs;
+   - both xlsx files open.
+5. **Upload.** Put both xlsx files into OUT_MIAMI / OUT_CHINA and verify each one by md5:
+   Drive's `md5Checksum` must equal the local file's md5. Retry up to 3 times.
+   Never delete existing files. The dashboards show the file with the newest date,
+   and among files with the same name, the newest one wins.
+6. **Best-seller alert.** Flag any of the top 50 by 30-day units that has less than 14 days of cover on
+   live SP-API inventory, and publish it to the CEO dashboard at `/best-sellers/`.
 
 ## Drive folder IDs
 - IN (raw FBA uploads):        `19-AoS9nM3nm702v9tw15LWQGAT2c4xQr`
 - OUT_MIAMI (Miami dashboard): `1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U`
 - OUT_CHINA (China dashboard): `1MBGCoI4yTltZdRlnOHcpl9pg5ZaubluF`
 
-The velocity lock lives in OUT_MIAMI as `velocity_lock.json`.
-
-## Steps
-
-### 1. Set up a work dir and fetch the code (public repo, no auth)
-```bash
-mkdir -p /tmp/reorder && cd /tmp/reorder
-pip install --quiet openpyxl
-curl -sL -o reorder.py    https://raw.githubusercontent.com/frolovdo/bodyj4you/main/automation/reorder.py
-curl -sL -o catalog.xlsx  https://raw.githubusercontent.com/frolovdo/bodyj4you/main/automation/catalog.xlsx
-```
-
-### 2. Get the velocity lock
-Use the Google Drive tools. Search OUT_MIAMI for `velocity_lock.json`
-(`parentId = '1LgVtREkBxLcrrFdhkc4TTplzZhH0gu1U' and title = 'velocity_lock.json'`),
-download its content, and save it to `/tmp/reorder/velocity_lock.json`.
-
-**If it does not exist yet (first run before any FBA upload post-setup):**
-self-bootstrap it —
-  1. Search IN for the newest `.csv` (sort by createdTime desc), download it to
-     `/tmp/reorder/fba.csv`.
-  2. `python reorder.py catalog.xlsx fba.csv velocity-lock velocity_lock.json`
-  3. Upload `velocity_lock.json` into OUT_MIAMI (create_file, parentId =
-     OUT_MIAMI, contentMimeType `application/json`).
-Then proceed with the freshly built lock.
-
-### 3. Pull live inventory from Helium10
-Call the Helium10 inventory tool `get_inventory_values` with
-`marketplace: ["US"]`, `fulfillment_type: "FBA"`, `page_size: 1000`. If
-`total_count` exceeds what you received, page through (page_index 2, 3, …) until
-you have every row.
-
-Aggregate rows **by ASIN** (multiple SKUs can share one ASIN — sum them):
-- `available` += `inventory.available`
-- `inbound`   += `inventory.inbound_quantity`
-
-Write `/tmp/reorder/inventory.json`:
-```json
-{ "by_asin": { "B0XXXXXXXX": { "available": 123, "inbound": 45 }, ... } }
-```
-
-### 4. Compute today's date label and run the daily mode
-Date label is `MM.DD.YY` for today (Los Angeles time).
-```bash
-python reorder.py daily catalog.xlsx velocity_lock.json inventory.json \
-  "Reorder_Miami_<MM.DD.YY>.xlsx" "Reorder_China_<MM.DD.YY>.xlsx"
-```
-Print the summary it emits (SKU counts + totals) so the run log is auditable.
-
-### 5. Upload the two files to Drive
-Upload with the Drive `create_file` tool, base64-encoding the xlsx bytes:
-- Miami: parentId = OUT_MIAMI, title = `Reorder_Miami_<MM.DD.YY>.xlsx`
-- China: parentId = OUT_CHINA, title = `Reorder_China_<MM.DD.YY>.xlsx`
-- contentMimeType =
-  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
-- `disableConversionToGoogleType: true` (keep it a real .xlsx, do not convert
-  to a Google Sheet)
-
-If a file with today's exact name already exists in the folder (you ran twice
-today), that's fine — the dashboard shows the newest by createdTime.
-
-### 6. Report
-One short summary: date label, Miami SKU/unit totals, China SKU/unit totals,
-and whether the lock was read or self-bootstrapped. If any step failed, say
-which step and the error — do not silently produce a partial file.
-
-## Sanity checks before you upload
-- The Miami file should have roughly the same SKU count as recent snapshots
-  (dozens, not hundreds). A huge inflation usually means the Helium10 pull was
-  empty/partial and most ASINs defaulted to available 0 → revival qty. If Miami
-  URGENT is >100 SKUs, the inventory pull probably failed — investigate, don't
-  upload.
-- `velocity_lock.json` must be non-empty and cover most catalog ASINs.
+## Manual path (unchanged)
+Upload an FBA CSV to IN and click "Refresh from Drive". The GitHub Action
+`sync-reorder.yml` then runs the same full recount.
