@@ -269,10 +269,17 @@ def load_fba_inventory(fba_path):
             "t60": num(row[headers["units-shipped-t60"]]),
             "t90": num(row[headers["units-shipped-t90"]]),
             "min_level": num(row[headers["fba-minimum-inventory-level"]]),
+            # Supply fix (2026-09-26): units moving between Amazon warehouses are stock we
+            # already own at Amazon; units reserved for customer orders are already sold.
+            # Both columns are optional so an older manual export still loads (-> 0).
+            "fc_transfer": num(row[headers["fc-transfer"]]) if "fc-transfer" in headers else 0.0,
+            "customer_order": (num(row[headers["Reserved Customer Order"]])
+                               if "Reserved Customer Order" in headers else 0.0),
         }
         # Aggregate by ASIN
         if asin in by_asin:
-            for k in ["available", "inbound", "reserved", "t7", "t30", "t60", "t90", "min_level"]:
+            for k in ["available", "inbound", "reserved", "t7", "t30", "t60", "t90", "min_level",
+                      "fc_transfer", "customer_order"]:
                 by_asin[asin][k] += record[k]
             by_asin[asin]["days"] = min(by_asin[asin]["days"], record["days"]) if record["days"] > 0 else by_asin[asin]["days"]
         else:
@@ -280,7 +287,8 @@ def load_fba_inventory(fba_path):
         # Aggregate by SKU
         if sku:
             if sku in by_sku:
-                for k in ["available", "inbound", "reserved", "t7", "t30", "t60", "t90", "min_level"]:
+                for k in ["available", "inbound", "reserved", "t7", "t30", "t60", "t90", "min_level",
+                          "fc_transfer", "customer_order"]:
                     by_sku[sku][k] += record[k]
                 by_sku[sku]["days"] = min(by_sku[sku]["days"], record["days"]) if record["days"] > 0 else by_sku[sku]["days"]
             else:
@@ -342,13 +350,17 @@ def compute_row(cat_item, fba_record):
     velocity = (fba_record["t7"] / 7 * 0.4 + fba_record["t30"] / 30 * 0.3 +
                 fba_record["t60"] / 60 * 0.2 + fba_record["t90"] / 90 * 0.1)
     # Status: True if pipeline >= min level
-    pipeline = fba_record["available"] + fba_record["inbound"] + fba_record["reserved"]
-    status = pipeline >= fba_record["min_level"]
-    return {
+    row = {
         **cat_item,
         "available": fba_record["available"],
         "inbound": fba_record["inbound"],
         "reserved": fba_record["reserved"],
+        "fc_transfer": fba_record.get("fc_transfer", 0.0),
+        "customer_order": fba_record.get("customer_order", 0.0),
+    }
+    status = supply(row) >= fba_record["min_level"]
+    return {
+        **row,
         "days": fba_record["days"],
         "velocity": velocity,
         "min_level": fba_record["min_level"],
@@ -532,6 +544,19 @@ def lead_time(row):
     return 10
 
 
+def supply(row):
+    """
+    Units we own at or on the way to Amazon, net of units already sold:
+        available + inbound + FC transfer + (Total Reserved - Reserved Customer Order)
+    Total Reserved = FC processing + customer order + staging, so this is
+    available + inbound + FC transfer + FC processing + staging.
+    Rows built without the new fields (daily/lock mode) fall back to the old
+    available + inbound + reserved, so nothing else changes behaviour.
+    """
+    return (row["available"] + row["inbound"] + row["reserved"]
+            + row.get("fc_transfer", 0) - row.get("customer_order", 0))
+
+
 def ship_qty(row):
     """
     Weekly ship qty.
@@ -544,8 +569,7 @@ def ship_qty(row):
         return 20
 
     target = row["velocity"] * (COVER_DAYS + lead_time(row))
-    pipeline = row["available"] + row["inbound"] + row["reserved"]
-    return roundup_to_10(target - pipeline)
+    return roundup_to_10(target - supply(row))
 
 
 def monthly_qty(row):
@@ -558,9 +582,11 @@ def display_days_value(row):
     OUR days of coverage — the single source of truth for "days" everywhere in
     the report (classification, sorting, flags, display).
 
-      velocity > 0             -> (Available + Inbound) / velocity
-                                  (inbound counts, so 0 on-hand with units
-                                  incoming shows real coverage, not a false 0)
+      velocity > 0             -> supply(row) / velocity
+                                  (available + inbound + FC transfer + FC
+                                  processing + staging; units already sold to
+                                  customers do not count) -- the same definition
+                                  ship_qty() and the Best-Seller page use
       velocity == 0, stock > 0 -> 999  (indefinite coverage, nothing selling)
       velocity == 0, no stock  -> 0
 
@@ -568,7 +594,7 @@ def display_days_value(row):
     is unreliable near FBA minimum levels and is reference-only.
     """
     if row["velocity"] > 0:
-        return round((row["available"] + row["inbound"]) / row["velocity"], 1)
+        return round(supply(row) / row["velocity"], 1)
     if row["available"] > 0:
         return 999
     return 0
