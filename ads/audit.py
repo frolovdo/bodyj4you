@@ -251,12 +251,22 @@ class Index:
                     return True
         return False
 
+    def target_acos_for_parent(self, code):
+        """Parent's own target, else the default for its stage, else the account default."""
+        p = self.cfg["parents"].get(code) or {}
+        if p.get("target_acos"):
+            return p["target_acos"]
+        by_stage = self.cfg["account"].get("stage_default_target_acos", {})
+        if p.get("stage") in by_stage:
+            return by_stage[p["stage"]]
+        return self.cfg["account"]["default_target_acos"]
+
     def target_acos_for_campaign(self, camp_id):
         asins = {p.get("asin") for ag in self.ag_by_camp.get(camp_id, []) for p in self.ads_by_ag.get(str(ag["adGroupId"]), [])}
         for a in asins:
             code = self.parent_by_asin.get(a)
             if code:
-                return self.cfg["parents"][code].get("target_acos", self.cfg["account"]["default_target_acos"])
+                return self.target_acos_for_parent(code)
         return self.cfg["account"]["default_target_acos"]
 
     def campaign_name(self, camp_id):

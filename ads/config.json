@@ -16,7 +16,13 @@
       "launch": "performance",
       "grow": "performance",
       "harvest": "profitability"
-    }
+    },
+    "stage_default_target_acos": {
+      "launch": 0.5,
+      "grow": 0.3,
+      "harvest": 0.2
+    },
+    "_stage_default_note": "Used when a parent has a stage but no target_acos of its own. Launch deliberately allows up to 50% ACoS: velocity and rank matter more than margin in that phase (playbook section 1)."
   },
   "windows_days": {
     "negation": 30,

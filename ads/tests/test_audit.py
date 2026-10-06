@@ -152,6 +152,11 @@ def main():
         assert any(x["rule"] == "structure" for x in scoped2)
         assert not any(x["rule"] == "waste" for x in scoped2), "waste $12.50 is under the $100 floor"
         assert any(x["rule"] == "scale" for x in scoped2), "scale $210 is above the floor"
+        # stage default target ACoS when a parent has none of its own
+        cfg2 = json.loads(json.dumps(cfg)); cfg2["parents"]["OTHER"].pop("target_acos")
+        ix2 = audit.Index(audit.load_snapshot(snap), cfg2)
+        assert ix2.target_acos_for_parent("OTHER") == 0.20, "harvest stage default"
+        assert ix2.target_acos_for_parent("PA-SALINE") == 0.25, "explicit target wins"
         # one-order harvest is off by default
         assert not any(x["rule"] == "harvest" and "1 orders" in x["detail"] for x in findings)
         failed = [r for r, chk in expected.items() if not chk(by_rule.get(r, []))]
