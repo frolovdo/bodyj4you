@@ -1,0 +1,56 @@
+{
+  "_comment": "Thresholds and targets for ads/audit.py. Every value here is a [D] default from ads/playbook.md unless tagged. Edit freely; no code change needed.",
+
+  "account": {
+    "profile_id_env": "ADS_PROFILE_ID",
+    "marketplace": "US",
+    "default_break_even_acos": 0.40,
+    "default_target_acos": 0.25,
+    "attribution_lag_days": 3
+  },
+
+  "windows_days": {
+    "negation": 30,
+    "harvest": 30,
+    "bids": 60,
+    "structure": 90
+  },
+
+  "thresholds": {
+    "waste_spend_min": 10.0,
+    "bleed_acos": 0.80,
+    "bleed_roas": 1.5,
+    "scale_roas": 3.0,
+    "scale_min_orders": 2,
+    "harvest_min_orders": 2,
+    "harvest_one_order_max_acos_ratio": 1.0,
+    "max_targets_per_adgroup": 5,
+    "never_negated_spend_min": 50.0,
+    "budget_usage_capped": 0.90,
+    "placement_roas_ratio": 1.3,
+    "placement_min_orders": 10,
+    "placement_cut_roas": 1.0,
+    "zombie_max_impressions": 100,
+    "pause_min_clicks": 30,
+    "min_clicks_for_own_cvr": 20,
+    "bid_step_up": 0.05,
+    "bid_step_down": 0.05
+  },
+
+  "helium10": {
+    "h10_monthly_cap": 100,
+    "cache_dir": "ads/data/h10"
+  },
+
+  "parents": {
+    "_example_PARENTCODE": {
+      "name": "Example parent, delete me",
+      "asins": ["B000000000"],
+      "category": "PA",
+      "stage": "grow",
+      "price": 12.99,
+      "break_even_acos": 0.40,
+      "target_acos": 0.25
+    }
+  }
+}
