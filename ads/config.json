@@ -1,5 +1,5 @@
 {
-  "_comment": "Thresholds and targets for ads/audit.py. Every value here is a [D] default from ads/playbook.md unless tagged. Edit freely; no code change needed. A parent with a stage set gets findings outside its phase listed as deferred; parents without a stage get everything.",
+  "_comment": "Thresholds and account defaults for ads/audit.py. Every value is a [D] default from ads/playbook.md unless tagged. Edit freely; no code change needed. Parents (ASINs, prices, margins, stage) live in ads/parents.json, which is gitignored; see parents.example.json.",
   "account": {
     "profile_id_env": "ADS_PROFILE_ID",
     "marketplace": "US",
@@ -42,23 +42,12 @@
     "pause_min_clicks": 30,
     "min_clicks_for_own_cvr": 20,
     "bid_step_up": 0.05,
-    "bid_step_down": 0.05
+    "bid_step_down": 0.05,
+    "harvest_allow_one_order": false,
+    "min_finding_dollars": 0.0
   },
   "helium10": {
     "h10_monthly_cap": 100,
     "cache_dir": "ads/data/h10"
-  },
-  "parents": {
-    "_example_PARENTCODE": {
-      "name": "Example parent, delete me",
-      "asins": [
-        "B000000000"
-      ],
-      "category": "PA",
-      "stage": "grow",
-      "price": 12.99,
-      "break_even_acos": 0.4,
-      "target_acos": 0.25
-    }
   }
 }
