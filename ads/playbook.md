@@ -1,4 +1,4 @@
-# BodyJ4You Amazon Ads Playbook (v0.2, draft for review)
+# BodyJ4You Amazon Ads Playbook (v0.3, draft for review)
 
 This is the rulebook the audit and the automation follow. Every rule has a
 source tag:
@@ -10,7 +10,10 @@ source tag:
   Denis confirms or overrides these. Every [D] number lives in
   `ads/config.json` and changes without touching code.
 
-v0.2 replaces the v0.1 draft after reading the four articles directly. What
+v0.3 adds Denis's two decisions: waste and pause are actioned in either
+phase, and the zero-sale benchmark scales with each product's price and CVR.
+
+v0.2 replaced the v0.1 draft after reading the four articles directly. What
 changed: portfolios are per parent, not per category; branded keywords get
 their own campaigns; each product sits in one optimization phase at a time;
 zero-impression targets get a bid raise before removal; the honeymoon rule
@@ -134,11 +137,26 @@ above 3 and at least 2 orders in the window.
 **High ACoS → lower the bid.** [T] Trivium's published filters: spend above
 $10 with zero sales, ACoS above 80%, ROAS below 1.5.
 
+**Zero sales is judged against the product, not a flat $10.** [D, Denis
+2026-10-06] A $10 flat line is too trigger-happy on a $25 product and too
+lenient on a $10 one. A zero-order target is wasteful when both hold:
+
+```
+clicks ≥ ln(1 − confidence) / ln(1 − parent_CVR)      # the silence is unlikely
+spend  ≥ lost_orders × price × target_ACoS            # you have paid for N orders and got none
+```
+
+Defaults: 90% confidence and 2 lost orders for negation, 95% confidence for
+pausing a target. Example, rosehip 4oz at $9.99, target ACoS 25%, parent CVR
+8%: negate after 28 clicks and $5.00 with no order. The 16oz at $24.99 with
+CVR 6%: 37 clicks and $12.50. Trivium's $10 remains the fallback when a
+parent has no price or CVR on file.
+
 **Low or zero impressions → raise the bid first, a second chance.** [T]
 Only remove after the raise has had a window to work.
 
-**Pause instead of lowering again** [D]: at least 30 clicks and zero orders
-in 60 days.
+**Pause instead of lowering again** [D]: zero orders past the 95% benchmark
+above in 60 days. Fallback 30 clicks when the parent has no CVR.
 
 **Dynamic bidding.** [D] Down only on manual campaigns; placement modifiers
 carry the upside. Flag up-and-down campaigns for review.
@@ -168,8 +186,14 @@ on non-profitable targets, reduce poor placement adjustments, eliminate
 irrelevant and non-profitable search terms.
 
 The audit tags every finding with its phase. Findings outside the parent's
-current phase are listed as deferred, not dropped. Parents with no stage in
-`config.json` get both lists in full.
+current phase are listed as deferred, not dropped. Parents with no stage on
+file get both lists in full.
+
+**Exception [D, Denis 2026-10-06]:** removing something that spends money
+with no sales is done in either phase. Negating zero-order search terms and
+pausing zero-order targets are never deferred. Trivium places negation in
+profitability mode; we keep that for high-ACoS bid cuts (bleed), not for
+pure waste.
 
 **Monitoring in performance phase.** [T] Spend growth should be proportional
 to session growth, otherwise the keywords are not relevant. The gap between
@@ -219,9 +243,9 @@ the structural part on every snapshot and the performance part weekly.
 | branded        | branded and generic keywords in the same campaign                  | structural    | T      |
 | overlap        | same keyword and match type enabled in two or more campaigns       | structural    | T      |
 | bidding        | campaign uses dynamic up and down                                  | structural    | D      |
-| waste          | search term spend ≥ $10, 0 orders, not negated                     | profitability | T      |
+| waste          | 0 orders past the 90% click/spend benchmark, not negated           | always        | T/D    |
 | bleed          | target spend ≥ $10 and ACoS > 80% or ROAS < 1.5                    | profitability | T      |
-| pause          | target ≥ 30 clicks, 0 orders in 60 days                            | profitability | D      |
+| pause          | 0 orders past the 95% click/spend benchmark in 60 days             | always        | D      |
 | placement cut  | modifier set, placement ROAS < 1                                   | profitability | T      |
 | never-negated  | discovery campaign with spend ≥ $50 and zero negatives             | profitability | D      |
 | scale          | target ROAS > 3 with ≥ 2 orders                                    | performance   | T      |

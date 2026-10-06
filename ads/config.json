@@ -44,7 +44,11 @@
     "bid_step_up": 0.05,
     "bid_step_down": 0.05,
     "harvest_allow_one_order": false,
-    "min_finding_dollars": 0.0
+    "min_finding_dollars": 0.0,
+    "waste_confidence": 0.9,
+    "waste_lost_orders": 2,
+    "pause_confidence": 0.95,
+    "_benchmark_note": "waste/pause benchmarks scale with the product: a target qualifies when its zero-order click count is statistically unlikely at the parent's CVR (waste_confidence / pause_confidence) AND spend exceeds waste_lost_orders x (price x target ACoS). waste_spend_min and pause_min_clicks are only the fallback when the parent has no price or CVR."
   },
   "helium10": {
     "h10_monthly_cap": 100,
