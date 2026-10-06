@@ -226,9 +226,12 @@ def rule_search_terms(snap, ix, out):
         tgt = ix.target_acos_for_campaign(cid)
         # waste
         if a["cost"] >= t["waste_spend_min"] and a["orders"] == 0 and not ix.is_negated(cid, agid, term):
-            out.append(dict(rule="waste", severity="high", campaign=cname, adgroup=r.get("adGroupName"), target=term,
+            is_asin_term = term.startswith("b0") and len(term) == 10
+            out.append(dict(rule="waste", severity="high", campaign=cname, adgroup=r.get("adGroupName"),
+                            target=term.upper() if is_asin_term else term,
                             detail="%s spend, %d clicks, 0 orders" % (money(a["cost"]), a["clicks"]),
-                            action="add negative exact in this campaign", dollars=a["cost"]))
+                            action="add negative product target in this campaign" if is_asin_term else "add negative exact in this campaign",
+                            dollars=a["cost"]))
         # harvest
         is_asin = term.startswith("b0") and len(term) == 10
         already = term in ix.exact_texts
@@ -293,7 +296,7 @@ def rule_targets(snap, ix, out):
         if a["impressions"] < t["zombie_max_impressions"] and (r.get("adKeywordStatus") or "ENABLED") == "ENABLED" and ix.camp.get(cid, {}).get("state") == "ENABLED":
             out.append(dict(rule="zombie", severity="low", campaign=cname, adgroup=r.get("adGroupName"), target=label,
                             detail="%d impressions in window, bid %s" % (a["impressions"], money(bid)),
-                            action="raise bid or remove", dollars=0))
+                            action="second chance: raise bid one step, remove only if still no impressions next window", dollars=0))
 
 
 def rule_budget(snap, ix, out):
@@ -314,7 +317,7 @@ def rule_budget(snap, ix, out):
                             action="raise budget to %s" % money(new_budget), dollars=p["sales"] if p else 0,
                             current=budget, proposed=new_budget))
         elif ro < t["bleed_roas"]:
-            out.append(dict(rule="budget", severity="medium", campaign=c.get("name", cid),
+            out.append(dict(rule="budget-hold", severity="medium", campaign=c.get("name", cid),
                             detail="budget %s capped at %s used, ROAS %.1f" % (money(budget), pct(usage), ro),
                             action="lower bids before touching budget", dollars=0))
 
@@ -344,9 +347,70 @@ def rule_placements(snap, ix, out):
                                 detail="ROAS %.1f vs %.1f elsewhere, %d orders, no modifier" % (ro, ro_other, a["orders"]),
                                 action="set %s modifier to +25%%" % pl, dollars=a["sales"], current=0, proposed=25))
             elif mod and a["cost"] >= t["waste_spend_min"] and ro < t["placement_cut_roas"]:
-                out.append(dict(rule="placement", severity="medium", campaign=c.get("name"), target=pl,
+                out.append(dict(rule="placement-cut", severity="medium", campaign=c.get("name"), target=pl,
                                 detail="modifier +%d%%, ROAS %.1f, %s spend" % (mod, ro, money(a["cost"])),
                                 action="cut %s modifier to 0" % pl, dollars=a["cost"] - a["sales"], current=mod, proposed=0))
+
+
+def rule_portfolio(snap, ix, out):
+    """One portfolio per parent [T]."""
+    parents_in_portfolio = defaultdict(set)
+    for cid, c in ix.camp.items():
+        if c.get("state") != "ENABLED":
+            continue
+        pid = c.get("portfolioId")
+        if not pid:
+            out.append(dict(rule="portfolio", severity="low", campaign=c["name"],
+                            detail="campaign is not in a portfolio", action="move into the parent's portfolio", dollars=0))
+            continue
+        for ag in ix.ag_by_camp.get(cid, []):
+            for pa in ix.ads_by_ag.get(str(ag["adGroupId"]), []):
+                if pa.get("state") == "ENABLED":
+                    parents_in_portfolio[str(pid)].add(ix.parent_by_asin.get(pa.get("asin"), pa.get("asin")))
+    names = {str(p["portfolioId"]): p.get("name", str(p["portfolioId"])) for p in snap["portfolios"]}
+    for pid, parents in parents_in_portfolio.items():
+        if len(parents) > 1:
+            out.append(dict(rule="portfolio", severity="low", target=names.get(pid, pid),
+                            detail="portfolio holds %d parents: %s" % (len(parents), ", ".join(sorted(map(str, parents)))[:200]),
+                            action="one portfolio per parent", dollars=0))
+
+
+def rule_branded(snap, ix, out):
+    """Branded keywords in their own campaigns [T]."""
+    terms = [b.lower() for b in ix.cfg["account"].get("brand_terms", [])]
+    if not terms:
+        return
+    for cid, c in ix.camp.items():
+        if c.get("state") != "ENABLED":
+            continue
+        kws = [k for ag in ix.ag_by_camp.get(cid, []) for k in ix.kw_by_ag.get(str(ag["adGroupId"]), []) if k.get("state") == "ENABLED"]
+        branded = [k["keywordText"] for k in kws if any(b in k["keywordText"].lower().replace("-", " ") for b in terms)]
+        if branded and len(branded) < len(kws):
+            out.append(dict(rule="branded", severity="medium", campaign=c["name"],
+                            detail="%d branded of %d keywords: %s" % (len(branded), len(kws), ", ".join(branded[:5])),
+                            action="move branded keywords to a BRAND campaign", dollars=0))
+
+
+def rule_listing_signal(snap, ix, out):
+    """CTR/CVR read per parent [T]: high CTR low CVR = PDP problem; low CTR high CVR = attention problem."""
+    agg = aggregate(snap["report_advertised_products"], lambda r: ix.parent_by_asin.get(r.get("advertisedAsin"), r.get("advertisedAsin")))
+    rows = [(k, a) for k, a in agg.items() if a["clicks"] >= 100]
+    if len(rows) < 2:
+        return
+    ctrs = sorted(a["clicks"] / a["impressions"] for _, a in rows if a["impressions"])
+    cvrs = sorted(a["orders"] / a["clicks"] for _, a in rows)
+    med_ctr, med_cvr = ctrs[len(ctrs) // 2], cvrs[len(cvrs) // 2]
+    for k, a in rows:
+        ctr = a["clicks"] / a["impressions"] if a["impressions"] else 0
+        cvr = a["orders"] / a["clicks"]
+        if ctr >= med_ctr and cvr < 0.5 * med_cvr:
+            out.append(dict(rule="listing", severity="info", target=str(k),
+                            detail="CTR %.2f%% (median %.2f%%), CVR %.1f%% (median %.1f%%)" % (100 * ctr, 100 * med_ctr, 100 * cvr, 100 * med_cvr),
+                            action="detail page is not converting: price, bullets, A+, reviews", dollars=0))
+        elif ctr < 0.5 * med_ctr and cvr >= med_cvr:
+            out.append(dict(rule="listing", severity="info", target=str(k),
+                            detail="CTR %.2f%% (median %.2f%%), CVR %.1f%% (median %.1f%%)" % (100 * ctr, 100 * med_ctr, 100 * cvr, 100 * med_cvr),
+                            action="listing not getting attention: main image, title, price, rating", dollars=0))
 
 
 def rule_coverage(snap, ix, out):
@@ -363,7 +427,15 @@ def rule_coverage(snap, ix, out):
                             action="confirm Sponsored Brands and Display exist for this parent (not in SP snapshot)", dollars=0))
 
 
-RULES = [rule_structure, rule_search_terms, rule_targets, rule_budget, rule_placements, rule_coverage]
+RULES = [rule_structure, rule_portfolio, rule_branded, rule_search_terms, rule_targets, rule_budget, rule_placements, rule_coverage, rule_listing_signal]
+
+# Playbook section 4: one phase per product. Structural rules apply always.
+PHASE_OF_RULE = {
+    "waste": "profitability", "bleed": "profitability", "pause": "profitability",
+    "never-negated": "profitability", "budget-hold": "profitability", "placement-cut": "profitability",
+    "scale": "performance", "harvest": "performance", "budget": "performance",
+    "placement": "performance", "zombie": "performance",
+}
 SEV_ORDER = {"high": 0, "medium": 1, "low": 2, "info": 3}
 
 
@@ -373,7 +445,7 @@ def write_outputs(findings, snap, out_dir, snap_dir):
     findings.sort(key=lambda x: (SEV_ORDER.get(x["severity"], 9), -abs(x.get("dollars", 0))))
     with open(os.path.join(out_dir, "findings.json"), "w") as fh:
         json.dump(findings, fh, indent=1, ensure_ascii=False)
-    cols = ["rule", "severity", "campaign", "adgroup", "target", "current", "proposed", "action", "detail", "dollars"]
+    cols = ["rule", "severity", "phase", "deferred", "parent", "campaign", "adgroup", "target", "current", "proposed", "action", "detail", "dollars"]
     with open(os.path.join(out_dir, "actions.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
         w.writeheader()
@@ -392,8 +464,11 @@ def write_outputs(findings, snap, out_dir, snap_dir):
     for rule, (n, d) in sorted(counts.items(), key=lambda kv: -kv[1][1]):
         lines.append("| %s | %d | %s |" % (rule, n, money(d)))
     lines += ["", "Dollars in play: wasted spend for waste/bleed/pause, attributed sales for scale/harvest/budget.", ""]
+    deferred = [x for x in findings if x.get("deferred")]
+    if deferred:
+        lines += ["%d findings are deferred because the parent is in the other optimization phase (playbook section 4). They are listed at the end." % len(deferred), ""]
     for sev in ("high", "medium", "low"):
-        sub = [x for x in findings if x["severity"] == sev]
+        sub = [x for x in findings if x["severity"] == sev and not x.get("deferred")]
         if not sub:
             continue
         lines += ["## %s (%d)" % (sev.capitalize(), len(sub)), ""]
@@ -403,9 +478,38 @@ def write_outputs(findings, snap, out_dir, snap_dir):
         if len(sub) > 60:
             lines.append("- ... %d more in actions.csv" % (len(sub) - 60))
         lines.append("")
+    if deferred:
+        lines += ["## Deferred (%d)" % len(deferred), ""]
+        for x in deferred[:60]:
+            where = " / ".join(s for s in (x.get("campaign"), x.get("adgroup"), x.get("target")) if s)
+            lines.append("- **%s** [%s phase, parent %s] %s. %s. Action: %s." % (x["rule"], x["phase"], x["parent"], where, x["detail"], x["action"]))
+        lines.append("")
     with open(os.path.join(out_dir, "findings.md"), "w") as fh:
         fh.write("\n".join(lines))
     return os.path.join(out_dir, "findings.md")
+
+
+def tag_phases(findings, ix):
+    """Attach phase and parent to each finding; mark deferred when outside the parent's phase."""
+    stage_phase = ix.cfg["account"].get("stage_phase", {})
+    name_to_id = {c["name"]: cid for cid, c in ix.camp.items()}
+    for x in findings:
+        x["phase"] = PHASE_OF_RULE.get(x["rule"], "structural")
+        cid = name_to_id.get(x.get("campaign"))
+        parent = None
+        if cid:
+            for ag in ix.ag_by_camp.get(cid, []):
+                for pa in ix.ads_by_ag.get(str(ag["adGroupId"]), []):
+                    parent = ix.parent_by_asin.get(pa.get("asin"))
+                    if parent:
+                        break
+                if parent:
+                    break
+        x["parent"] = parent or ""
+        stage = ix.cfg.get("parents", {}).get(parent, {}).get("stage") if parent else None
+        active = stage_phase.get(stage) if stage else None
+        x["deferred"] = bool(active and x["phase"] not in ("structural", "info", active))
+    return findings
 
 
 def run(snap_dir, cfg, out_dir):
@@ -414,6 +518,7 @@ def run(snap_dir, cfg, out_dir):
     findings = []
     for rule in RULES:
         rule(snap, ix, findings)
+    tag_phases(findings, ix)
     return findings, write_outputs(findings, snap, out_dir, snap_dir)
 
 
