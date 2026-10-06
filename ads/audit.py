@@ -5,7 +5,13 @@ Read-only. Input: a directory written by pull_snapshot.py. Output: findings.json
 findings.md and actions.csv under ads/data/audits/<date>/.
 
 Usage:
-    python3 audit.py [--snapshot DIR] [--config config.json] [--out DIR]
+    python3 audit.py [--snapshot DIR] [--config config.json] [--parents parents.json] [--out DIR]
+                     [--parent CODE ...] [--asin ASIN ...] [--min-dollars N]
+
+--parent / --asin restrict findings to campaigns that advertise those parents
+or ASINs. Campaigns that also advertise other products are kept and marked
+mixed. --min-dollars drops performance findings below that dollar value;
+structural findings are always kept.
 """
 
 import argparse
@@ -64,6 +70,29 @@ def pct(x):
     return "%.0f%%" % (100 * x)
 
 
+def load_parents(cfg, path):
+    """Merge parents.json into cfg['parents']. asins may be a list or {asin: {price, label}}."""
+    parents = dict(cfg.get("parents") or {})
+    if path and os.path.exists(path):
+        with open(path) as fh:
+            for code, p in json.load(fh).items():
+                if not code.startswith("_"):
+                    parents[code] = p
+    for code, p in parents.items():
+        asins = p.get("asins") or []
+        if isinstance(asins, list):
+            p["asins"] = {a: {"price": p.get("price"), "label": a} for a in asins}
+        else:
+            for a, meta in asins.items():
+                if isinstance(meta, (int, float)):
+                    asins[a] = {"price": float(meta), "label": a}
+                else:
+                    meta.setdefault("price", p.get("price"))
+                    meta.setdefault("label", a)
+    cfg["parents"] = parents
+    return cfg
+
+
 def acos(cost, sales):
     return cost / sales if sales else float("inf")
 
@@ -117,13 +146,77 @@ class Index:
             if self.camp.get(str(k["campaignId"]), {}).get("state") == "ENABLED":
                 self.kw_occurrences[(txt, k["matchType"])].add(str(k["campaignId"]))
         self.budget_usage = {str(b["campaignId"]): b for b in snap["budget_usage"]}
-        # parent lookup by ASIN
-        self.parent_by_asin = {}
+        # parent and price lookup by ASIN
+        self.parent_by_asin, self.price_by_asin = {}, {}
         for code, p in cfg.get("parents", {}).items():
             if code.startswith("_"):
                 continue
-            for a in p.get("asins", []):
+            for a, meta in (p.get("asins") or {}).items():
                 self.parent_by_asin[a] = code
+                if meta.get("price"):
+                    self.price_by_asin[a] = float(meta["price"])
+        # per-ASIN performance from the advertised product report (for ad-group price and parent CVR)
+        self.asin_perf = aggregate(snap["report_advertised_products"], lambda r: r.get("advertisedAsin"))
+        self.asin_perf_by_ag = aggregate(snap["report_advertised_products"],
+                                         lambda r: (str(r.get("adGroupId")), r.get("advertisedAsin")))
+        self.parent_perf = aggregate(snap["report_advertised_products"],
+                                     lambda r: self.parent_by_asin.get(r.get("advertisedAsin")))
+        # scope: campaigns advertising the requested parents/asins; mixed = also advertises others
+        self.scope_asins = None
+        self.mixed_campaigns = set()
+        self.campaign_parents = {}
+        for cid in self.camp:
+            ps = set()
+            for ag in self.ag_by_camp.get(cid, []):
+                for pa in self.ads_by_ag.get(str(ag["adGroupId"]), []):
+                    if pa.get("state") == "ENABLED":
+                        ps.add(self.parent_by_asin.get(pa.get("asin"), pa.get("asin")))
+            self.campaign_parents[cid] = ps
+
+    def set_scope(self, parents=None, asins=None):
+        """Restrict to campaigns advertising these parents or ASINs. Returns the set of campaign ids in scope."""
+        wanted = {a.upper() for a in (asins or [])}
+        for code in parents or []:
+            wanted.update((self.cfg["parents"].get(code) or {}).get("asins", {}).keys())
+        if not wanted:
+            return None
+        self.scope_asins = wanted
+        in_scope = set()
+        for cid in self.camp:
+            asins_here = {pa.get("asin", "").upper() for ag in self.ag_by_camp.get(cid, [])
+                          for pa in self.ads_by_ag.get(str(ag["adGroupId"]), []) if pa.get("state") == "ENABLED"}
+            if asins_here & wanted:
+                in_scope.add(cid)
+                if asins_here - wanted:
+                    self.mixed_campaigns.add(cid)
+        return in_scope
+
+    def adgroup_price(self, agid):
+        """Unit-weighted price of the ASINs advertised in an ad group, from parents.json prices."""
+        asins = [pa.get("asin") for pa in self.ads_by_ag.get(str(agid), []) if pa.get("state") == "ENABLED"]
+        priced = [(a, self.price_by_asin[a]) for a in asins if a in self.price_by_asin]
+        if not priced:
+            return None
+        weights = {a: max(self.asin_perf_by_ag.get((str(agid), a), {}).get("orders", 0), 0) for a, _ in priced}
+        tot = sum(weights.values())
+        if tot:
+            return sum(p * weights[a] for a, p in priced) / tot
+        return sum(p for _, p in priced) / len(priced)
+
+    def parent_cvr(self, cid):
+        """Parent-level conversion rate from the advertised product report, or None."""
+        for code in self.campaign_parents.get(cid, set()):
+            perf = self.parent_perf.get(code)
+            if perf and perf["clicks"] >= self.t["min_clicks_for_own_cvr"]:
+                return perf["orders"] / perf["clicks"]
+        return None
+
+    def starting_bid(self, cid, agid):
+        """Playbook section 3: price x parent CVR x target ACoS, when the target has no usable history."""
+        price, cvr = self.adgroup_price(agid), self.parent_cvr(cid)
+        if price and cvr:
+            return round(price * cvr * self.target_acos_for_campaign(cid), 2)
+        return None
 
     def is_negated(self, camp_id, ag_id, term):
         term = term.lower()
@@ -235,7 +328,8 @@ def rule_search_terms(snap, ix, out):
         # harvest
         is_asin = term.startswith("b0") and len(term) == 10
         already = term in ix.exact_texts
-        ok = a["orders"] >= t["harvest_min_orders"] or (a["orders"] == 1 and acos(a["cost"], a["sales"]) <= tgt * t["harvest_one_order_max_acos_ratio"])
+        ok = a["orders"] >= t["harvest_min_orders"] or (t.get("harvest_allow_one_order") and a["orders"] == 1
+                                                         and acos(a["cost"], a["sales"]) <= tgt * t["harvest_one_order_max_acos_ratio"])
         if ok and not already and not is_asin:
             out.append(dict(rule="harvest", severity="medium", campaign=cname, adgroup=r.get("adGroupName"), target=term,
                             detail="%d orders, %s sales, ACoS %s in %s" % (a["orders"], money(a["sales"]), pct(acos(a["cost"], a["sales"])), mt or ctype),
@@ -280,8 +374,9 @@ def rule_targets(snap, ix, out):
         elif a["cost"] >= t["waste_spend_min"] and (a["orders"] == 0 or ac > t["bleed_acos"] or ro < t["bleed_roas"]):
             # small steps per playbook: one step down, never below the formula bid in one move
             stepped = round(max(bid - t["bid_step_down"], 0.02), 2)
-            new_bid = max(stepped, formula_bid) if formula_bid else stepped
-            target_note = (", formula bid %s" % money(formula_bid)) if formula_bid else ""
+            ref_bid = formula_bid or ix.starting_bid(cid, agid)
+            new_bid = max(stepped, ref_bid) if ref_bid else stepped
+            target_note = (", formula bid %s" % money(ref_bid)) if ref_bid else ""
             out.append(dict(rule="bleed", severity="high", campaign=cname, adgroup=r.get("adGroupName"), target=label,
                             detail="%s spend, ACoS %s, ROAS %.1f, bid %s%s" % (money(a["cost"]), pct(ac) if ac != float("inf") else "n/a", ro, money(bid), target_note),
                             action="lower bid to %s" % money(new_bid), dollars=a["cost"] - a["sales"] * tgt, current=bid, proposed=new_bid))
@@ -294,9 +389,14 @@ def rule_targets(snap, ix, out):
                             detail="ROAS %.1f, %d orders, %s sales, TOS share %s, bid %s" % (ro, a["orders"], money(a["sales"]), ("%.0f%%" % f(tos)) if tos is not None else "n/a", money(bid)),
                             action="raise bid to %s" % money(new_bid), dollars=a["sales"], current=bid, proposed=new_bid))
         if a["impressions"] < t["zombie_max_impressions"] and (r.get("adKeywordStatus") or "ENABLED") == "ENABLED" and ix.camp.get(cid, {}).get("state") == "ENABLED":
+            ref_bid = ix.starting_bid(cid, agid)
+            new_bid = round(bid + t["bid_step_up"], 2)
+            if ref_bid and ref_bid > new_bid:
+                new_bid = round(min(ref_bid, bid + 2 * t["bid_step_up"]), 2)
             out.append(dict(rule="zombie", severity="low", campaign=cname, adgroup=r.get("adGroupName"), target=label,
-                            detail="%d impressions in window, bid %s" % (a["impressions"], money(bid)),
-                            action="second chance: raise bid one step, remove only if still no impressions next window", dollars=0))
+                            detail="%d impressions in window, bid %s%s" % (a["impressions"], money(bid), (", formula bid %s" % money(ref_bid)) if ref_bid else ""),
+                            action="second chance: raise bid to %s, remove only if still no impressions next window" % money(new_bid),
+                            dollars=0, current=bid, proposed=new_bid))
 
 
 def rule_budget(snap, ix, out):
@@ -440,12 +540,12 @@ SEV_ORDER = {"high": 0, "medium": 1, "low": 2, "info": 3}
 
 
 # ------------------------------------------------------------------ output
-def write_outputs(findings, snap, out_dir, snap_dir):
+def write_outputs(findings, snap, out_dir, snap_dir, scope_note=None):
     os.makedirs(out_dir, exist_ok=True)
     findings.sort(key=lambda x: (SEV_ORDER.get(x["severity"], 9), -abs(x.get("dollars", 0))))
     with open(os.path.join(out_dir, "findings.json"), "w") as fh:
         json.dump(findings, fh, indent=1, ensure_ascii=False)
-    cols = ["rule", "severity", "phase", "deferred", "parent", "campaign", "adgroup", "target", "current", "proposed", "action", "detail", "dollars"]
+    cols = ["rule", "severity", "phase", "deferred", "parent", "mixed", "campaign", "adgroup", "target", "current", "proposed", "action", "detail", "dollars"]
     with open(os.path.join(out_dir, "actions.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
         w.writeheader()
@@ -460,6 +560,7 @@ def write_outputs(findings, snap, out_dir, snap_dir):
     lines = ["# Ads audit %s" % dt.date.today().isoformat(), "",
              "Snapshot: `%s` (pulled %s, %s-day reports, profile %s)" % (os.path.basename(snap_dir), m.get("pulled_at", "?"), m.get("days", "?"), m.get("profile_id", "?")), "",
              "Enabled campaigns: %d. Findings: %d." % (sum(1 for c in snap["campaigns"] if c.get("state") == "ENABLED"), len(findings)), "",
+             ] + ([scope_note, ""] if scope_note else []) + [
              "| Rule | Findings | Dollars in play |", "|---|---:|---:|"]
     for rule, (n, d) in sorted(counts.items(), key=lambda kv: -kv[1][1]):
         lines.append("| %s | %d | %s |" % (rule, n, money(d)))
@@ -474,7 +575,8 @@ def write_outputs(findings, snap, out_dir, snap_dir):
         lines += ["## %s (%d)" % (sev.capitalize(), len(sub)), ""]
         for x in sub[:60]:
             where = " / ".join(s for s in (x.get("campaign"), x.get("adgroup"), x.get("target")) if s)
-            lines.append("- **%s** %s. %s. Action: %s." % (x["rule"], where, x["detail"], x["action"]))
+            mixed = " (mixed campaign)" if x.get("mixed") else ""
+            lines.append("- **%s** %s%s. %s. Action: %s." % (x["rule"], where, mixed, x["detail"], x["action"]))
         if len(sub) > 60:
             lines.append("- ... %d more in actions.csv" % (len(sub) - 60))
         lines.append("")
@@ -512,27 +614,57 @@ def tag_phases(findings, ix):
     return findings
 
 
-def run(snap_dir, cfg, out_dir):
+def run(snap_dir, cfg, out_dir, parents=None, asins=None, min_dollars=None):
     snap = load_snapshot(snap_dir)
     ix = Index(snap, cfg)
+    in_scope = ix.set_scope(parents, asins)
     findings = []
     for rule in RULES:
         rule(snap, ix, findings)
     tag_phases(findings, ix)
-    return findings, write_outputs(findings, snap, out_dir, snap_dir)
+    name_to_id = {c["name"]: cid for cid, c in ix.camp.items()}
+    if in_scope is not None:
+        kept = []
+        for x in findings:
+            cid = name_to_id.get(x.get("campaign"))
+            if cid is None:
+                # account-level finding (overlap, portfolio by name, coverage, listing): keep if it names a scoped parent/asin
+                txt = " ".join(str(x.get(k, "")) for k in ("target", "detail", "parent")).upper()
+                if any(a in txt for a in ix.scope_asins) or any(p in txt for p in (parents or [])):
+                    kept.append(x)
+                continue
+            if cid in in_scope:
+                x["mixed"] = cid in ix.mixed_campaigns
+                kept.append(x)
+        findings = kept
+    md = t_min = (min_dollars if min_dollars is not None else cfg["thresholds"].get("min_finding_dollars", 0)) or 0
+    if md:
+        findings = [x for x in findings if x.get("phase") in ("structural", "info") or abs(x.get("dollars", 0)) >= md]
+    scope_note = None
+    if in_scope is not None:
+        scope_note = "Scope: %s. %d campaigns in scope, %d of them mixed with other products." % (
+            ", ".join((parents or []) + (asins or [])), len(in_scope), len(ix.mixed_campaigns))
+    return findings, write_outputs(findings, snap, out_dir, snap_dir, scope_note)
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--snapshot", help="snapshot dir (default: latest under ads/data/snapshots)")
     ap.add_argument("--config", default=os.path.join(HERE, "config.json"))
+    ap.add_argument("--parents", default=os.path.join(HERE, "parents.json"), help="parents file (gitignored; see parents.example.json)")
     ap.add_argument("--out", help="output dir (default ads/data/audits/<today>)")
+    ap.add_argument("--parent", nargs="+", metavar="CODE", help="restrict to these parent codes from parents.json")
+    ap.add_argument("--asin", nargs="+", metavar="ASIN", help="restrict to campaigns advertising these ASINs")
+    ap.add_argument("--min-dollars", type=float, help="drop performance findings under this dollar value")
     args = ap.parse_args(argv)
     with open(args.config) as fh:
         cfg = json.load(fh)
+    load_parents(cfg, args.parents)
+    if not cfg["parents"]:
+        sys.stderr.write("note: no parents configured (%s missing). Bid formulas fall back to each target's own data.\n" % args.parents)
     snap_dir = args.snapshot or latest_snapshot()
     out_dir = args.out or os.path.join(HERE, "data", "audits", dt.date.today().isoformat())
-    findings, path = run(snap_dir, cfg, out_dir)
+    findings, path = run(snap_dir, cfg, out_dir, parents=args.parent, asins=args.asin, min_dollars=args.min_dollars)
     print("%d findings -> %s" % (len(findings), path))
 
 

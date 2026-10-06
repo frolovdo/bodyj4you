@@ -17,3 +17,4 @@ Thumbs.db
 
 # Amazon Ads pulls and audit output (regenerate with ads/pull_snapshot.py)
 ads/data/
+ads/parents.json

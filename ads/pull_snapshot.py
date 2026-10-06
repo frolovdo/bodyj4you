@@ -7,6 +7,12 @@ resolve there (keychain on the Mac, env vars anywhere else).
 
 Usage:
     python3 pull_snapshot.py [--profile ID] [--days 90] [--skip-reports] [--out DIR]
+                             [--campaigns ID_OR_NAME ...] [--asins ASIN ...]
+
+Scope: --campaigns takes campaign ids or case-insensitive name substrings;
+--asins selects every campaign that advertises one of those ASINs. Structure
+lists are filtered server-side; reports are account-wide requests (the Ads
+API has no campaign filter on reports) and rows are filtered after download.
 """
 
 import argparse
@@ -52,21 +58,51 @@ LIST_ENDPOINTS = {
 }
 
 
-def list_all(ads, path, vendor, key, profile, extra_body=None):
+def list_all(ads, path, vendor, key, profile, extra_body=None, campaign_ids=None):
+    """Paginate a v3 list endpoint. campaign_ids (iterable of str) adds a server-side campaignIdFilter in chunks of 100."""
     ctype = "application/vnd.%s.v3+json" % vendor
-    out, token = [], None
-    while True:
-        body = {"maxResults": 100}
-        if extra_body:
-            body.update(extra_body)
-        if token:
-            body["nextToken"] = token
-        res = ads.request("POST", path, body=body, profile=profile,
-                          accept=ctype, content_type=ctype)
-        out.extend(res.get(key, []))
-        token = res.get("nextToken")
-        if not token:
-            return out
+    chunks = [None]
+    if campaign_ids is not None:
+        ids = sorted(set(str(c) for c in campaign_ids))
+        if not ids:
+            return []
+        chunks = [ids[i:i + 100] for i in range(0, len(ids), 100)]
+    out = []
+    for chunk in chunks:
+        token = None
+        while True:
+            body = {"maxResults": 100}
+            if extra_body:
+                body.update(extra_body)
+            if chunk is not None:
+                body["campaignIdFilter"] = {"include": chunk}
+            if token:
+                body["nextToken"] = token
+            res = ads.request("POST", path, body=body, profile=profile,
+                              accept=ctype, content_type=ctype)
+            out.extend(res.get(key, []))
+            token = res.get("nextToken")
+            if not token:
+                break
+    return out
+
+
+def select_campaigns(campaigns, product_ads, wanted_campaigns, wanted_asins):
+    """Resolve --campaigns / --asins into a set of campaign id strings."""
+    if not wanted_campaigns and not wanted_asins:
+        return None
+    sel = set()
+    for w in wanted_campaigns or []:
+        wl = w.lower()
+        for c in campaigns:
+            if str(c["campaignId"]) == w or wl in (c.get("name") or "").lower():
+                sel.add(str(c["campaignId"]))
+    asins = {a.upper() for a in (wanted_asins or [])}
+    if asins:
+        for pa in product_ads:
+            if (pa.get("asin") or "").upper() in asins:
+                sel.add(str(pa["campaignId"]))
+    return sel
 
 
 def portfolios(ads, profile):
@@ -216,6 +252,8 @@ def main(argv=None):
     ap.add_argument("--lag", type=int, default=3, help="days to drop for attribution lag (default 3)")
     ap.add_argument("--skip-reports", action="store_true", help="structure only, no performance reports")
     ap.add_argument("--out", help="output dir (default ads/data/snapshots/<today>)")
+    ap.add_argument("--campaigns", nargs="+", metavar="ID_OR_NAME", help="only these campaigns (ids or name substrings)")
+    ap.add_argument("--asins", nargs="+", metavar="ASIN", help="only campaigns advertising these ASINs")
     args = ap.parse_args(argv)
 
     ads = _import_adsapi()
@@ -240,8 +278,24 @@ def main(argv=None):
 
     dump(out_dir, "portfolios", portfolios(ads, profile))
     data = {}
+    # campaigns and product ads first: they are cheap and decide the scope
+    path, vendor, key = LIST_ENDPOINTS["campaigns"]
+    all_campaigns = list_all(ads, path, vendor, key, profile)
+    path, vendor, key = LIST_ENDPOINTS["product_ads"]
+    all_ads = list_all(ads, path, vendor, key, profile)
+    scope = select_campaigns(all_campaigns, all_ads, args.campaigns, args.asins)
+    if scope is not None:
+        sys.stderr.write("scope: %d of %d campaigns match --campaigns/--asins\n" % (len(scope), len(all_campaigns)))
+        if not scope:
+            sys.exit("No campaign matched. Check --campaigns / --asins against profile %s." % profile)
+    data["campaigns"] = [c for c in all_campaigns if scope is None or str(c["campaignId"]) in scope]
+    data["product_ads"] = [a for a in all_ads if scope is None or str(a["campaignId"]) in scope]
+    dump(out_dir, "campaigns", data["campaigns"])
+    dump(out_dir, "product_ads", data["product_ads"])
     for name, (path, vendor, key) in LIST_ENDPOINTS.items():
-        data[name] = list_all(ads, path, vendor, key, profile)
+        if name in data:
+            continue
+        data[name] = list_all(ads, path, vendor, key, profile, campaign_ids=scope)
         dump(out_dir, name, data[name])
 
     camp_ids = [c["campaignId"] for c in data["campaigns"] if c.get("state") == "ENABLED"]
@@ -250,6 +304,8 @@ def main(argv=None):
     manifest = {
         "pulled_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "profile_id": profile, "days": args.days, "lag": args.lag,
+        "scope": {"campaigns": args.campaigns, "asins": args.asins,
+                  "campaign_ids": sorted(scope) if scope is not None else "all"},
         "reports": {},
     }
 
@@ -267,6 +323,8 @@ def main(argv=None):
             for rid, (n, s, e) in pending.items():
                 if n == name:
                     rows.extend(results.get(rid, []))
+            if scope is not None:
+                rows = [r for r in rows if str(r.get("campaignId")) in scope]
             dump(out_dir, "report_" + name, rows)
 
     dump(out_dir, "manifest", manifest)

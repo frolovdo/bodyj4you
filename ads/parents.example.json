@@ -1,0 +1,32 @@
+{
+  "_comment": "Copy to ads/parents.json (gitignored) and fill in. asins may be a list, or a dict with per-ASIN price and label so the bid formula uses the right price per size.",
+  "ROSEHIP": {
+    "name": "Rosehip Oil",
+    "category": "EO",
+    "stage": "grow",
+    "break_even_acos": 0.4,
+    "target_acos": 0.25,
+    "asins": {
+      "B000000001": {
+        "label": "4oz",
+        "price": 9.99
+      },
+      "B000000002": {
+        "label": "16oz",
+        "price": 24.99
+      }
+    }
+  },
+  "PA-SALINE": {
+    "name": "Piercing Aftercare Saline",
+    "category": "PA",
+    "stage": "harvest",
+    "break_even_acos": 0.45,
+    "target_acos": 0.2,
+    "asins": [
+      "B000000003",
+      "B000000004"
+    ],
+    "price": 12.99
+  }
+}

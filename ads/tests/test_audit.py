@@ -75,7 +75,7 @@ def build(snap_dir):
     ]
     campaigns_daily = [row(date="2026-09-%02d" % d, campaignId=3, campaignName="SP | PA | E | winner", clicks=4, cost=2.0, purchases7d=1, sales7d=14.0) for d in range(1, 31)]
     budget_usage = [{"campaignId": 3, "budgetUsagePercent": 97.0, "budget": 10.0}]
-    advertised = [row(campaignId=3, adGroupId=30, adId=4, advertisedAsin="B0PARENT01", advertisedSku="PA-01", cost=60.0, purchases7d=15, sales7d=210.0)]
+    advertised = [row(campaignId=3, adGroupId=30, adId=4, advertisedAsin="B0PARENT01", advertisedSku="PA-01", clicks=120, cost=60.0, purchases7d=15, sales7d=210.0)]
 
     files = dict(campaigns=campaigns, adgroups=adgroups, keywords=keywords, targets=targets, product_ads=product_ads,
                  neg_keywords=[], campaign_neg_keywords=[], neg_targets=[], campaign_neg_targets=[], budget_usage=budget_usage,
@@ -90,8 +90,10 @@ def build(snap_dir):
 def main():
     with open(os.path.join(os.path.dirname(HERE), "config.json")) as fh:
         cfg = json.load(fh)
-    cfg["parents"] = {"PA-SALINE": {"asins": ["B0PARENT01"], "target_acos": 0.25, "break_even_acos": 0.40, "stage": "grow"},
-                      "OTHER": {"asins": ["B0OTHERPAR"], "target_acos": 0.25, "break_even_acos": 0.40, "stage": "harvest"}}
+    cfg["parents"] = {"PA-SALINE": {"asins": {"B0PARENT01": {"label": "4oz", "price": 12.99}}, "target_acos": 0.25, "break_even_acos": 0.40, "stage": "grow"},
+                      "OTHER": {"asins": ["B0OTHERPAR"], "price": 9.99, "target_acos": 0.25, "break_even_acos": 0.40, "stage": "harvest"}}
+    audit.load_parents(cfg, None)
+    assert cfg["parents"]["OTHER"]["asins"]["B0OTHERPAR"]["price"] == 9.99, "list-form asins must inherit the parent price"
     with tempfile.TemporaryDirectory() as tmp:
         snap = os.path.join(tmp, "snap"); os.makedirs(snap)
         build(snap)
@@ -126,6 +128,23 @@ def main():
         scale = [x for x in findings if x["rule"] == "scale"]
         assert scale and not any(x["deferred"] for x in scale), "scale on grow-stage parent must not be deferred"
         assert all("phase" in x for x in findings)
+        # starting bid formula: ad group 20 is mixed (12.99 and 9.99, no unit data -> mean 11.49) x parent CVR (15/120)
+        # x target 0.25 = 0.36; zombie at 0.20 steps up at most two steps to min(0.36, 0.30)
+        zombie = [x for x in findings if x["rule"] == "zombie"][0]
+        assert abs(zombie["proposed"] - 0.30) < 1e-6, zombie
+        assert "formula bid $0.36" in zombie["detail"], zombie["detail"]
+        # scope: only the OTHER parent -> only the mixed campaign 2 remains, flagged mixed
+        scoped, _ = audit.run(snap, cfg, os.path.join(tmp, "out2"), parents=["OTHER"])
+        camps = {x.get("campaign") for x in scoped if x.get("campaign")}
+        assert camps == {"SP | PA | B | messy"}, camps
+        assert all(x.get("mixed") for x in scoped if x.get("campaign")), "campaign 2 advertises two parents and must be marked mixed"
+        # scope by ASIN with min-dollars: structural findings survive, small performance findings go
+        scoped2, _ = audit.run(snap, cfg, os.path.join(tmp, "out3"), asins=["B0PARENT01"], min_dollars=100)
+        assert any(x["rule"] == "structure" for x in scoped2)
+        assert not any(x["rule"] == "waste" for x in scoped2), "waste $12.50 is under the $100 floor"
+        assert any(x["rule"] == "scale" for x in scoped2), "scale $210 is above the floor"
+        # one-order harvest is off by default
+        assert not any(x["rule"] == "harvest" and "1 orders" in x["detail"] for x in findings)
         failed = [r for r, chk in expected.items() if not chk(by_rule.get(r, []))]
         print(open(path).read())
         if failed:
