@@ -49,6 +49,14 @@ ads/data/                      gitignored
     findings.json  findings.md  actions.csv
 ```
 
+## Config keys that matter
+
+- `account.brand_terms`: strings that mark a keyword as branded (playbook: branded keywords get their own campaigns).
+- `account.stage_phase`: maps a parent's `stage` to its optimization phase. A parent with a stage gets findings
+  from the other phase listed as deferred. Parents without a stage get everything.
+- `parents.<CODE>`: `asins`, `stage`, `price`, `break_even_acos`, `target_acos`. The audit maps campaigns to
+  parents through advertised ASINs, so fill `asins` first.
+
 Nothing here writes to Amazon. Write-back (bid changes, negatives, new
 campaigns) is a separate step that will run from reviewed `actions.csv`.
 

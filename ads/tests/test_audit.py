@@ -18,9 +18,9 @@ def row(**kw):
 
 def build(snap_dir):
     campaigns = [
-        {"campaignId": 1, "name": "SP | PA | AUTO-CLOSE", "state": "ENABLED", "targetingType": "AUTO",
+        {"campaignId": 1, "name": "SP | PA | AUTO-CLOSE", "state": "ENABLED", "targetingType": "AUTO", "portfolioId": 900,
          "budget": {"budget": 20.0}, "dynamicBidding": {"strategy": "LEGACY_FOR_SALES", "placementBidding": []}},
-        {"campaignId": 2, "name": "SP | PA | B | messy", "state": "ENABLED", "targetingType": "MANUAL",
+        {"campaignId": 2, "name": "SP | PA | B | messy", "state": "ENABLED", "targetingType": "MANUAL", "portfolioId": 900,
          "budget": {"budget": 10.0}, "dynamicBidding": {"strategy": "AUTO_FOR_SALES", "placementBidding": []}},
         {"campaignId": 3, "name": "SP | PA | E | winner", "state": "ENABLED", "targetingType": "MANUAL",
          "budget": {"budget": 10.0}, "dynamicBidding": {"strategy": "LEGACY_FOR_SALES",
@@ -40,6 +40,8 @@ def build(snap_dir):
                      "keywordText": "piercing aftercare spray", "matchType": "EXACT"})
     keywords.append({"keywordId": 301, "campaignId": 2, "adGroupId": 21, "state": "ENABLED", "bid": 0.8,
                      "keywordText": "piercing aftercare spray", "matchType": "EXACT"})  # overlap with 300
+    keywords.append({"keywordId": 302, "campaignId": 3, "adGroupId": 30, "state": "ENABLED", "bid": 0.8,
+                     "keywordText": "bodyj4you saline", "matchType": "EXACT"})  # branded mixed with generic
     targets = [{"targetId": 500, "campaignId": 2, "adGroupId": 20, "state": "ENABLED", "bid": 0.4,
                 "expressionType": "MANUAL", "expression": [{"type": "ASIN_SAME_AS", "value": "B0COMPETIT"}]}]
     product_ads = [
@@ -77,7 +79,7 @@ def build(snap_dir):
 
     files = dict(campaigns=campaigns, adgroups=adgroups, keywords=keywords, targets=targets, product_ads=product_ads,
                  neg_keywords=[], campaign_neg_keywords=[], neg_targets=[], campaign_neg_targets=[], budget_usage=budget_usage,
-                 portfolios=[], report_search_terms=search_terms, report_targeting=targeting, report_placements=placements,
+                 portfolios=[{"portfolioId": 900, "name": "PA mixed"}], report_search_terms=search_terms, report_targeting=targeting, report_placements=placements,
                  report_campaigns_daily=campaigns_daily, report_advertised_products=advertised,
                  manifest={"pulled_at": "test", "days": 90, "profile_id": "test"})
     for k, v in files.items():
@@ -88,7 +90,8 @@ def build(snap_dir):
 def main():
     with open(os.path.join(os.path.dirname(HERE), "config.json")) as fh:
         cfg = json.load(fh)
-    cfg["parents"] = {"PA-SALINE": {"asins": ["B0PARENT01"], "target_acos": 0.25, "break_even_acos": 0.40, "stage": "grow"}}
+    cfg["parents"] = {"PA-SALINE": {"asins": ["B0PARENT01"], "target_acos": 0.25, "break_even_acos": 0.40, "stage": "grow"},
+                      "OTHER": {"asins": ["B0OTHERPAR"], "target_acos": 0.25, "break_even_acos": 0.40, "stage": "harvest"}}
     with tempfile.TemporaryDirectory() as tmp:
         snap = os.path.join(tmp, "snap"); os.makedirs(snap)
         build(snap)
@@ -111,7 +114,18 @@ def main():
             "placement": lambda xs: any("Top of Search" in x["target"] and x["proposed"] == 25 for x in xs)
                                     and any("Detail Page" in x["target"] and x["proposed"] == 0 for x in xs),
             "coverage": lambda xs: any(x["target"] == "PA-SALINE" for x in xs),
+            "portfolio": lambda xs: any("holds 2 parents" in x["detail"] for x in xs) and any(x.get("campaign") == "SP | PA | E | winner" for x in xs),
+            "branded": lambda xs: any(x["campaign"] == "SP | PA | E | winner" and "bodyj4you saline" in x["detail"] for x in xs),
+            "budget-hold": lambda xs: True,
+            "placement-cut": lambda xs: any("Detail Page" in x["target"] and x["proposed"] == 0 for x in xs),
         }
+        expected["placement"] = lambda xs: any("Top of Search" in x["target"] and x["proposed"] == 25 for x in xs)
+        # phase tagging: PA-SALINE is grow -> performance; its profitability findings (waste in campaign 1) are deferred
+        waste = [x for x in findings if x["rule"] == "waste"]
+        assert waste and all(x["deferred"] for x in waste), "waste on grow-stage parent should be deferred"
+        scale = [x for x in findings if x["rule"] == "scale"]
+        assert scale and not any(x["deferred"] for x in scale), "scale on grow-stage parent must not be deferred"
+        assert all("phase" in x for x in findings)
         failed = [r for r, chk in expected.items() if not chk(by_rule.get(r, []))]
         print(open(path).read())
         if failed:
