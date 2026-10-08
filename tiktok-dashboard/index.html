@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>BodyJ4You TikTok Shop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: operations dashboard. Period tiles first, then metric cards in rows of four with sparklines, then the monthly CEO table. One global period selector. */
+:root{
+  --bg:#f6f5f1; --surface:#ffffff; --surface-2:#f0efe9; --line:#e4e2da; --line-2:#d2d0c6;
+  --fg:#17181a; --fg-2:#5a5b57; --fg-3:#8b8c86;
+  --accent:#2a78d6; --accent-soft:rgba(42,120,214,.10); --prior:#9a9a93;
+  --good:#1d7a1d; --bad:#cf3a39; --warn:#b26b00;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px; --shadow:0 1px 2px rgba(20,20,15,.05),0 1px 1px rgba(20,20,15,.03);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141517; --surface:#1d1e21; --surface-2:#25262a; --line:#2e2f34; --line-2:#3b3c42;
+  --fg:#f1f1ee; --fg-2:#b4b5ae; --fg-3:#80817b;
+  --accent:#3987e5; --accent-soft:rgba(57,135,229,.16); --prior:#7c7d78;
+  --good:#5fc45f; --bad:#ef7271; --warn:#e3a44a; --shadow:none; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#141517; --surface:#1d1e21; --surface-2:#25262a; --line:#2e2f34; --line-2:#3b3c42;
+  --fg:#f1f1ee; --fg-2:#b4b5ae; --fg-3:#80817b;
+  --accent:#3987e5; --accent-soft:rgba(57,135,229,.16); --prior:#7c7d78;
+  --good:#5fc45f; --bad:#ef7271; --warn:#e3a44a; --shadow:none; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:14px;line-height:1.4;padding-inline:clamp(16px,2.5vw,32px);padding-block:20px 48px;margin:0}
+h1,h2,h3{margin:0;text-wrap:balance}
+.num{font-variant-numeric:tabular-nums}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-bottom:22px}
+.top h1{font-size:24px;font-weight:600;letter-spacing:-.01em}
+.top .sub{color:var(--fg-2);font-size:13px}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,button{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;cursor:pointer}
+select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--fg-2)}
+section{margin-top:30px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:12px}
+.sec-head h2{font-size:18px;font-weight:600}
+.sec-head .range{color:var(--fg-2);font-size:13px}
+/* period tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.tile header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px 10px}
+.tile .lbl{font-size:12px;color:var(--fg-2)}
+.tile .hero{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.tile .when{text-align:right;font-size:12px;color:var(--fg-2)}
+.tile .when b{display:block;color:var(--fg);font-weight:600;font-size:13px}
+.tile table{width:100%;border-collapse:collapse;font-size:12.5px}
+.tile td{padding:7px 16px;border-top:1px solid var(--line);color:var(--fg-2)}
+.tile td:first-child{text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+.tile td.v{text-align:right;color:var(--fg);white-space:nowrap}
+.tile td.p{text-align:right;width:64px;font-size:11.5px}
+.tile tr.key td{color:var(--fg);font-weight:500}
+.tile td.na{color:var(--fg-3);font-style:italic}
+.delta{font-size:12px;font-weight:500;white-space:nowrap}
+.delta.up{color:var(--good)} .delta.down{color:var(--bad)} .delta.flat{color:var(--fg-3)}
+.delta .vs{color:var(--fg-3);font-weight:400;margin-left:4px}
+/* metric cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px 10px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.card .t{font-size:13px;color:var(--fg-2);display:flex;justify-content:space-between;gap:8px}
+.card .t .hint{color:var(--fg-3);font-size:11px}
+.card .val{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.card .val b{font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.card .prev{font-size:12px;color:var(--fg-3)}
+.spark{position:relative;margin-top:4px}
+.spark svg{display:block;width:100%;height:84px;overflow:visible}
+.spark .tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);font-size:11.5px;padding:6px 8px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);display:none;z-index:2;line-height:1.35}
+.spark .tip b{font-weight:600}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--fg-3);margin-top:2px}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid var(--accent);vertical-align:middle;margin-right:5px}
+.legend i.pr{border-top:2px dashed var(--prior)}
+.card.na{justify-content:center;align-items:flex-start;color:var(--fg-2);border-style:dashed}
+.card.na b{font-size:15px;color:var(--fg)}
+.card.na p{margin:4px 0 0;font-size:12.5px;line-height:1.45}
+/* monthly table */
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow-x:auto}
+table.months{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+.months th,.months td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.months thead th{font-weight:600;background:var(--surface-2);position:sticky;top:0}
+.months th:first-child,.months td:first-child{position:sticky;left:0;background:var(--surface);min-width:220px;color:var(--fg-2);font-weight:500;z-index:1}
+.months thead th:first-child{background:var(--surface-2);z-index:2}
+.months td .d{display:block;font-size:11.5px;margin-top:2px}
+.months td.total{font-weight:600;border-left:1px solid var(--line)}
+.months th.total{border-left:1px solid var(--line)}
+.months tr.group td{background:var(--surface-2);color:var(--fg-2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding-top:6px;padding-bottom:6px;font-weight:600}
+.months tbody tr:last-child td{border-bottom:none}
+.foot{margin-top:28px;color:var(--fg-3);font-size:12px;line-height:1.5;max-width:70ch}
+.foot code{font-family:var(--mono);font-size:11.5px}
+#err{display:none;background:var(--surface);border:1px solid var(--bad);border-radius:var(--r);padding:14px 16px;margin-top:12px;color:var(--fg)}
+@media (max-width:560px){.tile .hero{font-size:26px}.card .val b{font-size:22px}}
+@media (prefers-reduced-motion:no-preference){.spark path.cur{transition:d .25s ease}}
+img{max-width:100%}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h1>BodyJ4You TikTok Shop</h1>
+    <div class="sub" id="subtitle">Loading data…</div>
+  </div>
+  <div class="ctl">
+    <label for="range" class="sub">Period</label>
+    <select id="range">
+      <option value="7">Last 7 days</option>
+      <option value="14">Last 14 days</option>
+      <option value="28" selected>Last 28 days</option>
+      <option value="56">Last 8 weeks</option>
+      <option value="90">Last 90 days</option>
+    </select>
+    <button id="copytable" type="button">Copy monthly table</button>
+    <span class="pill" id="copied" hidden>Copied</span>
+  </div>
+</div>
+<div id="err"></div>
+
+<section id="s-period">
+  <div class="sec-head"><h2>Snapshot</h2><span class="range">Yesterday · week to date · month to date, each against the matching prior period</span></div>
+  <div class="tiles" id="tiles"></div>
+</section>
+
+<section id="s-sales">
+  <div class="sec-head"><h2>Sales</h2><span class="range" data-range></span></div>
+  <div class="cards" id="cards-sales"></div>
+</section>
+
+<section id="s-orders">
+  <div class="sec-head"><h2>Orders</h2><span class="range" data-range></span></div>
+  <div class="cards" id="cards-orders"></div>
+</section>
+
+<section id="s-cust">
+  <div class="sec-head"><h2>Customers</h2><span class="range" data-range></span></div>
+  <div class="cards" id="cards-cust"></div>
+</section>
+
+<section id="s-traffic">
+  <div class="sec-head"><h2>Traffic and affiliates</h2><span class="range" data-range></span></div>
+  <div class="cards" id="cards-traffic"></div>
+</section>
+
+
+<section id="s-months">
+  <div class="sec-head"><h2>Monthly performance</h2><span class="range" id="months-range"></span>
+    <label style="margin-left:auto" class="sub"><input type="checkbox" id="newest" checked> Newest first</label></div>
+  <div class="tablewrap"><table class="months" id="months"><thead></thead><tbody></tbody></table></div>
+</section>
+
+<p class="foot" id="foot"></p>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const money=(v,d=2)=>(v<0?'-':'')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const int=v=>Math.round(v).toLocaleString('en-US');
+const dec=(v,d=2)=>v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=v=>(v*100).toFixed(1)+'%';
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d));};
+const iso=d=>d.toISOString().slice(0,10);
+const addD=(d,n)=>new Date(d.getTime()+n*86400000);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtD=d=>d.getUTCDate()+' '+MON[d.getUTCMonth()];
+const fmtDY=d=>fmtD(d)+' '+d.getUTCFullYear();
+const spanTxt=(a,b)=>a.getTime()===b.getTime()?fmtDY(a):fmtD(a)+' – '+fmtDY(b);
+
+// metric definitions. agg: how a day-row becomes the metric; some are ratios over the period.
+const SUM=k=>({sum:k});
+const M={
+  total_sales:{label:'Total sales',hint:'buyer paid incl. tax & shipping',fmt:money,...SUM('ord_total_sales'),good:1},
+  gmv:{label:'GMV (raw)',hint:'TikTok analytics',fmt:money,...SUM('gmv'),good:1},
+  refunds:{label:'Refunds',fmt:money,...SUM('refunds'),good:-1},
+  gmv_net:{label:'GMV net of refunds',fmt:money,calc:r=>r.gmv-r.refunds,good:1},
+  fees:{label:'Platform fees',hint:'from settlement statements',fmt:money,calc:r=>-(r.fin_fees||0),good:-1},
+  shipping_cost:{label:'Shipping cost',fmt:money,calc:r=>-(r.fin_shipping||0),good:-1},
+  adjust:{label:'Adjustments',fmt:money,...SUM('fin_adjust'),good:1},
+  payout:{label:'Payout (settled)',hint:'what TikTok pays out',fmt:money,...SUM('fin_settlement'),good:1},
+  orders:{label:'Total orders',fmt:int,...SUM('orders'),good:1},
+  units:{label:'Items sold',fmt:int,...SUM('units'),good:1},
+  aov:{label:'Average order value',hint:'GMV / orders',fmt:money,ratio:['gmv','orders'],good:1},
+  ipo:{label:'Items per order',fmt:v=>dec(v,2),ratio:['units','orders'],good:1},
+  cancels:{label:'Cancellations and returns',fmt:int,...SUM('cancels_returns'),good:-1},
+  buyers:{label:'Buyers',hint:'TikTok analytics',fmt:int,...SUM('buyers'),good:1},
+  new_cust:{label:'New customers',hint:'first order ever, from order history',fmt:int,...SUM('new_customers'),good:1},
+  ret_cust:{label:'Returning customers',fmt:int,...SUM('returning_customers'),good:1},
+  ret_share:{label:'Returning share',hint:'returning / all customers',fmt:pct,ratio:['returning_customers',r=>(r.new_customers||0)+(r.returning_customers||0)],good:1},
+  page_views:{label:'Product page views',fmt:int,...SUM('page_views'),good:1},
+  impressions:{label:'Product impressions',fmt:int,...SUM('impressions'),good:1},
+  cvr:{label:'Page view to order',hint:'orders / page views',fmt:pct,ratio:['orders','page_views'],good:1},
+  gmv_video:{label:'Shoppable video GMV',fmt:money,...SUM('gmv_video'),good:1},
+  gmv_live:{label:'Live GMV',fmt:money,...SUM('gmv_live'),good:1},
+  gmv_card:{label:'Product card GMV',fmt:money,...SUM('gmv_card'),good:1},
+  video_share:{label:'Video share of GMV',fmt:pct,ratio:['gmv_video','gmv'],good:1},
+};
+const val=(r,k)=>typeof k==='function'?k(r):(r[k]||0);
+function dayVal(r,m){ if(m.calc) return m.calc(r); if(m.sum) return r[m.sum]||0; if(m.ratio){const d=val(r,m.ratio[1]);return d?val(r,m.ratio[0])/d:0;} return 0; }
+function periodVal(rows,m){ if(m.ratio){const n=rows.reduce((a,r)=>a+val(r,m.ratio[0]),0),d=rows.reduce((a,r)=>a+val(r,m.ratio[1]),0);return d?n/d:0;} return rows.reduce((a,r)=>a+dayVal(r,m),0); }
+
+let DATA=null, byDate={}, DAYS=[], END=null;
+function slice(a,b){const out=[];for(let d=a;d<=b;d=addD(d,1)){const r=byDate[iso(d)];out.push(r||{date:iso(d)});}return out;}
+function deltaHTML(cur,prev,good,vsText){
+  if(!prev&&!cur) return '<span class="delta flat">0%'+(vsText?'<span class="vs">'+vsText+'</span>':'')+'</span>';
+  if(!prev) return '<span class="delta flat">new'+(vsText?'<span class="vs">'+vsText+'</span>':'')+'</span>';
+  const ch=(cur-prev)/Math.abs(prev); const dir=ch>0.0005?1:ch<-0.0005?-1:0;
+  const cls=dir===0?'flat':(dir*good>0?'up':'down'); const arrow=dir>0?'↗':dir<0?'↘':'→';
+  return '<span class="delta '+cls+'">'+arrow+' '+(ch>0?'+':'')+(ch*100).toFixed(1)+'%'+(vsText?'<span class="vs">'+vsText+'</span>':'')+'</span>';
+}
+
+// ---------- snapshot tiles
+function tile(title,a,b,pa,pb){
+  const cur=slice(a,b),prev=slice(pa,pb);
+  const heroM=M.gmv_net; const hv=periodVal(cur,heroM),hp=periodVal(prev,heroM);
+  const rows=[['total_sales'],['gmv'],['refunds'],['gmv_net',1],['fees'],['shipping_cost'],['adjust'],['payout',1]];
+  let trs='';
+  for(const [k,key] of rows){
+    const m=M[k],v=periodVal(cur,m),p=periodVal(prev,m);
+    const gmv=periodVal(cur,M.gmv);
+    const share=(k==='fees'||k==='shipping_cost'||k==='refunds'||k==='payout')&&gmv?('<td class="p num">'+pct(v/gmv)+'</td>'):'<td class="p">'+deltaHTML(v,p,m.good)+'</td>';
+    trs+='<tr'+(key?' class="key"':'')+'><td>'+m.label+'</td><td class="v num">'+m.fmt(v)+'</td>'+share+'</tr>';
+  }
+  return '<div class="tile"><header><div><div class="lbl">GMV net of refunds</div><div class="hero num">'+money(hv)+'</div><div style="margin-top:6px">'+deltaHTML(hv,hp,1,'vs '+spanTxt(pa,pb))+'</div></div><div class="when"><b>'+title+'</b>'+spanTxt(a,b)+'</div></header><table>'+trs+'</table></div>';
+}
+function renderTiles(){
+  const y=END; const dow=y.getUTCDay(); // Sunday-start week, matching TikTok Seller Center
+  const ws=addD(y,-dow); const wlen=(y-ws)/86400000+1;
+  const ms=new Date(Date.UTC(y.getUTCFullYear(),y.getUTCMonth(),1)); const mlen=y.getUTCDate();
+  const pms=new Date(Date.UTC(y.getUTCFullYear(),y.getUTCMonth()-1,1)); const pme=addD(pms,mlen-1);
+  $('#tiles').innerHTML=tile('Yesterday',y,y,addD(y,-1),addD(y,-1))+tile('Week to date',ws,y,addD(ws,-7),addD(ws,-7+wlen-1))+tile('Month to date',ms,y,pms,pme);
+}
+
+// ---------- sparkline cards
+function smooth(pts){ if(pts.length<3) return 'M'+pts.map(p=>p.join(' ')).join('L');
+  let d='M'+pts[0][0]+' '+pts[0][1];
+  for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+    const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+    d+='C'+c1.join(' ')+' '+c2.join(' ')+' '+p2.join(' ');}
+  return d; }
+function card(id,m,cur,prev,a,b,pa,pb){
+  const W=400,H=84,pad=6;
+  const cv=cur.map(r=>dayVal(r,m)),pv=prev.map(r=>dayVal(r,m));
+  const max=Math.max(1e-9,...cv,...pv);
+  const x=i=>pad+i*(W-2*pad)/Math.max(1,cv.length-1), y=v=>H-pad-(v/max)*(H-2*pad-10);
+  const cp=cv.map((v,i)=>[x(i),y(v)]),pp=pv.map((v,i)=>[x(i),y(v)]);
+  const area=smooth(cp)+'L'+cp[cp.length-1][0]+' '+(H-pad)+'L'+cp[0][0]+' '+(H-pad)+'Z';
+  const last=cp[cp.length-1];
+  const total=periodVal(cur,m),ptotal=periodVal(prev,m);
+  const svg='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" data-id="'+id+'">'
+    +'<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+(H-pad)+'" y2="'+(H-pad)+'" stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>'
+    +'<path d="'+area+'" fill="var(--accent-soft)"/>'
+    +'<path d="'+smooth(pp)+'" fill="none" stroke="var(--prior)" stroke-width="1.5" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>'
+    +'<path class="cur" d="'+smooth(cp)+'" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
+    +'<line class="xh" x1="0" x2="0" y1="'+pad+'" y2="'+(H-pad)+'" stroke="var(--fg-3)" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>'
+    +'<circle class="hd" cx="'+last[0]+'" cy="'+last[1]+'" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2" vector-effect="non-scaling-stroke"/>'
+    +'</svg><div class="tip"></div>';
+  const el=document.createElement('div'); el.className='card';
+  el.innerHTML='<div class="t"><span>'+m.label+'</span>'+(m.hint?'<span class="hint">'+m.hint+'</span>':'')+'</div>'
+    +'<div class="val"><b class="num">'+m.fmt(total)+'</b>'+deltaHTML(total,ptotal,m.good,'vs '+spanTxt(pa,pb))+'</div>'
+    +'<div class="prev num">Prior period '+m.fmt(ptotal)+'</div><div class="spark">'+svg+'</div>'
+    +'<div class="legend"><span><i></i>'+spanTxt(a,b)+'</span><span><i class="pr"></i>'+spanTxt(pa,pb)+'</span></div>';
+  // hover
+  const sp=el.querySelector('.spark'),svgEl=sp.querySelector('svg'),tip=sp.querySelector('.tip'),xh=svgEl.querySelector('.xh');
+  const move=e=>{const rc=svgEl.getBoundingClientRect();const fx=(e.clientX-rc.left)/rc.width;const i=Math.max(0,Math.min(cv.length-1,Math.round((fx*W-pad)/((W-2*pad)/Math.max(1,cv.length-1)))));
+    xh.setAttribute('x1',x(i));xh.setAttribute('x2',x(i));xh.style.display='';
+    tip.style.display='block';tip.style.left=(x(i)/W*100)+'%';tip.style.top='0px';
+    tip.innerHTML='<b>'+fmtD(addD(a,i))+'</b> '+m.fmt(cv[i])+'<br><span style="opacity:.75">'+fmtD(addD(pa,i))+' '+m.fmt(pv[i])+'</span>';};
+  sp.addEventListener('pointermove',move);sp.addEventListener('pointerleave',()=>{tip.style.display='none';xh.style.display='none';});
+  return el;
+}
+function naCard(title,body){const el=document.createElement('div');el.className='card na';el.innerHTML='<b>'+title+'</b><p>'+body+'</p>';return el;}
+function renderCards(){
+  const n=+$('#range').value; const b=END,a=addD(END,-(n-1)),pb=addD(a,-1),pa=addD(pb,-(n-1));
+  const cur=slice(a,b),prev=slice(pa,pb);
+  document.querySelectorAll('[data-range]').forEach(e=>e.textContent=spanTxt(a,b)+' · dashed line is '+spanTxt(pa,pb));
+  const fill=(sel,keys)=>{const c=$(sel);c.innerHTML='';keys.forEach(k=>c.appendChild(card(k,M[k],cur,prev,a,b,pa,pb)));return c;};
+  fill('#cards-sales',['total_sales','gmv','gmv_net','payout','fees','refunds']);
+  fill('#cards-orders',['orders','units','aov','ipo','cancels']);
+  fill('#cards-cust',['buyers','new_cust','ret_cust','ret_share']);
+  fill('#cards-traffic',['page_views','impressions','cvr','gmv_video','gmv_card','gmv_live','video_share']);
+}
+
+// ---------- monthly table
+function renderMonths(){
+  const first=parse(DATA.since),last=END;
+  const months=[];let m=new Date(Date.UTC(first.getUTCFullYear(),first.getUTCMonth(),1));
+  while(m<=last){const e=new Date(Date.UTC(m.getUTCFullYear(),m.getUTCMonth()+1,0));months.push({s:m,e:e<last?e:last,rows:slice(m,e<last?e:last),label:MON[m.getUTCMonth()]+' '+m.getUTCFullYear()+(e>last?' (to date)':'')});m=new Date(Date.UTC(m.getUTCFullYear(),m.getUTCMonth()+1,1));}
+  const all=slice(first,last); const newest=$('#newest').checked; const order=newest?[...months].reverse():months;
+  $('#months-range').textContent=spanTxt(first,last);
+  const groups=[['Sales',['gmv','refunds','gmv_net','total_sales','fees','shipping_cost','payout']],['Orders',['orders','units','aov','ipo','cancels']],['Customers',['buyers','new_cust','ret_cust','ret_share']],['Traffic and affiliates',['page_views','impressions','cvr','gmv_video','gmv_card','gmv_live','video_share']]];
+  let th='<tr><th>Metric</th>'+order.map(mo=>'<th>'+mo.label+'</th>').join('')+'<th class="total">Total</th></tr>';
+  let tb='';
+  for(const [g,keys] of groups){
+    tb+='<tr class="group"><td>'+g+'</td><td colspan="'+(order.length+1)+'"></td></tr>';
+    for(const k of keys){const met=M[k];
+      const vals=months.map(mo=>periodVal(mo.rows,met));
+      tb+='<tr><td>'+met.label+'</td>';
+      order.forEach(mo=>{const i=months.indexOf(mo);const v=vals[i];const p=i>0?vals[i-1]:null;
+        tb+='<td class="num">'+met.fmt(v)+(p!==null&&!mo.label.includes('to date')?'<span class="d">'+deltaHTML(v,p,met.good)+'</span>':(mo.label.includes('to date')?'<span class="d delta flat">partial month</span>':''))+'</td>';});
+      tb+='<td class="total num">'+met.fmt(periodVal(all,met))+'</td></tr>';}
+  }
+  $('#months thead').innerHTML=th;$('#months tbody').innerHTML=tb;
+  // TSV for copy
+  const cols=['Metric',...order.map(o=>o.label),'Total'];
+  const lines=[cols.join('\t')];
+  for(const [g,keys] of groups) for(const k of keys){const met=M[k];lines.push([met.label,...order.map(mo=>periodVal(mo.rows,met).toFixed(met.fmt===money?2:met.fmt===pct?4:2)),periodVal(all,met).toFixed(2)].join('\t'));}
+  window.__tsv=lines.join('\n');
+}
+
+function renderAll(){renderTiles();renderCards();renderMonths();}
+async function load(){
+  try{
+    const r=await fetch('data/dashboard.json',{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
+    DATA=await r.json(); DAYS=DATA.days; byDate={}; DAYS.forEach(d=>byDate[d.date]=d); END=parse(DATA.latest_analytics_date||DATA.until);
+    $('#subtitle').textContent='US shop · data through '+fmtDY(END)+' · refreshed '+DATA.generated_at.replace('T',' ').slice(0,16);
+    $('#foot').innerHTML='Sources: TikTok Shop analytics API (GMV, orders, buyers, refunds, page views, impressions, GMV by source), finance statements (fees, shipping, adjustments, payout) and the full order history since '+DATA.orders_history_from+' for new vs returning customers and total sales. Payout is the settled amount and lands a few days after the sale, so the latest days under-report fees and payout. Refreshed automatically every morning at 5am ET.';
+    renderAll();
+  }catch(e){const er=$('#err');er.style.display='block';er.textContent='Could not load data/dashboard.json: '+e.message;$('#subtitle').textContent='No data';}
+}
+$('#range').addEventListener('change',renderCards);
+$('#newest').addEventListener('change',renderMonths);
+$('#copytable').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(window.__tsv||'');const p=$('#copied');p.hidden=false;setTimeout(()=>p.hidden=true,1500);}catch(e){const ta=document.createElement('textarea');ta.value=window.__tsv||'';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();}});
+try{const saved=localStorage.getItem('tt-range');if(saved)$('#range').value=saved;}catch(e){}
+$('#range').addEventListener('change',()=>{try{localStorage.setItem('tt-range',$('#range').value);}catch(e){}});
+load();
+})();
+</script>
+</body>
+</html>

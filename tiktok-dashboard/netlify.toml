@@ -1,0 +1,14 @@
+# Netlify settings for the TikTok Shop dashboard (static, no build step).
+# In the Netlify UI set this site's "Base directory" to: tiktok-dashboard
+# and leave the build command empty. The publish path is relative to that base.
+[build]
+  publish = "."
+  # Skip the deploy when nothing inside this folder changed (sibling dashboards
+  # share the repo). https://docs.netlify.com/configure-builds/ignore-builds/
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
+
+# Data is replaced every morning; never let a browser or CDN hold on to it.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
