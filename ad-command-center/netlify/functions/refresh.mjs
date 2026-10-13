@@ -3,7 +3,7 @@ import { json, err, body } from '../lib/http.mjs';
 import { currentUser, csrfOk, can } from '../lib/auth.mjs';
 import { audit } from '../lib/supabase.mjs';
 
-const OWNER = 'frolovdo', REPO = 'adsops-engine', WORKFLOW = 'refresh.yml';
+const OWNER = 'frolovdo', REPO = 'bodyj4you-amazon-api', WORKFLOW = 'refresh.yml';  // ~/sp-api is this repo
 
 export default async (req) => {
   const u = await currentUser(req);
