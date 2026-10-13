@@ -60,3 +60,15 @@ details summary{cursor:pointer;color:var(--accent);font-size:13px;margin-top:8px
 .popup h3{margin:0 0 8px}.popbody{max-height:55vh;overflow:auto}.popbtns{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}.money{font-size:16px}
 .steps{padding-left:20px}.steps li{margin:4px 0}.steps li.run{font-weight:600}.steps li.done{color:var(--good)}.steps li.fail{color:var(--bad)}
 .result{padding:10px 12px;border-radius:8px;border-left:4px solid var(--good)}.result.bad{border-left-color:var(--bad)}.result h4{margin:0 0 4px}
+
+/* Hourly, Keywords, kill switch */
+.dp{border-collapse:separate;border-spacing:2px;font-size:11px}.dp th{font-weight:500;color:var(--mut);padding:2px 4px;white-space:nowrap}.dp .hl{text-align:left;position:sticky;left:0;background:var(--card);padding-right:8px}
+.dp td{width:30px;height:24px;text-align:center;border-radius:3px;font-variant-numeric:tabular-nums}
+.sh{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px;color:var(--mut)}
+.rs{margin:0;padding-left:18px}.rs li{margin-bottom:6px}.rs .dim::marker{color:var(--bad)}.rs .boost::marker{color:var(--good)}
+.plain ul{margin:0;padding-left:20px;font-size:15px;line-height:1.55}
+.note{margin:8px 0;padding:6px 10px;border-radius:8px;font-size:13px;border:1px solid var(--bd)}
+.btn.no{background:var(--bad);border-color:var(--bad);color:#fff}
+.killask{font-size:13px;display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.killon{color:var(--bad);font-weight:700;font-size:13px;display:inline-flex;gap:8px;align-items:center}
+.ack{display:block;margin:8px 0;font-weight:600;color:var(--bad)}.ack input{width:auto;min-height:0;margin-right:6px}
+.hz .chip.good{border-color:var(--good)}

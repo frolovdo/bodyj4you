@@ -52,7 +52,7 @@ async function stage(u, f) {
     title = `Edits to ${ncamp} campaign${ncamp === 1 ? '' : 's'}: ${a.levers.join(', ')}`; lever = a.levers.join('+');
     intent = Object.entries(hyps).map(([k, v]) => `${k}: ${v.text}`).join(' | ');
   }
-  const checks = await prechecks(rows, beforeBudgets, fam);
+  const checks = await prechecks(rows, beforeBudgets, fam, { restore: !!f.since });
   const bl = blocked(checks);
   if (bl.length) throw new Error('blocked: ' + bl.map((c) => c.detail).join('; '));
   const id = newItemId(u.name, f.since ? '-REVERT' : '');

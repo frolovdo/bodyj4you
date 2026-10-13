@@ -19,7 +19,7 @@ export default async (req) => {
     } else {
       ({ rows, beforeBudgets, hyps } = assemble(f, live, fam));
     }
-    const checks = await prechecks(rows, beforeBudgets, fam);
+    const checks = await prechecks(rows, beforeBudgets, fam, { restore: !!f.since });
     const enabled = live.state.campaigns.filter((c) => c.state === 'ENABLED');
     const tb0 = enabled.reduce((s, c) => s + parseFloat(c.budget.budget), 0);
     const tb1 = enabled.reduce((s, c) => { const v = (f['b_' + c.campaignId] ?? '').toString().trim(); return s + (v !== '' ? parseFloat(v) : parseFloat(c.budget.budget)); }, 0);
