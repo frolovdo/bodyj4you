@@ -22,3 +22,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[dev]
+  command = "npx vite --port 5173"
+  targetPort = 5173
+  port = 8888
+  framework = "#custom"
+  autoLaunch = false
