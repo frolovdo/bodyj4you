@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Login from './Login.jsx';
 import EnginePage from './EnginePage.jsx';
+import Update from './Update.jsx';
+import History from './History.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -47,7 +49,7 @@ export default function App() {
         <button className="btn alt sm" onClick={signOut}>Sign out</button>
       </header>
       <main className="wrap">
-        <EnginePage key={page} name={page} csrf={csrf} user={user} />
+        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );
