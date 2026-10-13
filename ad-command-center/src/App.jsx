@@ -3,6 +3,9 @@ import Login from './Login.jsx';
 import EnginePage from './EnginePage.jsx';
 import Update from './Update.jsx';
 import History from './History.jsx';
+import Keywords from './Keywords.jsx';
+import Hourly from './Hourly.jsx';
+import Kill from './Kill.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -47,9 +50,10 @@ export default function App() {
         <button className="btn alt sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? 'Light' : 'Dark'} mode</button>
         <span className="mut">{user.name} · {user.role}</span>
         <button className="btn alt sm" onClick={signOut}>Sign out</button>
+        <Kill csrf={csrf} user={user} />
       </header>
       <main className="wrap">
-        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );

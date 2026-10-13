@@ -128,7 +128,7 @@ export function assemble(form, live, fam) {
 }
 
 /** Charter checks, same names and levels as the Mac tool. */
-export async function prechecks(rows, beforeBudgets, fam, { emergency = false, exceptItem = null } = {}) {
+export async function prechecks(rows, beforeBudgets, fam, { emergency = false, exceptItem = null, restore = false } = {}) {
   const ch = fam.charter, out = [], add = (name, level, detail) => out.push({ name, level, detail });
   const today = ptDate();
   const lock = (ch.lock_windows || []).find((w) => w.start <= today && today <= w.end);
@@ -149,7 +149,7 @@ export async function prechecks(rows, beforeBudgets, fam, { emergency = false, e
     const b = r.body || {}, name = r.campaign || '';
     if (r.api === 'PUT /sp/campaigns' && b.budget) {
       const nb = b.budget.budget, ob = beforeBudgets[name];
-      if (ob) { const pct = (100 * (nb - ob)) / ob; if (Math.abs(pct) > lim) add('step_limit', 'warn', `${name} budget $${ob} -> $${nb} is ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}% (limit ${lim}%/week). Confirming records the override.`); }
+      if (ob && !restore) { const pct = (100 * (nb - ob)) / ob; if (Math.abs(pct) > lim) add('step_limit', 'warn', `${name} budget $${ob} -> $${nb} is ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}% (limit ${lim}%/week). ${pct < 0 ? 'A cut this deep needs the extra tick below.' : 'Confirming records the override.'}`); }
       for (const f of floors) if (name.includes(f.campaign_name_contains) && nb < f.min_budget) { add('floor', 'block', `${name} budget $${nb} is below the floor $${f.min_budget}`); floorHit = true; }
     }
     if (r.api === 'PUT /sp/campaigns' && b.dynamicBidding) {
