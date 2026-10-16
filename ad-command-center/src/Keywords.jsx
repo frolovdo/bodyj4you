@@ -16,10 +16,16 @@ export default function Keywords({ csrf }) {
   const [pop, setPop] = useState(null); const [preview, setPreview] = useState(null); const [progress, setProgress] = useState(null); const [result, setResult] = useState(null); const [staged, setStaged] = useState(null);
   useEffect(() => { api('keywords').then((r) => (r.ok ? setD(r) : setError(r.error || 'could not load'))); }, []);
   const M = d?.model;
-  const advTop = useMemo(() => (M?.advertise || []).filter((c) => c.ok && c.clicks >= 3).sort((a, b) => b.orders - a.orders), [M]);
-  const negSafe = useMemo(() => (M?.negatives || []).filter((c) => c.luck <= 20 && !c.core).sort((a, b) => b.cost - a.cost), [M]);
-  const advList = allAdv ? (M?.advertise || []) : advTop.slice(0, 5);
-  const negList = allNeg ? (M?.negatives || []).filter((c) => !c.core) : negSafe.slice(0, 5);
+  // what Amazon holds right now: a term already advertised as exact anywhere, or already blocked in that campaign, is not offered again
+  const have = d?.have || { adv: {}, neg: {} };
+  const norm = (s) => String(s || '').trim().toLowerCase();
+  const advAll = useMemo(() => (M?.advertise || []).filter((c) => !have.adv[norm(c.term)]), [M, have]);
+  const advDone = (M?.advertise || []).length - advAll.length;
+  const negAll = useMemo(() => (M?.negatives || []).filter((c) => !have.neg[`${c.campaignId}|${norm(c.term)}`]), [M, have]);
+  const advTop = useMemo(() => advAll.filter((c) => c.ok && c.clicks >= 3).sort((a, b) => b.orders - a.orders), [advAll]);
+  const negSafe = useMemo(() => negAll.filter((c) => c.luck <= 20 && !c.core).sort((a, b) => b.cost - a.cost), [negAll]);
+  const advList = allAdv ? advAll : advTop.slice(0, 5);
+  const negList = allNeg ? negAll.filter((c) => !c.core) : negSafe.slice(0, 5);
   const dests = M?.destinations || [];
   // campaigns touched: destination campaigns of adds, source campaigns of block-in-source, campaigns of negatives
   const touched = useMemo(() => {
@@ -50,7 +56,7 @@ export default function Keywords({ csrf }) {
     setStaged(s1.id); steps[0] = { ...steps[0], state: 'done', note: s1.id }; steps[1].state = 'run'; setProgress([...steps]);
     const s2 = await post('send', { csrf, step: 'execute', id: s1.id }); steps[1] = { ...steps[1], state: s2.ok ? 'done' : 'fail', note: `${s2.sent || 0} sent${s2.failed ? `, ${s2.failed} failed` : ''}` }; steps[2].state = 'run'; setProgress([...steps]);
     const s3 = await post('send', { csrf, step: 'verify', id: s1.id }); steps[2] = { ...steps[2], state: s3.ok ? 'done' : 'fail' }; setProgress([...steps]);
-    setResult({ ok: s2.ok && s3.ok, sentAny: (s2.sent || 0) > 0, text: `${s1.title}: ${s2.sent || 0} sent, ${s2.failed || 0} failed.`, diffs: s3.diffs, errors: s2.errors });
+    setResult({ ok: s2.ok && s3.ok, sentAny: (s2.sent || 0) > 0, text: `${s1.title}: ${s2.summary || `${s2.sent || 0} sent, ${s2.failed || 0} failed`}.`, diffs: s3.diffs, skipped: s2.skipped, errors: s2.errors });
     setAdds({}); setNegs({}); setHyps({}); api('keywords').then((r) => r.ok && setD(r));
   };
   const close = async () => { if (staged && !result) await post('send', { csrf, step: 'cancel', id: staged }); setPop(null); setStaged(null); };
@@ -64,7 +70,9 @@ export default function Keywords({ csrf }) {
       <h2 id="adv" style={{ marginTop: 0 }}>Keywords to advertise</h2>
       <div className="card">
         <p><b>Why these:</b> shoppers typed these exact words and bought, but we only reached them by accident through broad, auto or deal campaigns. <b>Why add them as exact keywords:</b> you set the bid for that exact phrase yourself, Amazon learns that your listing belongs to it (which helps organic rank), and the spend stops depending on how the auto campaign feels that day. <b>Block in source</b> stops the old campaign bidding on the same word, so you do not pay twice.</p>
-        <p className="small"><b>The five that matter most</b> (most orders first, at or under your target ad cost of {Math.round(M.tgt)}%). <a href="#adv" onClick={(e) => { e.preventDefault(); setAllAdv(!allAdv); }}>{allAdv ? 'Show the top 5 only' : `Show all ${M.advertise.length}`}</a></p>
+        <p className="small"><b>The five that matter most</b> (most orders first, at or under your target ad cost of {Math.round(M.tgt)}%). <a href="#adv" onClick={(e) => { e.preventDefault(); setAllAdv(!allAdv); }}>{allAdv ? 'Show the top 5 only' : `Show all ${advAll.length}`}</a>
+          {advDone > 0 && <span className="mut"> · {advDone} term{advDone === 1 ? ' is' : 's are'} already advertised on Amazon and left out</span>}{have.error && <span className="warn"> · could not read Amazon just now; the send step checks again</span>}</p>
+        {!advList.length && <p className="mut">Nothing left to add: every term with orders is already an exact keyword.</p>}
         <div className="wrap"><table className="kw"><thead><tr><th>Add</th><th>Search term</th><th>Found in</th><th>Orders, 30d</th><th>Clicks</th><th>Ad cost per $100</th><th>Bid $</th><th>Add to</th><th></th></tr></thead><tbody>
           {advList.map((c) => { const a = adds[c.key]; const dst = a?.dest || c.default; const srcNeg = c.campaignId !== dst; return (
             <tr key={c.key}><td><input type="checkbox" checked={!!a} onChange={(e) => setAdds((s) => { const n2 = { ...s }; if (e.target.checked) n2[c.key] = { dest: c.default, bid: c.bid, neg: srcNeg }; else delete n2[c.key]; return n2; })} /></td>

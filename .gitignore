@@ -22,3 +22,6 @@ ads/parents.json
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Local Netlify folder
+.netlify

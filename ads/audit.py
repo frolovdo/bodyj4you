@@ -195,7 +195,8 @@ class Index:
         """Unit-weighted price of the ASINs advertised in an ad group, from parents.json prices."""
         asins = [pa.get("asin") for pa in self.ads_by_ag.get(str(agid), []) if pa.get("state") == "ENABLED"]
         priced = [(a, self.price_by_asin[a]) for a in asins if a in self.price_by_asin]
-        if not priced:
+        if not priced or len(priced) < len(asins):
+            # unpriced ASINs in the ad group (mixed with other products): no reliable price
             return None
         weights = {a: max(self.asin_perf_by_ag.get((str(agid), a), {}).get("orders", 0), 0) for a, _ in priced}
         tot = sum(weights.values())
@@ -295,7 +296,7 @@ def rule_structure(snap, ix, out):
     for cid, c in ix.camp.items():
         if c.get("state") != "ENABLED":
             continue
-        ags = ix.ag_by_camp.get(cid, [])
+        ags = [a for a in ix.ag_by_camp.get(cid, []) if a.get("state") != "ARCHIVED"]
         if len(ags) > 1:
             out.append(dict(rule="structure", severity="medium", campaign=c["name"],
                             detail="%d ad groups in one campaign (playbook: one)" % len(ags),
@@ -384,7 +385,8 @@ def rule_search_terms(snap, ix, out):
         c = ix.camp.get(cid, {})
         if c.get("state") != "ENABLED":
             continue
-        kws = [k for ag in ix.ag_by_camp.get(cid, []) for k in ix.kw_by_ag.get(str(ag["adGroupId"]), [])]
+        kws = [k for ag in ix.ag_by_camp.get(cid, []) if ag.get("state") != "ARCHIVED"
+               for k in ix.kw_by_ag.get(str(ag["adGroupId"]), []) if k.get("state") == "ENABLED"]
         exact_only = kws and all(k["matchType"] == "EXACT" for k in kws)
         if spend >= t["never_negated_spend_min"] and ix.neg_count_by_camp.get(cid, 0) == 0 and not exact_only:
             out.append(dict(rule="never-negated", severity="medium", campaign=c.get("name"),
@@ -415,7 +417,8 @@ def rule_targets(snap, ix, out):
             # small steps per playbook: one step down, never below the formula bid in one move
             stepped = round(max(bid - t["bid_step_down"], 0.02), 2)
             ref_bid = formula_bid or ix.starting_bid(cid, agid)
-            new_bid = max(stepped, ref_bid) if ref_bid else stepped
+            # floor at the formula bid only when it is below the current bid; never "lower" to a higher number
+            new_bid = max(stepped, ref_bid) if ref_bid and ref_bid < bid else stepped
             target_note = (", formula bid %s" % money(ref_bid)) if ref_bid else ""
             out.append(dict(rule="bleed", severity="high", campaign=cname, adgroup=r.get("adGroupName"), target=label,
                             detail="%s spend, ACoS %s, ROAS %.1f, bid %s%s" % (money(a["cost"]), pct(ac) if ac != float("inf") else "n/a", ro, money(bid), target_note),
@@ -677,6 +680,8 @@ def run(snap_dir, cfg, out_dir, parents=None, asins=None, min_dollars=None):
                 continue
             if cid in in_scope:
                 x["mixed"] = cid in ix.mixed_campaigns
+                if x["mixed"] and x["rule"] == "zombie":
+                    continue  # a mixed campaign's idle targets mostly serve other products; audit those parents instead
                 kept.append(x)
         findings = kept
     md = t_min = (min_dollars if min_dollars is not None else cfg["thresholds"].get("min_finding_dollars", 0)) or 0

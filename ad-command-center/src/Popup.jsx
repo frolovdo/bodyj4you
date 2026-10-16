@@ -21,6 +21,7 @@ export default function Popup({ open, title, preview, label, onConfirm, onClose,
             <p className="money">{b && Math.abs(b[1] - b[0]) > 0.5 ? <b>Product-ad budget ${Math.round(b[0])} → ${Math.round(b[1])} a day ({b[1] > b[0] ? '+' : '−'}${Math.round(Math.abs(b[1] - b[0]))}). Goes live on Amazon now.</b> : <b>Goes live on Amazon now.</b>}</p>
             <p><b>{preview.changes.length} change{preview.changes.length === 1 ? '' : 's'} will be sent:</b></p>
             <ul>{preview.changes.map((c, i) => <li key={i}>{c}</li>)}</ul>
+            {preview.skipped?.length > 0 && <><p className="mut small"><b>Already on Amazon, not sent again:</b></p><ul className="small mut">{preview.skipped.map((c, i) => <li key={i}>{c}</li>)}</ul></>}
             {Object.keys(preview.hyps || {}).length > 0 && <><p className="mut small"><b>Hypotheses saved as benchmarks:</b></p><ul className="small">{Object.entries(preview.hyps).map(([k, v]) => <li key={k}><b>{k}:</b> {v}</li>)}</ul></>}
             {warns.length > 0 && <><p className="warn">Heads up (recorded if you confirm):</p><ul>{warns.map((c, i) => <li key={i}>{c.detail}</li>)}</ul></>}
             {deepCut && <label className="ack"><input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} /> I understand this cut is far beyond the weekly step and I want it anyway.</label>}
@@ -30,10 +31,11 @@ export default function Popup({ open, title, preview, label, onConfirm, onClose,
         {progress && !result && <ol className="steps">{progress.map((s, i) => <li key={i} className={s.state}>{s.label}{s.note ? <span className="mut small"> · {s.note}</span> : ''}</li>)}</ol>}
         {result && (
           <div className={'result ' + (result.ok ? 'good' : 'bad')}>
-            <h4>{result.ok ? 'Sent to Amazon and verified' : result.sentAny ? 'Sent, but check the result' : 'Not sent'}</h4>
+            <h4>{result.ok ? (result.sentAny ? 'Sent to Amazon and verified' : 'Nothing to send: Amazon already had all of it') : result.sentAny ? 'Sent, but check the result' : 'Not sent'}</h4>
             <p>{result.text}</p>
             {result.diffs?.length > 0 && <ul>{result.diffs.map((d, i) => <li key={i}>{d}</li>)}</ul>}
-            {result.errors?.length > 0 && <ul>{result.errors.map((d, i) => <li key={i}>{d}</li>)}</ul>}
+            {result.skipped?.length > 0 && <ul className="small mut">{result.skipped.map((d, i) => <li key={i}>{d}</li>)}</ul>}
+            {result.errors?.length > 0 && <ul>{result.errors.map((d, i) => <li key={i}>failed: {d}</li>)}</ul>}
           </div>
         )}
       </div>

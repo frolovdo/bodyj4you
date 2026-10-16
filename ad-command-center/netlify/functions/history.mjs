@@ -3,6 +3,7 @@
 import { json, err } from '../lib/http.mjs';
 import { currentUser } from '../lib/auth.mjs';
 import { db, FAMILY, dataset } from '../lib/supabase.mjs';
+import { plainError } from '../lib/engine.mjs';
 
 function verdict(h, k, be) {
   const b0 = h.baseline || {};
@@ -29,7 +30,7 @@ export default async (req) => {
   const fam = FAMILY();
   const [{ data: items }, { data: logs }, { data: backs }, { data: hyps }, M] = await Promise.all([
     db().from('queue_items').select('id, title, status, proposed_by, approver, applied_at, result, hypothesis, lever, undoes').eq('family', fam).in('status', ['applied', 'failed']).order('applied_at', { ascending: false }).limit(60),
-    db().from('applied_log').select('at, item_id, campaign, change, status, why').order('at', { ascending: false }).limit(400),
+    db().from('applied_log').select('at, item_id, campaign, change, status, why, error').order('at', { ascending: false }).limit(400),
     db().from('backups').select('item_id'),
     db().from('hypotheses').select('*').eq('family', fam).order('at', { ascending: false }).limit(60),
     dataset('campaign_model'),
@@ -40,8 +41,12 @@ export default async (req) => {
   const batches = (items || []).map((it) => {
     const rows = byItem[it.id] || [];
     const ok = rows.filter((r) => r.status === 'OK');
+    const already = rows.filter((r) => r.status === 'ALREADY' || (r.status !== 'OK' && /duplicateValueError|already exists/i.test(r.error || '')));
+    const failed = rows.filter((r) => r.status !== 'OK' && !already.includes(r));
     return { id: it.id, time: toPT(it.applied_at), who: it.approver ? `${it.proposed_by} (approved by ${it.approver})` : it.proposed_by, title: it.title, status: it.status,
-      camps: [...new Set(ok.map((r) => r.campaign).filter(Boolean))], changes: ok.map((r) => r.change), ok: ok.length, err: rows.length - ok.length, why: it.hypothesis || rows[0]?.why || '', restorable: hasBackup.has(it.id), undoes: it.undoes };
+      camps: [...new Set(ok.map((r) => r.campaign).filter(Boolean))], changes: ok.map((r) => r.change), ok: ok.length, err: failed.length, already: already.length,
+      failed: failed.map((r) => `${r.campaign}: ${r.change} — ${plainError(r.error)}`), alreadyRows: already.map((r) => `${r.campaign}: ${r.change} — already on Amazon`),
+      why: it.hypothesis || rows[0]?.why || '', restorable: hasBackup.has(it.id) && ok.length > 0, undoes: it.undoes };
   });
   // sends made from the Mac before the bridge (no queue item id): group by minute
   for (const [k, rows] of Object.entries(byItem)) if (k.startsWith('cli:')) {
