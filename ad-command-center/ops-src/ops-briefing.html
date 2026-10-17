@@ -1,0 +1,1252 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>BodyJ4You Ops — Morning Briefing</title>
+<style>
+  :root{
+    --ground:#f5f7f8; --panel:#ffffff; --panel-2:#fbfcfd;
+    --ink:#141b21; --ink-2:#4d5962; --ink-3:#808b94;
+    --line:#e4e8eb; --line-2:#eef1f3;
+    --accent:#0e7c72; --accent-ink:#0a5e56; --accent-tint:#e6f2f0;
+    --crit:#c23a2e; --crit-tint:#fbecea; --warn:#a9721a; --warn-tint:#fbf2df; --good:#1e8a57; --good-tint:#e7f4ed;
+    --uv:#7c3aed; --uv-tint:#f1ecfb; --steel:#55606b; --steel-tint:#eef1f4;
+    --shadow:0 1px 2px rgba(20,27,33,.04),0 1px 3px rgba(20,27,33,.06);
+    --radius:10px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  a{color:var(--accent-ink)}
+  button{font-family:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  .app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+  .sidebar{background:#0f1a1e;color:#cdd7da;padding:22px 16px;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh}
+  .brand .mark{font-weight:700;font-size:15px;letter-spacing:-.2px;color:#fff;display:flex;align-items:center;gap:8px}
+  .brand .mark .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  .brand .sub{font-size:11px;color:#7d8d91;letter-spacing:.3px;margin-top:3px}
+  nav{display:flex;flex-direction:column;gap:2px}
+  .nav-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6a7a7e;margin:0 0 6px 10px}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:8px;color:#b9c4c7;background:none;border:0;width:100%;text-align:left;cursor:pointer;font-size:13.5px;transition:background .12s,color .12s}
+  .nav-item svg{width:17px;height:17px;flex:none;opacity:.85}
+  .nav-item .tag{margin-left:auto;font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;background:#223033;color:#9fb0b3}
+  .nav-item.crit .tag{background:#3a211f;color:#f0a79f}
+  .nav-item:hover{background:#18272b;color:#e7eef0}
+  .nav-item.active{background:var(--accent);color:#fff}
+  .nav-item.active .tag{background:rgba(255,255,255,.18);color:#eafffb}
+  .nav-item.active svg{opacity:1}
+  .briefing{margin-top:auto;border-top:1px solid #1e2b2f;padding-top:16px;font-size:11.5px;color:#8a9a9e;line-height:1.55}
+  .briefing b{color:#cdd7da;font-weight:600}
+  .main{min-width:0;display:flex;flex-direction:column}
+  .topbar{padding:22px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .topbar h1{margin:0;font-size:21px;letter-spacing:-.3px;text-wrap:balance}
+  .topbar .lede{margin:4px 0 0;color:var(--ink-2);font-size:13.5px;max-width:64ch}
+  .provenance{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);white-space:nowrap}
+  .provenance .pdot{width:7px;height:7px;border-radius:50%}
+  .provenance.live .pdot{background:var(--good)} .provenance.preview .pdot{background:var(--warn)}
+  .view{padding:22px 32px 48px;display:none;animation:fade .18s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 12px}
+  .grid{display:grid;gap:16px}
+  .cards4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:1080px){.cards4{grid-template-columns:repeat(2,1fr)}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .stat{padding:18px;cursor:pointer;transition:border-color .12s,transform .12s;position:relative;overflow:hidden}
+  .stat:hover{border-color:#cdd5d9;transform:translateY(-1px)}
+  .stat .k{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .stat .v{font-size:34px;font-weight:700;letter-spacing:-1px;margin:10px 0 2px}
+  .stat .c{font-size:12.5px;color:var(--ink-2)}
+  .stat .stripe{position:absolute;left:0;top:0;bottom:0;width:3px}
+  .stat.s-crit .stripe{background:var(--crit)} .stat.s-warn .stripe{background:var(--warn)}
+  .stat.s-good .stripe{background:var(--good)} .stat.s-accent .stripe{background:var(--accent)}
+  .stat .arrow{color:var(--ink-3);font-size:18px;position:absolute;right:16px;top:16px}
+  .block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+  .block-h{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .block-h h3{margin:0;font-size:14px;letter-spacing:-.1px}
+  .block-h .count{font-size:12px;color:var(--ink-3);font-weight:600;margin-left:auto}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .pill.urgent{background:var(--crit-tint);color:var(--crit)} .pill.planned,.pill.warn{background:var(--warn-tint);color:var(--warn)}
+  .pill.good{background:var(--good-tint);color:var(--good)} .pill.uv{background:var(--uv-tint);color:var(--uv)}
+  .pill.steel{background:var(--steel-tint);color:var(--steel)} .pill.family{background:var(--accent-tint);color:var(--accent-ink)}
+  .inv-wrap{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+  @media(max-width:1180px){.inv-wrap{grid-template-columns:1fr}}
+  .tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:4px;width:max-content;box-shadow:var(--shadow)}
+  .tab{border:0;background:none;padding:7px 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:8px}
+  .tab .b{font-size:11px;color:var(--ink-3);background:var(--line-2);padding:0 7px;border-radius:20px;font-weight:700}
+  .tab.active{background:var(--accent);color:#fff}.tab.active .b{background:rgba(255,255,255,.2);color:#fff}
+  .ware{display:none}.ware.active{display:block}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap;vertical-align:top}
+  th.r,td.r{text-align:right}
+  th .hint{display:block;font-weight:400;font-size:9.5px;letter-spacing:.02em;text-transform:none;color:var(--ink-3);opacity:.9;margin-top:3px}
+  td{padding:9px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--panel-2)}
+  .sku{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .catline{font-size:11.5px;color:var(--ink-3);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cov{font-weight:700;font-variant-numeric:tabular-nums}
+  .cov.crit{color:var(--crit)} .cov.warn{color:var(--warn)} .cov.ok{color:var(--ink-2)} .cov.oos{color:#fff;background:var(--crit);padding:1px 7px;border-radius:5px;font-size:11px}
+  .vel,.oh{font-variant-numeric:tabular-nums;color:var(--ink-2)}
+  .oh .inb{color:var(--accent-ink);font-size:11px}
+  .rec{color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .stepper button{width:24px;height:28px;border:0;background:var(--panel-2);color:var(--ink-2);font-size:15px;cursor:pointer;line-height:1}
+  .stepper button:hover{background:var(--line-2)}
+  .stepper input{width:44px;height:28px;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:7px;cursor:pointer;transition:background .12s,border-color .12s;white-space:nowrap}
+  .btn:hover{background:var(--panel-2);border-color:#cdd5d9}
+  .btn.add{color:var(--accent-ink);border-color:#bfe0db}.btn.add:hover{background:var(--accent-tint)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:var(--accent-ink)}
+  .btn.primary:disabled{background:#b9c7c4;border-color:#b9c7c4;cursor:not-allowed}
+  .btn.ghost{border:0;background:none;color:var(--ink-3);padding:6px 8px}.btn.ghost:hover{color:var(--crit)}
+  .cart{position:sticky;top:20px}
+  .cart .block-h{background:var(--panel-2)}
+  .cart-body{padding:0;max-height:46vh;overflow:auto}
+  .cart-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line-2)}
+  .cart-row:last-child{border-bottom:0}
+  .cart-row .meta{min-width:0;flex:1}
+  .cart-row .meta .s{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cart-row .meta .c{font-size:11px;color:var(--ink-3)}
+  .cart-row .q{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+  tr.pending td{opacity:.45;background:var(--panel-2)}
+  .btn.add:disabled{opacity:.5;cursor:not-allowed;background:var(--line-2);color:var(--ink-3);border-color:var(--line)}
+  .stepper button:disabled,.stepper input:disabled{opacity:.4;cursor:not-allowed}
+  .cstep{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .cstep button{width:22px;height:26px;border:0;background:var(--panel-2);color:var(--ink-2);font-size:14px;cursor:pointer;line-height:1}
+  .cstep button:hover{background:var(--line-2)}
+  .cstep input{width:40px;height:26px;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .cart-empty{padding:34px 20px;text-align:center;color:var(--ink-3);font-size:13px}
+  .cart-foot{padding:14px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;background:var(--panel-2)}
+  .cart-foot .sum{display:flex;justify-content:space-between;font-size:13px}.cart-foot .sum b{font-variant-numeric:tabular-nums}
+  .alert{display:flex;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line-2);position:relative}
+  .alert:last-child{border-bottom:0}
+  .alert .edge{position:absolute;left:0;top:0;bottom:0;width:3px}
+  .alert.crit .edge{background:var(--crit)}.alert.warn .edge{background:var(--warn)}.alert.good .edge{background:var(--good)}
+  .alert .body{flex:1;min-width:0}
+  .alert .head{display:flex;align-items:center;gap:9px;margin-bottom:3px;flex-wrap:wrap}
+  .alert .head .t{font-weight:650;font-size:13.5px}
+  .alert .ch{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--line-2);padding:2px 8px;border-radius:5px}
+  .alert .d{font-size:13px;color:var(--ink-2)}.alert .d .mono{font-size:12px;color:var(--ink)}
+  .alert .act{align-self:center}.alert.resolved{opacity:.72}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+  @media(max-width:900px){.kpis{grid-template-columns:1fr}}
+  .kpi{padding:18px}
+  .kpi .k{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .kpi .v{font-size:30px;font-weight:700;letter-spacing:-.8px;margin:8px 0 4px}
+  .kpi .delta{font-size:12.5px;font-weight:600}
+  .kpi .delta.up{color:var(--crit)}.kpi .delta.flat{color:var(--ink-3)}
+  .rev{padding:14px 18px;border-bottom:1px solid var(--line-2);display:flex;gap:13px;align-items:flex-start}
+  .rev:last-child{border-bottom:0}
+  .stars{font-family:var(--mono);font-weight:700;font-size:13px;white-space:nowrap}
+  .stars.bad{color:var(--crit)}.stars.mid{color:var(--warn)}
+  .rev .txt{flex:1}.rev .txt .q{font-size:13.5px;font-style:italic}.rev .txt .m{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .flagline{display:flex;align-items:center;gap:8px;padding:12px 18px;background:var(--crit-tint);border-bottom:1px solid #f3d9d6;font-size:13px;color:var(--crit)}.flagline b{font-weight:700}
+  .scrim{position:fixed;inset:0;background:rgba(15,26,30,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
+  .scrim.open{display:flex}
+  .modal{background:var(--panel);border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);overflow:hidden}
+  .modal h2{margin:0;font-size:17px}.modal .mh{padding:20px 22px 0}.modal .mb{padding:14px 22px 22px}
+  .modal .line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line-2);font-size:13px}.modal .line:last-of-type{border-bottom:0}
+  .modal .mf{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;background:var(--panel-2);border-top:1px solid var(--line)}
+  .plan-list{max-height:180px;overflow:auto;margin:8px 0 0}
+  .modal.wide{max-width:760px}.modal.wide .mb{max-height:62vh;overflow:auto}
+  .sl{display:grid;grid-template-columns:1fr 74px 28px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line-2)}
+  .sl .from{font-size:11px;color:var(--ink-3)}.sl select,.sl input,.shipf select,.shipf input{width:100%;height:30px;border:1px solid var(--line);border-radius:7px;font-size:12.5px;padding:0 6px;background:var(--panel);color:var(--ink)}
+  .sl input.q{text-align:center;font-family:var(--mono)}.sl .x{height:30px;border:0;background:none;color:var(--ink-3);font-size:18px;cursor:pointer}
+  .bc{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:20px;margin-top:5px}.bc.fn{background:var(--uv-tint);color:var(--uv)}.bc.upc{background:var(--good-tint);color:var(--good)}.bc.unk{background:var(--warn-tint);color:var(--warn)}
+  /* choices that need a look: orange until you pick/confirm, green once set */
+  select.pick{border:2px solid var(--warn)!important;background:var(--warn-tint)!important;font-weight:600;height:34px!important;box-shadow:0 0 0 3px rgba(169,114,26,.15)}
+  select.pick.ok{border-color:var(--good)!important;background:var(--good-tint)!important;box-shadow:none}
+  select.pick.one{border:2px solid var(--good)!important;background:var(--panel)!important;box-shadow:none}
+  .picknote{font-size:11px;font-weight:700;color:var(--warn);margin-left:6px}.picknote.ok{color:var(--good)}
+  .shipf{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;align-items:center;font-size:12.5px;color:var(--ink-2);margin-bottom:10px}.shipf b{font-weight:600}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#11211f;color:#eafffb;padding:12px 18px;border-radius:9px;font-size:13.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.25s;z-index:50;display:flex;gap:10px;align-items:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast .dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+  .airead{background:var(--accent-tint);border:1px solid #cbe4df;border-radius:var(--radius);padding:15px 18px;margin-bottom:18px}
+  .airead p{margin:7px 0 0;font-size:13px;color:var(--ink);line-height:1.55}
+  .airead p.soon{color:var(--crit)}
+  .aihd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .aibadge{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 9px;border-radius:5px}
+  .aistat{font-size:22px;font-weight:700;color:var(--accent-ink);letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+  .aistat span{font-size:12.5px;font-weight:500;color:var(--ink-2);letter-spacing:0}
+  .usd{font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+  .usd.hi{color:var(--accent-ink)}
+  .riskflag{font-size:11px;color:var(--crit);font-weight:700;margin-top:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .footnote{font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.55}
+  .onord{display:inline-block;margin-top:4px;font-size:11px;font-weight:600;color:var(--accent-ink);background:var(--accent-tint);padding:1px 8px;border-radius:20px;white-space:nowrap}
+  .itab{border:0;background:none;padding:7px 15px;border-radius:7px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:8px}
+  .itab .b{font-size:11px;color:var(--ink-3);background:var(--line-2);padding:0 7px;border-radius:20px;font-weight:700}.itab .b.f{background:var(--crit-tint);color:var(--crit)}
+  .itab.active{background:var(--accent);color:#fff}.itab.active .b{background:rgba(255,255,255,.2);color:#fff}
+  .inb-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.inb-bar .tabs{margin:0}
+  .inb-bar input[type=search]{height:36px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:13px;min-width:240px;flex:1;max-width:360px;background:var(--panel);color:var(--ink)}
+  .inb-bar label{font-size:12.5px;color:var(--ink-2);display:flex;gap:6px;align-items:center;cursor:pointer}
+  tr.ship{cursor:pointer} tr.ship.done td{opacity:.45} tr.ship.flag td{background:var(--crit-tint)} tr.ship.flag td:first-child{box-shadow:inset 3px 0 0 var(--crit)}
+  tr.ship .nm{font-weight:600;font-size:12.5px;white-space:normal;max-width:300px}tr.ship .id{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  tr.ship .car{display:inline-block;width:12px;color:var(--ink-3);transition:transform .12s}tr.ship.open .car{transform:rotate(90deg)}
+  .st{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--line-2);color:var(--ink-2)}
+  .st.moving{background:var(--accent-tint);color:var(--accent-ink)}.st.rcv{background:var(--warn-tint);color:var(--warn)}.st.prep{background:var(--steel-tint);color:var(--steel)}
+  .short{color:var(--crit);font-weight:700}.extra{color:var(--good);font-weight:700}
+  tr.items>td{background:var(--panel-2);padding:6px 12px 12px 34px}tr.items table td,tr.items table th{padding:5px 10px}tr.items tr.hit td{background:var(--accent-tint)}
+  .btn.recon{color:var(--crit);border-color:#efc4bf;text-decoration:none;display:inline-block}.btn.recon:hover{background:var(--crit-tint)}
+  .skuhit{font-size:11px;color:var(--accent-ink);font-weight:600}
+  tr.onorder td{opacity:.4;background:var(--panel-2)} tr.onorder:hover td{opacity:.75}
+  .side{position:sticky;top:20px;display:flex;flex-direction:column;gap:16px}.side .cart{position:static}
+  .pend .block-h{background:var(--panel-2)}
+  .pend-o{padding:12px 16px;border-bottom:1px solid var(--line-2)}.pend-o:last-child{border-bottom:0}
+  .pend-o .t{font-weight:700;font-size:12.5px}.pend-o .m{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+  .pend-o .a{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pend-o .a .btn{height:28px;font-size:12px;padding:0 10px}
+  .pend-o select{width:100%;margin-top:8px;height:30px;border:1px solid var(--line);border-radius:7px;font-size:12px;padding:0 6px;background:var(--panel);color:var(--ink)}
+  .stp{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:20px;margin-top:5px}
+  .stp.open{background:var(--warn-tint);color:var(--warn)}.stp.shipped{background:var(--accent-tint);color:var(--accent-ink)}.stp.matched{background:var(--good-tint);color:var(--good)}
+  .rec .less{display:block;font-size:10.5px;color:var(--accent-ink);font-weight:600}
+  .ord{padding:14px 18px;border-bottom:1px solid var(--line-2)}.ord:last-child{border-bottom:0}
+  .ord-h{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .ord-t{font-weight:700;font-size:13.5px}.ord-m{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .ord-a{display:flex;gap:8px;flex-wrap:wrap}
+  .ord details{margin-top:8px}.ord summary{cursor:pointer;font-size:12px;color:var(--accent-ink);font-weight:600}
+  .ord details table td,.ord details table th{padding:5px 10px}
+  .ord-empty{padding:16px 18px;color:var(--ink-3);font-size:13px}
+  .logt td{white-space:normal;vertical-align:top;font-size:12.5px}.logt td.w{white-space:nowrap;color:var(--ink-3)}
+  .who{font-size:11px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--steel-tint);color:var(--steel);white-space:nowrap}.who.c{background:var(--uv-tint);color:var(--uv)}
+  .mfield{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+  .mfield span{width:32px;font-weight:600}
+  .mfield input{flex:1;height:30px;border:1px solid var(--line);border-radius:7px;padding:0 9px;font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+  .mline{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line-2);font-size:13px}.mline:last-of-type{border-bottom:0}
+  #mktBody .mstatus,#mktBody .mnote{padding:0 18px 14px}
+  a.btn{display:inline-flex;align-items:center;text-decoration:none}
+  .mstatus{font-size:12.5px;margin-top:10px;line-height:1.45}
+  .mstatus:empty{display:none}
+  .mstatus.err{color:var(--crit);background:var(--crit-tint);padding:8px 10px;border-radius:7px}
+  .mstatus.info{color:var(--ink-2)}
+  .mstatus.ok{color:var(--good);background:var(--good-tint);padding:10px 12px;border-radius:7px;font-weight:600;font-size:13.5px}
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="mark"><span class="dot"></span>BodyJ4You Ops</div><div class="sub">RESTOCK &amp; PRODUCTION</div></div>
+    <nav>
+      <p class="nav-eyebrow">Morning briefing</p>
+      <button class="nav-item active" data-view="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Today</button>
+      <button class="nav-item" data-view="inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Inventory <span class="tag" id="navInv">—</span></button>
+      <button class="nav-item" data-view="inbound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Inbound shipments <span class="tag" id="navInb">—</span></button>
+      <button class="nav-item" data-view="customer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Customer <span class="tag" id="navCust">—</span></button>
+      <button class="nav-item" data-view="marketplace" id="navMktBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag" id="navMkt">—</span></button>
+      <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders &amp; log <span class="tag" id="navOrd">—</span></button>
+    </nav>
+    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked every hour.<br>Returns &amp; Walmart stock: Oct 12 (not live yet).</div></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><h1 id="vTitle">Today</h1><p class="lede" id="vLede">Your prebuilt list for this morning. Act on what matters, ignore the rest.</p></div>
+      <span class="provenance preview" id="vProv"><span class="pdot"></span>Amazon data: Oct 12</span>
+    </div>
+
+    <section class="view active" id="view-today">
+      <div class="grid cards4">
+        <div class="card stat s-good" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Ship to FBA · Miami</div><div class="v num" id="cMiamiRisk">$64</div><div class="c"><b>at risk</b> · healthy cover · routine top-up</div></div>
+        <div class="card stat s-crit" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Order from Bony · China</div><div class="v num" id="cChinaRisk">$5.5k</div><div class="c" id="cChinaCap">at risk · 13 items · <b>top 4 = 75%</b></div></div>
+        <div class="card stat s-good" data-go="marketplace" id="cLateCard"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Late orders</div><div class="v num" id="cLate">—</div><div class="c" id="cLateCap">checking marketplaces…</div></div>
+        <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Returns to action · 90d</div><div class="v num">831</div><div class="c"><b>HS0002 spike</b> · 155 wrong-item</div></div>
+      </div>
+      <p class="eyebrow" style="margin-top:30px">Recommended for you</p>
+      <div class="block">
+        <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t" id="aChinaT">Send China reorder to Bony — $5.5k at risk</span><span class="ch">INVENTORY</span></div><div class="d" id="aChinaD">China's 30-day lead means the urgent money is here.</div></div><div class="act"><button class="btn primary" data-go="inventory">Open Inventory</button></div></div>
+        <div class="alert good"><span class="edge"></span><div class="body"><div class="head"><span class="t">Miami FBA is routine this week</span><span class="ch">INVENTORY</span></div><div class="d" id="aMiamiD">Only <b>$64</b> truly at risk — healthy cover across the list. Top up to 30-day cover when convenient.</div></div><div class="act"><button class="btn" data-go="inventory">Review</button></div></div>
+        <div id="aMkt"></div>
+        <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Investigate HS0002 return spike</span><span class="ch">CUSTOMER</span></div><div class="d">932 returns/90d on the Saline Spray — customers report &ldquo;not sterile&rdquo; and &ldquo;wrong solution / tea tree&rdquo;. Possible product or mislabel issue.</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-inventory">
+      <div class="tabs" id="wareTabs">
+        <button class="tab active" data-ware="miami">Miami <span class="b num" id="tabMiami"></span></button>
+        <button class="tab" data-ware="china">China <span class="b num" id="tabChina"></span></button>
+        <button class="tab" data-ware="walmart">Walmart <span class="b num" id="tabWalmart"></span></button>
+        <button class="tab" data-ware="tiktok">TikTok <span class="b num" id="tabTiktok"></span></button>
+      </div>
+      <div class="inv-wrap">
+        <div>
+          <div class="ware active" id="ware-miami"></div>
+          <div class="ware" id="ware-china"></div>
+          <div class="ware" id="ware-walmart"></div>
+          <div class="ware" id="ware-tiktok"></div>
+          <p class="footnote">Live from the Amazon <b>FBA Inventory Planning report</b>, summed <b>per ASIN</b> (sibling SKUs added, most-recent SKU shown). <b>Days of cover</b> = supply &divide; daily sales; <b>Units sold / day</b> = your reorder-skill blend of units shipped t7/t30/t60/t90; <b>Recommended qty</b> tops each item up to ~30-day cover plus the warehouse's lead time. The dollar figures in the summary are <b>revenue at risk</b> — the sales an empty shelf would cost before a lead-time replenishment lands.</p>
+        </div>
+        <div class="side"><aside class="cart card">
+          <div class="block-h"><h3 id="cartTitle">Miami shipment cart</h3><span class="count" id="cartCount">0 items</span></div>
+          <div class="cart-body" id="cartBody"></div>
+          <div class="cart-foot"><div class="sum"><span>Total units</span><b class="num" id="cartUnits">0</b></div><div class="sum"><span>Total cost of goods</span><b class="num" id="cartCogs">$0</b></div><button class="btn primary" id="createBtn" disabled>Create FBA inbound shipment</button></div>
+        </aside>
+        <div class="card pend" id="pendBox" hidden></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-inbound">
+      <div class="inb-bar">
+        <div class="tabs" id="inbTabs">
+          <button class="itab active" data-inb="miami">Miami <span class="b num"></span></button>
+          <button class="itab" data-inb="china">China <span class="b num"></span></button>
+          <button class="itab" data-inb="walmart">Walmart <span class="b num"></span></button>
+          <button class="itab" data-inb="tiktok">TikTok <span class="b num"></span></button>
+        </div>
+        <input type="search" id="inbSearch" placeholder="Search SKU, ASIN or shipment ID" aria-label="Search shipments">
+        <div class="tabs" id="inbStat">
+          <button class="itab active" data-st="all">All</button>
+          <button class="itab" data-st="prep">Preparing <span class="b num"></span></button>
+          <button class="itab" data-st="ship">Shipped <span class="b num"></span></button>
+          <button class="itab" data-st="closed">Closed <span class="b num"></span></button>
+          <button class="itab" data-st="flag">Reconcile <span class="b num f"></span></button>
+        </div>
+      </div>
+      <div id="inbBody"><div class="block"><div class="ord-empty">Loading shipments…</div></div></div>
+      <p class="footnote">Every FBA shipment (Miami and China), Walmart WFS shipment and TikTok FBT receipt created in the last 120 days (newest first), refreshed on each <b>Pull fresh data</b>. Click a shipment to see its SKUs. <b>Reconcile</b> = a closed shipment where the total received is less than the total shipped (a SKU swap that nets out is not flagged, but the SKU lines still show it); <b>Reconcile ↗</b> opens that shipment in Seller Central. Fully received or cancelled shipments are grayed out. <b>Preparing</b> = not shipped yet · <b>Shipped</b> = on the way or being received · <b>Closed</b> = done. ETA (Amazon's delivery window) shows only when Amazon gives one.</p>
+    </section>
+
+    <section class="view" id="view-customer">
+      <div class="kpis">
+        <div class="card kpi"><div class="k">Returns · 90d</div><div class="v num">3,361</div><div class="delta flat">from Amazon FBA returns report</div></div>
+        <div class="card kpi"><div class="k">Product-fault returns</div><div class="v num">831</div><div class="delta up">defective · not-as-described · missing parts</div></div>
+        <div class="card kpi"><div class="k">Wrong item shipped</div><div class="v num">155</div><div class="delta up">ORDERED_WRONG_ITEM — auto-flagged</div></div>
+      </div>
+      <div class="block">
+        <div class="block-h"><h3>Returns by reason · 90d</h3><span class="count">3,361 total</span></div>
+        <div id="reasonBars" style="padding:12px 18px 16px"></div>
+      </div>
+      <div class="block">
+        <div class="block-h"><h3>Returns running hot</h3><span class="count">top SKUs by volume</span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Returns 90d</th><th class="r">Defective</th><th class="r">Wrong item</th><th></th></tr></thead><tbody id="hotBody"></tbody></table></div>
+      </div>
+      <div class="block">
+        <div class="block-h"><h3>Voice of customer — what they wrote on return</h3><span class="count">flagged comments</span></div>
+        <div class="flagline"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><b>HS0002 Saline Spray</b> — spike in &ldquo;not sterile / wrong solution / tea tree&rdquo; comments. Likely a product or mislabel issue — needs eyes.</div>
+        <div id="vocBody"></div>
+      </div>
+      <p class="footnote">100% Amazon SP-API — FBA Customer Returns report (<span class="mono">reason</span> + <span class="mono">customer-comments</span>), last 90 days. Product reviews are not available through Amazon's API and are intentionally excluded.</p>
+    </section>
+
+    <section class="view" id="view-orders">
+      <div id="ordErr"></div>
+      <div class="block"><div class="block-h"><h3>Open with Bony</h3><span class="count" id="ordOpenCount"></span></div><div id="ordOpen"><div class="ord-empty">Loading…</div></div></div>
+      <p class="footnote" style="margin:-8px 0 18px">A list sent to Bony is a <b>hold</b>, not a shipment: until it ships, the China list and the Send to Bony window subtract it, and rows it fully covers are grayed out. The hold clears <b>by itself</b> on the first pull after Bony's FBA shipment (created after the hold, with any of its SKUs) appears on Amazon — Amazon counts inbound from the moment a shipment is created, so what actually shipped is counted there. Use <b>Release hold</b> only for a list that will never ship.</p>
+      <div class="block"><div class="block-h"><h3>Order history</h3><span class="count" id="ordHistCount"></span></div><div id="ordHist"></div></div>
+      <div class="block"><div class="block-h"><h3>Action log</h3><span class="count" id="logCount"></span></div><div style="overflow-x:auto" id="logList"></div></div>
+    </section>
+
+    <section class="view" id="view-marketplace">
+      <div id="mktBody"><div class="mstatus">Loading marketplace orders…</div></div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="mh"><h2 id="mTitle">Create FBA inbound shipment</h2><p id="mSub" style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Creates an inbound plan in Amazon via SP-API and opens it in Seller Central to finalize boxing &amp; labels.</p></div>
+  <div class="mb"><div class="plan-list" id="planList"></div><div class="line" style="margin-top:8px;font-weight:700"><span>Total units</span><span class="num" id="planUnits">0</span></div><div class="line" style="font-weight:700"><span>Total cost of goods</span><span class="num" id="planCogs">$0</span></div></div>
+  <div class="mf"><button class="btn ghost" id="cancelModal">Cancel</button><button class="btn" id="copyList">Copy list</button><a class="btn primary" id="scLink" href="https://sellercentral.amazon.com/fba/inbound-shipment-workflow" target="_blank" rel="noopener">Open in Seller Central &rarr;</a></div>
+</div></div>
+<div class="scrim" id="loginScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="max-width:340px">
+  <div class="mh"><h2 id="loginTitle">BodyJ4You Ops</h2><p style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Enter your PIN.</p></div>
+  <div class="mb"><input id="loginPin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="10" style="width:100%;height:40px;border:1px solid var(--line);border-radius:8px;font-size:20px;text-align:center;letter-spacing:6px;font-family:var(--mono)" aria-label="PIN"><div id="loginStatus"></div></div>
+  <div class="mf"><button class="btn primary" id="loginGo" style="width:100%">Unlock</button></div>
+</div></div>
+<div class="scrim" id="shipScrim"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="shipTitle">
+  <div class="mh"><h2 id="shipTitle">Create FBA shipment</h2><p id="shipSub" style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Pick the ship-from address and the Amazon SKU each line ships under. <b>FNSKU</b> = needs your Amazon label · <b>UPC</b> = ships on its own barcode. Creating it makes the plan in Send to Amazon; you finish boxes, placement and carrier there.</p></div>
+  <div class="mb"><div class="shipf"><b>Ship from <span class="picknote" id="fromNote">check</span></b><select id="shipFrom" class="pick"></select><b>Plan name</b><input id="shipName" maxlength="40"></div><div id="shipLines"></div>
+    <div class="line" style="margin-top:8px;font-weight:700"><span>Total</span><span class="num" id="shipUnits">0</span></div></div>
+  <div class="mf" style="flex-wrap:wrap;align-items:center"><div id="shipStatus" style="flex:1 1 100%"></div><button class="btn ghost" id="shipCancel">Close</button><button class="btn primary" id="shipGo">Create shipment on Amazon</button></div>
+</div></div>
+<div class="scrim" id="bonyScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="bonyTitle">
+  <div class="mh"><h2 id="bonyTitle">Send to Bony</h2><p id="bonySub" style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Base gauge kits for Bony to manufacture. Steel kits map to their base gauge-kit SKU (balm / jojoba aftercare is added in Miami); UV kits use their own SKU. Adjust quantities, then send — Claude emails the list to Bony from your Gmail with an Excel attached.</p></div>
+  <div class="mb"><div class="plan-list" id="bonyList"></div><div class="line" style="margin-top:8px;font-weight:700"><span>Total units</span><span class="num" id="bonyUnits">0</span></div><div class="line" style="font-weight:700"><span>Total cost of goods</span><span class="num" id="bonyCogs">$0</span></div>
+    <label class="mfield"><span>To</span><input id="bonyTo" value="wmxbony@gmail.com" autocomplete="off"></label>
+    <label class="mfield"><span>CC</span><input id="bonyCc" value="streetholes1@gmail.com" autocomplete="off"></label>
+    <label class="mfield"><span>Subj</span><input id="bonySubj" placeholder="Type the email subject" autocomplete="off" style="font-family:var(--sans)"></label>
+    <div class="mstatus" id="bonyStatus" role="status"></div></div>
+  <div class="mf"><button class="btn ghost" id="bonyCancel">Cancel</button><button class="btn primary" id="bonySend">Send to Bony &rarr;</button></div>
+</div></div>
+<div class="scrim" id="pullScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="pullTitle">
+  <div class="mh"><h2 id="pullTitle">Pull fresh data?</h2><p style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Pulls today's Amazon FBA inventory report and rebuilds the Miami and China reorder lists. Takes about a minute. Read-only — nothing changes on Amazon.</p></div>
+  <div class="mb"><div class="line"><span>Data on this page</span><b id="pullHave">Oct 12 (built into page)</b></div><div class="mstatus info" id="pullStatus" role="status"></div></div>
+  <div class="mf"><button class="btn ghost" id="pullCancel">Not now</button><button class="btn primary" id="pullGo">Pull now</button></div>
+</div></div>
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg"></span></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const REORDER = {"miami":[{"sec":"URGENT FBA","sku":"PB-10-2","cat":"PA","avail":56,"inb":0,"days":23.8,"vel":2.52,"qty":40,"price":14.36,"usd":36.1,"rev30":861,"gap":0,"lost":0,"cogs":2.0},{"sec":"URGENT FBA","sku":"PB-10-4","cat":"PA","avail":1,"inb":0,"days":4.2,"vel":0.47,"qty":20,"price":24.38,"usd":11.5,"rev30":244,"gap":5.8,"lost":67,"cogs":3.5},{"sec":"URGENT FBA","sku":"HB0006","cat":"PA","avail":331,"inb":15,"days":28.4,"vel":15.41,"qty":180,"price":14.59,"usd":224.9,"rev30":6054,"gap":0,"lost":0,"cogs":1.75},{"sec":"PLANNED FBA","sku":"HB0005","cat":"PA","avail":105,"inb":22,"days":36.2,"vel":4.69,"qty":10,"price":9.88,"usd":46.3,"rev30":1462,"gap":0,"lost":0,"cogs":1.2},{"sec":"URGENT FBA","sku":"JOJOBA","cat":"PA","avail":366,"inb":0,"days":22.7,"vel":20.38,"qty":300,"price":7.84,"usd":159.7,"rev30":4696,"gap":0,"lost":0,"cogs":0.5},{"sec":"URGENT FBA","sku":"JOJOBA-125","cat":"PA","avail":5,"inb":0,"days":8.8,"vel":0.91,"qty":30,"price":14.99,"usd":13.6,"rev30":405,"gap":1.2,"lost":16,"cogs":2.5},{"sec":"URGENT FBA","sku":"EO-JOJOBA-16Oz","cat":"EO","avail":68,"inb":0,"days":28.9,"vel":3.22,"qty":30,"price":27.78,"usd":89.5,"rev30":2528,"gap":0,"lost":0,"cogs":5.0},{"sec":"URGENT FBA","sku":"EO-CASTOR-2oz-USDA","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"PLANNED FBA","sku":"EO-ROSEHIP-1oz_FBA","cat":"EO","avail":2230,"inb":1,"days":33.7,"vel":71.16,"qty":240,"price":9.18,"usd":653.0,"rev30":19216,"gap":0,"lost":0,"cogs":1.01},{"sec":"URGENT FBA","sku":"EO-ROSEHIP-2oz","cat":"EO","avail":161,"inb":0,"days":26.0,"vel":6.42,"qty":80,"price":13.86,"usd":88.9,"rev30":2925,"gap":0,"lost":0,"cogs":1.5},{"sec":"URGENT FBA","sku":"EO-ROSEHIP-16oz","cat":"EO","avail":131,"inb":10,"days":20.3,"vel":9.97,"qty":170,"price":28.25,"usd":281.6,"rev30":9067,"gap":0,"lost":0,"cogs":10.59},{"sec":"URGENT FBA","sku":"EO-COCONUT-1.7oz-RL","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"PLANNED FBA","sku":"PD-ROSEMARY-MCT-10-RL","cat":"EO","avail":319,"inb":0,"days":33.2,"vel":9.9,"qty":40,"price":9.3,"usd":92.1,"rev30":2707,"gap":0,"lost":0,"cogs":0.75},{"sec":"URGENT FBA","sku":"PD-EUCALYPTUS-MCT-10-RL","cat":"EO","avail":35,"inb":0,"days":16.8,"vel":2.26,"qty":50,"price":9.58,"usd":21.6,"rev30":785,"gap":0,"lost":0,"cogs":0.75},{"sec":"PLANNED FBA","sku":"PD-TEATREE-MCT-16oz","cat":"EO","avail":216,"inb":81,"days":35.6,"vel":9.43,"qty":20,"price":27.81,"usd":262.3,"rev30":8760,"gap":0,"lost":0,"cogs":7.0},{"sec":"URGENT FBA","sku":"PD-LAVENDER-MCT-1oz","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"URGENT FBA","sku":"PD-PEPPERMINT-MCT-1oz","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"URGENT FBA","sku":"PD-PEPPERMINT-MCT-4oz","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"URGENT FBA","sku":"PD-PEPPERMINT-MCT-16oz","cat":"EO","avail":0,"inb":0,"days":0,"vel":0.0,"qty":20,"price":0,"usd":0.0,"rev30":0,"gap":0.0,"lost":0,"cogs":0},{"sec":"UV","sku":"GK0713_FBA","cat":"GK","avail":14,"inb":0,"days":32.7,"vel":0.43,"qty":10,"price":17.45,"usd":7.5,"rev30":384,"gap":0,"lost":0,"cogs":2.8},{"sec":"STEEL","sku":"GK0697_FBA","cat":"GK","avail":25,"inb":44,"days":33.6,"vel":2.44,"qty":20,"price":21.39,"usd":52.3,"rev30":1305,"gap":0,"lost":0,"cogs":5.75},{"sec":"STEEL","sku":"GK0715_FBA","cat":"GK","avail":174,"inb":0,"days":36.5,"vel":5.13,"qty":20,"price":19.55,"usd":100.2,"rev30":2815,"gap":0,"lost":0,"cogs":3.5},{"sec":"STEEL","sku":"GK0839_FBA","cat":"GK","avail":14,"inb":0,"days":19.9,"vel":0.8,"qty":20,"price":19.37,"usd":15.5,"rev30":504,"gap":0,"lost":0,"cogs":4.0},{"sec":"STEEL","sku":"GK0840_FBA","cat":"GK","avail":11,"inb":10,"days":35.9,"vel":1.06,"qty":10,"price":19.85,"usd":21.0,"rev30":377,"gap":0,"lost":0,"cogs":5.5},{"sec":"STEEL","sku":"GK0717_FBA","cat":"GK","avail":13,"inb":0,"days":15.8,"vel":0.88,"qty":30,"price":21.99,"usd":19.4,"rev30":616,"gap":0,"lost":0,"cogs":5.8}],"china":[{"sec":"PL6328 TAPER PLUGS","sku":"PL6328-0G","cat":"GK","avail":120,"inb":7,"days":38.6,"vel":3.47,"qty":80,"price":18.81,"usd":65.3,"rev30":1335,"gap":0,"lost":0,"cogs":3.85},{"sec":"PL6328 TAPER PLUGS","sku":"PL6328-14mm","cat":"GK","avail":36,"inb":0,"days":42.4,"vel":0.92,"qty":20,"price":26.57,"usd":24.4,"rev30":691,"gap":0,"lost":0,"cogs":6.25},{"sec":"PL6328 TAPER PLUGS","sku":"PL6328-4G","cat":"GK","avail":13,"inb":8,"days":31.7,"vel":0.73,"qty":30,"price":16.99,"usd":12.3,"rev30":425,"gap":0,"lost":0,"cogs":2.95},{"sec":"GK GAUGES & KITS","sku":"KT8002-BK","cat":"GK","avail":113,"inb":0,"days":24.9,"vel":4.61,"qty":170,"price":19.46,"usd":89.8,"rev30":2646,"gap":5.1,"lost":455,"cogs":4.0},{"sec":"GK GAUGES & KITS","sku":"GK0363","cat":"GK","avail":63,"inb":7,"days":47.6,"vel":1.55,"qty":20,"price":21.15,"usd":32.9,"rev30":888,"gap":0,"lost":0,"cogs":5.5},{"sec":"GK GAUGES & KITS","sku":"GK0858","cat":"GK","avail":86,"inb":0,"days":19.8,"vel":4.46,"qty":180,"price":29.19,"usd":130.0,"rev30":3474,"gap":10.2,"lost":1333,"cogs":8.25},{"sec":"GK GAUGES & KITS","sku":"GK0908","cat":"GK","avail":20,"inb":1,"days":31.4,"vel":0.73,"qty":30,"price":28.58,"usd":21.0,"rev30":486,"gap":0,"lost":0,"cogs":8.25},{"sec":"GK GAUGES & KITS","sku":"GK0078","cat":"GK","avail":36,"inb":1,"days":34.5,"vel":1.19,"qty":40,"price":16.9,"usd":20.1,"rev30":608,"gap":0,"lost":0,"cogs":3.5},{"sec":"GK GAUGES & KITS","sku":"GK0220-Gold","cat":"GK","avail":27,"inb":1,"days":6.8,"vel":4.87,"qty":260,"price":17.99,"usd":87.7,"rev30":2878,"gap":23.2,"lost":2036,"cogs":6.11},{"sec":"GK GAUGES & KITS","sku":"GK0278","cat":"GK","avail":0,"inb":0,"days":0.0,"vel":0.15,"qty":10,"price":17.99,"usd":2.7,"rev30":0,"gap":30.0,"lost":81,"cogs":3.7},{"sec":"GK GAUGES & KITS","sku":"GK0242","cat":"GK","avail":0,"inb":0,"days":0.0,"vel":0.68,"qty":50,"price":18.99,"usd":12.9,"rev30":475,"gap":30.0,"lost":387,"cogs":5.5},{"sec":"GK GAUGES & KITS","sku":"GK0279","cat":"GK","avail":9,"inb":70,"days":37.6,"vel":2.42,"qty":60,"price":17.39,"usd":42.1,"rev30":1183,"gap":0,"lost":0,"cogs":5.8},{"sec":"PJ + FJ JEWELRY","sku":"BR3791","cat":"PJ","avail":0,"inb":0,"days":0.0,"vel":0.08,"qty":10,"price":9.99,"usd":0.8,"rev30":30,"gap":30.0,"lost":24,"cogs":0.75},{"sec":"PJ + FJ JEWELRY","sku":"BR4158","cat":"PJ","avail":0,"inb":0,"days":0.0,"vel":0.0,"qty":10,"price":0,"usd":0.0,"rev30":0,"gap":30.0,"lost":0,"cogs":0.92},{"sec":"PJ + FJ JEWELRY","sku":"KT8153","cat":"PJ","avail":147,"inb":0,"days":35.3,"vel":4.34,"qty":110,"price":19.14,"usd":83.0,"rev30":2182,"gap":0,"lost":0,"cogs":5.35},{"sec":"PJ + FJ JEWELRY","sku":"KT8100","cat":"PJ","avail":130,"inb":0,"days":42.1,"vel":3.14,"qty":60,"price":16.45,"usd":51.6,"rev30":1135,"gap":0,"lost":0,"cogs":3.2},{"sec":"PJ + FJ JEWELRY","sku":"BR4238","cat":"PJ","avail":0,"inb":0,"days":0.0,"vel":0.07,"qty":10,"price":19.99,"usd":1.4,"rev30":20,"gap":30.0,"lost":41,"cogs":4.0},{"sec":"PJ + FJ JEWELRY","sku":"BN1663","cat":"PJ","avail":56,"inb":0,"days":49.9,"vel":1.14,"qty":20,"price":14.19,"usd":16.2,"rev30":355,"gap":0,"lost":0,"cogs":3.2},{"sec":"PJ + FJ JEWELRY","sku":"BN1798","cat":"PJ","avail":34,"inb":0,"days":43.2,"vel":0.83,"qty":20,"price":9.84,"usd":8.2,"rev30":266,"gap":0,"lost":0,"cogs":2.15},{"sec":"NC CHOKERS","sku":"NC4379","cat":"NC","avail":24,"inb":1,"days":12.1,"vel":2.4,"qty":120,"price":9.99,"usd":23.9,"rev30":689,"gap":17.9,"lost":428,"cogs":0.45},{"sec":"NC CHOKERS","sku":"NC4274","cat":"NC","avail":3,"inb":0,"days":7.8,"vel":0.51,"qty":30,"price":18.54,"usd":9.5,"rev30":408,"gap":22.2,"lost":210,"cogs":0.4},{"sec":"NC CHOKERS","sku":"NC4305","cat":"NC","avail":197,"inb":0,"days":26.1,"vel":7.89,"qty":270,"price":19.93,"usd":157.2,"rev30":5462,"gap":3.9,"lost":609,"cogs":3.8},{"sec":"NC CHOKERS","sku":"NC4353","cat":"NC","avail":0,"inb":0,"days":0.0,"vel":0.27,"qty":20,"price":19.99,"usd":5.4,"rev30":180,"gap":30.0,"lost":161,"cogs":3.0},{"sec":"NC CHOKERS","sku":"NC4400-Z","cat":"NC","avail":0,"inb":0,"days":0.0,"vel":0.1,"qty":10,"price":9.89,"usd":1.0,"rev30":49,"gap":30.0,"lost":29,"cogs":1.0}],"walmart":[{"sec":"WFS URGENT","sku":"KT8100","cat":"PJ","avail":11,"inb":0,"days":17.4,"vel":0.63,"qty":20,"price":16.99,"usd":10.8,"rev30":323,"gap":0.0,"lost":0,"cogs":3.2},{"sec":"WFS PLANNED","sku":"PD-FRANK-CASTOR-MCT-10-RL","cat":"PD","avail":0,"inb":60,"days":34.6,"vel":1.73,"qty":20,"price":19.98,"usd":34.6,"rev30":1039,"gap":0.0,"lost":0,"cogs":0.75},{"sec":"WFS PLANNED","sku":"PD-TEATREE-MCT-2oz","cat":"PD","avail":0,"inb":4,"days":30.0,"vel":0.13,"qty":10,"price":9.95,"usd":1.3,"rev30":40,"gap":0.0,"lost":0,"cogs":1.01}],"tiktok":[{"sec":"TIKTOK SHOP","sku":"PB-10","cat":"PA","avail":60,"inb":0,"days":13.0,"vel":4.6,"qty":200,"price":24.99,"usd":114.9,"rev30":3450,"gap":0,"lost":0,"cogs":1.0},{"sec":"TIKTOK SHOP","sku":"EO-CASTOR-2oz-USDA","cat":"EO","avail":0,"inb":0,"days":0,"vel":6.4,"qty":300,"price":16.99,"usd":108.7,"rev30":3260,"gap":0,"lost":0,"cogs":0},{"sec":"TIKTOK SHOP","sku":"GK0486","cat":"GK","avail":20,"inb":0,"days":14.3,"vel":1.4,"qty":60,"price":19.99,"usd":28.0,"rev30":840,"gap":0,"lost":0,"cogs":2.65}]};
+
+const usdOf=r=>(r.usd||0);
+const money=n=>'$'+Math.round(n).toLocaleString();
+const COGS={};[...REORDER.miami,...REORDER.china].forEach(r=>{COGS[r.sku]=r.cogs||0;});
+const cogsOf=s=>COGS[s]||0;
+function summaryHtml(wh){
+  const rows=REORDER[wh];
+  const biz=rows.reduce((a,b)=>a+(b.usd||0),0);
+  const rev=rows.reduce((a,b)=>a+(b.rev30||0),0);
+  const lostTot=rows.reduce((a,b)=>a+(b.lost||0),0);
+  const reorderCost=rows.reduce((a,b)=>a+(b.qty||0)*(b.cogs||0),0);
+  const atrisk=rows.filter(r=>r.lost>0).sort((a,b)=>b.lost-a.lost);
+  const lead={miami:10,china:30,walmart:14,tiktok:14}[wh]||30;
+  let line;
+  if(lostTot<120){
+    line=`<p>Nothing time-critical this week — if we ship nothing, only about <b>${money(lostTot)}</b> of sales is at risk from an empty shelf before a ${lead}-day replenishment lands. The ${rows.length}-item list is a routine top-up to hold 30-day cover.</p>`;
+  }else{
+    let cum=0,n=0;for(const r of atrisk){cum+=r.lost;n++;if(cum>=lostTot*0.75)break;}
+    const t=atrisk[0];
+    line=`<p>If we don't ship these, we're risking about <b>${money(lostTot)}</b> in sales to empty shelves before a ${lead}-day replenishment lands — and it's concentrated: the <b>top ${n} of ${atrisk.length}</b> items are 75% of it. <b>${t.sku}</b> alone is <b>${money(t.lost)}</b> (${t.days}-day cover · recommend ${t.qty}) — ship this first. A well-covered bestseller needing a few units can wait; that's not where the money is.</p>`;
+  }
+  const head=`${money(lostTot)}<span> in sales at risk &middot; ${money(reorderCost)} to reorder (COGS)</span>`;
+  return `<div class="airead"><div class="aihd"><span class="aibadge">AI read</span><span class="aistat">${head}</span></div>${line}<p style="margin:7px 0 0;font-size:12px;color:var(--ink-3)">Cost to reorder the full ${rows.length}-item list (recommended qty &times; unit cost): <b style="color:var(--ink-2)">${money(reorderCost)}</b>.</p></div>`;
+}
+const CAT={PA:"Aftercare",EO:"Carrier Oil",PD:"Aftercare Oil",GK:"Gauge / Kit",PJ:"Piercing Jewelry",NC:"Choker",FJ:"Fashion Jewelry"};
+const SECMETA={
+  "URGENT FBA":{pill:"urgent",sub:"under 30 days cover"},"PLANNED FBA":{pill:"planned",sub:"30+ days"},
+  "UV":{pill:"uv",sub:"UV reactive"},"STEEL":{pill:"steel",sub:"steel gauges"},
+  "PL6328 TAPER PLUGS":{pill:"family",sub:"factory"},"GK GAUGES & KITS":{pill:"family",sub:"factory"},
+  "PJ + FJ JEWELRY":{pill:"family",sub:"factory"},"NC CHOKERS":{pill:"family",sub:"factory"},
+  "WFS URGENT":{pill:"urgent",sub:"under 14 days cover"},"WFS PLANNED":{pill:"planned",sub:"14+ days"},
+  "ENROLL TO WFS":{pill:"good",sub:"sells ≥1/day · not on WFS yet"},
+  "TIKTOK SHOP":{pill:"urgent",sub:"running short in FBT"},
+  "NEW TO WFS":{pill:"good",sub:"sells on Walmart · nothing in WFS yet · ranked by 30-day sales"},"NEW TO FBT":{pill:"good",sub:"sells on TikTok · nothing in FBT yet · ranked by 30-day sales"}
+};
+const ORDER={miami:["URGENT FBA","PLANNED FBA","UV","STEEL"],china:["PL6328 TAPER PLUGS","GK GAUGES & KITS","PJ + FJ JEWELRY","NC CHOKERS"],walmart:["WFS URGENT","WFS PLANNED","NEW TO WFS"],tiktok:["TIKTOK SHOP","NEW TO FBT"]};
+// per-warehouse labels for the cart + create-shipment modal
+const WARECFG={
+  miami:{cart:"Miami shipment cart",btn:"Create FBA shipment",mTitle:"Create FBA inbound shipment",mSub:"Creates an inbound plan in Amazon via SP-API and opens it in Seller Central to finalize boxing & labels.",sc:"Open in Seller Central →",href:"https://sellercentral.amazon.com/fba/inbound-shipment-workflow",toast:"Inbound plan created — finish in Seller Central",empty:"a shipment."},
+  china:{cart:"China order for Bony",btn:"Send order to Bony",mTitle:"Send order to Bony",mSub:"Emails Bony the purchase order as an Excel file so she can prepare it.",sc:"Send to Bony →",href:"#",toast:"Order ready — tell Claude to send it to Bony",empty:"a reorder for Bony."},
+  walmart:{cart:"Walmart (WFS) shipment cart",btn:"Create Walmart (WFS) shipment",empty:"a WFS shipment."},
+  tiktok:{cart:"TikTok shipment cart",btn:"Create TikTok shipment",mTitle:"Create TikTok inbound shipment",mSub:"TikTok's API can't create FBT inbound orders, so this opens TikTok's Create inbound order page (FBT Merchant Portal). Click Add there and enter these SKUs and quantities — Copy list puts them on your clipboard.",sc:"Open TikTok — Create inbound order →",href:"https://scm-us.tiktok.com/stockin/replenish/create-order?op_region=US",toast:"Opened TikTok — add these SKUs in Create inbound order",empty:"a TikTok FBT shipment."}
+};
+let TT_LIVE=false,TT_ERR=null,WM_LIVE=false,WM_ERR=null;
+const PLAT=()=>ship&&ship.source==="walmart"?"Walmart":"Amazon";
+const GO_TXT=()=>"Create shipment on "+PLAT();
+const wmBanner=()=>WM_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">Walmart part of the pull failed</span></div><p>${esc(WM_ERR)}</p></div>`:
+  WM_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">Walmart WFS — ship from Miami to Walmart's warehouses</span></div><p><b>Units sold / day</b> = every Walmart order in the last 30 days (WFS and the ones we ship ourselves), so it shows what a SKU would sell from WFS. <b>On hand</b> = available in WFS (+ on open WFS shipments). <b>Recommended qty</b> = 30 days of cover + 14-day lead time, minus WFS stock and inbound. Top: running short. <b>New to WFS</b> below: everything else selling on Walmart with nothing in WFS — add a few while you're shipping anyway (marked ones need converting to WFS in Seller Center first). <b>Create Walmart (WFS) shipment</b> creates the inbound order on Walmart; labels and carrier are finished in Seller Center.</p></div>`:
+  `<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">Old example list — click Pull fresh data for the live Walmart list</span></div></div>`;
+const ttBanner=()=>TT_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">TikTok part of the pull failed</span></div><p>${esc(TT_ERR)}</p></div>`:
+  TT_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">TikTok FBT — ship from Miami to TikTok's warehouses</span></div><p><b>Units sold / day</b> = every TikTok order in the last 30 days (FBT and the ones shipped from Amazon/us). <b>On hand</b> = available in all FBT warehouses (+ reserved and in transit). <b>Recommended qty</b> = 30 days of cover + 10-day lead time, minus FBT stock and in transit. Top: running short. <b>New to FBT</b> below: everything else selling on TikTok with nothing in FBT — add a few while you're shipping anyway (marked ones must be added under Goods in the FBT portal first).</p></div>`:TIKTOK_BANNER;
+const TIKTOK_BANNER=`<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">TikTok isn't part of the pull yet — the rows below are old example data</span></div><p>Your TikTok Shop API works (Claude uses it from your Mac), but the pull runs on GitHub, which doesn't have the TikTok key. Also: TikTok orders ship out of your Amazon FBA stock (TikTok warehouse "MCF FBA"), so TikTok has no inbound shipments of its own — its stock is covered by the Miami list.</p></div>`;
+// Base gauge kit each finished kit maps to, for supplier (Bony) reorder.
+// Steel: finished FBA SKU -> base steel gauge-kit SKU (aftercare is added in Miami).
+// Source: active-family-sku-map.csv — the (…) in its SKU column is the base kit;
+// the balm (GK0541-Master) & jojoba (GK0715-Master) families share the same bases.
+const BASE_KIT={
+  "GK0541_FBA":"GK0078","GK0542_FBA":"GK0184","GK0697_FBA":"GK0242","GK0693_FBA":"GK0278","GK0694_FBA":"GK0279","GK0543_FBA":"GK0220-Gold",
+  "GK0715_FBA":"GK0078","GK0716_FBA":"GK0184","GK0843_FBA":"GK0242","GK0839_FBA":"GK0278","GK0840_FBA":"GK0279","GK0717_FBA":"GK0220-Gold"
+};
+// UV (GK0486-Master): Bony makes the whole kit under its own SKU — just strip _FBA. JOJOBA is added in Miami.
+// Rows from a pull carry bony_cost = Bony's bare-kit price (row cogs includes the aftercare).
+const baseKitFor=r=>BASE_KIT[r.sku]||r.sku.replace(/_FBA$/,"");
+const carts={miami:new Map(),china:new Map(),walmart:new Map(),tiktok:new Map()};
+// Order memory (Supabase ops_orders): open orders = on order with Bony, keyed by Bony's SKU (base kit for steel kits)
+let ORDERS=[],LOG=[],ordersAt=null,CN_IN=null,CN_ERR=null;
+// Two separate flows with Bony:
+//  cn  = China tab, China -> FBA (kind PO): a hold that clears when Bony's FBA shipment shows up on Amazon
+//  mia = Miami UV / Steel base kits (kind UV / STEEL): a PO on the way to Miami, closed with "Received in Miami"
+const flowOf=o=>o.kind==="STEEL"||o.kind==="UV"?"mia":"cn";
+let ONORDER={cn:new Map(),mia:new Map()};
+// open = pending at Bony; shipped = Bony shipped, waiting to be matched to its FBA inbound shipment;
+// matched = tied to that FBA plan, so Amazon's own inbound now counts the units (no longer "on order")
+const LIVE=o=>o.status==="open"||o.status==="shipped";
+const onQty=(k,f)=>(ONORDER[f].get(k)||{qty:0}).qty;
+const shortDay=t=>new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+const onDates=(k,f)=>[...new Set((ONORDER[f].get(k)||{orders:[]}).orders.map(o=>shortDay(o.at)))].join(", ");
+const bonyKey=(wh,r)=>wh==="miami"&&(r.sec==="STEEL"||r.sec==="UV")?baseKitFor(r):r.sku;
+// China list: suggested qty minus what's already on order
+const suggOf=(wh,r)=>wh==="china"?Math.max(0,r.qty-onQty(r.sku,"cn")):r.qty;
+let activeWare="miami";
+const recOf=(wh,sku)=>{const r=REORDER[wh].find(x=>x.sku===sku);return r?suggOf(wh,r):0;};
+// remove from cart and re-enable its (grayed) row in the reorder list
+function uncart(sku){
+  carts[activeWare].delete(sku);
+  const tr=document.querySelector(`#ware-${activeWare} tr[data-sku="${CSS.escape(sku)}"]`);
+  if(tr){tr.classList.remove("pending");const inp=tr.querySelector("input");if(inp){inp.disabled=false;inp.value=recOf(activeWare,sku);}tr.querySelectorAll(".stepper button").forEach(b=>b.disabled=false);const ab=tr.querySelector(".btn.add");if(ab)ab.disabled=false;}
+  renderCart();
+}
+
+function covCell(r){
+  if(r.sec==="NEW TO WFS"||r.sec==="NEW TO FBT") return '<span class="cov" style="color:var(--good)">new</span>';
+  if(r.avail===0) return '<span class="cov oos">OOS</span>';
+  const d=r.days; const cls=d<7?"crit":d<15?"warn":"ok";
+  return `<span class="cov ${cls}">${d}d</span>`;
+}
+// rows render before the shared esc() is defined further down, so they use this hoisted copy
+function escH(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function rowHtml(r,wh){
+  const kit=wh==="miami"&&(r.sec==="STEEL"||r.sec==="UV"),f=kit?"mia":"cn";
+  const k=bonyKey(wh,r),on=wh==="china"||kit?onQty(k,f):0,sg=suggOf(wh,r),inCart=carts[wh]&&carts[wh].has(r.sku);
+  const tag=!on?"":kit?`<div class="onord" title="Ordered from Bony, on the way to Miami">${k!==r.sku?"Base "+k+" ":""}on the way to Miami: ${on} · ${onDates(k,f)}</div>`:`<div class="onord" title="On hold: sent to Bony, not shipped to FBA yet">On hold ${on} · ${onDates(k,f)}</div>`;
+  const covered=on>0&&(wh==="china"?sg===0:on>=r.qty);
+  const note=r.note?`<div class="onord" style="background:var(--warn-tint);color:var(--warn)">${escH(r.note)}</div>`:"";
+  const blocked=!!r.blocked;
+  const cls=[inCart?"pending":"",covered?"onorder":""].filter(Boolean).join(" ");
+  return `<tr data-sku="${r.sku}"${cls?` class="${cls}"`:""}>
+    <td><div class="sku">${r.sku}</div><div class="catline" title="${escH(CAT[r.cat]||r.cat)}">${CAT[r.cat]||escH(r.cat)}</div>${tag}${note}</td>
+    <td class="r">${covCell(r)}</td>
+    <td class="r vel">${r.vel}${r.sold30!=null?`<span class="inb" style="display:block">${r.sold30} in 30d</span>`:""}</td>
+    <td class="r oh">${r.avail}${r.inb?` <span class="inb">+${r.inb}</span>`:""}</td>
+    <td class="r rec">${sg}${sg!==r.qty?`<span class="less">${r.qty} − ${r.qty-sg} on hold</span>`:""}</td>
+    <td class="r"><span class="stepper"><button data-step="-1" aria-label="decrease"${inCart?" disabled":""}>&minus;</button><input class="num" value="${inCart?0:sg}" inputmode="numeric" aria-label="quantity"${inCart?" disabled":""}><button data-step="1" aria-label="increase"${inCart?" disabled":""}>+</button></span></td>
+    <td class="r">${blocked?`<span class="inb" title="${escH(r.note||"")}">convert first</span>`:`<button class="btn add" data-add${inCart?" disabled":""}>Add</button>`}</td></tr>`;
+}
+function renderWare(wh){
+  const rows=REORDER[wh]||[]; let html="";
+  for(const sec of (ORDER[wh]||[])){
+    const items=rows.filter(r=>r.sec===sec).sort((a,b)=>(b.lost-a.lost)||(b.usd-a.usd)); if(!items.length) continue;
+    const units=items.reduce((a,b)=>a+b.qty,0); const m=SECMETA[sec];
+    const bony=(sec==="UV"||sec==="STEEL")?`<button class="btn add" data-bony="${sec}" style="margin-left:6px">Send to Bony</button>`:"";
+    html+=`<div class="block"><div class="block-h"><h3>${sec}</h3><span class="pill ${m.pill}">${m.sub}</span>${bony}<span class="count">${items.length} SKUs · ${units} units</span></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">${wh==="walmart"||wh==="tiktok"?"all orders, last 30 days":"wtd. 7&ndash;90 day avg"}</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
+  }
+  const top=wh==="tiktok"?ttBanner():wh==="walmart"?wmBanner():summaryHtml(wh);
+  document.getElementById("ware-"+wh).innerHTML=top+html;
+}
+renderWare("miami");renderWare("china");renderWare("walmart");renderWare("tiktok");
+const sum=wh=>({n:(REORDER[wh]||[]).length,u:(REORDER[wh]||[]).reduce((a,b)=>a+b.qty,0)});
+function renderCounts(){
+document.getElementById("tabMiami").textContent=sum("miami").n;
+document.getElementById("tabChina").textContent=sum("china").n;
+document.getElementById("tabWalmart").textContent=sum("walmart").n;
+document.getElementById("tabTiktok").textContent=sum("tiktok").n;
+document.getElementById("navInv").textContent=["miami","china","walmart","tiktok"].flatMap(w=>REORDER[w]||[]).filter(r=>r.lost>0).length;
+}
+renderCounts();
+
+// Today page — derive the reorder cards/alerts from the REORDER data
+function renderToday(){
+  const fmtK=n=>n>=1000?'$'+(n/1000).toFixed(1).replace(/\.0$/,'')+'k':money(n);
+  const stat=wh=>{const rows=REORDER[wh];const lost=rows.reduce((a,b)=>a+(b.lost||0),0);const ar=rows.filter(r=>r.lost>0).sort((a,b)=>b.lost-a.lost);let cum=0,n=0;for(const r of ar){cum+=r.lost;n++;if(cum>=lost*0.75)break;}return{lost,ar,n};};
+  const mi=stat("miami"),cn=stat("china");
+  document.getElementById("cMiamiRisk").textContent=money(mi.lost);
+  document.getElementById("cChinaRisk").textContent=fmtK(cn.lost);
+  document.getElementById("cChinaCap").innerHTML=`at risk · ${REORDER.china.length} items · <b>top ${cn.n} = 75%</b>`;
+  document.getElementById("aMiamiD").innerHTML=`Only <b>${money(mi.lost)}</b> truly at risk — healthy cover across the list. Top up to 30-day cover when convenient.`;
+  document.getElementById("aChinaT").textContent=`Send China reorder to Bony — ${fmtK(cn.lost)} at risk`;
+  const t0=cn.ar[0],t1=cn.ar[1];
+  if(t0)document.getElementById("aChinaD").innerHTML=`China's 30-day lead means the urgent money is here. ${cn.ar.length} SKUs at risk — top ${cn.n} = 75%: <b>${t0.sku}</b> (${money(t0.lost)}, ${t0.days}d cover)${t1?` and <b>${t1.sku}</b> (${money(t1.lost)})`:""} first.`;
+}
+renderToday();
+
+const titles={today:["Today","Your prebuilt list for this morning. Act on what matters, ignore the rest.","live"],
+  inventory:["Inventory","What to ship to FBA (Miami) and what to produce (China) — from your reorder skill. Build a cart, create the inbound.","live"],
+  customer:["Customer","Returns, reasons and the actual words customers wrote — straight from Amazon's returns report.","live"],
+  marketplace:["Marketplace alerts","Orders still to ship — Walmart, eBay, TikTok, Amazon (seller-shipped) and Mercado Libre. Red = ship-by time has passed.","live"],
+  inbound:["Inbound shipments","Every shipment on its way to Amazon or Walmart: status, where it's going, ETA — and which ones came up short.","live"],
+  orders:["Orders & log","What's on hold for Bony, every list sent, and a log of every action — saved in Supabase.","live"]};
+function go(view){
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.view===view));
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+view));
+  const [t,l,p]=titles[view];
+  document.getElementById("vTitle").textContent=t;document.getElementById("vLede").textContent=l;
+  const prov=document.getElementById("vProv");prov.className="provenance "+p;
+  renderProv(view);
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  activeWare=t.dataset.ware;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t));
+  document.querySelectorAll(".ware").forEach(w=>w.classList.toggle("active",w.id==="ware-"+activeWare));
+  renderCart();
+}));
+
+document.addEventListener("click",e=>{
+  const step=e.target.closest("[data-step]");
+  if(step){const inp=step.parentElement.querySelector("input");let v=parseInt(inp.value||"0",10)+(+step.dataset.step)*10;inp.value=Math.max(0,v);return;}
+  const cstep=e.target.closest("[data-cstep]");
+  if(cstep){const sku=cstep.dataset.sku;const it=carts[activeWare].get(sku);if(it){it.qty=Math.max(0,it.qty+(+cstep.dataset.cstep)*10);if(it.qty===0){uncart(sku);}else{renderCart();}}return;}
+  const add=e.target.closest("[data-add]");
+  if(add){const tr=add.closest("tr");const sku=tr.dataset.sku;const inp=tr.querySelector("input");const qty=parseInt(inp.value||"0",10);
+    if(qty>0){carts[activeWare].set(sku,{sku,cat:tr.querySelector(".catline").textContent,qty});
+      tr.classList.add("pending");inp.value=0;inp.disabled=true;tr.querySelectorAll(".stepper button").forEach(b=>b.disabled=true);add.disabled=true;
+      renderCart();toast(`Added ${qty} × ${sku} — adjust it in the ${activeWare==="china"?"China order":"shipment cart"}`);}return;}
+  const rm=e.target.closest("[data-rm]");
+  if(rm){uncart(rm.dataset.rm);return;}
+  const tb=e.target.closest("[data-toast]");if(tb){toast(tb.dataset.toast);}
+});
+function renderCart(){
+  const c=carts[activeWare];const body=document.getElementById("cartBody");
+  let units=0,cogs=0;c.forEach(i=>{units+=i.qty;cogs+=i.qty*cogsOf(i.sku);});
+  const cfg=WARECFG[activeWare];
+  document.getElementById("cartTitle").textContent=cfg.cart;
+  document.getElementById("cartCount").textContent=c.size+(c.size===1?" item":" items");
+  document.getElementById("cartUnits").textContent=units;
+  document.getElementById("cartCogs").textContent=money(cogs);
+  const btn=document.getElementById("createBtn");btn.disabled=c.size===0;
+  btn.textContent=cfg.btn;
+  renderPending();
+  if(c.size===0){body.innerHTML='<div class="cart-empty">Add items from the lists to build '+cfg.empty+'</div>';return;}
+  body.innerHTML=[...c.values()].map(i=>`<div class="cart-row"><div class="meta"><div class="s">${i.sku}</div><div class="c">${i.cat}</div></div><span class="cstep"><button data-cstep="-1" data-sku="${i.sku}" aria-label="decrease">&minus;</button><input class="num" data-cq="${i.sku}" value="${i.qty}" inputmode="numeric" aria-label="quantity"><button data-cstep="1" data-sku="${i.sku}" aria-label="increase">+</button></span><button class="btn ghost" data-rm="${i.sku}" aria-label="remove">&times;</button></div>`).join("");
+}
+// edit cart quantity directly (keeps focus; just recomputes totals)
+document.getElementById("cartBody").addEventListener("input",e=>{
+  const inp=e.target.closest("[data-cq]");if(!inp)return;
+  const it=carts[activeWare].get(inp.dataset.cq);if(!it)return;
+  it.qty=Math.max(0,parseInt(inp.value||"0",10)||0);
+  let units=0,cogs=0;carts[activeWare].forEach(i=>{units+=i.qty;cogs+=i.qty*cogsOf(i.sku);});
+  document.getElementById("cartUnits").textContent=units;document.getElementById("cartCogs").textContent=money(cogs);
+});
+renderCart();
+
+const scrim=document.getElementById("scrim");
+document.getElementById("createBtn").addEventListener("click",()=>{
+  const c=carts[activeWare];let units=0;c.forEach(i=>units+=i.qty);
+  if(activeWare==="china"){ // China cart = a real PO emailed to Bony
+    openBony({kind:"PO",title:"Send purchase order to Bony",fromCart:true,
+      sub:"Emails this purchase order to Bony from your Gmail with an Excel file attached. Check the list and quantities — clicking Send emails her right away.",
+      rows:[...c.values()].map(i=>({sku:i.sku,cat:i.cat,qty:i.qty,cost:cogsOf(i.sku)}))});
+    return;
+  }
+  if(activeWare==="walmart"){openShip({source:"walmart",lines:[...c.values()].map(i=>({sku:i.sku,qty:i.qty}))});return;}
+  if(activeWare==="miami"){openShip({source:"miami",lines:[...c.values()].map(i=>{const r=REORDER.miami.find(x=>x.sku===i.sku)||{};return {sku:i.sku,asin:r.asin||"",qty:i.qty};})});return;}
+  const cfg=WARECFG[activeWare];
+  document.getElementById("mTitle").textContent=cfg.mTitle;
+  document.getElementById("mSub").textContent=cfg.mSub;
+  const sc=document.getElementById("scLink");
+  sc.textContent=cfg.sc;
+  if(cfg.href!=="#"){sc.href=cfg.href;sc.target="_blank";}else{sc.href="#";sc.removeAttribute("target");}
+  document.getElementById("planList").innerHTML=[...c.values()].map(i=>`<div class="line"><span class="mono">${i.sku}</span><span class="num">${i.qty}</span></div>`).join("");
+  document.getElementById("planUnits").textContent=units;
+  let tc=0;c.forEach(i=>tc+=i.qty*cogsOf(i.sku));document.getElementById("planCogs").textContent=money(tc);
+  scrim.classList.add("open");
+});
+function closeModal(){scrim.classList.remove("open");}
+document.getElementById("cancelModal").addEventListener("click",closeModal);
+scrim.addEventListener("click",e=>{if(e.target===scrim)closeModal();});
+document.getElementById("scLink").addEventListener("click",(e)=>{const cfg=WARECFG[activeWare];if(cfg.href==="#")e.preventDefault();if(activeWare==="tiktok"){let u=0;carts.tiktok.forEach(i=>u+=i.qty);api("log_add",{action:"Opened TikTok Create inbound order",detail:carts.tiktok.size+" SKUs, "+u+" units: "+[...carts.tiktok.values()].map(i=>i.sku+" ×"+i.qty).join(", ").slice(0,1800),ref:"tiktok fbt"}).catch(()=>{});}setTimeout(()=>{closeModal();carts[activeWare].clear();renderCart();toast(cfg.toast);},150);});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+document.getElementById("copyList").addEventListener("click",()=>{const t=[...carts[activeWare].values()].map(i=>i.sku+"\t"+i.qty).join("\n");navigator.clipboard?.writeText(t).then(()=>toast("Copied "+carts[activeWare].size+" SKUs"),()=>toast("Couldn't copy"));});
+
+// ---- Send to Bony (UV / steel gauge-kit reorder from the supplier) ----
+const bonyScrim=document.getElementById("bonyScrim");
+// Sends for real: Gmail connector (the viewer's own Gmail) via the page's mcp capability.
+const GMAIL="Gmail";
+let bony={kind:"",fromCart:false},bonySending=false;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const usd2=n=>"$"+(+n).toFixed(2);
+const bonyStatus=(msg,cls,html)=>{const el=document.getElementById("bonyStatus");el.className="mstatus "+(cls||"");el[html?"innerHTML":"textContent"]=msg||"";};
+function closeBony(){if(bonySending)return;bonyScrim.classList.remove("open");}
+const skuSort=(a,b)=>a.sku.localeCompare(b.sku,undefined,{numeric:true,sensitivity:"base"});
+function openBony(o){
+  bony={kind:o.kind,fromCart:!!o.fromCart};
+  o.rows=o.rows.slice().sort(skuSort);
+  document.getElementById("bonyTitle").textContent=o.title;
+  document.getElementById("bonySub").textContent=o.sub;
+  let u=0,tc=0;
+  document.getElementById("bonyList").innerHTML=o.rows.map(r=>{u+=r.qty;tc+=r.qty*r.cost;const combo=r.from&&r.from.length>1?`<div style="font-size:11px;color:var(--ink-3);margin-top:3px">${r.from.join(" + ")} = ${r.need||r.qty}</div>`:"";
+    const f=bony.kind==="PO"?"cn":"mia",word=f==="cn"?"on hold":"on the way to Miami";
+    const on=r.on!=null?r.on:onQty(r.sku,f);
+    const onNote=on?`<div class="onord" style="white-space:normal">${r.need!=null?`Needed ${r.need} − ${on} already ${word} (${onDates(r.sku,f)}) = ${r.qty}`:`Already ${word}: ${on} (sent ${onDates(r.sku,f)}) — check you're not ordering twice`}</div>`:"";return `<div class="line" style="align-items:flex-start"><div><span class="mono">${esc(r.sku)}</span>${combo}${onNote}<div style="font-size:11px;color:var(--ink-3);margin-top:2px">${esc(r.cat)} · @ ${usd2(r.cost)} ea</div></div><input class="num" data-bq data-sku="${esc(r.sku)}" data-cat="${esc(r.cat)}" data-cost="${r.cost}" value="${r.qty}" inputmode="numeric" style="width:60px;height:28px;border:1px solid var(--line);border-radius:7px;text-align:center;font-family:var(--mono);font-variant-numeric:tabular-nums"></div>`;}).join("");
+  document.getElementById("bonyUnits").textContent=u;document.getElementById("bonyCogs").textContent=money(tc);
+  const sb=document.getElementById("bonySend");sb.disabled=false;sb.innerHTML="Send to Bony &rarr;";
+  bonyStatus(ordersAt?"":"Order history didn't load, so this list doesn't know what's already on hold. Check Orders & log before sending.",ordersAt?"":"err");
+  bonyScrim.classList.add("open");
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-bony]");if(!b)return;
+  const sec=b.dataset.bony;
+  const agg=new Map();                       // aggregate by base kit: balm + jojoba of the same color SUM into one base order
+  for(const r of REORDER.miami.filter(r=>r.sec===sec)){const base=baseKitFor(r);const e=agg.get(base)||{qty:0,from:[],cost:(r.bony_cost||cogsOf(base)||cogsOf(r.sku))};e.qty+=r.qty;e.from.push(r.sku.replace(/_FBA$/,"")+" "+r.qty);agg.set(base,e);}
+  for(const [base,e] of agg){const on=onQty(base,"mia");if(on){e.need=e.qty;e.on=on;e.qty=Math.max(0,e.qty-on);}}
+  openBony({kind:sec,title:"Send "+sec+" gauge kits to Bony",
+    sub:(sec==="STEEL"?"Bare steel gauge kits — balm / jojoba aftercare is added in Miami; balm + jojoba of the same kit are combined.":"UV kits under their own SKU.")+" Emails Bony from your Gmail with an Excel file attached — clicking Send emails her right away.",
+    rows:[...agg.entries()].map(([sku,e])=>({sku,cat:(sec==="UV"?"UV gauge kit":"Steel gauge kit"),qty:e.qty,cost:e.cost,from:e.from,need:e.need,on:e.on}))});
+});
+bonyScrim.addEventListener("input",e=>{if(!e.target.matches("[data-bq]"))return;let u=0,c=0;bonyScrim.querySelectorAll("[data-bq]").forEach(i=>{const q=parseInt(i.value||"0",10)||0;u+=q;c+=q*(parseFloat(i.dataset.cost)||0);});document.getElementById("bonyUnits").textContent=u;document.getElementById("bonyCogs").textContent=money(c);});
+document.getElementById("bonyCancel").addEventListener("click",closeBony);
+bonyScrim.addEventListener("click",e=>{if(e.target===bonyScrim)closeBony();});
+
+function bonyEmail(rows,po,subject){
+  const isPO=bony.kind==="PO";
+  rows=rows.slice().sort(skuSort);
+  const units=rows.reduce((a,r)=>a+r.qty,0),total=rows.reduce((a,r)=>a+r.qty*r.cost,0);
+  const th='style="text-align:left"';
+  const head=isPO?`<tr><th ${th}>SKU</th><th ${th}>Category</th><th>Qty</th><th>Unit Cost</th><th>Line Total</th></tr>`:`<tr><th ${th}>${bony.kind==="UV"?"UV Kit":"Base Gauge Kit"}</th><th>Qty</th></tr>`;
+  const body=rows.map(r=>isPO?`<tr><td>${esc(r.sku)}</td><td>${esc(r.cat)}</td><td align="right">${r.qty}</td><td align="right">${usd2(r.cost)}</td><td align="right">${usd2(r.qty*r.cost)}</td></tr>`:`<tr><td>${esc(r.sku)}</td><td align="right">${r.qty}</td></tr>`).join("");
+  const foot=isPO?`<tr style="font-weight:bold"><td colspan="2" align="right">TOTAL</td><td align="right">${units.toLocaleString()}</td><td></td><td align="right">${usd2(total)}</td></tr>`:`<tr style="font-weight:bold"><td align="right">TOTAL</td><td align="right">${units}</td></tr>`;
+  const htmlBody=`<p>Hi Bony,</p><table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px">${head}${body}${foot}</table><p>Thank you!</p>`;
+  const text=`Hi Bony,\n\n`+rows.map(r=>`${r.sku}  x ${r.qty}`).join("\n")+`\n\nTotal units: ${units}\n\nThank you!`;
+  // attachment
+  const aoa=[isPO?["SKU","Category","Qty","Unit Cost","Line Total"]:["SKU","Qty"]];
+  rows.forEach(r=>aoa.push(isPO?[r.sku,r.cat,r.qty,r.cost,+(r.qty*r.cost).toFixed(2)]:[r.sku,r.qty]));
+  aoa.push(isPO?["TOTAL","",units,"",+total.toFixed(2)]:["TOTAL",units]);
+  let att;
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(aoa);ws["!cols"]=isPO?[{wch:16},{wch:18},{wch:7},{wch:10},{wch:11}]:[{wch:16},{wch:7}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Order");
+    att={filename:po+"-Bony.xlsx",mimeType:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",content:XLSX.write(wb,{type:"base64",bookType:"xlsx"})};}
+  else{const csv=aoa.map(r=>r.map(v=>/[",]/.test(v)?`"${String(v).replace(/"/g,'""')}"`:v).join(",")).join("\r\n");
+    att={filename:po+"-Bony.csv",mimeType:"text/csv",content:btoa(unescape(encodeURIComponent(csv)))};}
+  return {subject,htmlBody,body:text,att,units};
+}
+const emails=s=>s.split(/[,;\s]+/).map(x=>x.trim()).filter(Boolean);
+const okEmail=s=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s);
+
+document.getElementById("bonySend").addEventListener("click",async()=>{
+  if(bonySending)return;
+  const rows=[...bonyScrim.querySelectorAll("[data-bq]")].map(i=>({sku:i.dataset.sku,cat:i.dataset.cat,cost:parseFloat(i.dataset.cost)||0,qty:parseInt(i.value||"0",10)||0})).filter(r=>r.qty>0);
+  if(!rows.length){bonyStatus("Nothing to send — every quantity is 0.","err");return;}
+  const to=emails(document.getElementById("bonyTo").value),cc=emails(document.getElementById("bonyCc").value);
+  const bad=[...to,...cc].filter(x=>!okEmail(x));
+  if(!to.length||bad.length){bonyStatus(bad.length?"Check this address: "+bad.join(", "):"Add Bony's email in To.","err");return;}
+  const subj=document.getElementById("bonySubj").value.trim();
+  if(!subj){bonyStatus("Type a subject first.","err");document.getElementById("bonySubj").focus();return;}
+  const mcp=WEB?null:await claude.use("mcp");
+  if(!mcp&&!WEB){bonyStatus("This view can't reach Gmail. Open the page on claude.ai (signed in) to send.","err");return;}
+  const d=new Date(),ymd=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+  const po="PO-"+ymd+(bony.kind==="PO"?"":"-"+bony.kind);
+  const m=bonyEmail(rows,po,subj);
+  if(WEB){ // Netlify copy has no Gmail access: download the Excel, open a filled-in Gmail draft, save the hold
+    const bin=atob(m.att.content),buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:m.att.mimeType}));a.download=m.att.filename;document.body.appendChild(a);a.click();a.remove();
+    const q=new URLSearchParams({view:"cm",fs:"1",authuser:"denis@bodyj4you.com",to:to.join(","),su:m.subject,body:m.body});if(cc.length)q.set("cc",cc.join(","));
+    window.open("https://mail.google.com/mail/?"+q.toString(),"_blank","noopener");
+    if(bony.fromCart){[...carts.china.keys()].forEach(uncart);}
+    const saved=await saveOrder({kind:bony.kind,subject:m.subject,po,to,cc,rows});
+    const sb=document.getElementById("bonySend");sb.textContent="Draft opened ✓";sb.disabled=true;
+    bonyStatus(`Gmail opened with the email filled in and <b>${esc(m.att.filename)}</b> downloaded — attach the file in Gmail and click Send there. `+(saved.ok?`Saved as hold #${saved.id}. If you don't send it, release the hold on Orders &amp; log.`:`⚠ Not saved (${esc(saved.err)}).`),"ok",true);
+    return;
+  }
+  const input={to,subject:m.subject,htmlBody:m.htmlBody,body:m.body,attachments:[m.att]};
+  if(cc.length)input.cc=cc;
+  const sb=document.getElementById("bonySend");
+  bonySending=true;sb.disabled=true;sb.textContent="Sending…";bonyStatus("Sending from your Gmail — if claude.ai asks to allow Gmail for this page, click Allow.","info");
+  try{
+    await mcp.callTool(GMAIL,"send_message",input);
+    bonySending=false;
+    if(bony.fromCart){[...carts.china.keys()].forEach(uncart);}
+    // stay open with a clear confirmation; a brief toast was easy to miss
+    const at=new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+    sb.textContent="Sent ✓";
+    bonyStatus(`✓ Sent to Bony at ${at}: "${m.subject}" (${m.units} units, Excel attached). It's in your Gmail Sent folder. Saving to Orders…`,"ok");
+    const saved=await saveOrder({kind:bony.kind,subject:m.subject,po,to,cc,rows});
+    bonyStatus(`✓ Sent to Bony at ${at}: "${m.subject}" (${m.units} units, Excel attached). It's in your Gmail Sent folder. `+(saved.ok?`Saved as hold #${saved.id} — counted until Bony's FBA shipment shows up on Amazon.`:`⚠ Not saved to order history (${saved.err}) — tell Claude to add it.`),saved.ok?"ok":"err");
+    toast(`Sent to Bony ✓ ${m.subject}`,6000);
+  }catch(err){
+    bonySending=false;
+    const code=err&&err.code;
+    const msg={
+      needs_reauth:"Gmail needs reconnecting: claude.ai → Settings → Connectors → Gmail, then click Send again.",
+      server_not_connected:"Gmail isn't connected for you: add it in claude.ai → Settings → Connectors, then click Send again.",
+      selection_required:"You have more than one Gmail connector — pick one when claude.ai asks, then click Send again.",
+      not_in_manifest:"Gmail wasn't allowed for this page. Allow it (page menu → Permissions) and click Send again.",
+      approval_required:"Gmail needs your approval for this page. Click Send again and choose Allow.",
+      consent_required:"Gmail needs your approval for this page. Click Send again and choose Allow.",
+      blocked_by_policy:"Your organization's policy blocks sending from Gmail here.",
+      not_granted:"This view can't reach Gmail. Open the page on claude.ai to send.",
+      capability_disabled:"This view can't reach Gmail. Open the page on claude.ai to send.",
+      tool_error:"Gmail refused the message: "+((err&&err.message)||"unknown error")+". Nothing was sent."
+    }[code]||"Gmail didn't confirm the send ("+(code||"unknown")+"). It may still have gone out — check your Sent folder before clicking Send again.";
+    bonyStatus(msg,"err");
+    logAction("Send to Bony failed",`"${subj}" · ${msg}`,null);
+    sb.disabled=false;sb.innerHTML="Send to Bony &rarr;";
+  }
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeBony();});
+const RETURNS={
+ reasons:[["Unwanted / changed mind",1197,"a"],["Not as described",503,"w"],["Undeliverable",498,"a"],["Wrong item ordered",155,"c"],["Defective",151,"w"],["Late delivery",92,"a"],["Damaged in FC",90,"w"],["Quality unacceptable",84,"w"],["Other",591,"a"]],
+ hot:[
+  {sku:"HS0002_FBA",name:"Piercing Aftercare Saline Spray",n:932,def:75,wrong:63,alert:1},
+  {sku:"NC4390",name:"2PC Choker Necklace — Black Y2K",n:192,def:9,wrong:2},
+  {sku:"NC4058_FBA",name:"12PC Tattoo Choker Necklace",n:171,def:18,wrong:2},
+  {sku:"PD-TEATREE-MCT-2oz",name:"Tea Tree Oil — USDA Organic",n:150,def:19,wrong:8},
+  {sku:"NC4285_FBA",name:"2PC Butterfly Choker Y2K",n:123,def:6,wrong:4},
+  {sku:"EO-JOJOBA-1oz",name:"Golden Jojoba Oil — USDA",n:122,def:20,wrong:7},
+  {sku:"PB-10_FBA",name:"Piercing Bump Solution",n:109,def:16,wrong:2},
+  {sku:"EO-ROSEHIP-1oz_FBA",name:"Rosehip Seed Oil — USDA",n:99,def:15,wrong:5}
+ ],
+ voc:[
+  {sku:"HS0002_FBA",r:"Not as described",t:"Not sterile"},
+  {sku:"HS0002_FBA",r:"Not as described",t:"Says it's for piercing aftercare but the ingredients will irritate piercings"},
+  {sku:"HS0002_FBA",r:"Not as described",t:"Wrong solution — tea tree oil"},
+  {sku:"HS0002_FBA",r:"Not as described",t:"Doesn't work"},
+  {sku:"GK0220-Gold_FBA",r:"Defective",t:"12g gauge is missing"},
+  {sku:"PD-LAVENDER-MCT-10-RL",r:"Defective",t:"Rollerball didn't work, and barely any lavender scent"},
+  {sku:"NC4364_FBA",r:"Defective",t:"Material / metal changed"},
+  {sku:"PD-LAVENDER-MCT-2oz",r:"Not as described",t:"Not real natural, not the original label"},
+  {sku:"GK0487_FBA",r:"Not as described",t:"Cheap quality"},
+  {sku:"HS0002-10_FBA",r:"Not as described",t:"Doesn't work"},
+  {sku:"NC4305_FBA",r:"Not as described",t:"Thought they'd look different"},
+  {sku:"PD-TEATREE-MCT-10-RL",r:"Not as described",t:"Too oily"}
+ ]
+};
+(function(){
+ const max=Math.max(...RETURNS.reasons.map(r=>r[1]));
+ const col={w:"var(--warn)",c:"var(--crit)",a:"var(--accent)"};
+ document.getElementById("reasonBars").innerHTML=RETURNS.reasons.map(([lab,n,c])=>`<div style="display:flex;align-items:center;gap:12px;padding:5px 0"><span style="width:168px;font-size:12.5px;color:var(--ink-2)">${lab}</span><span style="flex:1;height:8px;background:var(--line-2);border-radius:4px;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(n/max*100)}%;background:${col[c]}"></span></span><span class="num" style="width:52px;text-align:right;font-weight:600">${n}</span></div>`).join("");
+ document.getElementById("hotBody").innerHTML=RETURNS.hot.map(h=>`<tr><td><div class="sku">${h.sku}</div><div class="catline">${h.name}</div></td><td class="r num"><b>${h.n}</b>${h.alert?' <span class="pill urgent">alert</span>':''}</td><td class="r num" style="color:${h.def>=15?'var(--crit)':'var(--ink-2)'}">${h.def}</td><td class="r num">${h.wrong}</td><td class="r"><button class="btn" data-toast="Opened ${h.sku} returns detail">Investigate</button></td></tr>`).join("");
+ document.getElementById("vocBody").innerHTML=RETURNS.voc.map(v=>`<div class="rev"><span class="pill ${v.r==='Defective'?'urgent':'warn'}" style="flex:none">${v.r}</span><div class="txt"><div class="q">&ldquo;${v.t}&rdquo;</div><div class="m">${v.sku}</div></div><button class="btn" data-toast="Opened ${v.sku} return">View order</button></div>`).join("");
+ document.getElementById("navCust").textContent=RETURNS.hot.filter(h=>h.def>=15).length;
+})();
+// ---- Pull fresh data: page -> Supabase ops_refresh row -> GitHub job (Amazon report + reorder math) -> ops_snapshot -> page
+const SB="Supabase",SB_PROJECT="fsxoppdwmtelsfizareg";
+let dataState={date:"2026-10-12",pulledAt:null,source:"page"};
+const fmtDay=d=>new Date(d+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric"});
+const fmtTime=t=>new Date(t).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+function haveText(){return dataState.source==="page"?`${fmtDay(dataState.date)} (built into page)`:`Amazon snapshot ${fmtDay(dataState.date)} · pulled ${fmtTime(dataState.pulledAt)}`;}
+function renderProv(view){
+  const prov=document.getElementById("vProv");
+  if(view==="inbound"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Amazon + Walmart shipments'+(INB.at?" · synced "+fmtTime(INB.at):"");if(!INB.loaded)loadInbound();return;}
+  if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked every hour'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
+  if(view==="orders"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Saved in Supabase'+(ordersAt?" · loaded "+fmtTime(ordersAt):"");return;}
+  const amazon=view==="today"||view==="inventory";
+  const fresh=amazon&&dataState.date>=todayISO();
+  prov.className="provenance "+(fresh?"live":"preview");
+  prov.innerHTML='<span class="pdot"></span>'+(amazon?"Amazon data: "+fmtDay(dataState.date)+(dataState.pulledAt?" · pulled "+fmtTime(dataState.pulledAt):""):"Data from Oct 12 — not part of the pull yet");
+}
+function renderDataAge(){
+  document.getElementById("dataAge").innerHTML=dataState.source==="page"?`<b>Amazon data: ${fmtDay(dataState.date)}</b><br>built into the page`:`<b>Amazon data: ${fmtDay(dataState.date)}</b><br>pulled ${fmtTime(dataState.pulledAt)}`;
+  document.getElementById("pullHave").textContent=haveText();
+  renderProv(document.querySelector(".nav-item.active")?.dataset.view||"today");
+}
+function applySnapshot(snap){
+  const d=snap.data||{};
+  TT_LIVE=Array.isArray(d.tiktok);TT_ERR=d.tiktok_error||null;if(TT_ERR&&!TT_LIVE)renderWare("tiktok");
+  WM_LIVE=Array.isArray(d.walmart);WM_ERR=d.walmart_error||null;if(WM_ERR&&!WM_LIVE)renderWare("walmart");
+  for(const wh of ["miami","china","tiktok","walmart"]){
+    if(!Array.isArray(d[wh]))continue;
+    d[wh].forEach(r=>{if(r.cogs)COGS[r.sku]=r.cogs;else r.cogs=COGS[r.sku]||0;});
+    REORDER[wh]=d[wh];carts[wh].clear();renderWare(wh);
+  }
+  if(d.skus)indexSkus(d.skus);
+  CN_IN=Array.isArray(d.cn_inbound)?d.cn_inbound:null;CN_ERR=d.cn_inbound_error||null;renderPending();
+  dataState={date:snap.snapshot_date,pulledAt:snap.produced_at,source:"pull"};
+  renderCounts();renderToday();renderCart();renderDataAge();
+}
+// Supabase MCP answers with text that wraps the rows in <untrusted-data-…> tags
+function sqlRows(res){
+  const p=res&&res.payload;let s=typeof p==="string"?p:(p&&p.result)||"";
+  if(!s&&res&&res.content&&res.content[0])s=res.content[0].text||"";
+  // the intro sentence also names the tag, so take the block whose body is the JSON array
+  const m=String(s).match(/<untrusted-data-([\w-]+)>\s*(\[[\s\S]*\])\s*<\/untrusted-data-\1>/);
+  return JSON.parse(m?m[2]:s);
+}
+async function sql(q){const mcp=await claude.use("mcp");if(!mcp)throw{code:"not_granted"};return sqlRows(await mcp.callTool(SB,"execute_sql",{project_id:SB_PROJECT,query:q}));}
+// Every read/write is one named action. On claude.ai it runs as SQL through the Supabase connector;
+// on the Netlify copy (PIN login) the same action goes to /api/ops-api, which runs it with the server key.
+const WEB=!window.claude||/netlify\.app$|^localhost$/.test(location.hostname);
+const ACT={
+  pull_start:()=>"insert into public.ops_refresh (requested_by) values ('ops page') returning id",
+  refresh_get:a=>`select status,message,snapshot_id,result from public.ops_refresh where id=${+a.id}`,
+  snapshot_get:a=>`select id,produced_at,snapshot_date,data from public.ops_snapshot where id=${+a.id}`,
+  snapshot_latest:()=>"select id,produced_at,snapshot_date,data from public.ops_snapshot order by id desc limit 1",
+  log_add:a=>`insert into public.ops_log (action,detail,ref) values (${sq(a.action)},${a.detail==null?"null":sq(a.detail)},${a.ref==null?"null":sq(a.ref)})`,
+  order_create:a=>`insert into public.ops_orders (kind,subject,po,recipients,lines,units,total) values (${sq(a.kind)},${sq(a.subject)},${sq(a.po)},${sq(JSON.stringify(a.recipients))}::jsonb,${sq(JSON.stringify(a.lines))}::jsonb,${+a.units},${+a.total}) returning id`,
+  orders_list:()=>"select id,sent_at,kind,subject,lines,units,total,status,closed_at,note,shipped_at,fba_plan,fba_ids,matched_at from public.ops_orders order by sent_at desc limit 300",
+  log_list:()=>"select id,at,actor,action,detail,ref from public.ops_log order by at desc, id desc limit 300",
+  order_status:a=>a.status==="open"?`update public.ops_orders set status='open',shipped_at=null,fba_plan=null,fba_ids=null,matched_at=null,closed_at=null where id=${+a.id}`:`update public.ops_orders set status=${a.status==="received"?"'received'":"'cancelled'"},closed_at=now() where id=${+a.id}`,
+  inbound_page:a=>`select id,channel,name,status,closed,created,dest,eta_start,eta_end,carrier,tracking,units,received,short,extra,items,updated_at from public.ops_inbound where created>=current_date-${+a.days} order by created desc, id desc limit 400 offset ${+a.offset}`,
+  addresses:()=>"select key,country,label,uses,last_used from public.ops_addresses where not hidden order by last_used desc nulls last",
+  ship_start:a=>`insert into public.ops_refresh (requested_by,kind,payload) values ('ops page','ship',${sq(JSON.stringify(a.payload))}::jsonb) returning id`,
+  market_list:()=>"select channel,checked_at,tried_at,error,orders from public.ops_market"
+};
+let CSRF="";
+async function api(op,args){
+  if(!WEB)return sql(ACT[op](args||{}));
+  const r=await fetch("/api/ops-api",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json","x-csrf":CSRF},body:JSON.stringify({op,args:args||{}})});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){showLogin();throw{code:"login"};}
+  if(!r.ok||!j.ok)throw{code:"web",message:j.error||("HTTP "+r.status)};
+  return j.rows||[];
+}
+const pullScrim=document.getElementById("pullScrim");
+const pullStatus=(msg,cls)=>{const el=document.getElementById("pullStatus");el.className="mstatus "+(cls||"info");el.textContent=msg||"";};
+let pulling=false;
+function openPull(){if(!pulling){pullStatus("");const g=document.getElementById("pullGo");g.disabled=false;g.textContent="Pull now";}document.getElementById("pullHave").textContent=haveText();pullScrim.classList.add("open");}
+document.getElementById("pullOpen").addEventListener("click",openPull);
+document.getElementById("pullCancel").addEventListener("click",()=>pullScrim.classList.remove("open"));
+pullScrim.addEventListener("click",e=>{if(e.target===pullScrim)pullScrim.classList.remove("open");});
+function sqlErrText(e){
+  if(e&&e.code==="login")return "Session ended — enter your PIN again.";
+  if(e&&e.code==="web")return e.message||"Server error";
+  return ({needs_reauth:"Supabase needs reconnecting: claude.ai → Settings → Connectors → Supabase.",
+    server_not_connected:"Add the Supabase connector in claude.ai → Settings → Connectors.",
+    not_in_manifest:"Supabase wasn't allowed for this page. Allow it (page menu → Permissions) and try again.",
+    approval_required:"Supabase needs your approval for this page — click Pull now and choose Allow.",
+    consent_required:"Supabase needs your approval for this page — click Pull now and choose Allow.",
+    not_granted:"This view can't reach Supabase. Open the page on claude.ai."})[e&&e.code]||("Couldn't reach the data store ("+((e&&(e.code||e.message))||"error")+").");
+}
+const STEP={requested:"Asking GitHub to start…",dispatched:"Started — waiting for a GitHub runner…",running:"Pulling the Amazon report and rebuilding the lists…"};
+document.getElementById("pullGo").addEventListener("click",async()=>{
+  if(pulling)return;
+  const g=document.getElementById("pullGo");pulling=true;g.disabled=true;g.textContent="Pulling…";
+  pullStatus("Starting… if claude.ai asks to allow Supabase for this page, click Allow.");
+  let id;
+  try{id=(await api("pull_start"))[0].id;}
+  catch(e){pulling=false;g.disabled=false;g.textContent="Pull now";pullStatus(sqlErrText(e),"err");return;}
+  const t0=Date.now();
+  while(Date.now()-t0<6*60*1000){
+    await new Promise(r=>setTimeout(r,5000));
+    let st;try{st=(await api("refresh_get",{id}))[0];}catch(e){continue;}
+    if(!st)continue;
+    if(st.status==="done"){
+      setTimeout(()=>{INB.loaded=false;loadInbound();},6*60*1000);
+      try{const snap=(await api("snapshot_get",{id:st.snapshot_id}))[0];applySnapshot(snap);}
+      catch(e){pulling=false;g.disabled=false;g.textContent="Pull now";pullStatus("The pull finished but loading it failed: "+sqlErrText(e),"err");return;}
+      pulling=false;pullScrim.classList.remove("open");toast("Fresh data loaded — "+(st.message||""),6000);loadOrders();return;
+    }
+    if(st.status==="failed"){pulling=false;g.disabled=false;g.textContent="Try again";pullStatus("The pull failed: "+(st.message||"no detail"),"err");return;}
+    pullStatus((STEP[st.status]||st.status)+" ("+Math.round((Date.now()-t0)/1000)+"s)");
+  }
+  pulling=false;g.disabled=false;g.textContent="Pull now";
+  pullStatus("Still not finished after 6 minutes. It may finish on its own — reopen the page later, or try again.","err");
+});
+// ---- Order memory + action log (Supabase ops_orders / ops_log) ----
+const sq=v=>"'"+String(v==null?"":v).replace(/'/g,"''")+"'";
+const fmtWhen=t=>new Date(t).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+const KIND={PO:"China → FBA",STEEL:"Steel base kits → Miami",UV:"UV kits → Miami"};
+async function logAction(action,detail,ref){
+  try{await api("log_add",{action,detail,ref});}catch(e){}
+}
+async function saveOrder(o){
+  const lines=o.rows.map(r=>({sku:r.sku,cat:r.cat,qty:r.qty,cost:r.cost}));
+  const units=lines.reduce((a,b)=>a+b.qty,0),total=+lines.reduce((a,b)=>a+b.qty*(b.cost||0),0).toFixed(2);
+  try{
+    const id=(await api("order_create",{kind:o.kind,subject:o.subject,po:o.po,recipients:{to:o.to,cc:o.cc},lines,units,total}))[0].id;
+    await logAction("Sent order to Bony",`"${o.subject}" · ${lines.length} SKUs · ${units.toLocaleString()} units · ${usd2(total)}`,"order "+id);
+    await loadOrders();
+    return {ok:true,id};
+  }catch(e){return {ok:false,err:sqlErrText(e)};}
+}
+async function loadOrders(){
+  try{
+    ORDERS=await api("orders_list");
+    LOG=await api("log_list");
+    ordersAt=new Date().toISOString();document.getElementById("ordErr").innerHTML="";
+  }catch(e){
+    document.getElementById("ordErr").innerHTML=`<div class="mstatus err" style="margin:0 0 14px">Couldn't load orders and log: ${esc(sqlErrText(e))}</div>`;
+  }
+  ONORDER={cn:new Map(),mia:new Map()};
+  for(const o of ORDERS.filter(o=>LIVE(o))){const M=ONORDER[flowOf(o)];for(const l of (o.lines||[])){const m=M.get(l.sku)||{qty:0,orders:[]};m.qty+=+l.qty||0;m.orders.push({id:o.id,at:o.sent_at,qty:l.qty});M.set(l.sku,m);}}
+  renderOrders();renderPending();renderWare("miami");renderWare("china");
+  renderProv(document.querySelector(".nav-item.active")?.dataset.view||"today");
+}
+const STLABEL={open:"On hold",shipped:"On hold",matched:"Shipped",received:"Received in Miami",cancelled:"Released"};
+const stLabel=o=>LIVE(o)&&flowOf(o)==="mia"?"On the way to Miami":(STLABEL[o.status]||o.status);
+// Holds clear by themselves when Bony's FBA shipment appears on Amazon (ops_refresh.py, every pull).
+// Fallback only, on the Orders page: release a hold that will never ship (e.g. an email you told Bony to disregard).
+function ordActs(o,c){
+  const mia=flowOf(o)==="mia";
+  if(LIVE(o))return mia?`<button class="${c} primary" data-ord="received" data-id="${o.id}">Received in Miami</button><button class="${c} ghost" data-ord="cancelled" data-id="${o.id}">Cancel</button>`
+    :`<button class="${c} primary" data-shiphold="${o.id}">Ship to FBA</button><button class="${c} ghost" data-ord="cancelled" data-id="${o.id}">Release hold</button>`;
+  if(o.status==="cancelled"||(mia&&o.status==="received"))return `<button class="${c} ghost" data-ord="open" data-id="${o.id}">${mia?"Back to on the way":"Put back on hold"}</button>`;
+  return "";
+}
+function renderPending(){
+  const box=document.getElementById("pendBox");if(!box)return;
+  box.hidden=activeWare!=="china"&&activeWare!=="miami";if(box.hidden)return;
+  const f=activeWare==="china"?"cn":"mia",L=ORDERS.filter(o=>LIVE(o)&&flowOf(o)===f);
+  const title=f==="cn"?"On hold for Bony — China → FBA":"On the way to Miami — from Bony";
+  const foot=f==="cn"?"A hold is not a shipment. It clears by itself once Bony's FBA shipment shows up on Amazon; from then on Amazon's inbound counts what actually shipped."
+    :"UV and steel base kits ordered from Bony with Send to Bony. They count against the UV / Steel lines until you click <b>Received in Miami</b>.";
+  box.innerHTML=`<div class="block-h"><h3>${title}</h3><span class="count">${L.length} · ${L.reduce((a,b)=>a+(+b.units||0),0).toLocaleString()} units</span></div>`+
+    (L.length?L.map(o=>`<div class="pend-o"><div class="t">${esc(o.subject)}</div><div class="m">#${o.id} · sent ${shortDay(o.sent_at)} · ${(o.lines||[]).length} SKUs · ${(+o.units).toLocaleString()} units</div><span class="stp open">${stLabel(o)}</span>${o.note?`<div class="m">${esc(o.note)}</div>`:""}<div class="a">${ordActs(o,"btn")}</div><details style="margin-top:6px"><summary style="cursor:pointer;font-size:11.5px;color:var(--accent-ink);font-weight:600">Items</summary>${(o.lines||[]).slice().sort(skuSort).map(l=>`<div class="m" style="display:flex;justify-content:space-between"><span class="mono">${esc(l.sku)}</span><span class="num">${l.qty}</span></div>`).join("")}</details></div>`).join("")
+      :`<div class="cart-empty" style="padding:18px">${f==="cn"?"Nothing on hold. Send to Bony puts a China list on hold here.":"Nothing on the way. Send to Bony on the UV / Steel lists shows up here."}</div>`)+
+    `<div class="m" style="padding:10px 16px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--line-2)">${foot}</div>`;
+}
+function orderHtml(o){
+  const lines=o.lines||[],hasCost=lines.some(l=>l.cost!=null);
+  const st=` · <b>${stLabel(o)}</b>`+(o.status==="shipped"&&o.shipped_at?" "+fmtWhen(o.shipped_at):o.closed_at?" "+fmtWhen(o.closed_at):"")+(o.fba_plan?` · ${esc(o.fba_plan)} (${(o.fba_ids||[]).length} FBA shipments)`:"");
+  const acts=ordActs(o,"btn");
+  return `<div class="ord"><div class="ord-h"><div><div class="ord-t">${esc(o.subject)}</div><div class="ord-m">#${o.id} · sent ${fmtWhen(o.sent_at)} · ${KIND[o.kind]||esc(o.kind)} · ${lines.length} SKUs · ${(+o.units).toLocaleString()} units${+o.total?" · "+usd2(+o.total):""}${st}</div>${o.note?`<div class="ord-m">${esc(o.note)}</div>`:""}</div><div class="ord-a">${acts}</div></div>
+    <details><summary>Show items</summary><table><thead><tr><th>SKU</th><th class="r">Qty</th>${hasCost?'<th class="r">Unit cost</th>':""}</tr></thead><tbody>${lines.slice().sort(skuSort).map(l=>`<tr><td class="mono">${esc(l.sku)}</td><td class="r num">${l.qty}</td>${hasCost?`<td class="r num">${l.cost!=null?usd2(+l.cost):"—"}</td>`:""}</tr>`).join("")}</tbody></table></details></div>`;
+}
+function renderOrders(){
+  const open=ORDERS.filter(LIVE),hist=ORDERS.filter(o=>!LIVE(o));
+  document.getElementById("navOrd").textContent=open.length;
+  document.getElementById("ordOpenCount").textContent=`${open.length} open · ${open.reduce((a,b)=>a+(+b.units||0),0).toLocaleString()} units`;
+  document.getElementById("ordOpen").innerHTML=open.length?open.map(orderHtml).join(""):'<div class="ord-empty">Nothing on hold. Lists you send to Bony from this page show up here.</div>';
+  document.getElementById("ordHistCount").textContent=hist.length+" orders";
+  document.getElementById("ordHist").innerHTML=hist.length?hist.map(orderHtml).join(""):'<div class="ord-empty">No shipped or released holds yet.</div>';
+  document.getElementById("logCount").textContent=LOG.length+" entries";
+  document.getElementById("logList").innerHTML=LOG.length?`<table class="logt"><thead><tr><th>When</th><th>Who</th><th>Action</th><th>Details</th><th>Ref</th></tr></thead><tbody>${LOG.map(l=>`<tr><td class="w">${fmtWhen(l.at)}</td><td><span class="who${/claude/i.test(l.actor)?" c":""}">${esc(l.actor)}</span></td><td><b>${esc(l.action)}</b></td><td>${esc(l.detail||"")}</td><td class="w">${esc(l.ref||"")}</td></tr>`).join("")}</tbody></table>`:'<div class="ord-empty">No actions logged yet.</div>';
+}
+// Mark shipped / Match / Cancel / Reopen — click twice to confirm (no browser dialogs)
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-ord]");if(!b||b.disabled)return;
+  if(!b.dataset.armed){b.dataset.armed="1";b.dataset.label=b.textContent;b.textContent="Click again to confirm";setTimeout(()=>{if(b.isConnected&&b.dataset.armed){delete b.dataset.armed;b.textContent=b.dataset.label;}},4000);return;}
+  const st=b.dataset.ord,id=+b.dataset.id,o=ORDERS.find(x=>x.id===id);
+  if(!["open","cancelled","received"].includes(st))return;
+  const mia=o&&flowOf(o)==="mia";
+  const act=st==="received"?"Received in Miami":st==="open"?(mia?"Back to on the way to Miami":"Put back on hold"):(mia?"Cancelled Miami order":"Released hold");
+  const msg=st==="received"?`#${id} received in Miami — no longer counted as on the way`:st==="open"?`#${id} counted again`:`#${id} ${mia?"cancelled":"released"} — no longer counted`;
+  b.disabled=true;b.textContent="Saving…";
+  try{
+    await api("order_status",{id,status:st});
+    await logAction(act,o?`"${o.subject}" · ${(+o.units).toLocaleString()} units`:null,"order "+id);
+    await loadOrders();
+    toast(msg,5000);
+  }catch(err){b.disabled=false;delete b.dataset.armed;b.textContent=b.dataset.label;toast(sqlErrText(err),6000);}
+});
+// ---- Inbound shipments (Supabase ops_inbound, filled by each pull) ----
+const INB={rows:[],loaded:false,loading:false,at:null,tab:"miami",st:"all",open:new Set(),more:{}};
+const stOf=r=>isFlag(r)?"flag":r.closed?"closed":(STX[r.status]||[])[0]==="Preparing"?"prep":"ship";
+const INB_DAYS=120;
+// Plain statuses: Preparing (not shipped yet) · Shipped (on the way or being received) · Closed
+const PREP=["Preparing","prep"],SHIP=["Shipped","moving"];
+const STX={WORKING:PREP,READY_TO_SHIP:PREP,SHIPPED:SHIP,IN_TRANSIT:SHIP,DELIVERED:SHIP,CHECKED_IN:SHIP,RECEIVING:SHIP,AWAITING_DELIVERY:SHIP,RECEIVING_IN_PROGRESS:SHIP,
+  CLOSED:["Closed",""],CANCELLED:["Cancelled",""],DELETED:["Cancelled",""],ERROR:["Error",""]};
+const scLink=r=>r.channel==="walmart"?null:`https://sellercentral.amazon.com/fba/inbound-shipment/summary/${encodeURIComponent(r.id)}/contents`;
+const dshort=d=>d?new Date(d+"T12:00:00Z").toLocaleDateString(undefined,{month:"short",day:"numeric"}):"—";
+// flag = Amazon/Walmart finished receiving and the shipment total came in short (SKU swaps that net out are not flagged)
+const gapOf=r=>(+r.units||0)-(+r.received||0);
+const isFlag=r=>r.status==="CLOSED"&&gapOf(r)>0;
+async function loadInbound(){
+  if(INB.loading)return;INB.loading=true;
+  try{
+    const rows=[];
+    for(let off=0;off<6000;off+=400){
+      const page=await api("inbound_page",{days:INB_DAYS,offset:off});
+      rows.push(...page);if(page.length<400)break;
+    }
+    INB.rows=rows;INB.loaded=true;INB.at=rows.reduce((a,r)=>r.updated_at>a?r.updated_at:a,"")||null;
+  }catch(e){document.getElementById("inbBody").innerHTML=`<div class="mstatus err">Couldn't load shipments: ${esc(sqlErrText(e))}</div>`;INB.loading=false;return;}
+  INB.loading=false;renderInbound();
+  if(document.querySelector(".nav-item.active")?.dataset.view==="inbound")renderProv("inbound");
+}
+function inbMatch(r,q){
+  if(!q)return null;
+  const hits=(r.items||[]).filter(i=>(i[0]||"").toLowerCase().includes(q)||(i[1]||"").toLowerCase()===q);
+  if(hits.length)return hits;
+  return (r.id||"").toLowerCase().includes(q)||(r.name||"").toLowerCase().includes(q)?[]:null;
+}
+function shipRow(r,hits){
+  const [lab,cls]=STX[r.status]||[r.status,""],flag=isFlag(r),done=r.closed&&!flag,op=INB.open.has(r.id);
+  const eta=etaOf(r);
+  const hit=hits&&hits.length?`<div class="skuhit">${hits.map(i=>`${esc(i[0])}: ${i[2]} shipped${r.status==="WORKING"||r.status==="READY_TO_SHIP"?"":" · "+i[3]+" received"}`).join("<br>")}</div>`:"";
+  const recv=`${(+r.received).toLocaleString()} / ${(+r.units).toLocaleString()}`;
+  const diff=flag?`<span class="short">−${gapOf(r)}</span>`:r.status==="CLOSED"&&gapOf(r)<0?`<span class="extra">+${-gapOf(r)}</span>`:"";
+  const act=flag&&scLink(r)?`<a class="btn recon" href="${scLink(r)}" target="_blank" rel="noopener" data-noexp>Reconcile ↗</a>`:flag?`<span class="short">short — check in Seller Center</span>`:"";
+  const trk=r.tracking&&r.tracking.length?`<div class="id">${esc(r.carrier||"")} ${r.tracking.map(t=>/^1Z/i.test(t)?`<a href="https://www.ups.com/track?tracknum=${encodeURIComponent(t)}" target="_blank" rel="noopener" data-noexp>${esc(t)}</a>`:esc(t)).join(", ")}</div>`:"";
+  let h=`<tr class="ship${done?" done":""}${flag?" flag":""}${op?" open":""}" data-ship="${esc(r.id)}"><td><span class="car">›</span> <span class="nm">${esc(r.name||r.id)}</span><div class="id">${esc(r.id)}</div>${hit}</td>
+    <td><span class="st ${cls}">${esc(lab)}</span>${trk}</td><td>${esc(r.dest||"—")}</td><td>${dshort(r.created)}</td>${INB.etaCol?`<td>${eta}</td>`:""}
+    <td class="r num">${recv}</td><td class="r">${diff}</td><td class="r">${act}</td></tr>`;
+  if(op){
+    const q=INB.q;
+    h+=`<tr class="items"><td colspan="${INB.etaCol?8:7}"><table><thead><tr><th>SKU</th><th>ASIN</th><th class="r">Shipped</th><th class="r">Received</th><th class="r">Difference</th></tr></thead><tbody>${(r.items||[]).map(i=>{const d=i[3]-i[2];
+      return `<tr${q&&((i[0]||"").toLowerCase().includes(q)||(i[1]||"").toLowerCase()===q)?' class="hit"':""}><td class="mono">${esc(i[0])}</td><td class="mono">${esc(i[1]||"")}</td><td class="r num">${i[2]}</td><td class="r num">${i[3]}</td><td class="r num">${r.closed&&d<0?`<span class="short">${d}</span>`:r.closed&&d>0?`<span class="extra">+${d}</span>`:""}</td></tr>`;}).join("")||'<tr><td colspan="5">No item lines from Amazon for this shipment.</td></tr>'}</tbody></table></td></tr>`;
+  }
+  return h;
+}
+const etaOf=r=>r.closed||!r.eta_start?"":r.eta_end&&r.eta_end!==r.eta_start?`${dshort(r.eta_start)} – ${dshort(r.eta_end)}`:dshort(r.eta_start);
+function shipTable(title,rows,key,cap){
+  INB.etaCol=rows.some(r=>etaOf(r));
+  const shown=INB.more[key]||INB.q?rows:rows.slice(0,cap);
+  return `<div class="block"><div class="block-h"><h3>${title}</h3><span class="count">${rows.length} shipments · ${rows.reduce((a,b)=>a+(+b.units||0),0).toLocaleString()} units</span></div>
+    ${rows.length?`<div style="overflow-x:auto"><table><thead><tr><th>Shipment</th><th>Status</th><th>Going to</th><th>Created</th>${INB.etaCol?"<th>ETA</th>":""}<th class="r">Received / shipped</th><th class="r">Diff</th><th></th></tr></thead><tbody>${shown.map(r=>shipRow(r,inbMatch(r,INB.q))).join("")}</tbody></table></div>`+(shown.length<rows.length?`<div style="padding:10px 18px"><button class="btn ghost" data-inbmore="${key}">Show all ${rows.length}</button></div>`:""):`<div class="ord-empty">None.</div>`}</div>`;
+}
+function renderInbound(){
+  const q=INB.q=(document.getElementById("inbSearch").value||"").trim().toLowerCase();
+  const pick=ch=>INB.rows.filter(r=>r.channel===ch&&(!q||inbMatch(r,q)));
+  const flags=INB.rows.filter(isFlag).length;
+  document.getElementById("navInb").textContent=INB.loaded?flags:"—";
+  document.querySelectorAll("#inbTabs .itab").forEach(t=>{const ch=t.dataset.inb,rs=pick(ch),f=rs.filter(isFlag).length;
+    t.classList.toggle("active",ch===INB.tab);t.querySelector(".b").textContent=rs.length;t.querySelector(".b").classList.toggle("f",f>0&&!q);t.title=f?f+" need reconciliation":"";});
+  const body=document.getElementById("inbBody");
+  if(INB.tab==="tiktok"&&!INB.rows.some(r=>r.channel==="tiktok")&&INB.loaded){body.innerHTML=`<div class="block"><div class="ord-empty">TikTok isn't part of the pull yet — it needs your TikTok API key added to GitHub.</div></div>`;return;}
+  if(!INB.loaded){body.innerHTML=`<div class="block"><div class="ord-empty">Loading shipments…</div></div>`;return;}
+  const rs=pick(INB.tab);
+  if(INB.tab==="walmart"&&!INB.rows.some(r=>r.channel==="walmart")){body.innerHTML=`<div class="block"><div class="ord-empty">Walmart isn't part of the pull yet — it needs your Walmart API key added to GitHub. Ask Claude to connect it.</div></div>`;return;}
+  if(!INB.rows.length){body.innerHTML=`<div class="block"><div class="ord-empty">No shipments saved yet. Click <b>Pull fresh data</b>; the shipment list fills in a few minutes after the pull finishes.</div></div>`;return;}
+  // one list, every state, newest created first; the chips count and filter by state ("Closed" includes the ones to reconcile)
+  const cnt={prep:0,ship:0,closed:0,flag:0};rs.forEach(r=>{const k=stOf(r);cnt[k]++;if(k==="flag")cnt.closed++;});
+  document.querySelectorAll("#inbStat .itab").forEach(b=>{b.classList.toggle("active",b.dataset.st===INB.st);const n=b.querySelector(".b");if(n)n.textContent=cnt[b.dataset.st];});
+  const list=INB.st==="all"?rs:rs.filter(r=>INB.st==="closed"?r.closed:stOf(r)===INB.st);
+  const T={all:"All shipments",prep:"Preparing — not shipped yet",ship:"Shipped — on the way or being received",closed:"Closed",flag:"Reconcile — closed with fewer units received than shipped"};
+  body.innerHTML=shipTable(T[INB.st],list,INB.tab+INB.st,150);
+}
+document.getElementById("inbTabs").addEventListener("click",e=>{const t=e.target.closest(".itab");if(!t)return;INB.tab=t.dataset.inb;renderInbound();});
+let inbT;document.getElementById("inbSearch").addEventListener("input",()=>{clearTimeout(inbT);inbT=setTimeout(renderInbound,180);});
+document.getElementById("inbStat").addEventListener("click",e=>{const b=e.target.closest(".itab");if(!b)return;INB.st=b.dataset.st;renderInbound();});
+document.getElementById("inbBody").addEventListener("click",e=>{
+  if(e.target.closest("[data-noexp]"))return;
+  const m=e.target.closest("[data-inbmore]");if(m){INB.more[m.dataset.inbmore]=1;renderInbound();return;}
+  const tr=e.target.closest("tr.ship");if(!tr)return;const id=tr.dataset.ship;INB.open.has(id)?INB.open.delete(id):INB.open.add(id);renderInbound();
+});
+// ---- Create FBA shipment: pick ship-from address + the Amazon SKU each line ships under ----
+// SKUS: every seller SKU per ASIN from the last pull: [sku, fnsku, available, inbound]. FNSKU X00… = needs our label; FNSKU = ASIN = sells on its UPC.
+let SKUS={},SKU_ASIN={},BASE_ASINS={},ADDR=null,ship=null,shipBusy=false;
+const skuBase=s=>String(s||"").replace(/_[A-Za-z]+$/,"").toUpperCase();
+function indexSkus(map){SKUS=map||{};SKU_ASIN={};BASE_ASINS={};
+  for(const [a,list] of Object.entries(SKUS))for(const x of list){SKU_ASIN[x[0]]=a;(BASE_ASINS[skuBase(x[0])]=BASE_ASINS[skuBase(x[0])]||new Set()).add(a);}}
+const barcode=(f,a)=>!f?["unk","Barcode unknown"]:/^X0/i.test(f)?["fn","FNSKU — needs your Amazon label"]:(f===a||/^B0/i.test(f))?["upc","UPC — ships on its own barcode"]:["unk","Barcode "+f];
+function lastShipped(){const m={};for(const r of INB.rows){if(r.channel!=="miami"&&r.channel!=="china")continue;for(const i of r.items||[]){const k=i[0]+"|"+r.channel;if(!m[k]||r.created>m[k])m[k]=r.created;}}return m;}
+function candidates(line){
+  const asins=new Set();if(line.asin)asins.add(line.asin);if(SKU_ASIN[line.sku])asins.add(SKU_ASIN[line.sku]);(BASE_ASINS[skuBase(line.sku)]||[]).forEach(a=>asins.add(a));
+  const out=[];asins.forEach(a=>(SKUS[a]||[]).filter(x=>!/^amzn\.gr\./i.test(x[0])).forEach(x=>out.push({sku:x[0],fnsku:x[1],avail:x[2],inb:x[3],asin:a})));return out;
+}
+function shipLineHtml(l,i){
+  if(ship.source==="walmart")return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}</div><span class="bc upc">Walmart SKU · its own UPC/GTIN barcode</span></div><input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
+  const opts=l.cands.map((c,j)=>{const [,lab]=barcode(c.fnsku,c.asin),lm=ship.last[c.sku+"|"+ship.source],lo=ship.last[c.sku+"|"+(ship.source==="miami"?"china":"miami")];
+    return `<option value="${j}"${j===l.pick?" selected":""}>${esc(c.sku)} · ${lab.split(" —")[0]} · ${c.avail} in stock${c.inb?" +"+c.inb+" inbound":""}${lm?" · last "+ship.source+" "+dshort(lm):lo?" · last "+(ship.source==="miami"?"china":"miami")+" "+dshort(lo):""}</option>`;}).join("");
+  const c=l.cands[l.pick],[bc,bl]=c?barcode(c.fnsku,c.asin):["unk","No Amazon SKU found — type the SKU"];
+  const many=l.cands.length>1,cls="pick"+(many?(l.seen?" ok":""):" one");
+  return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}${many?`<span class="picknote${l.seen?" ok":""}">${l.seen?"✓ picked":l.cands.length+" Amazon SKUs — pick one"}</span>`:""}</div>${l.cands.length?`<select data-pick="${i}" class="${cls}">${opts}</select>`:`<input data-manual="${i}" placeholder="Amazon SKU" value="${esc(l.manual||"")}">`}<span class="bc ${bc}">${esc(bl)}</span></div>
+    <input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
+}
+function renderShip(){
+  const left=ship.source==="walmart"?0:ship.lines.filter(l=>l.cands.length>1&&!l.seen).length;
+  document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")||'<div class="ord-empty">No lines.</div>';
+  document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";
+}
+const SHIP_SUB=document.getElementById("shipSub").innerHTML;
+function shipStatus(msg,cls){document.getElementById("shipStatus").innerHTML=msg?`<div class="mstatus ${cls||""}" style="margin:0 0 10px">${msg}</div>`:"";}
+async function openShip(o){
+  if(!INB.loaded)await loadInbound();
+  ship={source:o.source,hold:o.hold||null,last:lastShipped(),lines:o.lines.map(l=>({...l}))};
+  for(const l of ship.lines){l.cands=o.source==="walmart"?[]:candidates(l);
+    let best=-1,bt="";l.cands.forEach((c,j)=>{const t=ship.last[c.sku+"|"+ship.source]||"";if(t>bt){bt=t;best=j;}});
+    if(best<0)l.cands.forEach((c,j)=>{if(best<0||c.avail+c.inb>l.cands[best].avail+l.cands[best].inb)best=j;});
+    l.pick=Math.max(0,best);}
+  document.getElementById("shipTitle").textContent=o.source==="china"?`Ship to FBA from China — hold #${o.hold}`:o.source==="walmart"?"Create Walmart (WFS) shipment — Miami":"Create FBA shipment — Miami";
+  document.getElementById("shipSub").innerHTML=o.source==="walmart"?"Pick the ship-from address and check the quantities. Creating it makes the WFS inbound order on Walmart (Walmart picks the warehouses); you finish labels and carrier in Walmart Seller Center. Each unit ships on its own UPC/GTIN barcode.":SHIP_SUB;
+  const d=new Date(),nm=(o.source==="china"?"China ":o.source==="walmart"?"WFS ":"Miami ")+`${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+  document.getElementById("shipName").value=o.name||nm;
+  const sel=document.getElementById("shipFrom");sel.innerHTML='<option>Loading addresses…</option>';
+  const go=document.getElementById("shipGo");go.disabled=false;go.textContent=GO_TXT();delete go.dataset.armed;go.style.background="";go.style.borderColor="";
+  shipStatus(o.source==="walmart"||Object.keys(SKUS).length?"":"The SKU list loads with the next <b>Pull fresh data</b> — until then only the list's own SKUs are offered.","err");
+  markFrom(false);renderShip();document.getElementById("shipScrim").classList.add("open");
+  try{ADDR=ADDR||await api("addresses");}
+  catch(e){sel.innerHTML='<option value="">Couldn\'t load addresses</option>';shipStatus(sqlErrText(e),"err");return;}
+  const want=o.source==="china"?"CN":"US",list=ADDR.filter(a=>a.country===want);
+  sel.innerHTML=list.map(a=>`<option value="${esc(a.key)}">${esc(a.label)} · used ${a.uses}×${a.last_used?" · last "+dshort(a.last_used):""}</option>`).join("")||'<option value="">No saved address</option>';
+}
+const disarmShip=()=>{const go=document.getElementById("shipGo");if(go.dataset.armed&&!shipBusy){delete go.dataset.armed;go.textContent=GO_TXT();go.style.background="";go.style.borderColor="";shipStatus("");}};
+document.getElementById("shipFrom").addEventListener("change",()=>{disarmShip();markFrom(true);});
+function markFrom(ok){document.getElementById("shipFrom").classList.toggle("ok",ok);const n=document.getElementById("fromNote");n.className="picknote"+(ok?" ok":"");n.textContent=ok?"✓ picked":"check";}
+document.getElementById("shipLines").addEventListener("input",disarmShip);
+document.getElementById("shipLines").addEventListener("change",e=>{disarmShip();const t=e.target;
+  if(t.dataset.pick!=null){const l=ship.lines[+t.dataset.pick];l.pick=+t.value;l.seen=true;renderShip();}});
+document.getElementById("shipLines").addEventListener("input",e=>{const t=e.target;
+  if(t.dataset.sq!=null){ship.lines[+t.dataset.sq].qty=Math.max(0,parseInt(t.value||"0",10)||0);document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";}
+  if(t.dataset.manual!=null)ship.lines[+t.dataset.manual].manual=t.value.trim();});
+document.getElementById("shipLines").addEventListener("click",e=>{const x=e.target.closest("[data-srm]");if(!x)return;ship.lines.splice(+x.dataset.srm,1);renderShip();});
+const closeShip=()=>{if(!shipBusy)document.getElementById("shipScrim").classList.remove("open");};
+document.getElementById("shipCancel").addEventListener("click",closeShip);
+document.getElementById("shipScrim").addEventListener("click",e=>{if(e.target.id==="shipScrim")closeShip();});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-shiphold]");if(!b)return;const o=ORDERS.find(x=>x.id===+b.dataset.shiphold);if(!o)return;
+  openShip({source:"china",hold:o.id,name:(o.subject||"").slice(0,40),lines:(o.lines||[]).slice().sort(skuSort).map(l=>({sku:l.sku,qty:+l.qty||0}))});});
+document.getElementById("shipGo").addEventListener("click",async()=>{
+  if(shipBusy||!ship)return;const go=document.getElementById("shipGo");
+  const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:ship.source==="walmart"?l.sku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty}));
+  if(!addr){shipStatus("Pick a ship-from address.","err");return;}
+  const bad=items.filter(i=>!i.msku);if(bad.length){shipStatus("Type the Amazon SKU for every line without one.","err");return;}
+  if(!items.length){shipStatus("No lines with a quantity.","err");return;}
+  const dup=items.map(i=>i.msku).filter((m,i,a)=>a.indexOf(m)!==i);if(dup.length){shipStatus("Same Amazon SKU on two lines: "+esc([...new Set(dup)].join(", "))+" — merge them.","err");return;}
+  const tot=items.reduce((a,b)=>a+b.qty,0);
+  if(!go.dataset.armed){go.dataset.armed="1";go.textContent=`Yes — create it (${tot.toLocaleString()} units)`;go.style.background="var(--crit)";go.style.borderColor="var(--crit)";
+    shipStatus(`Ready to create ${ship.source==="walmart"?"a Walmart WFS inbound order":"a Send to Amazon plan"}: <b>${items.length} SKUs, ${tot.toLocaleString()} units</b> from <b>${esc(document.getElementById("shipFrom").selectedOptions[0]?.textContent.split(" · used")[0]||"")}</b>. Click <b>Yes — create it</b> to send it to ${PLAT()}.`,"info");return;}
+  go.style.background="";go.style.borderColor="";
+  shipBusy=true;go.disabled=true;go.textContent="Creating…";shipStatus("Sending to "+PLAT()+"… (about a minute)");
+  const payload={source:ship.source,address_key:addr,name:document.getElementById("shipName").value.trim(),items,hold_id:ship.hold};
+  let id;
+  try{id=(await api("ship_start",{payload}))[0].id;}
+  catch(e){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus(sqlErrText(e),"err");return;}
+  const t0=Date.now();
+  while(Date.now()-t0<6*60*1000){
+    await new Promise(r=>setTimeout(r,4000));
+    let st;try{st=(await api("refresh_get",{id}))[0];}catch(e){continue;}
+    if(!st)continue;
+    if(st.status==="done"&&st.result){shipBusy=false;go.textContent="Created ✓";
+      shipStatus(ship.source==="walmart"?`✓ ${esc(st.message||"WFS inbound order created")}.${(st.result.shipments||[]).map(x=>`<br>Shipment <b class="mono">${esc(x.id||"")}</b> → ${esc(x.fc||"")} · ${x.units} units`).join("")}<br><a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open Walmart Seller Center ↗</b></a> → WFS → Inbound shipments to print labels and set the carrier.`:`✓ ${esc(st.message||"Plan created")}. <a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open in Send to Amazon ↗</b></a> to finish boxes, placement and carrier.`,"ok");
+      if(ship.source==="miami"||ship.source==="walmart"){carts[ship.source].clear();renderWare(ship.source);renderCart();}
+      loadOrders();return;}
+    if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
+    shipStatus("Sending to "+PLAT()+"… "+(STEP[st.status]?esc(st.status):"")+" ("+Math.round((Date.now()-t0)/1000)+"s)");
+  }
+  shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("No answer after 6 minutes — check "+(ship.source==="walmart"?"Walmart Seller Center":"Send to Amazon")+" before trying again, it may have been created.","err");
+});
+// ---- PIN login (Netlify copy only) ----
+let loginWait=null;
+function showLogin(){document.getElementById("loginScrim").classList.add("open");setTimeout(()=>document.getElementById("loginPin").focus(),50);if(!loginWait){let res;loginWait=new Promise(r=>res=r);loginWait._r=res;}return loginWait;}
+async function doLogin(){
+  const pin=document.getElementById("loginPin").value.trim(),st=document.getElementById("loginStatus");
+  if(!pin)return;st.innerHTML='<div class="mstatus">Checking…</div>';
+  try{const r=await fetch("/api/ops-login",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok){st.innerHTML=`<div class="mstatus err">${esc(j.error||"Wrong PIN.")}</div>`;document.getElementById("loginPin").select();return;}
+    CSRF=j.csrf;document.getElementById("loginScrim").classList.remove("open");document.getElementById("loginPin").value="";st.innerHTML="";
+    const w=loginWait;loginWait=null;if(w&&w._r)w._r();
+  }catch(e){st.innerHTML='<div class="mstatus err">Can\'t reach the server.</div>';}
+}
+document.getElementById("loginGo").addEventListener("click",doLogin);
+document.getElementById("loginPin").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+async function webSession(){
+  if(!WEB)return;
+  try{const r=await fetch("/api/ops-me",{credentials:"same-origin"});const j=await r.json().catch(()=>({}));if(r.ok&&j.ok){CSRF=j.csrf;return;}}catch(e){}
+  await showLogin();
+}
+// Marketplace alerts: open orders we ship ourselves, checked hourly by GitHub (ops/market_sync.py) -> ops_market
+const MKT={rows:[],at:null,loaded:false,err:null,stale:false};
+const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon",mercadolibre:"Mercado Libre"};
+const dur=ms=>{const h=Math.max(1,Math.round(Math.abs(ms)/3600e3));return h<48?h+"h":Math.round(h/24)+" days";};
+function mktOrders(){
+  const now=Date.now(),out=[];
+  for(const r of MKT.rows)for(const o of (r.orders||[])){
+    const t=o.ship_by?Date.parse(o.ship_by):null;
+    out.push({...o,ch:r.channel,t,sev:t==null?"ok":t<now?"late":t-now<864e5?"soon":"ok"});
+  }
+  return out.sort((a,b)=>(a.t??9e15)-(b.t??9e15));
+}
+function mktRow(o){
+  const now=Date.now(),late=o.sev==="late";
+  const items=(o.items||[]).map(i=>i.sku?`<span class="mono">${esc(i.sku)} ×${+i.qty||1}</span>`:`${+i.qty||1} item${(+i.qty||1)===1?"":"s"}`).join(", ");
+  const when=o.t==null?"no ship-by date":(late?`ship-by passed ${dur(now-o.t)} ago`:`due in ${dur(o.t-now)}`);
+  const idHtml=o.link?`<a class="mono" href="${esc(o.link)}" target="_blank" rel="noopener">${esc(o.id)} ↗</a>`:`<span class="mono">${esc(o.id)}</span>`;
+  const act=o.link?`<a class="btn${late?" primary":""}" href="${esc(o.link)}" target="_blank" rel="noopener">Open order ↗</a>`:`<button class="btn" data-copy="${esc(o.id)}">Copy order #</button>`;
+  return `<div class="alert ${late?"crit":"warn"}"><span class="edge"></span><div class="body"><div class="head"><span class="t">${late?"Late — ":"Due soon — "}${when}</span><span class="ch">${esc((CHN[o.ch]||o.ch).toUpperCase())}</span><span class="pill ${late?"urgent":"warn"}">${late?"Late":"Watch"}</span></div><div class="d">${idHtml} · ${items||"—"} · ship-by ${o.t==null?"—":fmtTime(o.t)} · ordered ${o.created?fmtTime(o.created):"—"}${o.status&&o.status!=="Not shipped"?` · <b>${esc(o.status)}</b>`:""}</div></div><div class="act">${act}</div></div>`;
+}
+function renderMarket(){
+  const el=document.getElementById("mktBody");
+  const all=mktOrders(),late=all.filter(o=>o.sev==="late"),soon=all.filter(o=>o.sev==="soon");
+  const now=Date.now();
+  const checks=MKT.rows.map(r=>r.checked_at).filter(Boolean).sort();
+  MKT.at=checks[0]||null;MKT.stale=!MKT.at||now-Date.parse(MKT.at)>3*3600e3;
+  const tag=document.getElementById("navMkt"),btn=document.getElementById("navMktBtn");
+  tag.textContent=MKT.loaded?(late.length||soon.length):"—";btn.classList.toggle("crit",late.length>0);
+  document.getElementById("cLate").textContent=MKT.loaded?late.length:"—";
+  document.getElementById("cLateCard").className="card stat "+(late.length?"s-crit":soon.length?"s-warn":"s-good");
+  document.getElementById("cLateCap").innerHTML=!MKT.loaded?(MKT.err?"couldn't load":"checking marketplaces…"):late.length?`<b>ship now</b> · ${[...new Set(late.map(o=>CHN[o.ch]))].join(", ")}`:soon.length?`${soon.length} due in the next 24h`:`all ${all.length} open orders on time`;
+  const a=document.getElementById("aMkt");
+  if(!MKT.loaded)a.innerHTML="";
+  else if(late.length)a.innerHTML=`<div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Ship ${late.length} late order${late.length>1?"s":""}</span><span class="ch">MARKETPLACE</span></div><div class="d">${late.slice(0,4).map(o=>`${CHN[o.ch]} <span class="mono">${esc(o.id)}</span> (${dur(now-o.t)} late)`).join(" · ")}${late.length>4?" · …":""}</div></div><div class="act"><button class="btn primary" data-go="marketplace">Open</button></div></div>`;
+  else if(soon.length)a.innerHTML=`<div class="alert warn"><span class="edge"></span><div class="body"><div class="head"><span class="t">${soon.length} order${soon.length>1?"s":""} due in the next 24 hours</span><span class="ch">MARKETPLACE</span></div><div class="d">Not late yet. Make sure they ship today.</div></div><div class="act"><button class="btn" data-go="marketplace">Review</button></div></div>`;
+  else a.innerHTML=`<div class="alert good"><span class="edge"></span><div class="body"><div class="head"><span class="t">No late orders</span><span class="ch">MARKETPLACE</span></div><div class="d">All ${all.length} open seller-shipped orders are on time.</div></div><div class="act"><button class="btn" data-go="marketplace">Review</button></div></div>`;
+  a.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+  if(!MKT.loaded){el.innerHTML=MKT.err?`<div class="mstatus err">Couldn't load marketplace alerts: ${esc(MKT.err)}</div>`:`<div class="mstatus">Loading marketplace orders…</div>`;return;}
+  let h="";
+  h+=`<div class="block"><div class="block-h"><h3>Late — ship now</h3><span class="count">${late.length}</span></div>${late.length?late.map(mktRow).join(""):`<div class="alert good resolved"><span class="edge"></span><div class="body"><div class="head"><span class="t">Nothing late</span><span class="pill good">OK</span></div><div class="d">No order is past its ship-by time.</div></div></div>`}</div>`;
+  h+=`<div class="block"><div class="block-h"><h3>Due in the next 24 hours</h3><span class="count">${soon.length}</span></div>${soon.length?soon.map(mktRow).join(""):`<div class="mstatus">None.</div>`}</div>`;
+  const rowsBy=Object.fromEntries(MKT.rows.map(r=>[r.channel,r]));
+  h+=`<div class="block"><div class="block-h"><h3>Marketplaces checked</h3><span class="count">every hour, 7am–1am ET</span></div>`+Object.keys(CHN).map(ch=>{
+    const r=rowsBy[ch];
+    if(!r)return `<div class="mline"><span><b>${CHN[ch]}</b></span><span style="color:var(--ink-2)">not connected yet</span></div>`;
+    const os=(r.orders||[]).length,lt=all.filter(o=>o.ch===ch&&o.sev==="late").length;
+    const old=!r.checked_at||now-Date.parse(r.checked_at)>3*3600e3;
+    const err=r.error&&(!r.checked_at||r.tried_at>r.checked_at);
+    return `<div class="mline"><span><b>${CHN[ch]}</b> · ${os} open to ship${lt?` · <b style="color:var(--crit)">${lt} late</b>`:""}</span><span style="color:${err||old?"var(--warn)":"var(--ink-2)"}">${err?`last check failed (${esc(r.error.slice(0,120))}) · `:""}${r.checked_at?"checked "+fmtTime(r.checked_at):"never checked"}</span></div>`;
+  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves; FBA, WFS and TikTok FBT orders ship themselves. Mercado Libre orders are listed for visibility (Mercado Libre Full ships them).</p></div>`;
+  el.innerHTML=h;
+}
+async function loadMarket(){
+  try{MKT.rows=await api("market_list");MKT.loaded=true;MKT.err=null;}catch(e){if(e&&e.code==="login")return;MKT.err=sqlErrText(e);}
+  renderMarket();
+  if(document.querySelector(".nav-item.active")?.dataset.view==="marketplace")renderProv("marketplace");
+}
+document.addEventListener("click",e=>{const c=e.target.closest("[data-copy]");if(!c)return;navigator.clipboard?.writeText(c.dataset.copy).then(()=>toast("Copied "+c.dataset.copy),()=>toast(c.dataset.copy));});
+setInterval(()=>{if(!document.hidden)loadMarket();},10*60e3);
+// On open: load the latest pulled data and the order memory, then ask to pull fresh
+(async()=>{
+  await webSession();
+  try{const s=(await api("snapshot_latest"))[0];if(s)applySnapshot(s);}catch(e){}
+  await loadOrders();
+  openPull();
+  loadInbound();
+  loadMarket();
+})();
+
+let tt;function toast(msg,ms){const el=document.getElementById("toast");document.getElementById("toastMsg").textContent=msg;el.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),ms||2400);}
+</script>
+
+</body></html>
