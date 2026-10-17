@@ -24,7 +24,7 @@ export default function EnginePage({ name, csrf, user }) {
   useEffect(() => { loadPage(); if (name === 'dashboard') loadRuns(); }, [name]);
   const runs = eng.runs || [];
   const running = runs.find((r) => r.status !== 'completed');
-  const fmtMin = (m) => (m == null ? '' : m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`);
+  const fmtMin = (m) => (m == null ? '' : m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60} min` : ''}` : `${m} min`);
   // While a run is going, ask every 30 s; when it ends, say how it ended and reload the page it produced.
   useEffect(() => {
     if (name !== 'dashboard' || !running) return undefined;
@@ -42,7 +42,7 @@ export default function EnginePage({ name, csrf, user }) {
   // After a start, GitHub lists the new run 5 to 20 s later: look again at 8, 20 and 45 s; give up after 2 minutes.
   useEffect(() => {
     if (!pending) return undefined;
-    const ts = [8000, 20000, 45000].map((ms) => setTimeout(async () => { const r = await loadRuns(); if (r && r.ok && (r.runs || []).find((x) => x.status !== 'completed')) setPending(0); }, ms));
+    const ts = [8000, 20000, 45000].map((ms) => setTimeout(async () => { const r = await loadRuns(); if (r && r.ok && (r.runs || []).find((x) => x.status !== 'completed')) { setPending(0); setMsg(''); } }, ms));   // from here the live status line speaks
     const giveUp = setTimeout(() => { setPending(0); setMsg('Uncertain whether the refresh started. Reload this page in a minute to check.'); }, 120000);
     return () => { ts.forEach(clearTimeout); clearTimeout(giveUp); };
   }, [pending]);
@@ -53,19 +53,21 @@ export default function EnginePage({ name, csrf, user }) {
     if (r.ok && r.runs) setEng(r);
     if (r.ok && r.started) setPending(Date.now());
   };
+  // A run going anywhere (schedule, another person, this press) closes the question.
+  useEffect(() => { if (running || pending) setChoice(null); }, [!!running, !!pending]);
   // Two kinds of run: full (Amazon reports, ~20 min) and light (today's spend and budgets, ~1 min). When the full data is
   // under FRESH_H hours old, a press asks which one first: most numbers only move after the morning run anyway, because
   // Amazon's reports settle 3 days back. Older than that, a press starts the full run straight away.
   const FRESH_H = 6;
   const lastFull = eng.last_full, lastLight = eng.last_light;
-  const fullAgeMin = lastFull ? Math.round((Date.now() - new Date(lastFull.finished)) / 60000) : null;
-  const about = (x) => (x ? (x.minutes ? `about ${fmtMin(x.minutes)}` : 'under a minute') : 'time uncertain');
+  const about = (x, usual) => (x ? (x.minutes ? `about ${fmtMin(x.minutes)}` : 'under a minute') : usual);
   const refresh = () => {
-    if (fullAgeMin === null || fullAgeMin >= FRESH_H * 60) return start('all');
+    const ageMin = lastFull ? Math.round((Date.now() - new Date(lastFull.finished)) / 60000) : null;   // at press time, not at render
+    if (ageMin === null || ageMin >= FRESH_H * 60) return start('all');
     const spend = lastLight && new Date(lastLight.finished) > new Date(lastFull.finished) ? ` Today's spend was updated ${lastLight.when}.` : '';
     setChoice({
-      text: `The full data is only ${fullAgeMin < 1 ? 'a minute' : fmtMin(fullAgeMin)} old (from ${lastFull.when}). Most numbers change only after the morning run, because Amazon's reports settle 3 days back.${spend} What do you want to refresh?`,
-      lightMin: about(lastLight), fullMin: about(lastFull), pick: start, cancel: () => setChoice(null),
+      text: `The full data is ${ageMin < 1 ? 'a minute' : fmtMin(ageMin)} old (from ${lastFull.when}); most numbers only change after the morning run.${spend} What do you want to refresh?`,
+      lightMin: about(lastLight, 'about 1 min'), fullMin: about(lastFull, 'time uncertain'), pick: start, cancel: () => setChoice(null),
     });
   };
   // Exactly one status sentence under the buttons: what is happening now, or where the data on the page comes from.
@@ -75,7 +77,7 @@ export default function EnginePage({ name, csrf, user }) {
     : running ? (running.status === 'in_progress' ? `A refresh is running (started ${running.when}, ${running.kind}${running.minutes ? `, ${fmtMin(running.minutes)} so far` : ''}). The pages update by themselves when it finishes.` : `A refresh is waiting to start${running.minutes > 10 ? ' and is taking longer than usual (uncertain why)' : ''}. The pages update by themselves when it finishes.`)
     : pending ? 'A refresh is waiting to start. The pages update by themselves when it finishes.'
     : last && last.conclusion !== 'success' ? `The last refresh (${last.kind}, started ${last.when}) did not finish. The pages still show earlier data; press Refresh daily data to try again.`
-    : lastFull ? `Data from ${lastFull.when}${spendFrom}. A full refresh takes ${about(lastFull)}.`
+    : lastFull ? `Data from ${lastFull.when}${spendFrom}. A full refresh takes ${about(lastFull, 'time uncertain')}.`
     : last ? `Last refresh finished ${last.when} (${last.kind}), took ${fmtMin(last.minutes)}.`
     : '';
   const waiting = !!running || !!pending;

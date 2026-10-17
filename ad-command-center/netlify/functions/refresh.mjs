@@ -10,7 +10,7 @@ const OWNER = 'frolovdo', REPO = 'bodyj4you-amazon-api', WORKFLOW = 'refresh.yml
 const FULL_MIN_MINUTES = 5;  // the run list does not say light or full; light runs take about a minute, so >= 5 min means a full run
 const PT = 'America/Los_Angeles';
 
-const ptClock = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-US', { timeZone: PT, hour: 'numeric', minute: '2-digit' }).replace(' ', '').toLowerCase() : '');
+const ptClock = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-US', { timeZone: PT, hour: 'numeric', minute: '2-digit' }).replace(/\s+/g, '').toLowerCase() : '');
 const ptDate = (d) => d.toLocaleDateString('en-CA', { timeZone: PT });  // YYYY-MM-DD in Pacific
 // "today 8:41am" / "yesterday 4:30am" / "Oct 14, 4:30am"
 function ptWhen(iso) {
@@ -23,7 +23,7 @@ const mins = (a, b) => (a && b ? Math.max(0, Math.round((new Date(b) - new Date(
 const notDone = (x) => x.status !== 'completed';
 
 async function listRuns(token) {
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=12`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
+  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=50`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
   if (!r.ok) throw new Error(`run list ${r.status}`);
   const d = await r.json();
   const runs = (d.workflow_runs || []).map((x) => ({
@@ -35,7 +35,7 @@ async function listRuns(token) {
   }));
   // The two kinds of run, by duration (the run list does not carry the "what" input): full = everything (Amazon reports,
   // ~20 min), light = today's spend and budgets + push (~1 min). Only runs that finished well count as data on the site.
-  const good = runs.filter((x) => x.status === 'completed' && x.conclusion === 'success');
+  const good = runs.filter((x) => x.status === 'completed' && x.conclusion === 'success' && x.minutes != null);
   const pick = (x) => (x ? { finished: x.finished, when: x.finished_when, minutes: x.minutes } : null);
   const lastFull = good.find((x) => x.minutes >= FULL_MIN_MINUTES), lastLight = good.find((x) => x.minutes < FULL_MIN_MINUTES);
   return { runs, last_full_minutes: lastFull ? lastFull.minutes : null, last_full: pick(lastFull), last_light: pick(lastLight) };
@@ -61,7 +61,7 @@ export default async (req) => {
     const where = busy.status === 'in_progress' ? `running (started ${busy.when}, ${busy.kind})` : 'waiting to start';
     return json({ ok: true, started: false, ...state, msg: `A refresh is already ${where}. Nothing new was started. This page updates by itself when it finishes.` });
   }
-  const what = WHATS[f.what] ? f.what : 'all';   // only the two kinds the page offers
+  const what = f.what === 'light' ? 'light' : 'all';   // only the two kinds the page offers
   const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, { method: 'POST',
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main', inputs: { what } }) });
   if (r.status !== 204) return err('The refresh could not be started (the runner refused). Nothing was started. Try again in a few minutes.', 502);

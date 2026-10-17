@@ -60,8 +60,8 @@ export default function Now({ csrf, user, engine }) {
           <div className="ask small">
             <div>{engine.choice.text}</div>
             <div className="row">
-              <button className="btn sm" onClick={() => engine.choice.pick('light')}>Today's spend only ({engine.choice.lightMin})</button>
-              <button className="btn alt sm" onClick={() => engine.choice.pick('all')}>Everything ({engine.choice.fullMin})</button>
+              <button className="btn sm" disabled={engine.starting || engine.waiting} onClick={() => engine.choice.pick('light')}>Today's spend only ({engine.choice.lightMin})</button>
+              <button className="btn alt sm" disabled={engine.starting || engine.waiting} onClick={() => engine.choice.pick('all')}>Everything ({engine.choice.fullMin})</button>
               <button className="btn alt sm" onClick={engine.choice.cancel}>Cancel</button>
             </div>
           </div>)}
