@@ -29,7 +29,7 @@ for h in handles:
             r['faqs'] = len(j['mainEntity'])
     res[h] = r
     print(h[:50].ljust(50), json.dumps(r)[:200])
-json.dump(res, open('validate_%s.json' % theme, 'w'), indent=1)
+json.dump(res, open('/Users/DK/bodyj4you/shopify-agentic/theme/validate_%s.json' % theme, 'w'), indent=1)
 bad = [h for h, r in res.items() if r['errors'] or not r.get('product')]
 print('pages', len(res), 'with errors/no product:', len(bad), 'faq pages:', sum(1 for r in res.values() if r.get('faqs')),
       'rated:', sum(1 for r in res.values() if r.get('rating', (None,))[0]))

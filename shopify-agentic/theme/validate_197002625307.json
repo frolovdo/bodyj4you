@@ -4,10 +4,610 @@
   "errors": [],
   "product": "Product",
   "rating": [
-   "4.5",
+   4.5,
    40
   ],
   "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "156pc-body-piercing-kit-14-16g": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.67,
+   85
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 7
+ },
+ "bodyj4you-37pc-gauges-kit-ear-stretching-aftercare-balm-14g-00g-surgical-steel-tunnel-plug-taper-set": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.74,
+   61
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "36pc-ear-stretching-kit-14g-00g": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.77,
+   101
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "18pc-stone-plug-set-double-flare-saddle-8g-24mm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.41,
+   54
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 5
+ },
+ "36pc-ear-stretching-kit-00g-20-mm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.77,
+   141
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "24pc-ear-stretching-kit-00g-20-mm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.8,
+   98
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "37pc-ear-stretching-kit-14g-00g-jojoba-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.39,
+   23
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "37pc-ear-stretching-kit-14g-00g-jojoba-oil-1": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   5.0,
+   2
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "54pc-ear-stretching-kit-14g-to-12-mm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.75,
+   226
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 5
+ },
+ "37pc-ear-stretching-kit-14g-00g-aftercare-balm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.63,
+   19
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "36pc-pro-body-piercing-kit": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.76,
+   536
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 6
+ },
+ "12pc-tattoo-choker-necklace-set-1": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.61,
+   150
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 7
+ },
+ "24pc-tattoo-choker-necklace-set": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.86,
+   393
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 7
+ },
+ "12pc-tattoo-choker-necklace-set": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.76,
+   503
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 7
+ },
+ "bodyj4you-jojoba-oil-golden-organic-5ml-stretched-ear-lobe-natural-aftercare-wax-gauges-taper-plug-5ml": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.65,
+   26
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "36pc-ear-stretching-kit-14g-00g-1": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.65,
+   62
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "36pc-ear-stretching-kit-00g-25-mm": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.91,
+   34
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "72pc-ear-stretching-kit-14g-00g": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.75,
+   884
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 5
+ },
+ "3pc-16g-internally-threaded-stud-set-flat-back": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.0,
+   4
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "2pc-tattoo-choker-leather-necklace-set": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 6
+ },
+ "2pc-tattoo-choker-necklace-set": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 7
+ },
+ "48pc-ear-stretching-kit-14g-00g-beginner-gauges-aftercare-jojoba-oil-multicolor-marble-acrylic-plugs-tapers-silicone-tunnels-lightweight-expanders-men-women": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 7,
+  "offers": true,
+  "faqs": 5
+ },
+ "piercing-aftercare-saline-spray-2-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   5.0,
+   1
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-aftercare-saline-spray-4-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   5.0,
+   1
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-aftercare-saline-drops-0-33-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-bump-care-oil-033-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "organic-castor-oil-pure-100-usda-certified": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 5
+ },
+ "complete-piercing-aftercare-kit-cleaning-floss": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   5.0,
+   1
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "organic-jojoba-oil-pure-100-usda-certified": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 5
+ },
+ "organic-rosehip-oil-pure-100-usda-certified": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 5
+ },
+ "piercing-aftercare-kit-balm-jojoba-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-aftercare-kit-saline-spray-bump-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-aftercare-kit-saline-drops-bump-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "ear-stretching-balm-natural-solution-for-gauges": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   5.0,
+   1
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "hypochlorous-acid-face-spray-4-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   4.8,
+   20
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "essential-oil-roll-on-pure-100-usda-organic-10-ml": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "3pc-essential-oils-gift-set-pure-100-usda-organic": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "3pc-essential-oils-gift-set-pure-100-usda-organic-1": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "6pc-essential-oils-gift-set-pure-100-usda-organic-copy": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "organic-oil-roll-on-100-pure-natural-usda": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "organic-piercing-aftercare-oil-blend-1-fl-oz": {
+  "blocks": 3,
+  "errors": [],
+  "product": "Product",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "piercing-aftercare-saline-spray-2-fl-oz-24-pack": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 7
+ },
+ "piercing-bump-care-oil-0-33-fl-oz-24-pack": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 10,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-tea-tree-oil-usda-organic-pre-diluted-mct": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 5
+ },
+ "bodyj4you-organic-lavender-essential-oil-for-skin-pre-diluted-mct": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-organic-argan-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-peppermint-essential-oil-pre-diluted-mct": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-eucalyptus-essential-oil-pre-diluted-mct": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-organic-beard-oil": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 8,
+  "offers": true,
+  "faqs": 6
+ },
+ "bodyj4you-wellness-essential-oil-blends": {
+  "blocks": 3,
+  "errors": [],
+  "product": "ProductGroup",
+  "rating": [
+   null,
+   null
+  ],
+  "facts": 9,
   "offers": true,
   "faqs": 6
  }
