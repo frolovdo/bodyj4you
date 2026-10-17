@@ -1,0 +1,78 @@
+{%- comment -%}
+  Agentic structured data (BodyJ4You, 2026-10-17). Source: ~/bodyj4you/shopify-agentic/theme.
+  1. Product: Shopify's own `structured_data` output, extended in the same object with
+     aggregateRating (reviews.rating / reviews.rating_count metafields, filled by Judge.me)
+     and additionalProperty (the "Key Facts" list of the agentic description).
+  2. FAQPage: the "Frequently Asked Questions" section of the description (h3 question + p answer).
+  Products whose description lacks those sections simply get the native Product block.
+{%- endcomment -%}
+{%- liquid
+  assign desc = product.description
+  assign sd = product | structured_data | strip
+  assign sd_open = sd | remove_last: '}'
+
+  assign rating = product.metafields.reviews.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+
+  assign facts_html = ''
+  if desc contains '<h2>Key Facts</h2>'
+    assign facts_html = desc | split: '<h2>Key Facts</h2>' | last | split: '</ul>' | first
+  endif
+
+  assign faq_html = ''
+  if desc contains '<h2>Frequently Asked Questions</h2>'
+    assign faq_html = desc | split: '<h2>Frequently Asked Questions</h2>' | last
+  endif
+-%}
+<script type="application/ld+json">
+  {{ sd_open }}
+  {%- if rating != blank and rating_count > 0 -%}
+    ,"aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ rating.rating | plus: 0 }},
+      "bestRating": {{ rating.scale_max | plus: 0 }},
+      "worstRating": {{ rating.scale_min | plus: 0 }},
+      "reviewCount": {{ rating_count | json }}
+    }
+  {%- endif -%}
+  {%- if facts_html != '' -%}
+    {%- assign items = facts_html | split: '<li>' -%}
+    ,"additionalProperty": [
+    {%- assign first = true -%}
+    {%- for item in items -%}
+      {%- unless item contains '</strong>' -%}{%- continue -%}{%- endunless -%}
+      {%- assign label = item | split: '</strong>' | first | strip_html | strip | remove_last: ':' | strip -%}
+      {%- assign value = item | split: '</strong>' | last | strip_html | strip -%}
+      {%- if label == 'Brand' or label == blank or value == blank -%}{%- continue -%}{%- endif -%}
+      {%- unless first -%},{%- endunless -%}
+      {"@type": "PropertyValue", "name": {{ label | json }}, "value": {{ value | json }}}
+      {%- assign first = false -%}
+    {%- endfor -%}
+    ]
+  {%- endif -%}
+  }
+</script>
+{%- if faq_html contains '<h3>' -%}
+  {%- assign qs = faq_html | split: '<h3>' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": {{ product.url | append: '#faq' | json }},
+      "about": {"@id": {{ product.url | append: '#product' | json }}},
+      "mainEntity": [
+      {%- assign first = true -%}
+      {%- for q in qs -%}
+        {%- unless q contains '</h3>' -%}{%- continue -%}{%- endunless -%}
+        {%- assign question = q | split: '</h3>' | first | strip_html | strip -%}
+        {%- assign answer = q | split: '</h3>' | last | split: '<h2>' | first | strip_html | strip -%}
+        {%- if question == blank or answer == blank -%}{%- continue -%}{%- endif -%}
+        {%- unless first -%},{%- endunless -%}
+        {"@type": "Question", "name": {{ question | json }},
+         "acceptedAnswer": {"@type": "Answer", "text": {{ answer | json }}}}
+        {%- assign first = false -%}
+      {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}

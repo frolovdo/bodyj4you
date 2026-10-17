@@ -1,0 +1,173 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "scrolling_promotion_KhdTdc": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "text_niHbzP": {
+          "type": "text",
+          "settings": {
+            "text": "100% CLEAN, NON-IRRITATING",
+            "text_link": "",
+            "text_size": "text-base",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_t3BcT4": {
+          "type": "text",
+          "settings": {
+            "text": "NO ANIMAL TESTING",
+            "text_link": "",
+            "text_size": "text-base",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_QCAxbn": {
+          "type": "text",
+          "settings": {
+            "text": "FREE SHIPPING ON ALL U.S. ORDERS $200+",
+            "text_link": "",
+            "text_size": "text-base",
+            "font_weight": "font-heading",
+            "font_style": "normal",
+            "letter_spacing": 0,
+            "text_opacity": 100,
+            "text_style": "normal",
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "text_niHbzP",
+        "text_t3BcT4",
+        "text_QCAxbn"
+      ],
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "color_scheme": "scheme-inverse",
+        "vertical_alignment": "center",
+        "direction": "left",
+        "pause_on_hover": false,
+        "speed": 0.5,
+        "h_spacing": 60,
+        "v_spacing": 0,
+        "padding_top": 12,
+        "padding_bottom": 12,
+        "show_divider": false,
+        "divider_layout": "vertical"
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "product_list_kfEYgp": {
+          "type": "product_list",
+          "settings": {
+            "menu_title": "Shop",
+            "collections": [
+              "new",
+              "sale",
+              "best-sellers"
+            ],
+            "menu_columns": 2,
+            "show_menu_column_divider": true,
+            "promotions_width": 60,
+            "number_of_columns": 3,
+            "product_list": [
+              "piercing-bump-care-oil-033-fl-oz",
+              "piercing-aftercare-saline-spray-4-fl-oz",
+              "organic-castor-oil-pure-100-usda-certified",
+              "organic-jojoba-oil-pure-100-usda-certified",
+              "complete-piercing-aftercare-kit-cleaning-floss"
+            ],
+            "heading": "Best sellers"
+          }
+        },
+        "custom_card_TUGQp7": {
+          "type": "custom_card",
+          "settings": {
+            "menu_title": "Shop",
+            "menu_columns": 3,
+            "promotions_width": 38,
+            "promotion_columns": 1,
+            "heading_1": "",
+            "heading_size_1": "h5",
+            "description_1": "",
+            "promotion_link_1": "",
+            "heading_2": "",
+            "heading_size_2": "h5",
+            "description_2": "",
+            "promotion_link_2": "",
+            "heading_3": "",
+            "heading_size_3": "h5",
+            "description_3": "",
+            "promotion_link_3": "",
+            "heading_4": "",
+            "heading_size_4": "h5",
+            "description_4": "",
+            "promotion_link_4": "",
+            "heading_5": "",
+            "heading_size_5": "h5",
+            "description_5": "",
+            "promotion_link_5": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_list_kfEYgp",
+        "custom_card_TUGQp7"
+      ],
+      "custom_css": [
+        ".card-media__text {max-width: 17rem;}",
+        "@media (min-width: 768px) {.product-card-style-3 .product-card__info {padding: 1.6rem; }}"
+      ],
+      "settings": {
+        "container": "full",
+        "color_scheme": "scheme-1",
+        "menu": "main-menu",
+        "menu_mobile": "main-menu",
+        "header_layout": "left-center",
+        "sticky_header": "on-scroll-up",
+        "menu_trigger": "hover",
+        "show_sperator_line": true,
+        "hide_sperator_on_pages": "index,about,lookbook",
+        "enable_transparent_header": false,
+        "transparent_header_color": "#ffffff",
+        "logo_mobile_position": "left",
+        "show_social_media_icons": false,
+        "enable_language_selector": false,
+        "enable_country_selector": true,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    }
+  },
+  "order": [
+    "scrolling_promotion_KhdTdc",
+    "header"
+  ]
+}

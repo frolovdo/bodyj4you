@@ -1,0 +1,93 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "image_text_F3FNhx": {
+          "type": "image_text",
+          "settings": {
+            "block_width": 25,
+            "heading": "About",
+            "heading_size": "h4",
+            "image_width": 50,
+            "text": "<p>At BodyJ4You, we pride ourselves on offering quality skincare made from the best ingredients available. </p>",
+            "button_label": "Learn more",
+            "button_link": "shopify://pages/about-us",
+            "open_default": true,
+            "show_divider": true
+          }
+        },
+        "contact_information_mn7LNY": {
+          "type": "contact_information",
+          "settings": {
+            "block_width": 25,
+            "heading": "Contact us",
+            "heading_size": "h4",
+            "address": "1732 NW 21st Terrace, Miami, FL, 33142",
+            "working_hours": "Mon-Thu 9:00am - 5:00pm (EST). Fri 9:00am - 3:00pm (EST)",
+            "email": "support@bodyj4you.com",
+            "phone": "+1 (786) 837-5562",
+            "open_default": false,
+            "show_divider": true
+          }
+        },
+        "menu_4eCrBB": {
+          "type": "menu",
+          "settings": {
+            "block_width": 25,
+            "heading": "Customer care",
+            "heading_size": "h4",
+            "menu": "customer-care",
+            "open_default": false,
+            "show_divider": true
+          }
+        },
+        "menu_DEKGYP": {
+          "type": "menu",
+          "settings": {
+            "block_width": 25,
+            "heading": "Shop",
+            "heading_size": "h4",
+            "menu": "footer-menu-shop",
+            "open_default": false,
+            "show_divider": true
+          }
+        }
+      },
+      "block_order": [
+        "image_text_F3FNhx",
+        "contact_information_mn7LNY",
+        "menu_4eCrBB",
+        "menu_DEKGYP"
+      ],
+      "custom_css": [
+        ".form-control {--color-border: var(--color-field);}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": false,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "footer_bottom_menu": "",
+        "show_section_divider": true,
+        "divider_width": "full"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

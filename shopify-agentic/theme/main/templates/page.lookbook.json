@@ -1,0 +1,421 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "custom_css": [],
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "image_with_text_overlay_pMpjM4": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "subheading_fFbrFP": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Our Lookbook"
+          }
+        },
+        "heading_ypkcNL": {
+          "type": "heading",
+          "settings": {
+            "heading": "Skincare with naturally",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "button_3T7neJ": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn more",
+            "button_style": "btn--primary"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_fFbrFP",
+        "heading_ypkcNL",
+        "button_3T7neJ"
+      ],
+      "settings": {
+        "container": "full",
+        "desktop_height": "adapt",
+        "overlay_opacity": 0,
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "color_scheme": "",
+        "content_position": "middle-center",
+        "content_alignment": "center",
+        "mobile_height": "adapt",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "featured_collection_e8nkKJ": {
+      "type": "featured-collection",
+      "custom_css": [
+        ".section__header--text {max-width: 70rem; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "header_layout": "vertical",
+        "heading": "We believe in considering the impact of the choices we make every day",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "Organic Ingredients",
+        "description": "<p>Sustainability is the epitome of allure in modern fashion. Our workout wear collection embodies this ethos, seamlessly blending eco-consciousness with undeniable sexiness. From sleek designs to flattering cuts, each piece exudes confidence and style while leaving</p>",
+        "text_size": "text-base",
+        "show_collection_description": false,
+        "limit": 4,
+        "columns": 4,
+        "column_gap": "medium",
+        "row_gap": "inherit",
+        "grid_layout": "standard",
+        "enable_slider": true,
+        "controls_position": "inside",
+        "pcard_image_ratio": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "show_all_button_on_top": false,
+        "button_label": "",
+        "button_style": "btn--primary",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "highlight_text_with_image_9KLzcX": {
+      "type": "highlight-text-with-image",
+      "blocks": {
+        "image_URaWGC": {
+          "type": "image",
+          "settings": {
+            "image_width": 220,
+            "image_width_mobile": 110
+          }
+        },
+        "image_DyKWHM": {
+          "type": "image",
+          "settings": {
+            "image_width": 220,
+            "image_width_mobile": 110
+          }
+        },
+        "image_NGQQmW": {
+          "type": "image",
+          "settings": {
+            "image_width": 220,
+            "image_width_mobile": 110
+          }
+        }
+      },
+      "block_order": [
+        "image_URaWGC",
+        "image_DyKWHM",
+        "image_NGQQmW"
+      ],
+      "custom_css": [
+        ".highlight-text-with-image {--blocks-radius: 13rem; --blocks-radius-mobile: 13rem;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "text": "Make you look [img1] and <br>feel glowy [img2] and healthy [img3]",
+        "heading_size": "hd1",
+        "alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "media_with_collection_BTHPGg": {
+      "type": "media-with-collection",
+      "blocks": {
+        "image_xqgdky": {
+          "type": "image",
+          "settings": {
+            "image_ratio": "adapt"
+          }
+        }
+      },
+      "block_order": [
+        "image_xqgdky"
+      ],
+      "settings": {
+        "color_scheme": "scheme-8",
+        "heading": "Makeup Collection",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "<p>Transform your look this season with our products!</p>",
+        "limit": 3,
+        "columns": "2",
+        "media_position": "left",
+        "product_image_ratio": "adapt",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "lookbook_banner_fUexWb": {
+      "type": "lookbook-banner",
+      "blocks": {
+        "product_pHCq3b": {
+          "type": "product",
+          "settings": {
+            "top": 45,
+            "left": 44,
+            "top_mobile": 45,
+            "left_mobile": 30
+          }
+        },
+        "scrolling_text_XCxeAA": {
+          "type": "scrolling_text",
+          "settings": {
+            "text": "Shop this look",
+            "text_link": ""
+          }
+        },
+        "scrolling_text_n8BpyR": {
+          "type": "scrolling_text",
+          "settings": {
+            "text": "Shining Make-up",
+            "text_link": ""
+          }
+        },
+        "scrolling_text_r37TjQ": {
+          "type": "scrolling_text",
+          "settings": {
+            "text": "European Style",
+            "text_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_pHCq3b",
+        "scrolling_text_XCxeAA",
+        "scrolling_text_n8BpyR",
+        "scrolling_text_r37TjQ"
+      ],
+      "custom_css": [
+        ".section__header--text {width: 70rem; max-width: 100%; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "heading": "We believe in considering the impact of the choices we make every day",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "Organic Ingredients",
+        "description": "",
+        "annotation_color": "light",
+        "scrolling_direction": "left",
+        "pause_on_hover": false,
+        "scrolling_speed": 0.3,
+        "scrolling_text_color": "#ffffff",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "multicolumn_mQAQbW": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_6be7nJ": {
+          "type": "column",
+          "settings": {
+            "image_width": "extra-large",
+            "title": "",
+            "heading_size": "h4",
+            "text": "<p>“ Also the customer service is phenomenal.<br/>I would purchase again.”</p>",
+            "text_size": "text-lg",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_m4RcYP": {
+          "type": "column",
+          "settings": {
+            "image_width": "extra-large",
+            "title": "",
+            "heading_size": "h4",
+            "text": "<p>“Great product line. <br/>Very attentive staff to deal with.”</p>",
+            "text_size": "text-lg",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_bRpkxq": {
+          "type": "column",
+          "settings": {
+            "image_width": "extra-large",
+            "title": "",
+            "heading_size": "h4",
+            "text": "<p>\"Looking to affordably upgrade your everyday dinnerware? Look no further than e.Space\"</p>",
+            "text_size": "text-lg",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "column_6be7nJ",
+        "column_m4RcYP",
+        "column_bRpkxq"
+      ],
+      "custom_css": [
+        ".multicolumn {--image-spacing-bottom: 1.2rem; --image-spacing-bottom-mobile: 1.2rem;}",
+        ".multicolumn-card--image-extra-large {--image-width-mobile: 15rem;}",
+        "@media (max-width: 767px) {.multicolumn-card__text br {display: none; }}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "heading": "Featured by Press",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "column_alignment": "center",
+        "columns_desktop": 3,
+        "column_gap": "large",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "products_showcase_9KVeQe": {
+      "type": "products-showcase",
+      "settings": {
+        "color_scheme": "",
+        "heading": "The core products",
+        "heading_size": "h2",
+        "heading_highlight_style": "none",
+        "pcard_title_size": "hd2",
+        "pcard_description_display": "3-lines",
+        "pcard_description_size": "text-lg",
+        "pcard_image_ratio": "3/4",
+        "pcard_show_vendor": false,
+        "pcard_show_type": true,
+        "pcard_button_label": "Shop this product",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": true,
+        "divider_width": "full"
+      }
+    },
+    "custom_content_7PdtA7": {
+      "type": "custom-content",
+      "blocks": {
+        "image_card_JEaNN9": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 30,
+            "heading": "Meet Our Partners",
+            "heading_size": "h1",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "Read more",
+            "button_style": "btn--primary",
+            "content_position": "middle-center",
+            "content_alignment": "center",
+            "content_spacing": "small",
+            "color_scheme_mobile": "",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "image_card_phA3qp": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 30,
+            "heading": "Find Us Everywhere",
+            "heading_size": "h1",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "Read more",
+            "button_style": "btn--primary",
+            "content_position": "middle-center",
+            "content_alignment": "center",
+            "content_spacing": "small",
+            "color_scheme_mobile": "",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_card_JEaNN9",
+        "image_card_phA3qp"
+      ],
+      "custom_css": [
+        ".card-media {--blocks-radius: 0; --child-margin-top: 2.4rem;}"
+      ],
+      "settings": {
+        "container": "full",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "column_gap": "none",
+        "row_gap": "inherit",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_overlay_pMpjM4",
+    "featured_collection_e8nkKJ",
+    "highlight_text_with_image_9KLzcX",
+    "media_with_collection_BTHPGg",
+    "lookbook_banner_fUexWb",
+    "multicolumn_mQAQbW",
+    "products_showcase_9KVeQe",
+    "custom_content_7PdtA7"
+  ]
+}

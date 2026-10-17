@@ -1,0 +1,147 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs_xYaBHj": {
+      "type": "breadcrumbs",
+      "settings": {
+        "text_alignment": "center"
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "contact_form_pUJ4BH": {
+      "type": "contact-form",
+      "blocks": {
+        "image_card_ETpApD": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image": "shopify://shop_images/5e7261fb-2ca4-459e-9f14-426d23068c17._CR0_0_2000_2000_SX1500.jpg",
+            "image_overlay_opacity": 42,
+            "heading": "How can we help you?",
+            "heading_size": "h1",
+            "subheading": "",
+            "description": "<p>Do you need to return your order, get a refund or have another concern?</p><p>Our customer service team wants to help and make your BodyJ4You experience an excellent one!</p><p>Our customer service team is available to help with any BodyJ4You.com issue you may have.</p><p>Complete the form and we will get back to you within 24-48 business hours.</p>",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "content_position": "bottom-left",
+            "content_alignment": "left",
+            "content_spacing": "large",
+            "card_link": "",
+            "color_scheme_mobile": "scheme-1",
+            "show_text_below": true,
+            "content_alignment_mobile": "center"
+          }
+        },
+        "custom_field_mJyPnA": {
+          "type": "custom_field",
+          "settings": {
+            "field_type": "phone",
+            "heading": "Phone",
+            "placeholder": "Your placeholder",
+            "required": false,
+            "full_width": true,
+            "select_options": "Option 1, Option 2, Option 3",
+            "checkbox_checked_value": "Yes",
+            "checkbox_uncheck_value": "No",
+            "radio_options": "Option 1, Option 2, Option 3"
+          }
+        }
+      },
+      "block_order": [
+        "image_card_ETpApD",
+        "custom_field_mJyPnA"
+      ],
+      "name": "t:sections.contact-form.presets.name",
+      "settings": {
+        "section_color_scheme": "",
+        "color_scheme": "scheme-1",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "padding_top": 0,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "multicolumn_agQ9HU": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_XTrFdN": {
+          "type": "column",
+          "settings": {
+            "show_image": false,
+            "image_width": "medium",
+            "title": "Customer Support Phone",
+            "heading_size": "h4",
+            "text": "",
+            "text_size": "text-base",
+            "button_label": "+1 (786) 837-5562",
+            "button_style": "btn--primary",
+            "button_link": "tel:+1 (786) 837-5562",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_FEdz64": {
+          "type": "column",
+          "settings": {
+            "show_image": false,
+            "image_width": "medium",
+            "title": "Customer Support Email",
+            "heading_size": "h4",
+            "text": "",
+            "text_size": "text-base",
+            "button_label": "support@bodyj4you.com",
+            "button_style": "btn--primary",
+            "button_link": "mailto:support@bodyj4you.com",
+            "mobile_layout": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "column_XTrFdN",
+        "column_FEdz64"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "heading": "Feel free to contact us directly",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "<p>Customer support hours: Mon-Thu 9:00am - 5:00pm (EST). Fri 9:00am - 3:00pm (EST)</p>",
+        "text_size": "text-base",
+        "column_alignment": "center",
+        "columns_desktop": 2,
+        "column_gap": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 50,
+        "padding_bottom": 94,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs_xYaBHj",
+    "main",
+    "contact_form_pUJ4BH",
+    "multicolumn_agQ9HU"
+  ]
+}

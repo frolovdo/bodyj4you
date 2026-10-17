@@ -1,0 +1,659 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "rich_text_eaA8rn": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_Y8jzAN": {
+          "type": "heading",
+          "settings": {
+            "heading": "About <strong>BodyJ4You</strong>",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "text_d3cRQ8": {
+          "type": "text",
+          "settings": {
+            "text": "",
+            "text_size": "text-base"
+          }
+        },
+        "button_7yqcGF": {
+          "type": "button",
+          "settings": {
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary"
+          }
+        }
+      },
+      "block_order": [
+        "heading_Y8jzAN",
+        "text_d3cRQ8",
+        "button_7yqcGF"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "content_alignment": "center",
+        "padding_top": 50,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "image_with_text_bexetQ": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_qa6nK8": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "BodyJ4You"
+          }
+        },
+        "heading_LpVime": {
+          "type": "heading",
+          "settings": {
+            "heading": "Crafted by Experts. Trusted by Thousands. Rooted in Care.",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "text_4nYaNE": {
+          "type": "text",
+          "settings": {
+            "text": "<p>For over 20 years, BodyJ4You has been dedicated to one mission: empowering self-expression through healthy, safe, and effective skincare for tattoos and piercings. Born in the USA and backed by decades of expertise, our products are trusted by professionals and loved by individuals who value both aesthetics and well-being.</p>",
+            "text_size": "text-base"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_qa6nK8",
+        "heading_LpVime",
+        "text_4nYaNE"
+      ],
+      "settings": {
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-3",
+        "image": "shopify://shop_images/5e7261fb-2ca4-459e-9f14-426d23068c17._CR0_0_2000_2000_SX1500.jpg",
+        "image_height": "adapt",
+        "layout": "text_first",
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "center",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "mobile_content_alignment": "left",
+        "padding_top": 56,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "full"
+      }
+    },
+    "image_with_text_pnkdUn": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_bwr66U": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "BodyJ4You"
+          }
+        },
+        "heading_qWe8Ta": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our story began with a simple truth:",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "text_YXjfeA": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Traditional aftercare products didn’t meet the needs of real people—those with sensitive skin, those who wanted natural ingredients, and those who expected transparency. So, we created something better. Developed by professional piercers and tested to the highest standards, our products are designed to support healing, reduce irritation, and nourish skin from the very first day.</p>",
+            "text_size": "text-base"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_bwr66U",
+        "heading_qWe8Ta",
+        "text_YXjfeA"
+      ],
+      "settings": {
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-2",
+        "image": "shopify://shop_images/fb1ee264-3eb0-4700-be89-dd463a79c5e4._CR0_0_750_750_SX750.jpg",
+        "image_height": "adapt",
+        "layout": "image_first",
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "center",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "mobile_content_alignment": "left",
+        "padding_top": 56,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "full"
+      }
+    },
+    "rich_text_w9LgC6": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_YV8wmG": {
+          "type": "heading",
+          "settings": {
+            "heading": "What Makes Us Different",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_YV8wmG"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "content_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "multicolumn_trERbz": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_PeaDKT": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-american-5128178.svg",
+            "image_width": "large",
+            "title": "Made in the USA",
+            "heading_size": "h4",
+            "text": "<p>We manufacture all our products locally, following strict U.S. regulations. This ensures consistent quality, transparency, and ethical production practices.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_AbJN3D": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-sensitive-skin-approved-7722430.svg",
+            "image_width": "large",
+            "title": "Safe for Sensitive Skin",
+            "heading_size": "h4",
+            "text": "<p>Our products are dermatologically tested, hypoallergenic, free from harsh additives, and suitable for all skin types—including the most delicate.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_GRYdw8": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-handshake-6944600.svg",
+            "image_width": "large",
+            "title": "Developed by Professionals",
+            "heading_size": "h4",
+            "text": "<p>Each formula is crafted in collaboration with experienced piercers and skincare experts to ensure safe, effective support for every stage of healing.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_HDFPiT": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-check-user-1347170.svg",
+            "image_width": "large",
+            "title": "20 Years of Experience",
+            "heading_size": "h4",
+            "text": "<p>Our journey started two decades ago, and today we proudly serve thousands of loyal customers across the U.S. With deep insights into tattoo and piercing care, we create solutions that genuinely work.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_C4mgnB": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-cruelty-free-6181635.svg",
+            "image_width": "large",
+            "title": "Natural. Vegan. Cruelty-Free.",
+            "heading_size": "h4",
+            "text": "<p>We believe in clean beauty. Our ingredients are plant-based, free from parabens, petroleum, alcohol, and animal testing.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_WzVXEW": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-eyebrow-piercing-6207488.svg",
+            "image_width": "large",
+            "title": "Universal Use",
+            "heading_size": "h4",
+            "text": "<p>Whether you have a single tattoo or a full sleeve, a fresh piercing or a long-term stretch, our products support your body’s natural recovery without compromise.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "column_PeaDKT",
+        "column_AbJN3D",
+        "column_GRYdw8",
+        "column_HDFPiT",
+        "column_C4mgnB",
+        "column_WzVXEW"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "column_alignment": "center",
+        "columns_desktop": 3,
+        "column_gap": "large",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "collapsible_tabs_z3JGYY": {
+      "type": "collapsible-tabs",
+      "blocks": {
+        "image_card_NmUgMM": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "desktop_image_position": "left",
+            "image_width": 50,
+            "alignment": "center",
+            "image": "shopify://shop_images/Frame_1000003035.png",
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 0,
+            "heading": "",
+            "heading_size": "h1",
+            "subheading": "",
+            "description": "",
+            "button_label": "",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "medium",
+            "card_link": "",
+            "order_first": false
+          }
+        },
+        "heading_MDmMTX": {
+          "type": "heading",
+          "settings": {
+            "heading": "Frequently Asked Questions",
+            "heading_size": "h1",
+            "sub_heading": "Bodyj4You"
+          }
+        },
+        "collapsible_item_VdqfgD": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "How do I know which product is right for my tattoo or piercing?",
+            "content": "<p>Each product page includes clear descriptions and usage recommendations. You can also use filters to search by skin type, healing stage, or procedure. For quick help, our live chat is available during business hours.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": true
+          }
+        },
+        "collapsible_item_AWXyNC": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Can I use one product for both tattoos and piercings?",
+            "content": "<p>We recommend using dedicated products for each. Tattooed skin and pierced areas have different healing needs, and our formulas are specifically optimized to support those differences.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false
+          }
+        },
+        "collapsible_item_nbqHwr": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Do you offer gift sets or bundles?",
+            "content": "<p>Yes! We offer curated aftercare kits that include everything needed for proper healing. They're perfect for personal use or as a thoughtful gift for someone getting their first tattoo or piercing.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false
+          }
+        },
+        "collapsible_item_ghjx8T": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "What if I have a reaction to a product?",
+            "content": "<p>Although our products are dermatologically tested and safe for sensitive skin, we recommend doing a patch test before full use. If irritation occurs, discontinue use and consult a healthcare professional. We're always here to help with any product concerns.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "image_card_NmUgMM",
+        "heading_MDmMTX",
+        "collapsible_item_VdqfgD",
+        "collapsible_item_AWXyNC",
+        "collapsible_item_nbqHwr",
+        "collapsible_item_ghjx8T"
+      ],
+      "custom_css": [
+        ".collapsible-tabs__wrapper {--row-gap-mobile: 4.8rem;}",
+        "@media (min-width: 768px) {collapsible-tabs {max-width: 61rem; padding-inline-start: 3rem; } .card-media {margin-right: -5px; } .collapsible-tabs__content-col {align-items: flex-end; }}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "header_layout": "vertical",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--primary",
+        "column_gap": "none",
+        "row_gap": "large",
+        "item_style": "standard",
+        "item_color_scheme": "",
+        "item_heading_font": "heading",
+        "item_heading_size": "h3",
+        "item_icon_size": "extra-large",
+        "padding_top": 96,
+        "padding_bottom": 0,
+        "show_section_divider": true,
+        "divider_width": "fixed"
+      }
+    },
+    "highlight_text_with_image_PkAxKw": {
+      "type": "highlight-text-with-image",
+      "blocks": {
+        "image_DKxJpy": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/image_9e7e87da-31e5-41ba-a400-ee7a7bda7cd5.png",
+            "image_link": "",
+            "image_width": 100,
+            "image_width_mobile": 50
+          }
+        },
+        "image_nbpbgH": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/image-1_54a02154-4c21-4a81-b817-d59be0171243.png",
+            "image_link": "",
+            "image_width": 100,
+            "image_width_mobile": 56
+          }
+        }
+      },
+      "block_order": [
+        "image_DKxJpy",
+        "image_nbpbgH"
+      ],
+      "name": "t:sections.highlight-text-with-image.name",
+      "settings": {
+        "color_scheme": "",
+        "text": "We Stand [img1] for More Than [img2] Just Skin",
+        "heading_size": "hd1",
+        "alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "rich_text_HVnYiF": {
+      "type": "rich-text",
+      "blocks": {
+        "text_DfEV4x": {
+          "type": "text",
+          "settings": {
+            "text": "<p>BodyJ4You isn’t a faceless brand. We listen—daily—to what our customers tell us they need. <br/>That’s why every product we launch is a direct response to real challenges our community faces. <br/>Because for us, tattoos and piercings aren’t just art—they’re stories. And behind every story, there should be care you can count on.</p>",
+            "text_size": "text-lg"
+          }
+        }
+      },
+      "block_order": [
+        "text_DfEV4x"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "content_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "collection_list_Q46NpX": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_rkJ8K7": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "piercing-aftercare",
+            "image": "shopify://shop_images/Frame_1000002985.png",
+            "title": "Piercing aftercare",
+            "description": ""
+          }
+        },
+        "featured_collection_JGAKUn": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "tattoo-aftercare",
+            "image": "shopify://shop_images/Frame_1000003004.png",
+            "title": "Tattoo aftercare",
+            "description": ""
+          }
+        },
+        "featured_collection_868UKh": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "organic-castor-oil",
+            "image": "shopify://shop_images/Frame_1000002991.png",
+            "title": "Skin, Eyelash & Eyebrow Care",
+            "description": ""
+          }
+        },
+        "featured_collection_9tdfxJ": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "piercing-jewelry",
+            "image": "shopify://shop_images/Frame_1000002989.png",
+            "title": "Piercing jewelry",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_rkJ8K7",
+        "featured_collection_JGAKUn",
+        "featured_collection_868UKh",
+        "featured_collection_9tdfxJ"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "layout": "split",
+        "subheading": "Want to see the difference real aftercare can make?",
+        "heading": "Explore our collection and feel the BodyJ4You difference—your skin will thank you.",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "description": "",
+        "text_size": "text-base",
+        "card_color_inherited": false,
+        "show_product_count": true,
+        "show_icon": true,
+        "card_style": "",
+        "card_image_ratio": "1/1",
+        "content_alignment": "left",
+        "columns_desktop": 3,
+        "column_gap": "medium",
+        "row_gap": "medium",
+        "enable_slider": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_7PdtA7": {
+      "type": "custom-content",
+      "blocks": {
+        "image_card_JEaNN9": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image": "shopify://shop_images/Frame_1000003038.png",
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 0,
+            "heading": "Become our partner",
+            "heading_size": "h1",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "Read more",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "large",
+            "card_link": "shopify://pages/partnership",
+            "color_scheme_mobile": "scheme-inverse",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "image_card_phA3qp": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image": "shopify://shop_images/Frame_1000003037.png",
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 0,
+            "heading": "Explore the catalog",
+            "heading_size": "h1",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "Read more",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "large",
+            "card_link": "shopify://collections/all",
+            "color_scheme_mobile": "scheme-inverse",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_card_JEaNN9",
+        "image_card_phA3qp"
+      ],
+      "custom_css": [
+        ".card-media {border-radius: 0;}",
+        ".rich-text {--child-margin-top: 2.4rem;}",
+        "@media (max-width: 767px) {.rich-text {--child-margin-top: 2rem; }}"
+      ],
+      "settings": {
+        "container": "full",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "column_gap": "none",
+        "row_gap": "inherit",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_eaA8rn",
+    "image_with_text_bexetQ",
+    "image_with_text_pnkdUn",
+    "rich_text_w9LgC6",
+    "multicolumn_trERbz",
+    "collapsible_tabs_z3JGYY",
+    "highlight_text_with_image_PkAxKw",
+    "rich_text_HVnYiF",
+    "collection_list_Q46NpX",
+    "custom_content_7PdtA7"
+  ]
+}

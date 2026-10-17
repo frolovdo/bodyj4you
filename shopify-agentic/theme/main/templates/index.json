@@ -1,0 +1,733 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "slideshow_q3U4Jn": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_JhU8hg": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "background": "shopify://shop_images/Frame_1000003056.png",
+            "background_mobile": "shopify://shop_images/Frame_1000003051.png",
+            "image_overlay_opacity": 0,
+            "show_content_in_container": true,
+            "content_position": "bottom-right",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "left",
+            "title": "",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "",
+            "description_size": "text-inherit",
+            "button_label": "",
+            "button_link": "shopify://collections/piercing-aftercare",
+            "button_style": "btn--primary"
+          }
+        },
+        "slide_X9VkPW": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "background": "shopify://shop_images/006-PA_banner.jpg",
+            "background_mobile": "shopify://shop_images/006-PA_banner.jpg",
+            "image_overlay_opacity": 0,
+            "show_content_in_container": true,
+            "content_position": "bottom-right",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "center",
+            "title": "",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "",
+            "description_size": "text-base",
+            "button_label": "Shop Now",
+            "button_link": "shopify://products/piercing-bump-care-oil-033-fl-oz",
+            "button_style": "btn--primary"
+          }
+        },
+        "slide_kDPWUr": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "background": "shopify://shop_images/011-PA_banner.jpg",
+            "background_mobile": "shopify://shop_images/011-PA_banner.jpg",
+            "image_overlay_opacity": 0,
+            "show_content_in_container": true,
+            "content_position": "bottom-right",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "center",
+            "title": "",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "",
+            "description_size": "text-base",
+            "button_label": "Shop Now",
+            "button_link": "shopify://products/bodyj4you-jojoba-oil-golden-organic-5ml-stretched-ear-lobe-natural-aftercare-wax-gauges-taper-plug-5ml",
+            "button_style": "btn--primary"
+          }
+        },
+        "slide_mj48bP": {
+          "type": "slide",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "background": "shopify://shop_images/Frame_1000003057.png",
+            "background_mobile": "shopify://shop_images/Frame_1000003055.png",
+            "image_overlay_opacity": 0,
+            "show_content_in_container": true,
+            "content_position": "bottom-right",
+            "content_position_mobile": "middle-center",
+            "text_alignment": "left",
+            "title": "",
+            "heading_size": "hd1",
+            "subheading": "",
+            "description": "",
+            "description_size": "text-base",
+            "button_label": "",
+            "button_link": "shopify://collections/essential-oils",
+            "button_style": "btn--primary"
+          }
+        }
+      },
+      "block_order": [
+        "slide_JhU8hg",
+        "slide_X9VkPW",
+        "slide_kDPWUr",
+        "slide_mj48bP"
+      ],
+      "custom_css": [
+        ".slideshow__text {max-width: 46rem;}",
+        "@media (max-width: 767px) {.slideshow__text {margin: 0 auto; }}",
+        "@media (min-width: 1280px) {.slideshow__text {padding-inline: 3.2rem; }}"
+      ],
+      "settings": {
+        "container": "full",
+        "layout": "standard",
+        "slide_height": "adapt",
+        "show_dots": true,
+        "autoplay": true,
+        "autoplay_delay": 5,
+        "controls_position": "bottom",
+        "show_text_below": true,
+        "text_alignment_mobile": "center",
+        "accessibility_info": "Slideshow about our brand"
+      }
+    },
+    "image_with_text_MgddA8": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_XLgqVJ": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "BodyJ4You"
+          }
+        },
+        "heading_J7mctK": {
+          "type": "heading",
+          "settings": {
+            "heading": "Crafted by Experts. Trusted by Thousands. Rooted in Care.",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        },
+        "text_A3Dahr": {
+          "type": "text",
+          "settings": {
+            "text": "<p>For over 20 years, BodyJ4You has been dedicated to one mission: empowering self-expression through healthy, safe, and effective skincare for tattoos and piercings.<br/><br/>orn in the USA and backed by decades of expertise, our products are trusted by professionals and loved by individuals who value both aesthetics and well-being.</p>",
+            "text_size": "text-base"
+          }
+        },
+        "button_jAUX49": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn more",
+            "button_link": "shopify://pages/about-us",
+            "button_style": "btn--underline"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_XLgqVJ",
+        "heading_J7mctK",
+        "text_A3Dahr",
+        "button_jAUX49"
+      ],
+      "custom_css": [
+        ".image-with-text__content {max-width: 40rem; margin: 0 auto;}"
+      ],
+      "settings": {
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-3",
+        "image": "shopify://shop_images/Frame_1000002983.png",
+        "image_height": "adapt",
+        "layout": "text_first",
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "center",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "mobile_content_alignment": "left",
+        "padding_top": 56,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "full"
+      }
+    },
+    "multicolumn_Tw7PCY": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_fYXhrq": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-american-5128178.svg",
+            "image_width": "large",
+            "title": "Made in USA",
+            "heading_size": "h4",
+            "text": "<p>Crafted with care, locally made and regulated.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_XFcGp6": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-sensitive-skin-approved-7722430.svg",
+            "image_width": "large",
+            "title": "For Sensitive Skin",
+            "heading_size": "h4",
+            "text": "<p>Hypoallergenic, non-comedogenic, and free from harsh chemicals.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_dEibXx": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-cruelty-free-6181635.svg",
+            "image_width": "large",
+            "title": "Cruelty Free",
+            "heading_size": "h4",
+            "text": "<p>100% vegan and never tested on animals.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        },
+        "column_qyKghq": {
+          "type": "column",
+          "settings": {
+            "show_image": true,
+            "image": "shopify://shop_images/noun-handshake-6944600.svg",
+            "image_width": "large",
+            "title": "Trusted by Professionals",
+            "heading_size": "h4",
+            "text": "<p>Created by expert piercers, backed by 20 years of experience.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_style": "btn--underline",
+            "button_link": "",
+            "mobile_layout": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "column_fYXhrq",
+        "column_XFcGp6",
+        "column_dEibXx",
+        "column_qyKghq"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "text_size": "text-base",
+        "column_alignment": "center",
+        "columns_desktop": 4,
+        "column_gap": "large",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "collection_list_Pr36qH": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_VHfaMD": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "piercing-aftercare",
+            "image": "shopify://shop_images/Frame_1000002985.png",
+            "title": "Piercing aftercare",
+            "description": ""
+          }
+        },
+        "featured_collection_H3VHEr": {
+          "type": "featured_collection",
+          "disabled": true,
+          "settings": {
+            "collection": "tattoo-aftercare",
+            "image": "shopify://shop_images/Frame_1000003004.png",
+            "title": "Tattoo aftercare",
+            "description": ""
+          }
+        },
+        "featured_collection_ytHAXL": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "essential-oils",
+            "image": "shopify://shop_images/Frame_1000002991.png",
+            "title": "Skin, Eyelash & Eyebrow Care",
+            "description": ""
+          }
+        },
+        "featured_collection_inyzwk": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "piercing-jewelry",
+            "image": "shopify://shop_images/Frame_1000002989.png",
+            "title": "Piercing jewelry",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_VHfaMD",
+        "featured_collection_H3VHEr",
+        "featured_collection_ytHAXL",
+        "featured_collection_inyzwk"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "layout": "split",
+        "subheading": "Care for your skin",
+        "heading": "Natural self care products",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "description": "",
+        "text_size": "text-base",
+        "card_color_inherited": false,
+        "show_product_count": true,
+        "show_icon": true,
+        "card_style": "",
+        "card_image_ratio": "1/1",
+        "content_alignment": "left",
+        "columns_desktop": 3,
+        "column_gap": "medium",
+        "row_gap": "medium",
+        "enable_slider": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "product_tabs_kL6YeF": {
+      "type": "product-tabs",
+      "blocks": {
+        "tab_ywXYKm": {
+          "type": "tab",
+          "settings": {
+            "title": "Best sellers",
+            "collection": "best-sellers"
+          }
+        },
+        "tab_RQg7RG": {
+          "type": "tab",
+          "settings": {
+            "title": "New",
+            "collection": "new"
+          }
+        },
+        "tab_pMnDKQ": {
+          "type": "tab",
+          "settings": {
+            "title": "Sale",
+            "collection": "sale"
+          }
+        }
+      },
+      "block_order": [
+        "tab_ywXYKm",
+        "tab_RQg7RG",
+        "tab_pMnDKQ"
+      ],
+      "name": "t:sections.product-tabs.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "header_layout": "vertical",
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "limit": 4,
+        "columns": 4,
+        "column_gap": "medium",
+        "row_gap": "inherit",
+        "grid_layout": "standard",
+        "pcard_image_ratio": "",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "show_all_button_on_top": true,
+        "button_label": "Shop All Products",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "tabs_nav_style": "design-2",
+        "padding_top": 68,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "products_bundle_cFjE73": {
+      "type": "products-bundle",
+      "blocks": {
+        "product_bNtrwr": {
+          "type": "product",
+          "settings": {
+            "product": "piercing-aftercare-saline-spray-2-fl-oz",
+            "color_scheme": "",
+            "horizontal_position": 19,
+            "vertical_position": 55
+          }
+        },
+        "product_tNmVzg": {
+          "type": "product",
+          "settings": {
+            "product": "piercing-bump-care-oil-033-fl-oz",
+            "color_scheme": "",
+            "horizontal_position": 86,
+            "vertical_position": 68
+          }
+        }
+      },
+      "block_order": [
+        "product_bNtrwr",
+        "product_tNmVzg"
+      ],
+      "custom_css": [
+        ".section__header--text {max-width: 44rem; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/Frame_1000003014_2e0a738c-9e8e-4c3f-aa09-68c7c1d4dcc9.png",
+        "heading": "Level up skincare routine with the bundle",
+        "heading_size": "h2",
+        "heading_highlight_style": "none",
+        "subheading": "Shop skincare set",
+        "description": "",
+        "padding_top": 100,
+        "padding_bottom": 54,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "rich_text_Rp3yaE": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_T9A7GQ": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our happy customers",
+            "heading_size": "hd1",
+            "heading_highlight_style": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_T9A7GQ"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "color_scheme": "",
+        "content_alignment": "center",
+        "padding_top": 86,
+        "padding_bottom": 18,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "video_carousel_slider_pgAJG6": {
+      "type": "video-carousel-slider",
+      "blocks": {
+        "video_D4q9xz": {
+          "type": "video",
+          "settings": {
+            "html5_video": "shopify://files/videos/content-1161820.mp4",
+            "product": "hypochlorous-acid-face-spray-4-fl-oz",
+            "collection": "piercing-aftercare"
+          }
+        },
+        "video_bcX74b": {
+          "type": "video",
+          "settings": {
+            "html5_video": "shopify://files/videos/EO-CASTOR-06.mp4",
+            "product": "organic-castor-oil-pure-100-usda-certified",
+            "collection": "essential-oils"
+          }
+        },
+        "video_ipLDzL": {
+          "type": "video",
+          "settings": {
+            "html5_video": "shopify://files/videos/EO-TEATREE-03.mp4",
+            "product": "organic-teatree-oil-pure-100-usda-certified",
+            "collection": "essential-oils"
+          }
+        },
+        "video_mfLfbg": {
+          "type": "video",
+          "settings": {
+            "html5_video": "shopify://files/videos/HS0002-Master Video-Vertical-01.mp4",
+            "product": "piercing-aftercare-saline-spray-2-fl-oz",
+            "collection": "piercing-aftercare"
+          }
+        },
+        "video_HUPqba": {
+          "type": "video",
+          "settings": {
+            "html5_video": "shopify://files/videos/EO-CASTOR-11.mp4",
+            "product": "organic-castor-oil-pure-100-usda-certified",
+            "collection": "essential-oils"
+          }
+        }
+      },
+      "block_order": [
+        "video_D4q9xz",
+        "video_bcX74b",
+        "video_ipLDzL",
+        "video_mfLfbg",
+        "video_HUPqba"
+      ],
+      "name": "Video carousel",
+      "settings": {
+        "slide_width": 355,
+        "image_crop": "1:1",
+        "aspect_ratio": "9:16",
+        "autoplay": 8,
+        "gap": 30,
+        "show_arrows": false,
+        "text_size": 100,
+        "text_alignment": "left",
+        "text_color": "#121212",
+        "border_color": "#ffffff",
+        "background_color": "",
+        "border_radius": 21,
+        "base_width": 100,
+        "max_width": "",
+        "inner_padding": 40,
+        "outer_margin": 20,
+        "custom_css": "",
+        "mobile_custom_css": "",
+        "anchor_id": "",
+        "override_theme_font": false,
+        "heading_font": "serif",
+        "main_font": "sans-serif"
+      }
+    },
+    "products_showcase_9KVeQe": {
+      "type": "products-showcase",
+      "settings": {
+        "color_scheme": "scheme-3",
+        "heading": "The core products",
+        "heading_size": "h2",
+        "heading_highlight_style": "none",
+        "products": [
+          "piercing-aftercare-saline-spray-2-fl-oz",
+          "piercing-bump-care-oil-033-fl-oz",
+          "organic-castor-oil-pure-100-usda-certified"
+        ],
+        "pcard_title_size": "hd3",
+        "pcard_description_display": "3-lines",
+        "pcard_description_size": "text-base",
+        "pcard_image_ratio": "3/4",
+        "pcard_show_vendor": false,
+        "pcard_show_type": true,
+        "pcard_button_label": "Shop this product",
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "rich_text_J3XnPC": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_jLVTiL": {
+          "type": "heading",
+          "settings": {
+            "heading": "At BodyJ4You, we pride ourselves on offering quality skincare made from the best ingredients available. ",
+            "heading_size": "h3",
+            "heading_highlight_style": "none"
+          }
+        },
+        "button_jYDXnF": {
+          "type": "button",
+          "settings": {
+            "button_label": "About Us",
+            "button_link": "shopify://pages/about-us",
+            "button_style": "btn--underline"
+          }
+        }
+      },
+      "block_order": [
+        "heading_jLVTiL",
+        "button_jYDXnF"
+      ],
+      "custom_css": [
+        ".rich-text {max-width: 76rem; margin: 0 auto;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "content_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_dxQmWd": {
+      "type": "custom-content",
+      "blocks": {
+        "image_card_cGCnqG": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-2",
+            "image": "shopify://shop_images/Frame_1000003009.png",
+            "image_ratio": "3/4",
+            "image_overlay_opacity": 0,
+            "heading": "News, tips, reviews",
+            "heading_size": "h2",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "View Our Blog",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "large",
+            "card_link": "shopify://blogs/news",
+            "color_scheme_mobile": "",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "image_card_6PehkE": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-2",
+            "image": "shopify://shop_images/Frame_1000003010.png",
+            "image_ratio": "3/4",
+            "image_overlay_opacity": 0,
+            "heading": "Partnership",
+            "heading_size": "h2",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "Become A Partner",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "large",
+            "card_link": "shopify://pages/partnership",
+            "color_scheme_mobile": "",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "image_card_GKVG6K": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-2",
+            "image": "shopify://shop_images/Frame_1000003011.png",
+            "image_ratio": "3/4",
+            "image_overlay_opacity": 0,
+            "heading": "Certificates",
+            "heading_size": "h2",
+            "heading_highlight_style": "none",
+            "subheading": "",
+            "description": "",
+            "button_label": "View Certification",
+            "button_style": "btn--primary",
+            "content_position": "bottom-center",
+            "content_alignment": "center",
+            "content_spacing": "large",
+            "card_link": "shopify://pages/usda-certificate",
+            "color_scheme_mobile": "",
+            "show_text_below": false,
+            "content_alignment_mobile": "center",
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_card_cGCnqG",
+        "image_card_6PehkE",
+        "image_card_GKVG6K"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "heading": "",
+        "heading_size": "h1",
+        "heading_highlight_style": "none",
+        "subheading": "",
+        "description": "",
+        "column_gap": "medium",
+        "row_gap": "inherit",
+        "swipe_on_mobile": true,
+        "columns_mobile": "1",
+        "padding_top": 60,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "slideshow_q3U4Jn",
+    "image_with_text_MgddA8",
+    "multicolumn_Tw7PCY",
+    "collection_list_Pr36qH",
+    "product_tabs_kL6YeF",
+    "products_bundle_cFjE73",
+    "rich_text_Rp3yaE",
+    "video_carousel_slider_pgAJG6",
+    "products_showcase_9KVeQe",
+    "rich_text_J3XnPC",
+    "custom_content_dxQmWd"
+  ]
+}
