@@ -557,7 +557,7 @@ document.addEventListener("click",e=>{
   if(add){const tr=add.closest("tr");const sku=tr.dataset.sku;const inp=tr.querySelector("input");const qty=parseInt(inp.value||"0",10);
     if(qty>0){carts[activeWare].set(sku,{sku,cat:tr.querySelector(".catline").textContent,qty});
       tr.classList.add("pending");inp.value=0;inp.disabled=true;tr.querySelectorAll(".stepper button").forEach(b=>b.disabled=true);add.disabled=true;
-      renderCart();toast(`Added ${qty} × ${sku} — adjust it in the ${activeWare==="miami"?"shipment cart":"China order"}`);}return;}
+      renderCart();toast(`Added ${qty} × ${sku} — adjust it in the ${activeWare==="china"?"China order":"shipment cart"}`);}return;}
   const rm=e.target.closest("[data-rm]");
   if(rm){uncart(rm.dataset.rm);return;}
   const tb=e.target.closest("[data-toast]");if(tb){toast(tb.dataset.toast);}
