@@ -1,0 +1,50 @@
+SHOPIFY PRODUCT 4885327085615
+Title: BodyJ4You 12PC Tattoo Choker Necklace Set - Assorted 90s Stretch Chokers
+Variant option: COLOR
+Variants (SKU: option value):
+  NC4250: Black
+  NC4058: Multicolor
+  NC4270: Rainbow
+  NC4272: Black, Clear
+  NC4274: Black, Red
+  NC4271: Pink, Clear
+  NC4273: Aqua, Pink, Clear
+  NC4275: Black, Pink, Clear
+  NC4293: Summer Mix
+  NC4377: Gothic Black
+
+== Amazon NC4250 / B07YCX7ZF4 (variant Black)
+Title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Black Gothic Emo']
+Highlight: ['90s Black Choker Necklaces for Women - Y2K Choker Stretchy Jewelry Set - Halloween Goth Emo Grunge - 2000s Rave Collar']
+B1: 90s TATTOO CHOKER NECKLACE SET: 12PC Stretchy Tattoo Choker Necklaces for Women in the Classic Henna Style Weave of 90s Accessories. Y2K Accessories That Pair With a Black Dress, Grunge Layers, Y2K Outfits for Women, 90s Outfits for Women, Concert Fits, and Halloween Costumes. Layers With BodyJ4You Charms
+B2: GOTH EMO Y2K JEWELRY: A Black Choker Necklace Is the Signature Piece of Goth Accessories, Emo Accessories, Scene, Alt, and Punk Style. Each Elastic Choker Is Made of Soft Non-Toxic Plastic, Sits Close to the Neck With No Clasp, and Stretches Up to 18 Inches (45 cm) for Easy Fit
+B3: RAVE CONCERT FESTIVAL ACCESSORIES: Colorful Chokers in Black, Rainbow, Pink, Blue, White, Red, Velvet Lace, and Beaded Boho Colorways Match Rave Outfits, Music Festival Looks, Pride Parades, 90s Theme Parties, Y2K Party Decorations and Favors, and Halloween Jewelry - a Halloween Choker for Witch, Vampire, Goth and 90s Costume Accessories. Waterproof for Beach, Pool, and Gym Wear
+B4: HOW TO WEAR A TATTOO CHOKER: Stretch the Choker Gently Open, Slip It Over Your Head, and Let It Settle at the Base of the Neck. Wear One Alone for a Minimalist Look or Stack Two or Three Colors for a Layered 2000s Style. Expect a Snug Fit That Relaxes Slightly After a Few Wears
+B5: SAFE QUALITY AND VARIETY: Made From Soft, Flexible, Non-Toxic, Odor-Free Plastic That Is Light Enough to Forget You Are Wearing It. 12 Chokers per Pack Means a Color for Every Outfit and Spares. BodyJ4You Has Designed Body Jewelry and Fashion Accessories for Over 10 Years
+Attributes: {"color": ["Black"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4058 (Multicolor): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Pink Blue Green']; attrs: {"color": ["Multicolor"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4270 (Rainbow): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Rainbow Colorful']; attrs: {"color": ["Rainbow"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4272 (Black, Clear): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Black White Goth']; attrs: {"color": ["Black, Clear"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4274 (Black, Red): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Black Red Gothic']; attrs: {"color": ["Black, Red"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+== Amazon NC4271 / B082LVB5NS (variant Pink, Clear)
+Title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Pink White Pastel']
+Highlight: ['90s Choker Necklaces for Woman - Stretchy Jewelry Set - Goth Emo Grunge Scene Alt Punk - 2000s Rave Concert Halloween Collar']
+B1: 90s TATTOO CHOKER NECKLACE SET: 12PC Stretchy Tattoo Choker Necklaces for Women in the Classic Henna Style Weave of 90s Accessories. Y2K Accessories That Pair With a Black Dress, Grunge Layers, 2000s Outfits, Concert Fits, and Halloween Costumes. Layers With BodyJ4You Charms
+B2: GOTH EMO Y2K JEWELRY: A Black Choker Necklace Is the Signature Piece of Goth Accessories, Emo Accessories, Scene, Alt, and Punk Style. Each Elastic Choker Is Made of Soft Non-Toxic Plastic, Sits Close to the Neck With No Clasp, and Stretches Up to 18 Inches (45 cm) for Easy Fit
+B3: RAVE CONCERT FESTIVAL ACCESSORIES: Colorful Chokers in Black, Rainbow, Pink, Blue, White, Red, Velvet Lace, and Beaded Boho Colorways Match Rave Outfits, Music Festival Looks, Pride Parades, 90s Theme Parties, and Halloween Jewelry. Waterproof for Beach, Pool, and Gym Wear
+B4: HOW TO WEAR A TATTOO CHOKER: Stretch the Choker Gently Open, Slip It Over Your Head, and Let It Settle at the Base of the Neck. Wear One Alone for a Minimalist Look or Stack Two or Three Colors for a Layered 2000s Style. Expect a Snug Fit That Relaxes Slightly After a Few Wears
+B5: SAFE QUALITY AND VARIETY: Made From Soft, Flexible, Non-Toxic, Odor-Free Plastic That Is Light Enough to Forget You Are Wearing It. 12 Chokers per Pack Means a Color for Every Outfit and Spares. BodyJ4You Has Designed Body Jewelry and Fashion Accessories for Over 10 Years
+Attributes: {"color": ["Pink, Clear"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4273 (Aqua, Pink, Clear): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Pink Blue White']; attrs: {"color": ["Aqua, Pink, Clear"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4275 (Black, Pink, Clear): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Black Pink White']; attrs: {"color": ["Black, Pink, Clear"], "size": ["Adjustable"], "material": ["Plastic"], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4293 (Summer Mix): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Colorful Beaded']; attrs: {"color": ["Multi"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}
+
+-- Amazon NC4377 (Gothic Black): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace - Y2K Accessories - Black Velvet Lace']; attrs: {"color": ["Gothic Black"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone", "No Gemstone", "No Gemstone"], "style": ["90s Fashion Vitange Trend Choker Necklace Set"]}

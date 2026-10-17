@@ -1,0 +1,26 @@
+SHOPIFY PRODUCT 9783722377499
+Title: Piercing Aftercare Saline Drops - 0.33 Fl Oz
+Variant option: Size
+Variants (SKU: option value):
+  HS0002-10_FBA: 0.33 Fl Oz (Pack of 1)
+  HS0002-10-2_FBA: 0.33 Fl Oz (Pack of 2)
+
+== Amazon HS0002-10_FBA / B0C5D7CZG2 (variant 0.33 Fl Oz (Pack of 1))
+Title: ['BodyJ4You Piercing Aftercare Drops - Sterile Saline Wound Wash Solution']
+Highlight: ['Cleans New Piercings Ear Nose - Soothes Septum Belly Button - Sea Salt Aloe Keloid Bump Care Travel Size 0.33 Fl Oz Dropper']
+B1: SAFE NATURAL CLEANSER PIERCING & TATTOO: Powered by Saline Solution, Sea Salt, Tea Tree Oil, Aloe Vera and Essential Minerals. Spray Helps Reduce Recovery Time by Keeping Your Skin Clean and Protected. Easy Care for New Tattoo or Body Modifications - Gauged Ears, Cartilage Piercing, Eyebrow, Nose, Septum, Navel Belly Button, and More
+B2: ESSENTIAL FOR EARS, FACE & BODY PIERCING: Daily Routine Use Helps to Reduce Discomfort and Recovery Time, Calm Irritated Skin, Minimize Swelling and Wounds Associated with New or Old Piercings. Create Naturally Optimal Environment for Your Body - Enjoy Shorter Recovery Time and Smoother Piercing Experience
+B3: NOSE PIERCING CLEANER: Convenient Dropper Dispenser Helps to Avoid Touching Your New Piercing, Simply Apply Directly on Piercing and Allow Air Dry. EAR CLEANING SOLUTION: For Best Results Apply Daily at Least Twice a Day. Sterile Saline Helps to Speed Up Recovery, but Remember to Be Patient with Your Body as It Recovers
+B4: EXPERT PIERCING AFTERCARE: Created by Piercing Professionals for Healthy Piercing Experience. Our Aftercare Products to Minimize Skin Bumps, Keloids, and Elevated Scars While Calming Redness, Tenderness, and Swelling. CONVENIENT: 0.33 Fl Oz (10ml) Dropper Bottle, Easy to Dispense, Safe Spill-Free Nozzle.
+B5: MADE IN USA: Manufactured in Certified Facility, USA Lab Patch Tested to Meet High Quality Standards, Safe Certified, Environmentally-Friendly, No CFCS, Preservatives or Additives. Trusted by Wide Community of Piercing Enthusiasts and Professionals
+Attributes: {"size": ["0.33 Fl Oz (10ml)"], "number_of_items": [1], "unit_count": [0.33], "item_volume": ["0.33"], "scent": ["Tea Tree and Rosemary"], "product_benefit": ["Cleansing"], "skin_type": ["normal", "dry", "combination", "oily"], "directions": ["Drop directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children"], "ingredients": ["Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E"]}
+
+== Amazon HS0002-10-2_FBA / B0C7XZ9SDX (variant 0.33 Fl Oz (Pack of 2))
+Title: ['BodyJ4You Piercing Aftercare Drops - Sterile Saline Wound Wash Solution']
+Highlight: ['Cleans New Piercings Ear Nose - Soothes Septum Belly Button - Sea Salt Aloe Keloid Bump Care Travel Size 2 Pack 0.33 Fl Oz']
+B1: SAFE NATURAL CLEANSER PIERCING & TATTOO: Powered by Saline Solution, Sea Salt, Tea Tree Oil, Aloe Vera and Essential Minerals. Spray Helps Reduce Recovery Time by Keeping Your Skin Clean and Protected. Easy Care for New Tattoo or Body Modifications - Gauged Ears, Cartilage Piercing, Eyebrow, Nose, Septum, Navel Belly Button, and More
+B2: ESSENTIAL FOR EARS, FACE & BODY PIERCING: Daily Routine Use Helps to Reduce Discomfort and Recovery Time, Calm Irritated Skin, Minimize Swelling and Wounds Associated with New or Old Piercings. Create Naturally Optimal Environment for Your Body - Enjoy Shorter Recovery Time and Smoother Piercing Experience
+B3: NOSE PIERCING CLEANER: Convenient Dropper Dispenser Helps to Avoid Touching Your New Piercing, Simply Apply Directly on Piercing and Allow Air Dry. EAR CLEANING SOLUTION: For Best Results Apply Daily at Least Twice a Day. Sterile Saline Helps to Speed Up Recovery, but Remember to Be Patient with Your Body as It Recovers
+B4: EXPERT PIERCING AFTERCARE: Created by Piercing Professionals for Healthy Piercing Experience. Our Aftercare Products to Minimize Skin Bumps, Keloids, and Elevated Scars While Calming Redness, Tenderness, and Swelling. CONVENIENT: Pack of 2 0.33 Fl Oz (10ml) Dropper Bottle, Easy to Dispense, Safe Spill-Free Nozzle.
+B5: MADE IN USA: Manufactured in Certified Facility, USA Lab Patch Tested to Meet High Quality Standards, Safe Certified, Environmentally-Friendly, No CFCS, Preservatives or Additives. Trusted by Wide Community of Piercing Enthusiasts and Professionals
+Attributes: {"size": ["2 x 0.33 Fl Oz (10ml)"], "unit_count": [0.66], "item_volume": ["0.66"], "scent": ["Tea Tree and Rosemary"], "skin_type": ["normal", "dry", "combination", "oily"], "directions": ["Drop directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children"], "ingredients": ["Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E"]}

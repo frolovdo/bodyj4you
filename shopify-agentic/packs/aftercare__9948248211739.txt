@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 9948248211739
+Title: Piercing Aftercare Kit, Saline Drops + Bump Oil
+Variant option: Title
+Variants (SKU: option value):
+  HB0017_FBA: Default Title
+
+== Amazon HB0017_FBA / B0C5D8F4F1 (variant Default Title)
+Title: ['BodyJ4You Sterile Saline Solution Keloid Bump Oil Drops - Travel Aftercare']
+Highlight: ['Saline Drops for Piercings - Ear Piercing Cleaner Wash Rinse - Nose Septum Belly Button Cartilage Nipple Navel - 0.33 Fl Oz']
+B1: TRAVEL PIERCING CLEANING KIT: Two 0.33 Fl Oz (10ml) Dropper Bottles, a Sterile Saline Solution Plus a Targeted Keloid Bump Oil. No Alcohol and No Preservatives. Sized for a Bag, Pocket, Purse or Locker So Your Daily Aftercare Goes Everywhere That You Go, Every Single Day
+B2: TARGETS PIERCING BUMPS & KELOIDS: Oil Helps Calm the Look of Redness, Soften the Feel of Hardness and Hydrate Skin With Natural Essential Oils. Supports Skin Renewal, Locks in Moisture, and Gradually Improves Texture With Consistent Use
+B3: GENTLE CLEANSING & PROTECTION: Saline Solution Maintains a Clean Piercing Environment With Sea Salt, Tea Tree Oil, and Aloe Vera. Rinses Gently, Calms the Look of Irritated Skin, and Keeps the Area Comfortable Through the Recovery Process
+B4: HOW TO CLEAN A NEW PIERCING: Wash Your Hands, Apply Two or Three Drops of Saline Onto the Piercing and Let It Air Dry, Then Massage Two Drops of Bump Oil Into the Area. Repeat This Twice Daily. Steady Daily Use Matters More Than Using a Lot at Once
+B5: CONVENIENT & EASY APPLICATION: Bump Treatment Comes in a 0.33 Fl Oz (10ml) Dropper Bottle for Precision, & Saline Solution in 0.33 Fl Oz (10ml) Dropper Bottle. Leak-Proof, Travel-Friendly, Small Batch Filled and Safety Sealed
+Attributes: {"size": ["Bundle 2 x 0.33 Fl Oz (10ml)"], "number_of_items": [2], "unit_count": [2.0], "scent": ["Characteristic"], "material_feature": ["Alcohol Free", "Preservative Free", "Sterile"], "product_benefit": ["Cleansing", "Moisturizing"], "skin_type": ["combination", "dry", "normal", "oily", "Sensitive"], "directions": ["Saline solution - apply directly on piercing or sterile disposable cotton tip, apply as needed to affected areas and allow air dry."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E."]}

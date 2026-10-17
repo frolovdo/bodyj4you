@@ -1,0 +1,24 @@
+SHOPIFY PRODUCT 4473229148207
+Title: 37PC Ear Stretching Kit (14G-00G) + Jojoba Oil
+Variant option: Color
+Variants (SKU: option value):
+  GK0715: Silvertone
+  GK0716: Black
+  GK0717: Goldtone
+  GK0718: Rainbow
+
+== Amazon GK0715 / B085SYXFDV (variant Silvertone)
+Title: ['BodyJ4You 37PC Ear Stretching Kit with Jojoba Oil']
+Highlight: ['Complete Beginner Set Gauges for Ears 14G-00G - Silvertone Stainless Steel Tapers Single Flare Plugs Tunnels']
+B1: COMPLETE STRETCHING KIT: 37-Piece Set With Surgical Stainless Steel Tapers, Single Flare Tunnels With O-Rings and Premium USDA Organic Jojoba Oil. Gauges for Ears 14G to 00G Plus the Organic Oil to Use Them. Everything You Need From First Stretch to Goal Size in One Box
+B2: VERIFIED SIZES, NO GUESSWORK: Tapers and Tunnels With O-Rings Included - 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). Single Flare Plug Has a Lip on One Side, Smooth on the Other - O-Rings Hold Jewelry Securely in Place
+B3: PREMIUM AFTERCARE INCLUDED: Most Kits Stop at the Hardware - This One Adds USDA Organic Cold-Pressed Jojoba Oil, the Closest Natural Match to Your Own Skin. Eases Each Stretch and Keeps Lobes Soft, Hydrated and Flexible. No Hunting for Aftercare, No Synthetic Lubricants
+B4: HOW DO I STRETCH MY EARS SAFELY: Apply the Jojoba Oil to a Clean Healed Lobe, Then Slide the Taper Through Gradually and Follow With the Matching Plug. Re-Apply Oil Daily and Wait 4-6 Weeks Before Sizing Up. Mild Pressure Is Normal - Pain Means Stop, So Patience Always Wins
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Surgical Stainless Steel With a Mirror-Polished Surface for Smooth Comfortable All-Day Wear. Lightweight, Durable and Easy to Clean. Jojoba Oil in a 0.17 Fl Oz (5ml) Amber Glass Dropper - Hexane Free, Vegan and Cruelty Free
+Attributes: {"color": ["Silvertone, Single Flare"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0716 (Black): same bullets as above; title: ['BodyJ4You 37PC Ear Stretching Kit with Jojoba Oil']; attrs: {"color": ["Black, Single Flare"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0717 (Goldtone): same bullets as above; title: ['BodyJ4You 37PC Ear Stretching Kit with Jojoba Oil']; attrs: {"color": ["Goldtone, Single Flare"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0718 (Rainbow): same bullets as above; title: ['BodyJ4You 37PC Ear Stretching Kit with Jojoba Oil']; attrs: {"color": ["Rainbow, Single Flare"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}

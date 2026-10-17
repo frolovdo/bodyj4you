@@ -1,0 +1,42 @@
+SHOPIFY PRODUCT 4885376565295
+Title: BodyJ4You 12PC Colorful Tattoo Choker Necklace Set - 90s Stretch Chokers
+Variant option: COLOR
+Variants (SKU: option value):
+  NC4059: All Colors
+  NC4084: Multicolor Mix
+  NC4101: Colorful Mix
+  NC4103: Pastel Multicolor
+  NC4284: Unicorn Rainbow
+  NC4304: Summer Mix
+  NC4305: Hawaiian Rainbow
+  NC4353: Back to School Mix
+
+== Amazon NC4059 / B01IACWDOK (variant All Colors)
+Title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Y2K Jewelry']
+Highlight: ['90s Choker Necklace - Y2K Accessories - Stretchy Tattoo Chokers - Goth Halloween Charm Pendant - Y2K Outfits for Women']
+B1: STRETCHY VINTAGE CHOKER NECKLACE: Inspired by 90s Henna Tattoo Designs, This Elastic Necklace Fits Comfortably and Complements a Variety of Styles - Perfect for Pairing with Classic Black Dress, Gothic Looks, 2000s-inspired Outfits, Rock Concerts, Beachwear, Halloween Costumes, or Holiday Parties
+B2: EFFORTLESS STYLE AND COMFORT: Designed with Convenient Slip-on Feature, Choker Eliminates Need for Clasp, Making It Quick and Easy to Wear. Crafted From Stretchy Plastic, It Comfortably Expands Up to 18 Inches (45cm) to Conform to Your Neck. Perfect for Elevating Scene Edgy Style with Minimal Effort
+B3: HAVE FUN GET CREATIVE: Embrace 90s and 2000s Vibe by Layering Chokers - Velvet and Black Choker, Flower Necklace, Rainbow, Daisy Charm, and Butterfly Pendant. Mix and Match to Create Your Own Unique Look, Whether It’s Cute, Anime, Goth, Emo, Chic, Gothic, Punk, or Grunge - Easy Halloween Costume Accessories for Witch, Vampire, or Y2K Looks
+B4: 90's ACCESSORIES JEWELRY SET: Cute Choker Delivers a Vintage, Nostalgic Look Suitable for Any Occasion. GIFT IDEA: Thoughtful Choice for Your Best Friend, Mother, Wife, or Even Yourself. Perfectly Versatile for Any Season, Including Summer, Autumn, Winter, and Spring
+B5: SAFE QUALITY: Made From Soft, Stretchy, and Durable Plastic That is Non-toxic and Odor-free - Ideal for Sensitive Skin. Waterproof and Water-resistant Design Allows You to Wear It Confidently During Beach Outings, Gym Sessions, or Swimming. Perfect Accessory for Vacations or Beach Days
+Attributes: {"color": ["Black, Rainbow, Purple"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+== Amazon NC4101 / B01MDJL6N5 (variant Colorful Mix)
+Title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Necklaces Y2K Fashion Trendy Vintage - Emo Black Choker Neon Green Red Pink Clear White Daisy Flower - Stretchy Elastic Chokers Neck Lace']
+Highlight: ['Stretchy Elastic Choker Necklaces Adjustable - Charm Pendant Necklaces Emo Goth Grunge - Henna Tattoo Chokers Vintage Trendy']
+B1: STRETCHY VINTAGE CHOKER NECKLACE: Inspired by 90s Henna Tattoo Designs, This Elastic Necklace Fits Comfortably and Complements a Variety of Styles - Perfect for Pairing with Classic Black Dress, Gothic Looks, 2000s-inspired Outfits, Rock Concerts, Beachwear, Halloween Costumes, or Holiday Parties
+B2: EFFORTLESS STYLE AND COMFORT: Designed with Convenient Slip-on Feature, Choker Eliminates Need for Clasp, Making It Quick and Easy to Wear. Crafted From Stretchy Plastic, It Comfortably Expands Up to 18 Inches (45cm) to Conform to Your Neck. Perfect for Elevating Scene Edgy Style with Minimal Effort
+B3: HAVE FUN GET CREATIVE: Embrace 90s and 2000s Vibe by Layering Chokers - Velvet and Black Choker, Flower Necklace, Rainbow, Daisy Charm, and Butterfly Pendant. Mix and Match to Create Your Own Unique Look, Whether It’s Cute, Anime, Goth, Emo, Chic, Gothic, Halloween, Punk, or Grunge
+B4: 90's ACCESSORIES JEWELRY SET: Cute Choker Delivers a Vintage, Nostalgic Look Suitable for Any Occasion. GIFT IDEA: Thoughtful Choice for Your Best Friend, Mother, Wife, or Even Yourself. Perfectly Versatile for Any Season, Including Summer, Autumn, Winter, and Spring
+B5: SAFE QUALITY: Made From Soft, Stretchy, and Durable Plastic That is Non-toxic and Odor-free - Ideal for Sensitive Skin. Waterproof and Water-resistant Design Allows You to Wear It Confidently During Beach Outings, Gym Sessions, or Swimming. Perfect Accessory for Vacations or Beach Days
+Attributes: {"color": ["Black, Rainbow, Red"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+-- Amazon NC4103 (Pastel Multicolor): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Y2K Jewelry']; attrs: {"color": ["Aqua, Clear, Pink"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+-- Amazon NC4284 (Unicorn Rainbow): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Y2K Jewelry']; attrs: {"color": ["Rainbow, Purple, Pink"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+-- Amazon NC4304 (Summer Mix): same bullets as above; title: ['BodyJ4You 12PC Choker Necklace Charm Cherry Star Butterfly Berry Pendant Black Henna Tattoo Stretch']; attrs: {"color": ["Black, Green, Red, Blue, Pink"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+-- Amazon NC4305 (Hawaiian Rainbow): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Y2K Jewelry']; attrs: {"color": ["Black, Rainbow, Blue"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}
+
+-- Amazon NC4353 (Back to School Mix): same bullets as above; title: ['BodyJ4You 12PC Tattoo Choker Necklace for Women - 90s Choker Y2K Jewelry']; attrs: {"color": ["Black, Rainbow"], "size": ["Adjustable"], "material": ["Plastic"], "item_package_quantity": [12], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["grunge punk gothic Y2K retro"]}

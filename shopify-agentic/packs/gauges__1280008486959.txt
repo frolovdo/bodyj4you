@@ -1,0 +1,48 @@
+SHOPIFY PRODUCT 1280008486959
+Title: 36PC Ear Stretching Kit (00G-20 mm)
+Variant option: Color
+Variants (SKU: option value):
+  GK0248: Black
+  GK0283: Clear
+  GK0286: Glow in the Dark
+  GK0285: Turquoise
+
+== Amazon GK0248_FBA / B0117T4S1E (variant Black)
+Title: ["BodyJ4You 36PC Ear Stretching Kit - 00G-20mm Big Gauges Kit - Heavy Acrylic Tapers Large Spiral Expanders No Flare Plugs - Solid Black - Women's Tapers Men's Tapers"]
+Highlight: None
+B1: BIG GAUGE STRETCHING SET: 36-Pieces Complete Large Gauge Stretching Kit - Heavy Solid Acrylic Tapers for Ears, Spiral Weights Ear Tapers, No Flare Plugs with O-Rings. Continue Stretching Journey - from 00G (10mm) and Gradually Go Up to 20mm (13/16"). We Strongly Recommend Purchasing Our Natural Jojoba Oil for Aftercare, Which Will Make Sizing Up Easy, Safe, and Comfortable.
+B2: VERIFIED SIZES: Hangers, Spirals, Plugs (O-Rings Included): 00G (10mm), 1/2" (12mm), 9/16" (14mm), 5/8" (16mm), 11/16" (18mm), 13/16" (20mm). COLOR: Black. Advanced Large Sizes 00G-20mm Stretching Kit Designed for Safe Ear Gauging Experience, Great as Dead Ear Stretching Kit.
+B3: HEALTHY STRETCHING: For a Safe and Gentle Ear Gauging Experience, Massage a Small Amount of Our Recommended Ear Stretching Oil or Ear Stretching Balm onto Your Earlobe Before Inserting the Taper. Be Patient as Your Body Recovers.
+B4: SAFE CHOICE: Jewelry Made of Hypoallergenic Materials, Solid, Durable, and Easy to Clean. Perfectly Smooth Surface Providing the Most Comfortable Wear, Prevents Damage and Irritation, Perfect for Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Black"], "material": ["Acrylic"], "metal_type": ["no-metal-type"], "gem_type": ["No Gemstone"]}
+
+== Amazon GK0283_FBA / B017J5I1PO (variant Clear)
+Title: ["BodyJ4You 36PC Ear Stretching Kit - 00G-20mm Big Gauges Kit - Heavy Acrylic Tapers Large Spiral Expanders No Flare Plugs - Clear Transparent - Women's Tapers Men's Tapers"]
+Highlight: None
+B1: BIG GAUGE STRETCHING SET: 36-Pieces Complete Large Gauge Stretching Kit - Heavy Solid Acrylic Tapers for Ears, Spiral Weights Ear Tapers, No Flare Plugs with O-Rings. Continue Stretching Journey - from 00G (10mm) and Gradually Go Up to 20mm (13/16"). We Strongly Recommend Purchasing Our Natural Jojoba Oil for Aftercare, Which Will Make Sizing Up Easy, Safe, and Comfortable.
+B2: VERIFIED SIZES: Hangers, Spirals, Plugs (O-Rings Included): 00G (10mm), 1/2" (12mm), 9/16" (14mm), 5/8" (16mm), 11/16" (18mm), 13/16" (20mm). COLOR: Clear Transparent. Advanced Large Sizes 00G-20mm Stretching Kit Designed for Safe Ear Gauging Experience, Great as Dead Ear Stretching Kit.
+B3: HEALTHY STRETCHING: For a Safe and Gentle Ear Gauging Experience, Massage a Small Amount of Our Recommended Ear Stretching Oil or Ear Stretching Balm onto Your Earlobe Before Inserting the Taper. Be Patient as Your Body Recovers.
+B4: SAFE CHOICE: Jewelry Made of Hypoallergenic Materials, Solid, Durable, and Easy to Clean. Perfectly Smooth Surface Providing the Most Comfortable Wear, Prevents Damage and Irritation, Perfect for Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Clear"], "material": ["Acrylic"], "metal_type": ["no-metal-type"], "gem_type": ["No Gemstone"]}
+
+== Amazon GK0286_FBA / B017J5HZC4 (variant Glow in the Dark)
+Title: ["BodyJ4You 36PC Ear Stretching Kit - 00G-20mm Big Gauges Kit - Heavy Acrylic Tapers Large Spiral Expanders No Flare Plugs - Glow in Dark Green - Women's Tapers Men's Tapers"]
+Highlight: None
+B1: BIG GAUGE STRETCHING SET: 36-Pieces Complete Large Gauge Stretching Kit - Heavy Solid Acrylic Tapers for Ears, Spiral Weights Ear Tapers, No Flare Plugs with O-Rings. Continue Stretching Journey - from 00G (10mm) and Gradually Go Up to 20mm (13/16"). We Strongly Recommend Purchasing Our Natural Jojoba Oil for Aftercare, Which Will Make Sizing Up Easy, Safe, and Comfortable.
+B2: VERIFIED SIZES: Hangers, Spirals, Plugs (O-Rings Included): 00G (10mm), 1/2" (12mm), 9/16" (14mm), 5/8" (16mm), 11/16" (18mm), 13/16" (20mm). COLOR: Glow in the Dark. Advanced Large Sizes 00G-20mm Stretching Kit Designed for Safe Ear Gauging Experience, Great as Dead Ear Stretching Kit.
+B3: HEALTHY STRETCHING: For a Safe and Gentle Ear Gauging Experience, Massage a Small Amount of Our Recommended Ear Stretching Oil or Ear Stretching Balm onto Your Earlobe Before Inserting the Taper. Be Patient as Your Body Recovers.
+B4: SAFE CHOICE: Jewelry Made of Hypoallergenic Materials, Solid, Durable, and Easy to Clean. Perfectly Smooth Surface Providing the Most Comfortable Wear, Prevents Damage and Irritation, Perfect for Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Glow in the Dark"], "material": ["Acrylic"], "metal_type": ["no-metal-type"], "gem_type": ["No Gemstone"]}
+
+== Amazon GK0285 / B017J71RQ2 (variant Turquoise)
+Title: ["BodyJ4You 36PC Ear Stretching Kit - 00G-20mm Big Gauges Kit - Heavy Acrylic Tapers Large Spiral Expanders No Flare Plugs - Turquoise Green - Women's Tapers Men's Tapers"]
+Highlight: None
+B1: BIG GAUGE STRETCHING SET: 36-Pieces Complete Large Gauge Stretching Kit - Heavy Solid Acrylic Tapers for Ears, Spiral Weights Ear Tapers, No Flare Plugs with O-Rings. Continue Stretching Journey - from 00G (10mm) and Gradually Go Up to 20mm (13/16"). We Strongly Recommend Purchasing Our Natural Jojoba Oil for Aftercare, Which Will Make Sizing Up Easy, Safe, and Comfortable.
+B2: VERIFIED SIZES: Hangers, Spirals, Plugs (O-Rings Included): 00G (10mm), 1/2" (12mm), 9/16" (14mm), 5/8" (16mm), 11/16" (18mm), 13/16" (20mm). COLOR: Turquoise. Advanced Large Sizes 00G-20mm Stretching Kit Designed for Safe Ear Gauging Experience, Great as Dead Ear Stretching Kit.
+B3: HEALTHY STRETCHING: For a Safe and Gentle Ear Gauging Experience, Massage a Small Amount of Our Recommended Ear Stretching Oil or Ear Stretching Balm onto Your Earlobe Before Inserting the Taper. Be Patient as Your Body Recovers.
+B4: SAFE CHOICE: Jewelry Made of Hypoallergenic Materials, Solid, Durable, and Easy to Clean. Perfectly Smooth Surface Providing the Most Comfortable Wear, Prevents Damage and Irritation, Perfect for Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Turquoise"], "material": ["Acrylic"], "metal_type": ["no-metal-type"], "gem_type": ["No Gemstone"]}

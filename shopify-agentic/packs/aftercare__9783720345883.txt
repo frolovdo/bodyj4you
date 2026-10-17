@@ -1,0 +1,21 @@
+SHOPIFY PRODUCT 9783720345883
+Title: Piercing Aftercare Saline Spray - 2 Fl Oz
+Variant option: Size
+Variants (SKU: option value):
+  HS0002_FBA: 2 Fl Oz (Pack of 1)
+  HS0002-2_FBA: 2 Fl Oz (Pack of 2)
+  HS0002-3: 2 Fl Oz (Pack of 3)
+
+== Amazon HS0002_FBA / B08S3JCTKC (variant 2 Fl Oz (Pack of 1))
+Title: ['BodyJ4You Piercing Aftercare Saline Spray - Sterile Saline Solution Wash']
+Highlight: ['Sea Salt Spray Ear Piercing Cleaner - Nose Septum Belly Button Nipple Cartilage - Earring Hole Fine Mist 2 Fl Oz Travel Size']
+B1: STERILE SALINE PIERCING AFTERCARE SPRAY: Sea Salt Saline Spray for Piercings. Fine Mist Piercing Spray Keeps Your New Piercing Fresh and Comfortable Every Day - Ear, Nose, Septum, Belly Button, Cartilage, Nipple, Tragus, Helix, Daith, Eyebrow, Lip, Dermal, Industrial
+B2: PIERCING BUMP CARE: Daily Aftercare Piercing Solution Helps Soothe Irritated Skin, Calm Visible Redness and Clean Around Bumps on New or Existing Piercings. Gentle No Sting Formula Creates a Naturally Clean Environment for Your Piercing - Enjoy a Smoother, More Comfortable Piercing Experience
+B3: EARRING CLEANER FOR PIERCED EARS: Convenient Travel Size Spray Helps You Avoid Touching Your Piercing - Simply Spray Directly and Allow to Air Dry. Pairs With BodyJ4You Piercing Bump Solution Drops for Complete Care of Fresh Ear, Nose and Body Piercings at Home or on the Go
+B4: HOW TO CLEAN A NEW PIERCING: Wash Hands First, Then Spray Saline Mist Directly on Front and Back of Your Piercing. Air Dry or Pat Dry With Clean Paper Towel, No Need to Rotate Jewelry. Use 2 to 6 Times Daily as an Ear or Nose Piercing Cleaner - One 2 Fl Oz Bottle Lasts About a Month of Twice Daily Piercing Care
+B5: NATURAL INGREDIENTS - NO ALCOHOL: Sterile Saline Solution for Piercings Made With Sodium Chloride Sea Salt, Aloe Vera, Tea Tree Oil, Rosemary and Vitamin E. No Preservatives, No Additives. Created by Piercing Professionals Trusted Over 20 Years
+Attributes: {"size": ["2.03 Fl Oz (Pack of 1)"], "number_of_items": [1], "unit_count": [2.0], "item_volume": [2.0], "scent": ["Unscented"], "material_feature": ["Alcohol Free", "Preservative Free", "Sterile"], "product_benefit": ["Cleansing"], "skin_type": ["normal", "dry", "combination", "oily"], "directions": ["Spray directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E."]}
+
+-- Amazon HS0002-2_FBA (2 Fl Oz (Pack of 2)): same bullets as above; title: ['BodyJ4You Piercing Aftercare Saline Spray - Sterile Saline Solution Wash']; attrs: {"size": ["2 Fl Oz (Pack of 2)"], "number_of_items": [2], "unit_count": [4.0], "item_volume": [4.0], "scent": ["Unscented"], "material_feature": ["Alcohol Free", "Preservative Free", "Sterile"], "product_benefit": ["Cleansing"], "skin_type": ["normal", "dry", "combination", "oily"], "directions": ["Spray directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach
+
+-- Amazon HS0002-3 (2 Fl Oz (Pack of 3)): same bullets as above; title: ['BodyJ4You Piercing Aftercare Saline Spray - Sterile Saline Solution Wash']; attrs: {"size": ["2 Fl Oz (Pack of 3)"], "number_of_items": [3], "unit_count": [6.0], "item_volume": [6.0], "scent": ["Unscented"], "metal_type": ["no-metal-type"], "material_feature": ["Alcohol Free", "Preservative Free", "Sterile"], "product_benefit": ["Cleansing"], "skin_type": ["normal", "dry", "combination", "oily"], "directions": ["Spray directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or 

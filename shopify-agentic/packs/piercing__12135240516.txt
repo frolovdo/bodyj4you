@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 12135240516
+Title: 120PC Body Piercing Jewelry Kit (14G, 16G)
+Variant option: Title
+Variants (SKU: option value):
+  KT8100: Default Title
+
+== Amazon KT8100_FBA / B0742QYGGN (variant Default Title)
+Title: ['BodyJ4You 120PC Body Piercing RANDOM Jewelry Kit']
+Highlight: ['CBR BCR Rings Barbells Studs Screws Curved Bars - Belly Button Cartilage Tragus Nose Septum Tongue']
+B1: VALUE PACK: 120 Pieces RANDOMLY Selected Set Includes All You Need for Ear, Facial and Body Piercing (14G, 16G, 18G). USE: Earlobe, Tragus, Conch, Daith, Helix, Cartilage, Orbital, Industrial, Rook, Antitragus, Snug, Eyebrow, Bridge, Cheek, Eyelid, Lip, Nose, Septum, Nostril, Tongue, Smiley, Labret, Medusa, Snake Bites, Navel, Nipple, Nape, Corset.
+B2: RANDOM 120PC: Each Set Will Include RANDOMLY Selected Jewelry, Colors May Vary from the Picture. We Guarantee That You Will Receive 120 Pieces of Unique, Quality Piercing Jewelry. CONDITIONS: Brand New, Unused. Each Type of Jewelry will be Packed in Sealed Zip-lock Bag.
+B3: SELECTION: The Kit Includes Jewelry in Standard Sizes For Each Body Piercing. Most Skilled Piercers Use Standard Gauges and Lengths. Please Be Aware That Every Body Is Unique and Piercers May Use Different Lengths And Gauges Depending On Your Body.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface Metal is Very Comfortable and Prevents Damage and Irritation to Your Piercing, Perfect For Daily Use.
+B5: UNIQUE DESIGN: Our Product is Proudly Designed in the USA. We Work Hard on Advancing Our Production Processes and Quality Levels Under Strict Quality Control Measures.
+Attributes: {"color": ["120PC Random Jewelry"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["NA"], "style": ["Body Piercing Jewelry"]}

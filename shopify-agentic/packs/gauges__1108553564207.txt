@@ -1,0 +1,22 @@
+SHOPIFY PRODUCT 1108553564207
+Title: 36PC Ear Stretching Kit (14G-00G)
+Variant option: COLOR
+Variants (SKU: option value):
+  GK0078: Silvertone
+  BJGK0183: Rainbow
+  GK0184: Black
+  GK0220-Gold: Goldtone
+
+== Amazon BJGK0183 / B00GUO4RWW (variant Rainbow)
+Title: ['BodyJ4You 36PC Ear Stretching Kit - Complete Beginner Set Gauges for Ears 14G-00G - Rainbow Stainless Steel Tapers Single Flare Plugs Tunnels - Dead Stretching Lobe Men Women Expander Piercing']
+Highlight: ['Gauges for Ears Stainless Steel Tapers Single Flare Plugs Tunnels - Dead Stretching Lobe Men Women Expander']
+B1: COMPLETE STRETCHING KIT: 36-Piece Set With Precision-Crafted Surgical Stainless Steel Tapers and Single Flare Tunnels With Secure O-Rings. Gauges for Ears 14G to 00G - Every Size You Need to Stretch From Your First Gauge to Your Goal Size, No Half-Size Gaps to Fill In Later
+B2: VERIFIED SIZES, NO GUESSWORK: Tapers and Tunnels With O-Rings Included - 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). Single Flare Plug Has a Lip on One Side, Smooth on the Other - O-Rings Hold Jewelry Securely in Place
+B3: HEALTHY STRETCHING NEEDS AFTERCARE: Stretching Without Proper Aftercare Can Lead to Dryness, Irritation and Slow Progress. Pair This Kit With BodyJ4You Organic Jojoba Oil or Ear Stretching Balm to Keep Lobes Soft, Conditioned and Comfortable as You Size Up Through Every Gauge
+B4: HOW DO I STRETCH MY EARS SAFELY: Apply Gauge Oil or Balm to a Clean Healed Lobe, Then Slide the Taper Through Gradually and Follow With the Matching Plug. Re-Apply Aftercare Daily and Wait 4-6 Weeks Before Sizing Up. Mild Pressure Is Normal - Pain Means Stop, Patience Wins
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Surgical Stainless Steel With a Mirror-Polished Surface for Smooth Comfortable All-Day Wear. Lightweight, Durable and Easy to Clean. Precision-Crafted Tapers Give a Smooth Transition Between Every Gauge Size for Beginner Stretchers
+Attributes: {"color": ["Rainbow, Single Flare"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0184 (Black): same bullets as above; title: ['BodyJ4You 36PC Ear Stretching Kit']; attrs: {"color": ["Black, Single Flare"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0220-Gold (Goldtone): same bullets as above; title: ['BodyJ4You 36PC Ear Stretching Kit']; attrs: {"color": ["Goldtone, Single Flare"], "material": ["Metal"], "item_package_quantity": [32], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}

@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 9948243329307
+Title: Piercing Aftercare Kit, Saline Spray + Bump Oil
+Variant option: Title
+Variants (SKU: option value):
+  HB0016_FBA: Default Title
+
+== Amazon HB0016_FBA / B0BG3GN7J4 (variant Default Title)
+Title: ['BodyJ4You Sterile Saline Piercing Aftercare Spray Kit - Keloid Bump Drops']
+Highlight: ['Saline Spray for Piercings - Ear Hole Cleaner Wound Wash Cleanser Oil - Nose Septum Belly Button Cartilage Nipple Navel Lip']
+B1: COMPLETE PIERCING CLEANING KIT: A Sterile Saline Aftercare Spray in a 2 Fl Oz Fine Mist Plus a 10ml Keloid Bump Removal Dropper. No Alcohol and No Preservatives. It Cleanses and Soothes Ear, Nose, Septum, Cartilage, Belly Button, Navel, Tragus, Helix, Daith, Conch and Lip
+B2: SALINE SPRAY FOR PIERCINGS: A Sterile Saline Wound Wash Blended With Sea Salt, Tea Tree Oil and Aloe Vera. The Touch Free Mist Keeps a Clean Piercing Environment Without Rotating Jewelry. An Ear Piercing Cleaner and Nose Ring Cleaner That Will Not Sting, Stain or Discolor Metal
+B3: PIERCING BUMP OIL AND KELOID CARE: Targeted Drops of Jojoba, Rosemary and Grape Seed Oil Soften the Look of Raised Bumps and Calm the Appearance of Redness. Apply It Right After Cleansing as a Focused Piercing Bump Treatment on Nose Bumps, Ear Bumps and Other Stubborn Spots
+B4: HOW TO CLEAN A NEW PIERCING: Wash Your Hands, Spray the Saline Mist Onto the Piercing and Let It Air Dry, Then Massage Two or Three Drops of Bump Oil Into the Area. Repeat This Twice Daily. Most Users See Visible Improvement Within Two to Four Weeks of Consistent Daily Use
+B5: LAB TESTED AND SAFETY SEALED: Small Batch Filled in a Certified Facility With No Alcohol, No Preservatives and No Harsh Additives, Gentle Enough for the Most Sensitive Skin. Leak Proof, Safety Sealed and Travel Friendly. At Twice Daily Use This Set Lasts Around Two Months
+Attributes: {"size": ["Saline Spray - Bump Removal"], "number_of_items": [2], "unit_count": [2.0], "scent": ["Characteristic"], "product_benefit": ["Cleansing"], "skin_type": ["combination", "dry", "normal", "oily", "Sensitive"], "directions": ["Saline solution - apply directly on piercing or sterile disposable cotton tip, apply as needed to affected areas and allow air dry. Bump drops - gently massage oil into keloids, elevated Marks, and piercing bumps 2-3 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Grape Seed Oil, Jojoba Oil, Lavender Oil, Rosemary Leaf Oil, Turmeric Root Oil, Clove Oil, Vitamin E, Rosa Rugosa Flower Oil, Citronella Oil, Pelargonium Graveolens Flower Oil, Boswellia Carterii Oil, Cananga Odorate Flower Oil, Eucalyptus Oil, Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E."]}

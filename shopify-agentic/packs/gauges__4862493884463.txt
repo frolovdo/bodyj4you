@@ -1,0 +1,27 @@
+SHOPIFY PRODUCT 4862493884463
+Title: BodyJ4You 37PC Ear Stretching Kit 14G-00G + Aftercare Balm
+Variant option: Color
+Variants (SKU: option value):
+  GK0693: Silvertone
+  GK0694: Goldtone
+  GK0695: Rose Goldtone
+  GK0696: Rainbow
+  GK0697: Black
+
+== Amazon GK0693 / B07RYJGHLJ (variant Silvertone)
+Title: ['BodyJ4You 37PC Ear Gauge Stretching Kit 14G-00G with Aftercare Balm']
+Highlight: ['Complete Beginner Set Gauges for Ears 14G-00G - Silvertone Stainless Steel Tapers Screw Fit Tunnels Plugs']
+B1: COMPLETE STRETCHING KIT: 37-Piece Set With Surgical Stainless Steel Tapers, Screw Fit Threaded Tunnels With O-Rings and Premium All-Natural Stretching Balm. Gauges for Ears 14G to 00G Plus the Aftercare to Use Them. Everything You Need From First Stretch to Goal Size in One Box
+B2: VERIFIED SIZES, NO GUESSWORK: Tapers and Tunnels With O-Rings Included - 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). Screw Fit Threaded Flesh Tunnels Unscrew at One End - Easily Insert Into Your Ear and Screw Back
+B3: PREMIUM AFTERCARE INCLUDED: Most Kits Stop at the Hardware - This One Adds a Natural Ear Stretching Balm Made With Jojoba, Castor and Plant-Based Oils. Conditions Lobes, Eases Each Stretch and Keeps Skin Soft and Flexible. No Hunting for Aftercare, No Synthetic Lubricants
+B4: HOW DO I STRETCH MY EARS SAFELY: Apply the Stretching Balm to a Clean Healed Lobe, Then Slide the Taper Through Gradually and Follow With the Matching Plug. Re-Apply Balm Daily and Wait 4-6 Weeks Before Sizing Up. Mild Pressure Is Normal - Pain Means Stop, Patience Wins
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Surgical Stainless Steel With a Mirror-Polished Surface for Smooth Comfortable All-Day Wear. Lightweight, Durable and Easy to Clean. Balm Comes in a 0.35 Oz (10g) Reusable Metal Tin - A Little Goes a Long Way and Lasts Months
+Attributes: {"color": ["Silvertone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [37], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0694 (Goldtone): same bullets as above; title: ['BodyJ4You 37PC Ear Gauge Stretching Kit 14G-00G with Aftercare Balm']; attrs: {"color": ["Goldtone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [37], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0695 (Rose Goldtone): same bullets as above; title: ['BodyJ4You 37PC Ear Stretching Kit 14G-00G - Balm - Rose Goldtone Steel Set']; attrs: {"color": ["Rose Goldtone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [37], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0696 (Rainbow): same bullets as above; title: ['BodyJ4You 37PC Ear Stretching Kit with Aftercare Balm']; attrs: {"color": ["Rainbow, Screw Fit"], "material": ["Metal"], "item_package_quantity": [37], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0697 (Black): same bullets as above; title: ['BodyJ4You 37PC Ear Gauge Stretching Kit 14G-00G with Aftercare Balm']; attrs: {"color": ["Black, Screw Fit"], "material": ["Metal"], "item_package_quantity": [37], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}

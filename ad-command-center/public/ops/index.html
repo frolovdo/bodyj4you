@@ -521,7 +521,7 @@ renderToday();
 const titles={today:["Today","Your prebuilt list for this morning. Act on what matters, ignore the rest.","live"],
   inventory:["Inventory","What to ship to FBA (Miami) and what to produce (China) — from your reorder skill. Build a cart, create the inbound.","live"],
   customer:["Customer","Returns, reasons and the actual words customers wrote — straight from Amazon's returns report.","live"],
-  marketplace:["Marketplace alerts","Orders we still have to ship ourselves — Walmart, eBay, TikTok and Amazon (seller-shipped). Red = ship-by time has passed.","live"],
+  marketplace:["Marketplace alerts","Orders still to ship — Walmart, eBay, TikTok, Amazon (seller-shipped), our website and Mercado Libre. Red = ship-by time has passed.","live"],
   inbound:["Inbound shipments","Every shipment on its way to Amazon or Walmart: status, where it's going, ETA — and which ones came up short.","live"],
   orders:["Orders & log","What's on hold for Bony, every list sent, and a log of every action — saved in Supabase.","live"]};
 function go(view){
@@ -1163,7 +1163,7 @@ async function webSession(){
 }
 // Marketplace alerts: open orders we ship ourselves, checked hourly by GitHub (ops/market_sync.py) -> ops_market
 const MKT={rows:[],at:null,loaded:false,err:null,stale:false};
-const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon"};
+const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon",website:"Website",mercadolibre:"Mercado Libre"};
 const dur=ms=>{const h=Math.max(1,Math.round(Math.abs(ms)/3600e3));return h<48?h+"h":Math.round(h/24)+" days";};
 function mktOrders(){
   const now=Date.now(),out=[];
@@ -1210,7 +1210,7 @@ function renderMarket(){
     const old=!r.checked_at||now-Date.parse(r.checked_at)>3*3600e3;
     const err=r.error&&(!r.checked_at||r.tried_at>r.checked_at);
     return `<div class="mline"><span><b>${CHN[ch]}</b> · ${os} open to ship${lt?` · <b style="color:var(--crit)">${lt} late</b>`:""}</span><span style="color:${err||old?"var(--warn)":"var(--ink-2)"}">${err?`last check failed (${esc(r.error.slice(0,120))}) · `:""}${r.checked_at?"checked "+fmtTime(r.checked_at):"never checked"}</span></div>`;
-  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves. FBA, WFS and TikTok FBT orders ship themselves and aren't listed.</p></div>`;
+  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves; FBA, WFS and TikTok FBT orders ship themselves. Website (bodyj4you.com) has no marketplace deadline: an order is flagged late 2 days after purchase. Mercado Libre orders are listed for visibility (Mercado Libre Full ships them).</p></div>`;
   el.innerHTML=h;
 }
 async function loadMarket(){

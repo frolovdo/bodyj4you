@@ -1,0 +1,59 @@
+SHOPIFY PRODUCT 4885272428591
+Title: 36PC PRO Body Piercing Kit (14G, 16G)
+Variant option: COLOR
+Variants (SKU: option value):
+  KT8073: Black
+  KT8071: Silvertone
+  KT8074: Goldtone
+  KT8072: Rainbow
+  KT8075: Rose Goldtone
+
+== Amazon KT8073 / None (variant Black)
+Title: ['BodyJ4You 36PC PRO Body Piercing Kit - Nose Septum Ear Cartilage Lip Belly Navel Tragus Eyebrow - Black Steel 14G 16G BCR CBR Ring Barbell Spike - Tools Needles Gloves Clamps']
+Highlight: None
+B1: VALUE PACK: Complete Professional Kit Includes Tools and Jewelry Needed to Perform Safe Ear, Face and Body Piercing: Ear Cartilage, Nose, Septum, Tragus, Labret, Lip, Monroe, Medusa, Nipple, Navel, Helix, Daith, Tongue, Smiley, Snug, Eyebrow.
+B2: JEWELRY: Ball Closure Rings (BCR) - 14G (2PC); Circular Horseshoe Barbells (CBR) - 14G (2PC), 16G (4PC); Curved Barbells (CR) - 14G (2PC), 16G (2PC); Labret Studs - 14G (2PC), 16G (4PC); Straight Barbells (BR) - 14G (2PC). METAL COLOR: Black. SELECTION: Jewelry in Standard and Most Popular Sizes for Each Body Part.
+B3: TOOLS: 10 Piercing Needles (14G, 16G), 2 Disposable Piercing Clamps, 2 Black Latex Gloves and Cleaning Alcohol Pads. All Items Are Brand New, Unused and 100% Sterilized Using Ethylene Oxide (EO) Gas.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface is Comfortable and Prevents Damage and Irritation, Perfect For Daily Use.
+B5: FASHION TREND: Body Piercings Have Become the New Way Of Self-Expression. Create Unique Looks that Express Your Style and Personality with BodyJ4You Piercing Kit. SAFETY: Must Be 18 Years Old To Purchase.
+Attributes: {"color": ["Black"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+== Amazon KT8071 / None (variant Silvertone)
+Title: ['BodyJ4You 36PC PRO Body Piercing Kit - Nose Septum Ear Cartilage Lip Belly Navel Tragus Eyebrow - Surgical Steel 14G 16G BCR CBR Ring Barbell Spike - Tools Needles Gloves Clamps']
+Highlight: None
+B1: VALUE PACK: Complete Professional Kit Includes Tools and Jewelry Needed to Perform Safe Ear, Face and Body Piercing: Ear Cartilage, Nose, Septum, Tragus, Labret, Lip, Monroe, Medusa, Nipple, Navel, Helix, Daith, Tongue, Smiley, Snug, Eyebrow.
+B2: JEWELRY: Ball Closure Rings (BCR) - 14G (2PC); Circular Horseshoe Barbells (CBR) - 14G (2PC), 16G (4PC); Curved Barbells (CR) - 14G (2PC), 16G (2PC); Labret Studs - 14G (2PC), 16G (4PC); Straight Barbells (BR) - 14G (2PC). METAL COLOR: Silvertone. SELECTION: Jewelry in Standard and Most Popular Sizes for Each Body Part.
+B3: TOOLS: 14 Piercing Needles (13G, 14G, 15G, 16G), 2 Disposable Piercing Clamps, 2 Black Latex Gloves and Cleaning Alcohol Pads. All Items Are Brand New, Unused and 100% Sterilized Using Ethylene Oxide (EO) Gas.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface is Comfortable and Prevents Damage and Irritation, Perfect For Daily Use.
+B5: FASHION TREND: Body Piercings Have Become the New Way Of Self-Expression. Create Unique Looks that Express Your Style and Personality with BodyJ4You Piercing Kit. SAFETY: Must Be 18 Years Old To Purchase.
+Attributes: {"color": ["Silvertone"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+== Amazon KT8074_FBA / B01EGMDL4Y (variant Goldtone)
+Title: ['BodyJ4You 36PC PRO Body Piercing Kit']
+Highlight: ['Nose Septum Ear Cartilage Lip Belly Navel Tragus Eyebrow - Goldtone Steel 14G 16G BCR CBR Ring Barbell Spike']
+B1: VALUE PACK: Complete Professional Kit Includes Tools and Jewelry Needed to Perform Safe Ear, Face and Body Piercing: Ear Cartilage, Nose, Septum, Tragus, Labret, Lip, Monroe, Medusa, Nipple, Navel, Helix, Daith, Tongue, Smiley, Snug, Eyebrow.
+B2: JEWELRY: Ball Closure Rings (BCR) - 14G (2PC); Circular Horseshoe Barbells (CBR) - 14G (2PC), 16G (4PC); Curved Barbells (CR) - 14G (2PC), 16G (2PC); Labret Studs - 14G (2PC), 16G (4PC); Straight Barbells (BR) - 14G (2PC). METAL COLOR: Goldtone. SELECTION: Jewelry in Standard and Most Popular Sizes for Each Body Part.
+B3: TOOLS: 10 Piercing Needles (14G, 16G), 2 Disposable Piercing Clamps, 2 Black Latex Gloves and Cleaning Alcohol Pads. All Items Are Brand New, Unused and 100% Sterilized Using Ethylene Oxide (EO) Gas.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface is Comfortable and Prevents Damage and Irritation, Perfect For Daily Use.
+B5: FASHION TREND: Body Piercings Have Become the New Way Of Self-Expression. Create Unique Looks that Express Your Style and Personality with BodyJ4You Piercing Kit. SAFETY: Must Be 18 Years Old To Purchase.
+Attributes: {"color": ["Goldtone"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+== Amazon KT8072_FBA / B01EGMDK18 (variant Rainbow)
+Title: ['BodyJ4You 36PC PRO Body Piercing Kit']
+Highlight: ['Nose Septum Ear Cartilage Lip Belly Navel Tragus Eyebrow - Rainbow Steel 14G 16G BCR CBR Ring Barbell Spike']
+B1: VALUE PACK: Complete Professional Kit Includes Tools and Jewelry Needed to Perform Safe Ear, Face and Body Piercing: Ear Cartilage, Nose, Septum, Tragus, Labret, Lip, Monroe, Medusa, Nipple, Navel, Helix, Daith, Tongue, Smiley, Snug, Eyebrow.
+B2: JEWELRY: Ball Closure Rings (BCR) - 14G (2PC); Circular Horseshoe Barbells (CBR) - 14G (2PC), 16G (4PC); Curved Barbells (CR) - 14G (2PC), 16G (2PC); Labret Studs - 14G (2PC), 16G (4PC); Straight Barbells (BR) - 14G (2PC). METAL COLOR: Rainbow. SELECTION: Jewelry in Standard and Most Popular Sizes for Each Body Part.
+B3: TOOLS: 10 Piercing Needles (14G, 16G), 2 Disposable Piercing Clamps, 2 Black Latex Gloves and Cleaning Alcohol Pads. All Items Are Brand New, Unused and 100% Sterilized Using Ethylene Oxide (EO) Gas.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface is Comfortable and Prevents Damage and Irritation, Perfect For Daily Use.
+B5: FASHION TREND: Body Piercings Have Become the New Way Of Self-Expression. Create Unique Looks that Express Your Style and Personality with BodyJ4You Piercing Kit. SAFETY: Must Be 18 Years Old To Purchase.
+Attributes: {"color": ["Rainbow"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+== Amazon KT8075 / None (variant Rose Goldtone)
+Title: ['BodyJ4You 36PC PRO Body Piercing Kit - Nose Septum Ear Cartilage Lip Belly Navel Tragus Eyebrow - Rose Goldtone Steel 14G 16G BCR CBR Ring Barbell Spike - Tools Needles Gloves Clamps']
+Highlight: None
+B1: VALUE PACK: Complete Professional Kit Includes Tools and Jewelry Needed to Perform Safe Ear, Face and Body Piercing: Ear Cartilage, Nose, Septum, Tragus, Labret, Lip, Monroe, Medusa, Nipple, Navel, Helix, Daith, Tongue, Smiley, Snug, Eyebrow.
+B2: JEWELRY: Ball Closure Rings (BCR) - 14G (2PC); Circular Horseshoe Barbells (CBR) - 14G (2PC), 16G (4PC); Curved Barbells (CR) - 14G (2PC), 16G (2PC); Labret Studs - 14G (2PC), 16G (4PC); Straight Barbells (BR) - 14G (2PC). METAL COLOR: Rose Goldtone. SELECTION: Jewelry in Standard and Most Popular Sizes for Each Body Part.
+B3: TOOLS: 10 Piercing Needles (14G, 16G), 2 Disposable Piercing Clamps, 2 Black Latex Gloves and Cleaning Alcohol Pads. All Items Are Brand New, Unused and 100% Sterilized Using Ethylene Oxide (EO) Gas.
+B4: MATERIAL: Surgical Stainless Steel Jewelry is an Ideal Choice Because it is Extremely Durable, Provides Lasting Color Retention and Extremely Easy to Clean. QUALITY: High Polished Smooth Surface is Comfortable and Prevents Damage and Irritation, Perfect For Daily Use.
+B5: FASHION TREND: Body Piercings Have Become the New Way Of Self-Expression. Create Unique Looks that Express Your Style and Personality with BodyJ4You Piercing Kit. SAFETY: Must Be 18 Years Old To Purchase.
+Attributes: {"color": ["Rose Goldtone"], "material": ["Metal"], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}

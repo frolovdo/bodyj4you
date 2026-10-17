@@ -1,0 +1,73 @@
+SHOPIFY PRODUCT 4888243798063
+Title: 72PC Ear Stretching Kit (14G-00G)
+Variant option: Color
+Variants (SKU: option value):
+  GK0201: Style A
+  GK0202: Style B
+  GK0203: Style C
+  GK0204: Style D
+  GK0343: Style H
+  GK0344: Style I
+  GK0347: Style J
+
+== Amazon GK0201 / B00HJXKA0Q (variant Style A)
+Title: ['BodyJ4You 72PC Gauges Kit Black White Acrylic Plugs Stainless Steel Tapers']
+Highlight: ['14G-00G Ear Stretching Set']
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Silvertone, Black, White. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin Cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set A, No Aftercare"], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+-- Amazon GK0202 (Style B): same bullets as above; title: ['BodyJ4You 72PC Ear Stretching Kit - 14G-00G Beginner Gauges - Surgical Steel Tunnels Solid Metal Tapers Black White Marble Acrylic Plugs - Men Women Unisex Body Jewelry']; attrs: {"color": ["Set B, No Aftercare"], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+== Amazon GK0203 / B00HJXKD80 (variant Style C)
+Title: ['BodyJ4You 72PC Ear Stretching Kit - 14G-00G Beginner Gauges - Surgical Steel Tunnels Solid Metal Tapers Blow Glow Dark Acrylic Plugs - Men Women Unisex Body Jewelry']
+Highlight: None
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Silvertone, Turquoise, Glow in the Dark. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set M, No Aftercare"], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+== Amazon GK0204 / B00HJXKEVG (variant Style D)
+Title: ['BodyJ4You 72PC Ear Stretching Kit - 14G-00G Beginner Gauges - Surgical Steel Tunnels Solid Metal Tapers Red Pink Acrylic Plugs - Men Women Unisex Body Jewelry']
+Highlight: None
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Silvertone, Red, Pink. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set F, No Aftercare"], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+== Amazon GK0343 / B06XJ7CDT9 (variant Style H)
+Title: ['BodyJ4You 72PC Ear Stretching Kit - 14G-00G Beginner Gauges - Surgical Steel Tunnels Solid Metal Tapers Black Purple Splatter Acrylic Plugs - Men Women Unisex Body Jewelry']
+Highlight: None
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Silvertone, Purple, Black. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin Cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set C, No Aftercare", {"language_tag": "en_US", "standardized_values": ["Purple"], "marketplace_id": "ATVPDKIKX0DER"}], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+== Amazon GK0344 / B06XHW289X (variant Style I)
+Title: ['BodyJ4You 72PC Ear Stretching Kit - 14G-00G Beginner Gauges - Surgical Steel Tunnels Solid Metal Tapers Blue Purple Splatter Acrylic Plugs - Men Women Unisex Body Jewelry']
+Highlight: None
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Silvertone, Purple, Green. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin Cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set D, No Aftercare", {"language_tag": "en_US", "standardized_values": ["Green"], "marketplace_id": "ATVPDKIKX0DER"}], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}
+
+== Amazon GK0347 / B06XZTJJ6V (variant Style J)
+Title: ['BodyJ4You 72PC Gauges Kit White Splatter Paint Acrylic Plugs Black Steel']
+Highlight: ['Tapers 14G-00G Stretching Set']
+B1: COMPLETE GAUGING SET: Begin Ear Stretching Journey with 72-Piece Jewelry Kit - Surgical Stainless Steel Tapers, Single Flare Flesh Tunnels and Acrylic No Flare Plugs. Start Easy with Smallest Size 14G (1.6mm) and Gradually Go Up to 00G (10mm), We Strongly Recommend Using Jojoba Oil or Ear Balm to Make Sizing Up Easy, Safe and Comfortable.
+B2: VERIFIED SIZES: Plugs, Tunnels, Tapers (O-Rings Included): 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). COLORS: Black, White. SINGLE FLARE: Plug Has Lip on One Side and Perfectly Smooth on Other, O-Rings will Securely Hold Jewelry in Your Ear.
+B3: HEALTHY STRETCHING: Using Aftercare Solutions Creates Safe and Gentle Piercing Experience. BENEFITS: Regular Application of BodyJ4You Aftercare Has Been Proven to Speed Up Recovery and Reduce Swelling, Minimizing the Chances of Skin Cracks, Elevated Bumps, and Keloids.
+B4: TRUSTED QUALITY: Jewelry Made of Hypoallergenic Materials, Lightweight, Durable and Easy to Clean. Perfectly Smooth Surface Providing Most Comfortable Wear, Prevents Damage and Irritation, Perfect For Daily Use. Pay Attention to How You Feel - Stretching Should Not Be Painful.
+B5: VALUE PACK: Proudly Designed in the USA by Piercing Professionals with Years of Experience and Dedication to Quality Control. We Use Only High-Quality Materials and Natural Aftercare Solutions to Ensure Positive Piercing Experience for Everyone. TRUSTED FOR TWO DECADES: Body Jewelry and Piercing Aftercare Is All We Do - BodyJ4You Has Outfitted Piercers and Enthusiasts for Over 20 Years.
+Attributes: {"color": ["Set E, No Aftercare"], "material": ["Acrylic"], "item_package_quantity": ["72"], "metal_type": ["Stainless-Steel"], "gem_type": ["NA"]}

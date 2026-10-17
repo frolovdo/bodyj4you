@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 9948239429915
+Title: Piercing Aftercare Kit, Balm + Jojoba Oil
+Variant option: Title
+Variants (SKU: option value):
+  HB0006_FBA: Default Title
+
+== Amazon HB0006_FBA / B084RXRZWM (variant Default Title)
+Title: ['BodyJ4You Ear Stretching Balm Organic Jojoba Oil - Dead Gauge Stretch Kit']
+Highlight: ['Ear Stretching Oil - Jojoba Oil Organic Piercing Aftercare - Septum Lobe Stretching Care - Ear Butter Gauges Tapers Plugs']
+B1: PREMIUM EAR STRETCHING BALM AND JOJOBA OIL: A Two Piece Gauge Stretching Kit Pairing a Fast Absorbing Ear Butter for Gauges With 100% Pure Cold Pressed Jojoba Oil. Vegan, Hexane Free and Small Batch Filled. For Stretched Lobes, Cartilage, Tragus, Nose, Septum and Navel Piercings
+B2: EAR STRETCHING OIL FOR GAUGES: Jojoba Oil for Ear Stretching and a Rich Stretching Balm Work Together to Cut Dryness and Ease Every Size Up. Piercing Oil That Absorbs Fast With No Greasy Residue, So Your Lobes Stay Soft and Pliable Through Dead Stretch and Septum Stretch Routines
+B3: PIERCING AFTERCARE FOR NEW AND HEALING SKIN: Jojoba Oil for Piercings Mimics Your Natural Skin Oils, Calming the Look of Redness, Bumps and Dryness Around Fresh Piercings. An Ear Moisturizer That Pairs With the BodyJ4You Saline Aftercare Spray for a Complete Daily Routine
+B4: HOW TO USE EAR STRETCHING BALM AND OIL: Massage a Small Amount Onto the Lobe Before Inserting Your Taper, Plugs or Tunnels, Then Reapply Twice Daily Between Stretches to Keep Lobes Soft and Comfortable Between Sizes. One Tin Lasts Roughly Three Months of Steady Daily Use
+B5: NATURAL VEGAN INGREDIENTS: Rice Bran Oil, Apricot Kernel Oil, Jojoba Seed Oil, Castor Seed Oil, Soy Butter and Candelilla Wax. No Preservatives, No Fillers, No Harsh Additives. Balm in a 0.35 Oz Metal Tin and Jojoba Oil in a 5ml Amber Glass Dropper. Cruelty Free Since 2004
+Attributes: {"size": ["2 Piece Set"], "number_of_items": [2], "unit_count": [2.0], "scent": ["Unscented"], "metal_type": ["no-metal-type"], "special_feature": ["Travel Size"], "material_feature": ["Natural", "Plant-Based"], "product_benefit": ["Ear Lobe Balm and Jojoba Oil is a Premium Combination of Natural Products to Help Reduce Recovery Time and Help Illuminate Problems Related to New or Old Piercings."], "skin_type": ["combination", "dry", "normal", "oily", "Sensitive"], "directions": ["Balm - massage small amount onto ear lobe before Inserting jewelry, apply at least 2 times per day. Jojoba - dispense small amount on skin or jewelry, apply at least 2 times per day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Oryza Sativa (rice) Bran Oil, Prunus Armeniaca (apricot) Kernel Oil, Simmondsia Chinensis (jojoba) Seed Oil, Ricinus Communis (castor) Seed Oil, Glycine Soja Butter, Euphorbia Cerifera Wax."]}

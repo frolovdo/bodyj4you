@@ -1,0 +1,35 @@
+SHOPIFY PRODUCT 4887976280111
+Title: BodyJ4You 36PC Ear Stretching Kit 14G-00G - Stainless Steel
+Variant option: COLOR
+Variants (SKU: option value):
+  GK0242: Black
+  GK0279: Goldtone
+  GK0230: Rainbow
+  GK0315: Rose Goldtone
+  GK0278: Silvertone
+
+== Amazon GK0242 / B00ZPQMXOK (variant Black)
+Title: ['BodyJ4You 36PC Ear Stretching Kit']
+Highlight: ['Complete Beginner Set Gauges for Ears 14G-00G - Black Stainless Steel Tapers Screw Fit Tunnels Plugs']
+B1: COMPLETE STRETCHING KIT: 36-Piece Set With Precision-Crafted Surgical Stainless Steel Tapers and Screw Fit Threaded Tunnels With Secure O-Rings. Gauges for Ears 14G to 00G - Every Size You Need to Stretch From Your First Gauge to Your Goal Size, No Half-Size Gaps to Fill In Later
+B2: VERIFIED SIZES, NO GUESSWORK: Tapers and Tunnels With O-Rings Included - 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). Screw Fit Threaded Flesh Tunnels Unscrew at One End - Easily Insert Into Your Ear and Screw Back Securely
+B3: HEALTHY STRETCHING NEEDS AFTERCARE: Stretching Without Proper Aftercare Can Lead to Dryness, Irritation and Slow Progress. Pair This Kit With BodyJ4You Organic Jojoba Oil or Ear Stretching Balm to Keep Lobes Soft, Conditioned and Comfortable as You Size Up Through Every Gauge
+B4: HOW DO I STRETCH MY EARS SAFELY: Apply Gauge Oil or Balm to a Clean Healed Lobe, Then Slide the Taper Through Gradually and Follow With the Matching Plug. Re-Apply Aftercare Daily and Wait 4-6 Weeks Before Sizing Up. Mild Pressure Is Normal - Pain Means Stop, Patience Wins
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Surgical Stainless Steel With a Mirror-Polished Surface for Smooth Comfortable All-Day Wear. Lightweight, Durable and Easy to Clean. Precision-Crafted Tapers Give a Smooth Transition Between Every Gauge Size for Beginner Stretchers
+Attributes: {"color": ["Black, Screw Fit"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0279 (Goldtone): same bullets as above; title: ['BodyJ4You 36PC Ear Stretching Kit']; attrs: {"color": ["Goldtone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0230 (Rainbow): same bullets as above; title: ['BodyJ4You 36PC Ear Stretching Kit - Complete Beginner Set Gauges for Ears 14G-00G - Rainbow Stainless Steel Tapers Screw Fit Tunnels Plugs - Dead Stretching Lobe Men Women Expander Piercing']; attrs: {"color": ["Rainbow, Screw Fit"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+== Amazon GK0315 / B01F2MIXEA (variant Rose Goldtone)
+Title: ['BodyJ4You 36PC Ear Gauge Stretching Kit - Gauges for Ears 14G-00G Starter Set - Rose Goldtone Stainless Steel Tapers Screw Fit Tunnels Plugs - Dead Stretching Lobe Beginner Men Women Expander Piercing']
+Highlight: ['Gauges for Ears Stainless Steel Tapers Single Flare Plugs Tunnels - Dead Stretching Lobe Men Women Expander']
+B1: COMPLETE EAR GAUGE STRETCHING KIT: 36-Piece Set Featuring Surgical Stainless Steel Tapers and Screw Fit Tunnels With O-Rings. Gauges for Ears From 14G (1.6mm) to 00G (10mm). Smooth Comfortable Stretch - Pair With Jojoba Oil or Ear Balm for Best Gauging Results
+B2: VERIFIED SIZES - Tunnels and Tapers With O-Rings Included: 14G (1.6mm), 12G (2mm), 10G (2.4mm), 8G (3.2mm), 6G (4mm), 4G (5mm), 2G (6mm), 0G (8mm), 00G (10mm). Screw Fit Threaded Flesh Tunnels Unscrew at One End - Easily Insert Into Your Ear and Screw Back
+B3: HEALTHY STRETCHING STARTS WITH AFTERCARE: Gauge Stretching Without Proper Aftercare Can Lead to Dryness, Discomfort and Slow Progress. Explore BodyJ4You Ear Stretching Balm or Organic Jojoba Oil to Keep Lobes Moisturized, Flexible and Comfortable Throughout Your Stretching Journey
+B4: SAFE GRADUAL STRETCHING: Apply Gauge Lube or Oil to Ear Lobe Before Inserting Taper, Plugs or Tunnels. Dead Stretching and Lobe Stretching Require Patience - Wait 4-6 Weeks Between Sizes. Mild Pressure is Normal but Stretching Should Never Be Painful. Listen to Your Body
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Stainless Steel Jewelry With Perfectly Smooth Surface for Comfortable All-Day Wear. Lightweight, Durable and Easy to Clean. Precision-Crafted Tapers Ensure Smooth Transition Between Gauge Sizes for Beginner and Experienced Stretchers
+Attributes: {"color": ["Rose Goldtone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0278 (Silvertone): same bullets as above; title: ['BodyJ4You 36PC Ear Stretching Kit']; attrs: {"color": ["Silvertone, Screw Fit"], "material": ["Metal"], "item_package_quantity": [36], "metal_type": ["Stainless Steel"], "gem_type": ["No Gemstone"]}
