@@ -343,7 +343,7 @@
 <div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <div class="mh"><h2 id="mTitle">Create FBA inbound shipment</h2><p id="mSub" style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Creates an inbound plan in Amazon via SP-API and opens it in Seller Central to finalize boxing &amp; labels.</p></div>
   <div class="mb"><div class="plan-list" id="planList"></div><div class="line" style="margin-top:8px;font-weight:700"><span>Total units</span><span class="num" id="planUnits">0</span></div><div class="line" style="font-weight:700"><span>Total cost of goods</span><span class="num" id="planCogs">$0</span></div></div>
-  <div class="mf"><button class="btn ghost" id="cancelModal">Cancel</button><a class="btn primary" id="scLink" href="https://sellercentral.amazon.com/fba/inbound-shipment-workflow" target="_blank" rel="noopener">Open in Seller Central &rarr;</a></div>
+  <div class="mf"><button class="btn ghost" id="cancelModal">Cancel</button><button class="btn" id="copyList">Copy list</button><a class="btn primary" id="scLink" href="https://sellercentral.amazon.com/fba/inbound-shipment-workflow" target="_blank" rel="noopener">Open in Seller Central &rarr;</a></div>
 </div></div>
 <div class="scrim" id="loginScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="max-width:340px">
   <div class="mh"><h2 id="loginTitle">BodyJ4You Ops</h2><p style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Enter your PIN.</p></div>
@@ -405,19 +405,24 @@ const SECMETA={
   "UV":{pill:"uv",sub:"UV reactive"},"STEEL":{pill:"steel",sub:"steel gauges"},
   "PL6328 TAPER PLUGS":{pill:"family",sub:"factory"},"GK GAUGES & KITS":{pill:"family",sub:"factory"},
   "PJ + FJ JEWELRY":{pill:"family",sub:"factory"},"NC CHOKERS":{pill:"family",sub:"factory"},
-  "WFS URGENT":{pill:"urgent",sub:"under 30 days cover"},"WFS PLANNED":{pill:"planned",sub:"30+ days"},
+  "WFS URGENT":{pill:"urgent",sub:"under 14 days cover"},"WFS PLANNED":{pill:"planned",sub:"14+ days"},
   "ENROLL TO WFS":{pill:"good",sub:"sells ≥1/day · not on WFS yet"},
   "TIKTOK SHOP":{pill:"family",sub:"preview"}
 };
-const ORDER={miami:["URGENT FBA","PLANNED FBA","UV","STEEL"],china:["PL6328 TAPER PLUGS","GK GAUGES & KITS","PJ + FJ JEWELRY","NC CHOKERS"],walmart:["WFS URGENT","WFS PLANNED","ENROLL TO WFS"],tiktok:["TIKTOK SHOP"]};
+const ORDER={miami:["URGENT FBA","PLANNED FBA","UV","STEEL"],china:["PL6328 TAPER PLUGS","GK GAUGES & KITS","PJ + FJ JEWELRY","NC CHOKERS"],walmart:["WFS URGENT","WFS PLANNED"],tiktok:["TIKTOK SHOP"]};
 // per-warehouse labels for the cart + create-shipment modal
 const WARECFG={
   miami:{cart:"Miami shipment cart",btn:"Create FBA shipment",mTitle:"Create FBA inbound shipment",mSub:"Creates an inbound plan in Amazon via SP-API and opens it in Seller Central to finalize boxing & labels.",sc:"Open in Seller Central →",href:"https://sellercentral.amazon.com/fba/inbound-shipment-workflow",toast:"Inbound plan created — finish in Seller Central",empty:"a shipment."},
   china:{cart:"China order for Bony",btn:"Send order to Bony",mTitle:"Send order to Bony",mSub:"Emails Bony the purchase order as an Excel file so she can prepare it.",sc:"Send to Bony →",href:"#",toast:"Order ready — tell Claude to send it to Bony",empty:"a reorder for Bony."},
-  walmart:{cart:"Walmart (WFS) shipment cart",btn:"Create Walmart (WFS) shipment",mTitle:"Create Walmart (WFS) inbound shipment",mSub:"Creates a WFS inbound shipment through the Walmart API and returns the shipment link.",sc:"Create WFS shipment →",href:"#",toast:"WFS inbound shipment created",empty:"a WFS shipment."},
-  tiktok:{cart:"TikTok shipment cart",btn:"Create TikTok shipment",mTitle:"Create TikTok inbound shipment",mSub:"Creating the FBT inbound from this page isn't connected — create it in TikTok Seller Center with this list.",sc:"Open TikTok Seller Center →",href:"https://seller-us.tiktok.com/",toast:"List ready — create the FBT inbound in TikTok Seller Center",empty:"a TikTok FBT shipment."}
+  walmart:{cart:"Walmart (WFS) shipment cart",btn:"Create Walmart (WFS) shipment",empty:"a WFS shipment."},
+  tiktok:{cart:"TikTok shipment cart",btn:"Create TikTok shipment",mTitle:"Create TikTok inbound shipment",mSub:"TikTok's API can't create FBT inbound orders, so this opens TikTok's Create inbound order page (FBT Merchant Portal). Click Add there and enter these SKUs and quantities — Copy list puts them on your clipboard.",sc:"Open TikTok — Create inbound order →",href:"https://scm-us.tiktok.com/stockin/replenish/create-order?op_region=US",toast:"Opened TikTok — add these SKUs in Create inbound order",empty:"a TikTok FBT shipment."}
 };
-let TT_LIVE=false,TT_ERR=null;
+let TT_LIVE=false,TT_ERR=null,WM_LIVE=false,WM_ERR=null;
+const PLAT=()=>ship&&ship.source==="walmart"?"Walmart":"Amazon";
+const GO_TXT=()=>"Create shipment on "+PLAT();
+const wmBanner=()=>WM_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">Walmart part of the pull failed</span></div><p>${esc(WM_ERR)}</p></div>`:
+  WM_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">Walmart WFS — ship from Miami to Walmart's warehouses</span></div><p><b>On hand</b> = available to sell in WFS (+ units on open WFS inbound shipments). <b>Units sold / day</b> = WFS units sold in the last 30 days. <b>Recommended qty</b> = 30 days of cover + 14-day lead time, minus WFS stock and inbound. Only SKUs that need stock are listed. <b>Create Walmart (WFS) shipment</b> creates the inbound order on Walmart; labels and carrier are finished in Seller Center.</p></div>`:
+  `<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">Old example list — click Pull fresh data for the live Walmart list</span></div></div>`;
 const ttBanner=()=>TT_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">TikTok part of the pull failed</span></div><p>${esc(TT_ERR)}</p></div>`:
   TT_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">TikTok FBT — ship from Miami to TikTok's warehouses</span></div><p><b>On hand</b> = available in all FBT warehouses (+ reserved and in transit). <b>Units sold / day</b> = units that left FBT on TikTok orders in the last 30 days. <b>Recommended qty</b> = 30 days of cover + 10-day lead time, minus FBT stock and in transit (same rule as Miami). Only SKUs that need stock are listed.</p></div>`:TIKTOK_BANNER;
 const TIKTOK_BANNER=`<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">TikTok isn't part of the pull yet — the rows below are old example data</span></div><p>Your TikTok Shop API works (Claude uses it from your Mac), but the pull runs on GitHub, which doesn't have the TikTok key. Also: TikTok orders ship out of your Amazon FBA stock (TikTok warehouse "MCF FBA"), so TikTok has no inbound shipments of its own — its stock is covered by the Miami list.</p></div>`;
@@ -489,7 +494,7 @@ function renderWare(wh){
     html+=`<div class="block"><div class="block-h"><h3>${sec}</h3><span class="pill ${m.pill}">${m.sub}</span>${bony}<span class="count">${items.length} SKUs · ${units} units</span></div>
       <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">wtd. 7&ndash;90 day avg</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
   }
-  const top=wh==="tiktok"?ttBanner():summaryHtml(wh);
+  const top=wh==="tiktok"?ttBanner():wh==="walmart"?wmBanner():summaryHtml(wh);
   document.getElementById("ware-"+wh).innerHTML=top+html;
 }
 renderWare("miami");renderWare("china");renderWare("walmart");renderWare("tiktok");
@@ -521,7 +526,7 @@ renderToday();
 const titles={today:["Today","Your prebuilt list for this morning. Act on what matters, ignore the rest.","live"],
   inventory:["Inventory","What to ship to FBA (Miami) and what to produce (China) — from your reorder skill. Build a cart, create the inbound.","live"],
   customer:["Customer","Returns, reasons and the actual words customers wrote — straight from Amazon's returns report.","live"],
-  marketplace:["Marketplace alerts","Orders still to ship — Walmart, eBay, TikTok, Amazon (seller-shipped), our website and Mercado Libre. Red = ship-by time has passed.","live"],
+  marketplace:["Marketplace alerts","Orders still to ship — Walmart, eBay, TikTok, Amazon (seller-shipped) and Mercado Libre. Red = ship-by time has passed.","live"],
   inbound:["Inbound shipments","Every shipment on its way to Amazon or Walmart: status, where it's going, ETA — and which ones came up short.","live"],
   orders:["Orders & log","What's on hold for Bony, every list sent, and a log of every action — saved in Supabase.","live"]};
 function go(view){
@@ -590,6 +595,7 @@ document.getElementById("createBtn").addEventListener("click",()=>{
       rows:[...c.values()].map(i=>({sku:i.sku,cat:i.cat,qty:i.qty,cost:cogsOf(i.sku)}))});
     return;
   }
+  if(activeWare==="walmart"){openShip({source:"walmart",lines:[...c.values()].map(i=>({sku:i.sku,qty:i.qty}))});return;}
   if(activeWare==="miami"){openShip({source:"miami",lines:[...c.values()].map(i=>{const r=REORDER.miami.find(x=>x.sku===i.sku)||{};return {sku:i.sku,asin:r.asin||"",qty:i.qty};})});return;}
   const cfg=WARECFG[activeWare];
   document.getElementById("mTitle").textContent=cfg.mTitle;
@@ -605,8 +611,9 @@ document.getElementById("createBtn").addEventListener("click",()=>{
 function closeModal(){scrim.classList.remove("open");}
 document.getElementById("cancelModal").addEventListener("click",closeModal);
 scrim.addEventListener("click",e=>{if(e.target===scrim)closeModal();});
-document.getElementById("scLink").addEventListener("click",(e)=>{const cfg=WARECFG[activeWare];if(cfg.href==="#")e.preventDefault();setTimeout(()=>{closeModal();carts[activeWare].clear();renderCart();toast(cfg.toast);},150);});
+document.getElementById("scLink").addEventListener("click",(e)=>{const cfg=WARECFG[activeWare];if(cfg.href==="#")e.preventDefault();if(activeWare==="tiktok"){let u=0;carts.tiktok.forEach(i=>u+=i.qty);api("log_add",{action:"Opened TikTok Create inbound order",detail:carts.tiktok.size+" SKUs, "+u+" units: "+[...carts.tiktok.values()].map(i=>i.sku+" ×"+i.qty).join(", ").slice(0,1800),ref:"tiktok fbt"}).catch(()=>{});}setTimeout(()=>{closeModal();carts[activeWare].clear();renderCart();toast(cfg.toast);},150);});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+document.getElementById("copyList").addEventListener("click",()=>{const t=[...carts[activeWare].values()].map(i=>i.sku+"\t"+i.qty).join("\n");navigator.clipboard?.writeText(t).then(()=>toast("Copied "+carts[activeWare].size+" SKUs"),()=>toast("Couldn't copy"));});
 
 // ---- Send to Bony (UV / steel gauge-kit reorder from the supplier) ----
 const bonyScrim=document.getElementById("bonyScrim");
@@ -792,7 +799,8 @@ function renderDataAge(){
 function applySnapshot(snap){
   const d=snap.data||{};
   TT_LIVE=Array.isArray(d.tiktok);TT_ERR=d.tiktok_error||null;if(TT_ERR&&!TT_LIVE)renderWare("tiktok");
-  for(const wh of ["miami","china","tiktok"]){
+  WM_LIVE=Array.isArray(d.walmart);WM_ERR=d.walmart_error||null;if(WM_ERR&&!WM_LIVE)renderWare("walmart");
+  for(const wh of ["miami","china","tiktok","walmart"]){
     if(!Array.isArray(d[wh]))continue;
     d[wh].forEach(r=>{if(r.cogs)COGS[r.sku]=r.cogs;else r.cogs=COGS[r.sku]||0;});
     REORDER[wh]=d[wh];carts[wh].clear();renderWare(wh);
@@ -1065,6 +1073,7 @@ function candidates(line){
   const out=[];asins.forEach(a=>(SKUS[a]||[]).filter(x=>!/^amzn\.gr\./i.test(x[0])).forEach(x=>out.push({sku:x[0],fnsku:x[1],avail:x[2],inb:x[3],asin:a})));return out;
 }
 function shipLineHtml(l,i){
+  if(ship.source==="walmart")return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}</div><span class="bc upc">Walmart SKU · its own UPC/GTIN barcode</span></div><input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
   const opts=l.cands.map((c,j)=>{const [,lab]=barcode(c.fnsku,c.asin),lm=ship.last[c.sku+"|"+ship.source],lo=ship.last[c.sku+"|"+(ship.source==="miami"?"china":"miami")];
     return `<option value="${j}"${j===l.pick?" selected":""}>${esc(c.sku)} · ${lab.split(" —")[0]} · ${c.avail} in stock${c.inb?" +"+c.inb+" inbound":""}${lm?" · last "+ship.source+" "+dshort(lm):lo?" · last "+(ship.source==="miami"?"china":"miami")+" "+dshort(lo):""}</option>`;}).join("");
   const c=l.cands[l.pick],[bc,bl]=c?barcode(c.fnsku,c.asin):["unk","No Amazon SKU found — type the SKU"];
@@ -1073,31 +1082,33 @@ function shipLineHtml(l,i){
     <input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
 }
 function renderShip(){
-  const left=ship.lines.filter(l=>l.cands.length>1&&!l.seen).length;
+  const left=ship.source==="walmart"?0:ship.lines.filter(l=>l.cands.length>1&&!l.seen).length;
   document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")||'<div class="ord-empty">No lines.</div>';
   document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";
 }
+const SHIP_SUB=document.getElementById("shipSub").innerHTML;
 function shipStatus(msg,cls){document.getElementById("shipStatus").innerHTML=msg?`<div class="mstatus ${cls||""}" style="margin:0 0 10px">${msg}</div>`:"";}
 async function openShip(o){
   if(!INB.loaded)await loadInbound();
   ship={source:o.source,hold:o.hold||null,last:lastShipped(),lines:o.lines.map(l=>({...l}))};
-  for(const l of ship.lines){l.cands=candidates(l);
+  for(const l of ship.lines){l.cands=o.source==="walmart"?[]:candidates(l);
     let best=-1,bt="";l.cands.forEach((c,j)=>{const t=ship.last[c.sku+"|"+ship.source]||"";if(t>bt){bt=t;best=j;}});
     if(best<0)l.cands.forEach((c,j)=>{if(best<0||c.avail+c.inb>l.cands[best].avail+l.cands[best].inb)best=j;});
     l.pick=Math.max(0,best);}
-  document.getElementById("shipTitle").textContent=o.source==="china"?`Ship to FBA from China — hold #${o.hold}`:"Create FBA shipment — Miami";
-  const d=new Date(),nm=(o.source==="china"?"China ":"Miami ")+`${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+  document.getElementById("shipTitle").textContent=o.source==="china"?`Ship to FBA from China — hold #${o.hold}`:o.source==="walmart"?"Create Walmart (WFS) shipment — Miami":"Create FBA shipment — Miami";
+  document.getElementById("shipSub").innerHTML=o.source==="walmart"?"Pick the ship-from address and check the quantities. Creating it makes the WFS inbound order on Walmart (Walmart picks the warehouses); you finish labels and carrier in Walmart Seller Center. Each unit ships on its own UPC/GTIN barcode.":SHIP_SUB;
+  const d=new Date(),nm=(o.source==="china"?"China ":o.source==="walmart"?"WFS ":"Miami ")+`${d.getMonth()+1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
   document.getElementById("shipName").value=o.name||nm;
   const sel=document.getElementById("shipFrom");sel.innerHTML='<option>Loading addresses…</option>';
-  const go=document.getElementById("shipGo");go.disabled=false;go.textContent="Create shipment on Amazon";delete go.dataset.armed;go.style.background="";go.style.borderColor="";
-  shipStatus(Object.keys(SKUS).length?"":"The SKU list loads with the next <b>Pull fresh data</b> — until then only the list's own SKUs are offered.","err");
+  const go=document.getElementById("shipGo");go.disabled=false;go.textContent=GO_TXT();delete go.dataset.armed;go.style.background="";go.style.borderColor="";
+  shipStatus(o.source==="walmart"||Object.keys(SKUS).length?"":"The SKU list loads with the next <b>Pull fresh data</b> — until then only the list's own SKUs are offered.","err");
   markFrom(false);renderShip();document.getElementById("shipScrim").classList.add("open");
   try{ADDR=ADDR||await api("addresses");}
   catch(e){sel.innerHTML='<option value="">Couldn\'t load addresses</option>';shipStatus(sqlErrText(e),"err");return;}
   const want=o.source==="china"?"CN":"US",list=ADDR.filter(a=>a.country===want);
   sel.innerHTML=list.map(a=>`<option value="${esc(a.key)}">${esc(a.label)} · used ${a.uses}×${a.last_used?" · last "+dshort(a.last_used):""}</option>`).join("")||'<option value="">No saved address</option>';
 }
-const disarmShip=()=>{const go=document.getElementById("shipGo");if(go.dataset.armed&&!shipBusy){delete go.dataset.armed;go.textContent="Create shipment on Amazon";go.style.background="";go.style.borderColor="";shipStatus("");}};
+const disarmShip=()=>{const go=document.getElementById("shipGo");if(go.dataset.armed&&!shipBusy){delete go.dataset.armed;go.textContent=GO_TXT();go.style.background="";go.style.borderColor="";shipStatus("");}};
 document.getElementById("shipFrom").addEventListener("change",()=>{disarmShip();markFrom(true);});
 function markFrom(ok){document.getElementById("shipFrom").classList.toggle("ok",ok);const n=document.getElementById("fromNote");n.className="picknote"+(ok?" ok":"");n.textContent=ok?"✓ picked":"check";}
 document.getElementById("shipLines").addEventListener("input",disarmShip);
@@ -1114,33 +1125,33 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-shiphold]"
   openShip({source:"china",hold:o.id,name:(o.subject||"").slice(0,40),lines:(o.lines||[]).slice().sort(skuSort).map(l=>({sku:l.sku,qty:+l.qty||0}))});});
 document.getElementById("shipGo").addEventListener("click",async()=>{
   if(shipBusy||!ship)return;const go=document.getElementById("shipGo");
-  const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty}));
+  const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:ship.source==="walmart"?l.sku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty}));
   if(!addr){shipStatus("Pick a ship-from address.","err");return;}
   const bad=items.filter(i=>!i.msku);if(bad.length){shipStatus("Type the Amazon SKU for every line without one.","err");return;}
   if(!items.length){shipStatus("No lines with a quantity.","err");return;}
   const dup=items.map(i=>i.msku).filter((m,i,a)=>a.indexOf(m)!==i);if(dup.length){shipStatus("Same Amazon SKU on two lines: "+esc([...new Set(dup)].join(", "))+" — merge them.","err");return;}
   const tot=items.reduce((a,b)=>a+b.qty,0);
   if(!go.dataset.armed){go.dataset.armed="1";go.textContent=`Yes — create it (${tot.toLocaleString()} units)`;go.style.background="var(--crit)";go.style.borderColor="var(--crit)";
-    shipStatus(`Ready to create a Send to Amazon plan: <b>${items.length} SKUs, ${tot.toLocaleString()} units</b> from <b>${esc(document.getElementById("shipFrom").selectedOptions[0]?.textContent.split(" · used")[0]||"")}</b>. Click <b>Yes — create it</b> to send it to Amazon.`,"info");return;}
+    shipStatus(`Ready to create ${ship.source==="walmart"?"a Walmart WFS inbound order":"a Send to Amazon plan"}: <b>${items.length} SKUs, ${tot.toLocaleString()} units</b> from <b>${esc(document.getElementById("shipFrom").selectedOptions[0]?.textContent.split(" · used")[0]||"")}</b>. Click <b>Yes — create it</b> to send it to ${PLAT()}.`,"info");return;}
   go.style.background="";go.style.borderColor="";
-  shipBusy=true;go.disabled=true;go.textContent="Creating…";shipStatus("Sending to Amazon… (about a minute)");
+  shipBusy=true;go.disabled=true;go.textContent="Creating…";shipStatus("Sending to "+PLAT()+"… (about a minute)");
   const payload={source:ship.source,address_key:addr,name:document.getElementById("shipName").value.trim(),items,hold_id:ship.hold};
   let id;
   try{id=(await api("ship_start",{payload}))[0].id;}
-  catch(e){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent="Create shipment on Amazon";shipStatus(sqlErrText(e),"err");return;}
+  catch(e){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus(sqlErrText(e),"err");return;}
   const t0=Date.now();
   while(Date.now()-t0<6*60*1000){
     await new Promise(r=>setTimeout(r,4000));
     let st;try{st=(await api("refresh_get",{id}))[0];}catch(e){continue;}
     if(!st)continue;
     if(st.status==="done"&&st.result){shipBusy=false;go.textContent="Created ✓";
-      shipStatus(`✓ ${esc(st.message||"Plan created")}. <a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open in Send to Amazon ↗</b></a> to finish boxes, placement and carrier.`,"ok");
-      if(ship.source==="miami"){carts.miami.clear();renderWare("miami");renderCart();}
+      shipStatus(ship.source==="walmart"?`✓ ${esc(st.message||"WFS inbound order created")}.${(st.result.shipments||[]).map(x=>`<br>Shipment <b class="mono">${esc(x.id||"")}</b> → ${esc(x.fc||"")} · ${x.units} units`).join("")}<br><a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open Walmart Seller Center ↗</b></a> → WFS → Inbound shipments to print labels and set the carrier.`:`✓ ${esc(st.message||"Plan created")}. <a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open in Send to Amazon ↗</b></a> to finish boxes, placement and carrier.`,"ok");
+      if(ship.source==="miami"||ship.source==="walmart"){carts[ship.source].clear();renderWare(ship.source);renderCart();}
       loadOrders();return;}
-    if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent="Create shipment on Amazon";shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
-    shipStatus("Sending to Amazon… "+(STEP[st.status]?esc(st.status):"")+" ("+Math.round((Date.now()-t0)/1000)+"s)");
+    if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
+    shipStatus("Sending to "+PLAT()+"… "+(STEP[st.status]?esc(st.status):"")+" ("+Math.round((Date.now()-t0)/1000)+"s)");
   }
-  shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent="Create shipment on Amazon";shipStatus("No answer after 6 minutes — check Send to Amazon before trying again, it may have been created.","err");
+  shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("No answer after 6 minutes — check "+(ship.source==="walmart"?"Walmart Seller Center":"Send to Amazon")+" before trying again, it may have been created.","err");
 });
 // ---- PIN login (Netlify copy only) ----
 let loginWait=null;
@@ -1163,7 +1174,7 @@ async function webSession(){
 }
 // Marketplace alerts: open orders we ship ourselves, checked hourly by GitHub (ops/market_sync.py) -> ops_market
 const MKT={rows:[],at:null,loaded:false,err:null,stale:false};
-const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon",website:"Website",mercadolibre:"Mercado Libre"};
+const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon",mercadolibre:"Mercado Libre"};
 const dur=ms=>{const h=Math.max(1,Math.round(Math.abs(ms)/3600e3));return h<48?h+"h":Math.round(h/24)+" days";};
 function mktOrders(){
   const now=Date.now(),out=[];
@@ -1210,7 +1221,7 @@ function renderMarket(){
     const old=!r.checked_at||now-Date.parse(r.checked_at)>3*3600e3;
     const err=r.error&&(!r.checked_at||r.tried_at>r.checked_at);
     return `<div class="mline"><span><b>${CHN[ch]}</b> · ${os} open to ship${lt?` · <b style="color:var(--crit)">${lt} late</b>`:""}</span><span style="color:${err||old?"var(--warn)":"var(--ink-2)"}">${err?`last check failed (${esc(r.error.slice(0,120))}) · `:""}${r.checked_at?"checked "+fmtTime(r.checked_at):"never checked"}</span></div>`;
-  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves; FBA, WFS and TikTok FBT orders ship themselves. Website (bodyj4you.com) has no marketplace deadline: an order is flagged late 2 days after purchase. Mercado Libre orders are listed for visibility (Mercado Libre Full ships them).</p></div>`;
+  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves; FBA, WFS and TikTok FBT orders ship themselves. Mercado Libre orders are listed for visibility (Mercado Libre Full ships them).</p></div>`;
   el.innerHTML=h;
 }
 async function loadMarket(){

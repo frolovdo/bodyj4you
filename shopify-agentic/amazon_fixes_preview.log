@@ -1,0 +1,68 @@
+GK0201 ['bullet_point'] VALID []
+GK0201_PRG no change
+GK0202 ['bullet_point'] VALID []
+GK0202_FBA no change
+GK0203 ['bullet_point'] VALID []
+GK0203_FBA no change
+GK0204 ['bullet_point'] VALID []
+GK0204_FBA no change
+GK0343 ['bullet_point'] VALID []
+GK0343_FBA no change
+GK0344 ['bullet_point'] VALID []
+GK0344_FBA no change
+GK0347 ['bullet_point'] VALID []
+GK0347_FBA no change
+GK0948 ['bullet_point'] VALID []
+GK0948_FBA no change
+GK0949 ['bullet_point'] VALID []
+GK0949_FBA no change
+GK0950 ['bullet_point'] VALID []
+GK0950_FBA no change
+GK0951 ['bullet_point'] VALID []
+GK0951_FBA no change
+GK0952 ['bullet_point'] VALID []
+GK0952_FBA no change
+GK0220-Gold ['item_package_quantity'] VALID []
+GK0220-Gold_FBA no change
+GK0268_FBA no change
+GK0486_FBA ['number_of_pieces'] VALID []
+GK0487 no change
+GK0487_FBA ['number_of_pieces'] VALID []
+GK0529 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0529_FBA ['number_of_pieces'] VALID []
+GK0530 ['number_of_pieces'] VALID []
+GK0530_FBA ['number_of_pieces'] INVALID [('100476', 'Provide an Item Name that is 75 characters or less to use Item Highlights. Additional deta')]
+GK0565_FBA ['number_of_pieces'] VALID []
+GK0712 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0712_FBA no change
+GK0713 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0713_FBA no change
+GK0714 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0714_FBA no change
+GK0751 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0751_FBA no change
+GK0752 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0752_FBA no change
+GK0859 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0859_FBA no change
+GK0872 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0872_FBA no change
+GK0873 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0873_FBA no change
+GK0874 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0874_FBA no change
+GK0875 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0875_FBA no change
+GK0907 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0907_FBA no change
+GK0909 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0909_FBA no change
+GK0910 ['item_package_quantity', 'number_of_pieces'] INVALID [('8541', "The Listing data provided is different from what's already in the Amazon catalog. The item")]
+GK0910_FBA ['number_of_pieces'] VALID []
+GK0918 ['item_package_quantity', 'number_of_pieces'] VALID []
+GK0918_FBA no change
+PD-EUCALYPTUS-MCT-10-RL no change
+PD-EUCALYPTUS-MCT-2oz ['ingredients'] VALID []
+PD-EUCALYPTUS-MCT-16oz ['ingredients'] VALID []
+PD-EUCALYPTUS-MCT-1oz ['ingredients'] VALID []
+PD-EUCALYPTUS-MCT-4oz ['ingredients'] VALID []

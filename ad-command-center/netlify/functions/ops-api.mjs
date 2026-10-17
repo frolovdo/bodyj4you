@@ -44,7 +44,7 @@ const ACT = {
   market_list: () => db().from('ops_market').select('channel,checked_at,tried_at,error,orders'),
   ship_start: (a) => {
     const p = a.payload || {};
-    if (!['miami', 'china'].includes(p.source) || !Array.isArray(p.items) || !p.items.length || p.items.length > 1500) throw new Error('bad shipment');
+    if (!['miami', 'china', 'walmart'].includes(p.source) || !Array.isArray(p.items) || !p.items.length || p.items.length > 1500) throw new Error('bad shipment');
     const payload = { source: p.source, address_key: str(p.address_key, 200), name: str(p.name, 40),
       items: p.items.map((i) => ({ msku: str(i.msku, 80), qty: int(i.qty) })), hold_id: p.hold_id == null ? null : int(p.hold_id) };
     return db().from('ops_refresh').insert({ requested_by: 'ops page', kind: 'ship', payload }).select('id');
