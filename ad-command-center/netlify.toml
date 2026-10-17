@@ -10,11 +10,19 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  # pg (the hourly feed's Postgres client) has optional native pieces esbuild cannot bundle: ship it from node_modules as is
+  external_node_modules = ["pg"]
 
 # API routes: the browser only ever talks to these functions; secrets stay in Netlify env
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
+  status = 200
+
+# Ops page (public/ops/index.html, PIN login via /api/ops-login)
+[[redirects]]
+  from = "/ops"
+  to = "/ops/index.html"
   status = 200
 
 # SPA fallback

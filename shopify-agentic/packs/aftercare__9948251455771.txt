@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 9948251455771
+Title: Ear Stretching Balm - Natural Solution for Gauges
+Variant option: Title
+Variants (SKU: option value):
+  HB0005_PRG: Default Title
+
+== Amazon HB0005_PRG / B01B1Y48AG (variant Default Title)
+Title: ['BodyJ4You Ear Stretching Balm - Jojoba Castor Oil Butter for Ear Gauges']
+Highlight: ['Dead Stretching Ear Moisturizer - Plugs Tunnels Tapers Piercing Aftercare - Natural Vegan - 0.35 Oz']
+B1: PREMIUM EAR STRETCHING BALM: Ear Gauging Cream That Moisturizes and Cares for Stretched Ear Lobes. Fast-Absorbing Ear Butter for Gauges Helps Hydrate, Maintain Skin Elasticity and Soften While Supporting Comfort at Every Size. Natural Vegan Formula Keeps Lobes Conditioned Daily
+B2: STRETCHING OIL & BALM FOR GAUGES: Stretch Comfortably When Sizing Up With Tapers, Plugs or Tunnels. Works Like an Ear Gauge Oil and Ear Stretching Oil for All Sizes. Regular Use Helps Maintain Skin Hydration and Reduce Dryness for a Smooth, Comfortable Stretching Process
+B3: DEAD STRETCHING & SEPTUM STRETCHING: Rich in Jojoba Oil for Ear Stretching Routines That Skip the Taper. Massage Into Lobes to Support Dead Stretching and Weighted Wear. Pairs With BodyJ4You Piercing Aftercare Spray for Complete Body Piercing Care Between Sizing Sessions
+B4: HOW TO USE EAR STRETCHING BALM: Massage a Small Amount Onto the Ear Lobe Before Inserting Your Taper, Plugs or Tunnels. Apply at Least Twice Daily for Best Results and Consistent Comfort. A Little Goes a Long Way - One 0.35 Oz (10g) Metal Tin Lasts for Months of Regular Daily Use
+B5: NATURAL VEGAN INGREDIENTS: Made With Jojoba Seed Oil, Castor Seed Oil, Rice Bran Oil, Apricot Kernel Oil, Soy Butter and Candelilla Wax. Cruelty Free With No Preservatives or Harsh Additives. Gentle on Sensitive Skin With a Mild Natural Scent That Fades Quickly After Application
+Attributes: {"size": ["0.35 Oz (Pack of 1)"], "number_of_items": [1], "unit_count": [0.35], "item_volume": [6.45], "scent": ["Unscented"], "material_feature": ["Natural", "Plant-Based", "Cruelty Free"], "product_benefit": ["Moisturizing", "Nourishing", "Soothing", "Relieves Itching", "Firming"], "skin_type": ["normal", "dry", "combination", "oily", "sensitive"], "directions": ["Begin by Massaging a Small Amount of Balm onto Ear Lobe and Then Slowly Insert the Small End of Taper. Pay Attention to How you Feel as Stretching Should not be Painful."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Oryza Sativa (rice) Bran Oil, Prunus Armeniaca (apricot) Kernel Oil, Simmondsia Chinensis (jojoba) Seed Oil, Ricinus Communis (castor) Seed Oil, Glycine Soja Butter, Euphorbia Cerifera Wax"]}

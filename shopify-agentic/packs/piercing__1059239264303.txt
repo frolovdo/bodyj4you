@@ -1,0 +1,27 @@
+SHOPIFY PRODUCT 1059239264303
+Title: 156PC Body Piercing Kit (14, 16G)
+Variant option: COLOR
+Variants (SKU: option value):
+  KT8153: Silvertone
+  KT8214: Rainbow
+  KT8215: Black
+  KT8216: Goldtone
+  KT8217: Rose Goldtone
+
+== Amazon KT8153 / B07FT1LP8R (variant Silvertone)
+Title: ['BodyJ4You 156PC Body Piercing Kit']
+Highlight: ['Industrial Cartilage Tragus Piercing Jewelry - Horseshoe Hoop Barbell Labret Stud Captive - 14G 16G 18G 20G Surgical Steel']
+B1: COMPLETE 156PC BODY PIERCING KIT: Everything You Need to Start in One Set - 140 Pieces of Assorted Body Jewelry Plus Sterile Needles, Clamps, Gloves and Alcohol Pads. For Belly Button Navel, Nose, Septum, Tragus, Ear Cartilage, Helix, Industrial, Eyebrow, Lip, Tongue and Nipple
+B2: ASSORTED 14G 16G BODY JEWELRY: Includes Ball Closure Rings, Circular Horseshoe Barbells, Curved Barbells, Straight Barbells and Labret Studs in Surgical Stainless Steel. 20 Pieces of Basic Jewelry Plus 120 Pieces of Randomly Selected Hoops, Rings, Studs, Beads and Barbells
+B3: PIERCING TOOLS INCLUDED: 10 Hollow Piercing Needles in 14G and 16G, Individually Sterilized With Ethylene Oxide (EO) Gas, Plus 2 Disposable Clamps, 2 Latex Gloves and 2 Alcohol Pads. Hygienic Single-Use Tools Help You Prep and Wipe the Pierced Area Cleanly Before You Begin
+B4: WHAT IS THE JEWELRY MADE OF: Surgical Stainless Steel is Durable, Holds Its Color and Wipes Clean Easily. The High Polished Smooth Surface Sits Comfortably for Everyday All-Day Wear. Pair With BodyJ4You Piercing Aftercare Spray, Bump Solution or Jojoba Oil for New Piercings
+B5: TRUSTED PIERCING BRAND: Backed by Over 20 Years in the Piercing and Body Jewelry Community. Lightweight, Hypoallergenic Jewelry Made for Beginners and Experienced Piercers Alike. Every Kit is Quality Checked Under Strict Quality Control Standards
+Attributes: {"color": ["RANDOM 14G,16G -  Silvertone"], "material": ["Metal"], "item_package_quantity": [156], "metal_type": ["stainless-steel"], "gem_type": ["NA"]}
+
+-- Amazon KT8214 (Rainbow): same bullets as above; title: ['BodyJ4You 156PC Body Piercing Kit - Needles 14G 16G 18G 20G RANDOM Jewelry']; attrs: {"color": ["RANDOM 14G,16G - Rainbow"], "material": ["Metal"], "item_package_quantity": [156], "metal_type": ["stainless-steel"], "gem_type": ["NA"]}
+
+-- Amazon KT8215 (Black): same bullets as above; title: ['BodyJ4You 156PC Body Piercing Kit - Needles 14G 16G 18G 20G RANDOM Jewelry']; attrs: {"color": ["RANDOM 14G,16G - Black"], "material": ["Metal"], "item_package_quantity": [156], "metal_type": ["stainless-steel"], "gem_type": ["NA"]}
+
+-- Amazon KT8216 (Goldtone): same bullets as above; title: ['BodyJ4You 156PC Body Piercing Kit - Needles 14G 16G 18G 20G RANDOM Jewelry']; attrs: {"color": ["RANDOM 14G,16G - Goldtone"], "material": ["Metal"], "item_package_quantity": [156], "metal_type": ["stainless-steel"], "gem_type": ["NA"]}
+
+-- Amazon KT8217 (Rose Goldtone): same bullets as above; title: ['BodyJ4You 156PC Body Piercing Kit - Needles 14G 16G 18G 20G RANDOM Jewelry']; attrs: {"color": ["RANDOM 14G,16G - Rose Goldtone"], "material": ["Metal"], "item_package_quantity": [156], "metal_type": ["stainless-steel"], "gem_type": ["NA"]}

@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 10139738046747
+Title: BodyJ4You Organic Piercing Aftercare Oil Blend - 1 Fl Oz
+Variant option: Title
+Variants (SKU: option value):
+  PA-BUMP-1oz: Default Title
+
+== Amazon PA-BUMP-1oz / B0G3Q4GTBM (variant Default Title)
+Title: ['BodyJ4You Organic Piercing Bump Oil - Keloid Bump Removal Nose Ear Cleaner']
+Highlight: ['Piercing Aftercare Drops Septum Belly Button Cartilage Nipple Eyebrow - Jojoba Tamanu Rosehip Cold Pressed - 1 Fl Oz Dropper']
+B1: PIERCING BUMP OIL WITH ORGANIC COLD PRESSED PLANT OILS: A Targeted Piercing Bump Solution That Softens The Look Of Raised Marks, Calms Visible Redness And Keeps Skin Around Jewelry Comfortable. Certified Organic Jojoba, Tamanu And Rosehip In A 1 Fl Oz Amber Glass Dropper Bottle
+B2: NOSE AND EAR PIERCING BUMP CARE: Built For The Stubborn Bump Beside A Nose Ring Or Cartilage Stud That Will Not Settle. Works As A Nose Piercing Cleaner Follow Up And An Ear Piercing Cleaner Partner, Helping Dry Tight Skin Look Smoother And Evener Around New And Older Piercings
+B3: BODY PIERCING AFTERCARE FOR EVERY SPOT: Septum, Belly Button, Navel, Cartilage, Helix, Tragus, Nipple, Dermal, Eyebrow And Lip. Layer It Over Your Saline Routine, Or Pair It With BodyJ4You Piercing Aftercare Spray, So Cleaning And Bump Care Both Happen In One Daily Habit
+B4: HOW DO YOU USE PIERCING BUMP OIL: Wash Hands, Clean And Dry The Area, Then Press One Or Two Drops Onto The Skin Beside The Piercing And Massage Gently, Twice Daily. Steady Daily Use Matters More Than Using A Lot At Once. One Bottle Covers Roughly Three Months Of Daily Care
+B5: USDA CERTIFIED ORGANIC OIL BLEND YOU CAN CHECK: Jojoba, Tamanu, Rosehip Seed, Lemon Balm, Lavender And Vitamin E. No Parabens, Phthalates, Mineral Oil, Silicone, Dyes Or Added Fragrance. Vegan And Cruelty Free, Small Batch Filled, Safety Sealed, Batch Coded Amber Glass Bottle
+Attributes: {"color": [{"language_tag": "en_US", "standardized_values": ["Yellow"], "marketplace_id": "ATVPDKIKX0DER"}], "number_of_items": [1], "unit_count": [1.0], "item_volume": [1.0], "material_feature": ["Natural", "Organic", "Plant Based", "Alcohol Free", "Vegan"], "product_benefit": ["Moisturizing", "Hydrating", "Nourishing"], "skin_type": ["All"], "directions": ["Wash Hands, Clean And Dry The Area, Then Press One Or Two Drops Onto The Skin Beside The Piercing And Massage Gently, Twice Daily. Steady Daily Use Matters More Than Using A Lot At Once. One Bottle Covers Roughly Three Months Of Daily Care"], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Organic Simmondsia Chinensis Seed Oil, Caprylic/Capric Triglyceride, Organic Calophyllum Inophyllum Seed Oil, Organic Melaleuca Alternifolia Leaf Oil, Organic Lavandula Angustifolia Oil, Organic Tocopherol"]}

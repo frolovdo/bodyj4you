@@ -95,18 +95,34 @@ export function assemble(form, live, fam) {
       levers.add('bid');
     }
   }
-  // new keywords and negatives (Keywords page): kadd_<i>=json, kneg_<i>=json rows prepared by the client from the model
+  // new keywords and negatives (Keywords page): kadd_<i>=json, kneg_<i>=json rows prepared by the client from the model.
+  // Checked against what Amazon holds right now, so a second press of the same list adds nothing twice:
+  //   already an enabled exact keyword there -> skipped and said so; paused there -> turned back on at the new bid (Amazon refuses a duplicate);
+  //   already blocked there -> skipped.
+  const skipped = [];
+  const norm = (s) => String(s || '').trim().toLowerCase();
   for (const [k, v] of Object.entries(form)) {
     if (!/^(kadd|kneg)_/.test(k) || !v) continue;
     let r; try { r = JSON.parse(v); } catch { continue; }
+    const camp = cname[r.campaignId] || r.campaignName;
     if (k.startsWith('kadd_') && r.campaignId && r.adGroupId && r.keywordText) {
       const bid = Math.round(num(r.bid, 0.2, 3, 'bid for ' + r.keywordText) * 100) / 100;
-      rows.push({ api: 'POST /sp/keywords', entity: 'keyword', campaign: cname[r.campaignId] || r.campaignName, target: `${r.keywordText} [EXACT]`,
+      const have = S.keywords.find((x) => String(x.campaignId) === String(r.campaignId) && x.matchType === 'EXACT' && norm(x.keywordText) === norm(r.keywordText) && x.state !== 'ARCHIVED');
+      if (have && have.state === 'ENABLED') { skipped.push(`'${r.keywordText}' is already an exact keyword in ${camp} at $${have.bid}, so nothing to add`); continue; }
+      if (have) {  // paused: Amazon refuses a second copy, so switch the existing one back on at the asked bid
+        rows.push({ api: 'PUT /sp/keywords', entity: 'keyword', campaign: camp, target: `${r.keywordText} [EXACT]`, body: { keywordId: have.keywordId, state: 'ENABLED', bid },
+          setting: 'keyword back on', before: `paused at $${have.bid}`, after: `on at $${bid}`, change: `turn exact '${r.keywordText}' back on at $${bid} (was paused at $${have.bid})` });
+        levers.add('new keywords');
+        continue;
+      }
+      rows.push({ api: 'POST /sp/keywords', entity: 'keyword', campaign: camp, target: `${r.keywordText} [EXACT]`,
         body: { campaignId: r.campaignId, adGroupId: r.adGroupId, keywordText: r.keywordText, matchType: 'EXACT', bid, state: 'ENABLED' }, setting: 'new keyword', before: '-', after: `exact at $${bid}`,
         change: `add exact '${r.keywordText}' at $${bid}` });
       levers.add('new keywords');
     } else if (k.startsWith('kneg_') && r.campaignId && r.adGroupId && r.keywordText) {
-      rows.push({ api: 'POST /sp/negativeKeywords', entity: 'negative keyword', campaign: cname[r.campaignId] || r.campaignName, target: r.keywordText,
+      const have = (S.negativeKeywords || []).find((x) => String(x.campaignId) === String(r.campaignId) && String(x.adGroupId) === String(r.adGroupId) && x.matchType === 'NEGATIVE_EXACT' && norm(x.keywordText) === norm(r.keywordText) && x.state === 'ENABLED');
+      if (have) { skipped.push(`'${r.keywordText}' is already blocked in ${camp}, so nothing to add`); continue; }
+      rows.push({ api: 'POST /sp/negativeKeywords', entity: 'negative keyword', campaign: camp, target: r.keywordText,
         body: { campaignId: r.campaignId, adGroupId: r.adGroupId, keywordText: r.keywordText, matchType: 'NEGATIVE_EXACT', state: 'ENABLED' }, setting: 'negative keyword', before: '-', after: 'negative exact',
         change: `block exact '${r.keywordText}'` });
       levers.add('negative keywords');
@@ -123,9 +139,21 @@ export function assemble(form, live, fam) {
     hyps[name] = { text: h, success: form['succ_' + cid] || 'orders_up', days: parseInt(form['days_' + cid] || '14', 10) || 14 };
   }
   for (const r of rows) r.why = (hyps[r.campaign]?.text || '').slice(0, 120);
-  if (!rows.length) throw new Error('nothing changed: every value equals what is live now');
-  return { rows, levers: [...levers].sort(), beforeBudgets, hyps, touched };
+  if (!rows.length) throw new Error(skipped.length ? 'nothing to send: ' + skipped.join('; ') : 'nothing changed: every value equals what is live now');
+  return { rows, levers: [...levers].sort(), beforeBudgets, hyps, touched, skipped };
 }
+
+/** Amazon's error JSON in plain words, for the popup and the History page. */
+export function plainError(raw) {
+  const s = String(raw || '');
+  if (!s) return '';
+  if (/duplicateValueError|already exists/i.test(s)) return 'already on Amazon, so nothing to do';
+  if (/entityNotFound/i.test(s)) return 'not found on Amazon any more';
+  if (/throttl|429/i.test(s)) return 'Amazon was busy (rate limit); try again in a minute';
+  const m = s.match(/"message"\s*:\s*"([^"]{3,160})/);
+  return m ? m[1] : s.slice(0, 160);
+}
+export const isDuplicate = (raw) => /duplicateValueError|already exists/i.test(String(raw || ''));
 
 /** Charter checks, same names and levels as the Mac tool. */
 export async function prechecks(rows, beforeBudgets, fam, { emergency = false, exceptItem = null, restore = false } = {}) {
@@ -241,6 +269,7 @@ export function verify(rows, after) {
     if (!now) { diffs.push(`${r.campaign}: ${kind} ${b[idk]} not found on read-back`); continue; }
     if (b.budget && Math.abs(parseFloat(now.budget?.budget) - b.budget.budget) > 0.005) diffs.push(`${r.campaign}: budget is $${now.budget?.budget}, asked $${b.budget.budget}`);
     if ('bid' in b && Math.abs(parseFloat(now.bid) - b.bid) > 0.005) diffs.push(`${r.campaign} ${r.target}: bid is $${now.bid}, asked $${b.bid}`);
+    if ('state' in b && now.state !== b.state) diffs.push(`${r.campaign} ${r.target || ''}: state is ${now.state}, asked ${b.state}`);
     if (b.dynamicBidding) {
       const want = Object.fromEntries((b.dynamicBidding.placementBidding || []).map((p) => [p.placement, p.percentage]));
       const got = Object.fromEntries((now.dynamicBidding?.placementBidding || []).map((p) => [p.placement, p.percentage]));

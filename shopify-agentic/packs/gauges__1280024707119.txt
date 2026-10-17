@@ -1,0 +1,27 @@
+SHOPIFY PRODUCT 1280024707119
+Title: 24PC Ear Stretching Kit (00G-20 mm)
+Variant option: Color
+Variants (SKU: option value):
+  KT8002-BK: Silver
+  GK0363: Black
+  KT8002-CL: Clear
+  GK0362: Rainbow
+  24-00G-20mmBigGaugesKit-White: White
+
+== Amazon KT8002-BK_FBA / B006P2VUF6 (variant Silver)
+Title: ['BodyJ4You 24PC Ear Gauge Stretching Kit']
+Highlight: ['Big Gauges for Ears 00G-20mm Advanced Set - Stainless Steel Single Flare Tunnels Plugs Solid Acrylic Tapers']
+B1: COMPLETE BIG GAUGE STRETCHING KIT: Advanced 24-Piece Ear Stretching Set Featuring Surgical Stainless Steel Single Flare Tunnels and Solid Acrylic Tapers. Big Gauges for Ears From 00G (10mm) to 13/16 Inch (20mm). Continue Your Stretching Journey - Pair With Jojoba Oil or Ear Balm for Best Results
+B2: VERIFIED SIZES - Tunnels and Tapers With O-Rings Included: 00G (10mm), 1/2 Inch (12mm), 9/16 Inch (14mm), 5/8 Inch (16mm), 11/16 Inch (18mm), 13/16 Inch (20mm). Single Flare Plug Has Lip on One Side, Perfectly Smooth on Other - O-Rings Securely Hold Jewelry in Place
+B3: HEALTHY STRETCHING STARTS WITH AFTERCARE: Big Gauge Stretching Without Proper Aftercare Can Lead to Dryness, Discomfort and Slow Progress. Explore BodyJ4You Ear Stretching Balm or Organic Jojoba Oil to Keep Lobes Moisturized, Flexible and Comfortable Throughout Your Stretching Journey
+B4: SAFE GRADUAL STRETCHING: Apply Gauge Lube or Oil to Ear Lobe Before Inserting Taper, Plugs or Tunnels. Dead Stretching and Lobe Stretching Require Patience - Wait 4-6 Weeks Between Sizes. Mild Pressure is Normal but Stretching Should Never Be Painful. Listen to Your Body
+B5: TRUSTED QUALITY FOR DAILY WEAR: Hypoallergenic Stainless Steel Tunnels and Lightweight Acrylic Tapers With Perfectly Smooth Surface for Comfortable All-Day Wear. Durable, Easy to Clean and Precision-Crafted for Smooth Transition Between Big Gauge Sizes for Experienced Stretchers
+Attributes: {"color": ["Black, Silvertone"], "material": ["Acrylic"], "metal_type": ["stainless-steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0363 (Black): same bullets as above; title: ['BodyJ4You 24PC Ear Gauge Stretching Kit']; attrs: {"color": ["All Black"], "material": ["Acrylic"], "metal_type": ["stainless-steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon KT8002-CL (Clear): same bullets as above; title: ['BodyJ4You 24PC Ear Gauge Stretching Kit - Big Gauges for Ears 00G-20mm Advanced Set - Silvertone Stainless Steel Single Flare Tunnels Clear Acrylic Tapers - Dead Stretching Lobe Men Women Expander']; attrs: {"color": ["Clear, Silvertone"], "material": ["Acrylic"], "metal_type": ["stainless-steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon GK0362 (Rainbow): same bullets as above; title: ['BodyJ4You 24PC Ear Gauge Stretching Kit']; attrs: {"color": ["Black, Rainbow"], "material": ["Acrylic"], "metal_type": ["stainless-steel"], "gem_type": ["No Gemstone"]}
+
+-- Amazon 24-00G-20mmBigGaugesKit-White (White): same bullets as above; title: ['BodyJ4You 24PC Ear Gauge Stretching Kit - Big Gauges for Ears 00G-20mm Advanced Set - Silvertone Stainless Steel Single Flare Tunnels White Acrylic Tapers - Dead Stretching Lobe Men Women Expander']; attrs: {"color": ["White, Silvertone"], "material": ["Acrylic"], "metal_type": ["stainless-steel"], "gem_type": ["No Gemstone"]}

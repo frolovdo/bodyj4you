@@ -52,9 +52,11 @@ def build(snap_dir):
     ]
     search_terms = [
         row(campaignId=1, campaignName="SP | PA | AUTO-CLOSE", adGroupId=10, adGroupName="auto", keywordType="QUERY_HIGH_REL_MATCHES",
-            matchType="TARGETING_EXPRESSION_PREDEFINED", searchTerm="nose ring cleaner", clicks=14, cost=12.5),                   # waste
+            matchType="TARGETING_EXPRESSION_PREDEFINED", searchTerm="nose ring cleaner", clicks=20, cost=12.5),                   # waste (benchmark 18 clicks, $6.50)
         row(campaignId=1, campaignName="SP | PA | AUTO-CLOSE", adGroupId=10, adGroupName="auto", keywordType="QUERY_HIGH_REL_MATCHES",
             matchType="TARGETING_EXPRESSION_PREDEFINED", searchTerm="saline wound wash piercing", clicks=20, cost=9.0, purchases7d=3, sales7d=42.0),  # harvest
+        row(campaignId=1, campaignName="SP | PA | AUTO-CLOSE", adGroupId=10, adGroupName="auto", keywordType="QUERY_HIGH_REL_MATCHES",
+            matchType="TARGETING_EXPRESSION_PREDEFINED", searchTerm="ear piercing kit", clicks=12, cost=11.0),                       # $11 but only 12 clicks: under benchmark, no waste
         row(campaignId=2, campaignName="SP | PA | B | messy", adGroupId=20, adGroupName="mixed", keyword="saline spray",
             matchType="PHRASE", searchTerm="saline spray for piercings", clicks=30, cost=55.0, purchases7d=1, sales7d=14.0),      # never-negated spend
     ]
@@ -122,9 +124,16 @@ def main():
             "placement-cut": lambda xs: any("Detail Page" in x["target"] and x["proposed"] == 0 for x in xs),
         }
         expected["placement"] = lambda xs: any("Top of Search" in x["target"] and x["proposed"] == 25 for x in xs)
-        # phase tagging: PA-SALINE is grow -> performance; its profitability findings (waste in campaign 1) are deferred
+        # phase tagging: PA-SALINE is grow -> performance. waste/pause are "always" and never deferred; bleed is.
         waste = [x for x in findings if x["rule"] == "waste"]
-        assert waste and all(x["deferred"] for x in waste), "waste on grow-stage parent should be deferred"
+        assert waste and not any(x["deferred"] for x in waste), "waste is actioned in either phase"
+        assert [x["target"] for x in waste] == ["nose ring cleaner"], "12-click term under the statistical benchmark must not fire"
+        assert "benchmark 18 clicks and $6.50" in waste[0]["detail"], waste[0]["detail"]
+        pause = [x for x in findings if x["rule"] == "pause"]
+        assert pause and not any(x["deferred"] for x in pause)
+        assert "benchmark 23 clicks" in pause[0]["detail"], pause[0]["detail"]
+        bleed = [x for x in findings if x["rule"] == "bleed"]
+        assert bleed and all(x["deferred"] for x in bleed), "bleed stays a profitability finding"
         scale = [x for x in findings if x["rule"] == "scale"]
         assert scale and not any(x["deferred"] for x in scale), "scale on grow-stage parent must not be deferred"
         assert all("phase" in x for x in findings)
@@ -143,6 +152,11 @@ def main():
         assert any(x["rule"] == "structure" for x in scoped2)
         assert not any(x["rule"] == "waste" for x in scoped2), "waste $12.50 is under the $100 floor"
         assert any(x["rule"] == "scale" for x in scoped2), "scale $210 is above the floor"
+        # stage default target ACoS when a parent has none of its own
+        cfg2 = json.loads(json.dumps(cfg)); cfg2["parents"]["OTHER"].pop("target_acos")
+        ix2 = audit.Index(audit.load_snapshot(snap), cfg2)
+        assert ix2.target_acos_for_parent("OTHER") == 0.20, "harvest stage default"
+        assert ix2.target_acos_for_parent("PA-SALINE") == 0.25, "explicit target wins"
         # one-order harvest is off by default
         assert not any(x["rule"] == "harvest" and "1 orders" in x["detail"] for x in findings)
         failed = [r for r, chk in expected.items() if not chk(by_rule.get(r, []))]

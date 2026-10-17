@@ -1,0 +1,51 @@
+SHOPIFY PRODUCT 6558385995823
+Title: BodyJ4You 3PC 16G Flat Back Stud Set - Internally Threaded CZ
+Variant option: COLOR
+Variants (SKU: option value):
+  BR3791: Silvertone, Clear CZ
+  BR3792: Goldtone, Clear CZ
+  BR3793: Rose Goldtone, Clear CZ
+  BR3926: Black Steel, Clear CZ
+  BR3927: Rainbow Steel, Clear CZ
+  BR4156: Goldtone, Yellow CZ
+  BR4157: Rose Goldtone, Pink CZ
+  BR4158: Black Steel, Black CZ
+  BR4159: Blue Steel, Blue CZ
+  BR4219: Silvertone, Threadless
+  BR4220: Clear, Aurora, Vitrail
+  BR4221: Silvertone, Black, Goldtone
+  BR4222: Star, Heart, Round CZ
+
+== Amazon BR3791 / B077ZFT4YF (variant Silvertone, Clear CZ)
+Title: ['BodyJ4You 3PC Surgical Steel Labret Stud Tragus Earring Set 16G Helix']
+Highlight: ['Monroe Piercing Jewelry 6mm-10mm']
+B1: FLAT BACK EARRINGS SET OF 3: Three Internally Threaded 16G Studs With Flat Back and Shiny Cubic Zirconia Crystal Front for a Secure, Low-Profile Look. Includes Three Bar Lengths, 6mm, 8mm and 10mm, to Fit Cartilage, Tragus, Helix, Conch, Labret, Lip, Monroe and Medusa Piercings
+B2: CARTILAGE AND STUD EARRINGS FOR WOMEN AND MEN: Versatile Flat Back Stud Set for Ear and Face Piercings. Gauge 16G (1.2mm), Bar Lengths 6mm (1/4 inch), 8mm (5/16 inch) and 10mm (3/8 inch), CZ Sizes 2mm, 3mm and 4mm. Mix Lengths to Build a Clean Cartilage and Helix Earring Stack
+B3: HYPOALLERGENIC SURGICAL STEEL: Made of 316L Surgical Stainless Steel That Is Durable and Resistant to Tarnishing. The Internally Threaded Screw Top Holds Each Stud Secure So It Will Not Loosen, While the Flat Back Sits Smooth Against Skin Without Catching Hair or Clothing
+B4: HOW TO WEAR AND STYLE: Insert the Flat Back Post From Behind, Place the CZ Top on the Front and Turn Clockwise Until Snug. Use Tweezers for a Firm Grip and Avoid Overtightening. Line Studs Along the Lobe and Set One at the Tragus or Helix to Build a Balanced Earring Stack
+B5: TRUSTED PIERCING JEWELRY BRAND: BodyJ4You Is Backed by Over 20 Years in the Piercing and Body Jewelry Community. Lightweight Hypoallergenic Flat Back Studs Made for All-Day Comfort. A Versatile Cartilage Earring Set for Casual or Active Wear, Quality Checked Before Shipping
+Attributes: {"color": ["Silvertone, Clear CZ"], "material": ["Metal"], "item_package_quantity": ["3"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR3792 (Goldtone, Clear CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Goldtone Surgical Steel']; attrs: {"color": ["Goldtone, Clear CZ"], "material": ["Metal"], "item_package_quantity": [3], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR3793 (Rose Goldtone, Clear CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Rose Goldtone Surgical']; attrs: {"color": ["Rose Goldtone, Clear CZ"], "material": ["Metal"], "item_package_quantity": ["3"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR3926 (Black Steel, Clear CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Black Surgical Steel Helix']; attrs: {"color": ["Black Steel, Clear CZ"], "material": ["Metal"], "item_package_quantity": ["3"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR3927 (Rainbow Steel, Clear CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Rainbow Surgical Steel']; attrs: {"color": ["Rainbow Steel, Clear CZ"], "material": ["Metal"], "item_package_quantity": ["3"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4156 (Goldtone, Yellow CZ): same bullets as above; title: ['BodyJ4You 3PC Flat Back Earrings for Women - 16G Cartilage Tragus Labret Stud Set - Hypoallergenic Surgical Steel Helix Conch Monroe - Internally Threaded CZ Crystal Earring Stack - Goldtone Yellow CZ']; attrs: {"color": ["Goldtone, Yellow CZ"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4157 (Rose Goldtone, Pink CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Rose Goldtone Pink Crystal']; attrs: {"color": ["Rose Goldtone, Pink CZ"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4158 (Black Steel, Black CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Black Steel Black Crystal']; attrs: {"color": ["Black Steel, Black CZ"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4159 (Blue Steel, Blue CZ): same bullets as above; title: ['BodyJ4You 3PC Labret Stud Tragus Earring Set 16G Blue Steel Blue Crystal']; attrs: {"color": ["Blue Steel, Blue CZ"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4219 (Silvertone, Threadless): same bullets as above; title: ['BodyJ4You 3PC Flat Back Earrings for Women']; attrs: {"color": ["Silvertone, Threadless"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4220 (Clear, Aurora, Vitrail): same bullets as above; title: ['BodyJ4You 3PC Flat Back Earrings for Women - 16G Cartilage Tragus Labret Stud Set - Hypoallergenic Surgical Steel Helix Conch - Internally Threaded CZ Crystal Earring Stack - Clear Aurora Vitrail CZ']; attrs: {"color": ["Clear, Aurora, Vitrail"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4221 (Silvertone, Black, Goldtone): same bullets as above; title: ['BodyJ4You 3PC Flat Back Earrings for Women - 16G Cartilage Tragus Labret Stud Set - Hypoallergenic Surgical Steel Helix - Internally Threaded CZ Crystal Earring Stack - Silvertone Black Goldtone CZ']; attrs: {"color": ["Silvertone, Black, Goldtone"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}
+
+-- Amazon BR4222 (Star, Heart, Round CZ): same bullets as above; title: ['BodyJ4You 3PC Flat Back Earrings for Women - 16G Cartilage Tragus Labret Stud Set - Hypoallergenic Surgical Steel Helix Conch Lip - Internally Threaded CZ Crystal Earring Stack - Star Heart Round CZ']; attrs: {"color": ["Star, Heart, Round CZ"], "material": ["Metal"], "metal_type": ["Stainless-Steel"], "gem_type": ["Crystal"]}

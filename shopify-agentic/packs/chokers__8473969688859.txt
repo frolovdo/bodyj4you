@@ -1,0 +1,48 @@
+SHOPIFY PRODUCT 8473969688859
+Title: 2PC Tattoo Choker Leather Necklace Set
+Variant option: COLOR
+Variants (SKU: option value):
+  NC4328: Black Heart
+  NC4333: Short Spikes
+  NC4334: Long Spikes
+  NC4335: Half Moon
+
+== Amazon NC4328 / B09LVGSGNJ (variant Black Heart)
+Title: ['BodyJ4You 2PC Black Choker Necklace for Women - Tattoo Choker Leather Set']
+Highlight: ['90s Black Choker Necklace for Women - 2000s Y2K Choker Vintage Collar Neck Lace - Goth Emo Punk Halloween Accessories']
+B1: GOTHIC CHARM FOR EVERY OCCASION: Whether You're Dressing Up for a Halloween Costume, a Gothic-themed Party, or Accessorizing a Casual Beach Outfit, Our Goth Choker Set is the Quintessential Addition. This Choker Necklace for Women, Complementing Both a Black Dress or Beachwear, is a Versatile Piece for Those Who Adore Black Jewelry.
+B2: NOSTALGIC AND TRENDY ACCESSORY SET: Our Tattoo Choker is Reminiscent of the Henna Tattoo, Offering a Charm Necklace That Echoes the Free-spirited Fashion of the 90s. It's an Essential Piece for Women's Clothes, Bringing a Touch of Old Office to Modern Styles and Serving as a Staple in Every Women's Jewelry Set.
+B3: SEAMLESS STYLE TRANSITION: Choker Set is a Testament to Transitional Fashion, Easily Taking You From Day to Night. Perfect for Adding a Dash of Vintage and Gothic Jewelry Flair, These Chokers Are Designed for Women and Looking for That Effortless Transition.
+B4: LIGHTWEIGHT AND HYPOALLERGENIC MATERIALS: Tattoo Choker Is Stretchable for Secure and Flexible Fit, While Black Leather Heart Choker With Silver-Tone Heart Ring Has Snap Button Closure for an Adjustable Fit. Made with Skin-Friendly Materials with No Nickel, Good for Sensitive Skin. Lightweight and Comfortable for Everyday Wear Without Irritation.
+B5: TRENDY GIFT FOR ANY OCCASION: Ideal for Goth, Punk, and Y2K Fashion Lovers. Great Gift for Birthdays, Halloween, Holidays, or Special Occasions. Choker Set Is Stylish and Thoughtful Present for Anyone Looking to Add Bold, Vintage-Inspired Accessories to Wardrobe.
+Attributes: {"color": ["Black Heart"], "material": ["Faux Leather"], "metal_type": ["NA"], "gem_type": ["No Gemstone"], "style": ["Black Heart"]}
+
+== Amazon NC4333 / B09WQD42B7 (variant Short Spikes)
+Title: ['BodyJ4You 2PC Black Choker Necklace for Women - Tattoo Choker Leather Set']
+Highlight: ['90s Black Choker Necklace for Women - 2000s Y2K Choker Vintage Collar Neck Lace - Goth Emo Punk Halloween Accessories']
+B1: GOTHIC CHARM FOR EVERY OCCASION: Whether You're Dressing Up for a Halloween Costume, a Gothic-themed Party, or Accessorizing a Casual Beach Outfit, Our Goth Choker Set is the Quintessential Addition. This Choker Necklace for Women, Complementing Both a Black Dress or Beachwear, is a Versatile Piece for Those Who Adore Black Jewelry.
+B2: NOSTALGIC AND TRENDY ACCESSORY SET: Our Tattoo Choker is Reminiscent of the Henna Tattoo, Offering a Charm Necklace That Echoes the Free-spirited Fashion of the 90s. It's an Essential Piece for Women's Clothes, Bringing a Touch of Old Office to Modern Styles and Serving as a Staple in Every Women's Jewelry Set.
+B3: SEAMLESS STYLE TRANSITION: Choker Set is a Testament to Transitional Fashion, Easily Taking You From Day to Night. Perfect for Adding a Dash of Vintage and Gothic Jewelry Flair, These Chokers Are Designed for Women and Looking for That Effortless Transition.
+B4: LIGHTWEIGHT AND HYPOALLERGENIC MATERIALS: Tattoo Choker Is Stretchable for Secure and Flexible Fit, While Black Leather Choker With Short Silver-Tone Spikes Has an Adjustable Buckle for Comfort. Made with Skin-Friendly Materials with No Nickel, Good for Sensitive Skin. Lightweight and Comfortable for Everyday Wear Without Irritation.
+B5: TRENDY GIFT FOR ANY OCCASION: Ideal for Goth, Punk, and Y2K Fashion Lovers. Great Gift for Birthdays, Halloween, Holidays, or Special Occasions. Choker Set Is Stylish and Thoughtful Present for Anyone Looking to Add Bold, Vintage-Inspired Accessories to Wardrobe.
+Attributes: {"color": ["Short Spikes"], "material": ["Faux Leather"], "metal_type": ["no-metal-type"], "gem_type": ["No Gemstone"], "style": ["Short Spikes"]}
+
+== Amazon NC4334 / B09WQYVMN5 (variant Long Spikes)
+Title: ['BodyJ4You 2PC Black Choker Necklace for Women - Tattoo Choker Leather Set']
+Highlight: ['90s Black Choker Necklace for Women - 2000s Y2K Choker Vintage Collar Neck Lace - Goth Emo Punk Halloween Accessories']
+B1: GOTHIC CHARM FOR EVERY OCCASION: Whether You're Dressing Up for a Halloween Costume, a Gothic-themed Party, or Accessorizing a Casual Beach Outfit, Our Goth Choker Set is the Quintessential Addition. This Choker Necklace for Women, Complementing Both a Black Dress or Beachwear, is a Versatile Piece for Those Who Adore Black Jewelry.
+B2: NOSTALGIC AND TRENDY ACCESSORY SET: Our Tattoo Choker is Reminiscent of the Henna Tattoo, Offering a Charm Necklace That Echoes the Free-spirited Fashion of the 90s. It's an Essential Piece for Women's Clothes, Bringing a Touch of Old Office to Modern Styles and Serving as a Staple in Every Women's Jewelry Set.
+B3: SEAMLESS STYLE TRANSITION: Choker Set is a Testament to Transitional Fashion, Easily Taking You From Day to Night. Perfect for Adding a Dash of Vintage and Gothic Jewelry Flair, These Chokers Are Designed for Women and Looking for That Effortless Transition.
+B4: LIGHTWEIGHT AND HYPOALLERGENIC MATERIALS: Tattoo Choker Is Stretchable for Secure and Flexible Fit, While Black Leather Choker With Long Silver-Tone Spikes Has an Adjustable Buckle for Comfort. Made with Skin-Friendly Materials with No Nickel, Good for Sensitive Skin. Lightweight and Comfortable for Everyday Wear Without Irritation.
+B5: TRENDY GIFT FOR ANY OCCASION: Ideal for Goth, Punk, and Y2K Fashion Lovers. Great Gift for Birthdays, Halloween, Holidays, or Special Occasions. Choker Set Is Stylish and Thoughtful Present for Anyone Looking to Add Bold, Vintage-Inspired Accessories to Wardrobe.
+Attributes: {"color": ["Long Spikes"], "material": ["Faux Leather"], "metal_type": ["NA"], "gem_type": ["No Gemstone"], "style": ["Long Spikes"]}
+
+== Amazon NC4335 / B09WQGST2N (variant Half Moon)
+Title: ['BodyJ4You 2PC Black Choker Necklace for Women - Tattoo Choker Leather Set']
+Highlight: ['90s Black Choker Necklace for Women - 2000s Y2K Choker Vintage Collar Neck Lace - Goth Emo Punk Halloween Accessories']
+B1: GOTHIC CHARM FOR EVERY OCCASION: Whether You're Dressing Up for a Halloween Costume, a Gothic-themed Party, or Accessorizing a Casual Beach Outfit, Our Goth Choker Set is the Quintessential Addition. This Choker Necklace for Women, Complementing Both a Black Dress or Beachwear, is a Versatile Piece for Those Who Adore Black Jewelry.
+B2: NOSTALGIC AND TRENDY ACCESSORY SET: Our Tattoo Choker is Reminiscent of the Henna Tattoo, Offering a Charm Necklace That Echoes the Free-spirited Fashion of the 90s. It's an Essential Piece for Women's Clothes, Bringing a Touch of Old Office to Modern Styles and Serving as a Staple in Every Women's Jewelry Set.
+B3: SEAMLESS STYLE TRANSITION: Choker Set is a Testament to Transitional Fashion, Easily Taking You From Day to Night. Perfect for Adding a Dash of Vintage and Gothic Jewelry Flair, These Chokers Are Designed for Women and Looking for That Effortless Transition.
+B4: LIGHTWEIGHT AND HYPOALLERGENIC MATERIALS: Tattoo Choker Is Stretchable for Secure and Flexible Fit, While Thin Black Braided Choker With Gold-Tone Crescent Moon Pendant Has a Lobster Clasp and Extender Chain. Made with Skin-Friendly Materials with No Nickel, Good for Sensitive Skin. Lightweight and Comfortable for Everyday Wear Without Irritation.
+B5: TRENDY GIFT FOR ANY OCCASION: Ideal for Goth, Punk, and Y2K Fashion Lovers. Great Gift for Birthdays, Halloween, Holidays, or Special Occasions. Choker Set Is Stylish and Thoughtful Present for Anyone Looking to Add Bold, Vintage-Inspired Accessories to Wardrobe.
+Attributes: {"color": ["Half Moon"], "material": ["Faux Leather"], "metal_type": ["NA"], "gem_type": ["No Gemstone"], "style": ["Half Moon"]}

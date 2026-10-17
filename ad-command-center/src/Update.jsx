@@ -101,7 +101,7 @@ export default function Update({ csrf }) {
     steps[1] = { ...steps[1], state: s2.ok ? 'done' : 'fail', note: `${s2.sent || 0} sent${s2.failed ? `, ${s2.failed} failed` : ''}` }; steps[2].state = 'run'; setProgress([...steps]);
     const s3 = await post('send', { csrf, step: 'verify', id: s1.id });
     steps[2] = { ...steps[2], state: s3.ok ? 'done' : 'fail' }; setProgress([...steps]);
-    setResult({ ok: s2.ok && s3.ok, sentAny: (s2.sent || 0) > 0, text: `${s1.title}: ${s2.sent || 0} sent, ${s2.failed || 0} failed. ${s3.diffs?.length ? '' : 'Amazon holds what was asked.'}`, diffs: s3.diffs, errors: s2.errors });
+    setResult({ ok: s2.ok && s3.ok, sentAny: (s2.sent || 0) > 0, skipped: s2.skipped, text: `${s1.title}: ${s2.summary || `${s2.sent || 0} sent, ${s2.failed || 0} failed`}. ${s3.diffs?.length ? '' : 'Amazon holds what was asked.'}`, diffs: s3.diffs, errors: s2.errors });
     load(); setVals({}); setHyps({});
   };
   const close = async () => { if (staged && !result && progress) { /* mid-flight: leave it */ } else if (staged && !result) await post('send', { csrf, step: 'cancel', id: staged }); setPop(null); setStaged(null); };

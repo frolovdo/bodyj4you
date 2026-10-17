@@ -5,7 +5,7 @@
 import { json, err, body } from '../lib/http.mjs';
 import { currentUser, csrfOk } from '../lib/auth.mjs';
 import { db, audit, FAMILY, dataset } from '../lib/supabase.mjs';
-import { family, liveState, assemble, prechecks, blocked, backupFor, execute, verify, newItemId, ptStamp } from '../lib/engine.mjs';
+import { family, liveState, assemble, prechecks, blocked, backupFor, execute, verify, newItemId, ptStamp, plainError, isDuplicate } from '../lib/engine.mjs';
 import { restoreRows } from './restore.mjs';
 
 export default async (req) => {
@@ -87,16 +87,22 @@ async function run(u, id) {
   if (!it || it.status !== 'approved') throw new Error(`item ${id} is ${it?.status || 'missing'}: cannot send`);
   if (await killed()) throw new Error('all sending is stopped');
   const { results, created } = await execute(it.rows);
+  // "already exists" is not a failure: Amazon already holds what was asked. Logged as ALREADY so History counts it apart.
+  for (const r of results) if (r.status === 'ERROR' && isDuplicate(r.error)) r.status = 'ALREADY';
   const okN = results.filter((r) => r.status === 'OK').length;
+  const already = results.filter((r) => r.status === 'ALREADY').length;
   await db().from('applied_log').insert(results.map((r) => ({ ...r, item_id: id })));
   if (created.length) {
     const { data: b } = await db().from('backups').select('rollback_rows').eq('item_id', id).single();
     await db().from('backups').update({ rollback_rows: [...(b?.rollback_rows || []), ...created] }).eq('item_id', id);
   }
-  const failed = results.length - okN;
-  await db().from('queue_items').update({ status: failed ? 'failed' : 'applied', applied_at: new Date().toISOString(), result: `${okN} OK, ${failed} errors`, updated_at: new Date().toISOString() }).eq('id', id);
-  await audit(u, failed ? 'send_failed' : 'sent', id, `${okN} OK, ${failed} errors`);
-  return { ok: !failed, id, sent: okN, failed, errors: results.filter((r) => r.status !== 'OK').map((r) => `${r.campaign} ${r.change}: ${r.error}`) };
+  const failed = results.length - okN - already;
+  const summary = `${okN} OK` + (already ? `, ${already} already there` : '') + (failed ? `, ${failed} errors` : '');
+  await db().from('queue_items').update({ status: failed ? 'failed' : 'applied', applied_at: new Date().toISOString(), result: summary, updated_at: new Date().toISOString() }).eq('id', id);
+  await audit(u, failed ? 'send_failed' : 'sent', id, summary);
+  return { ok: !failed, id, sent: okN, already, failed, summary,
+    skipped: results.filter((r) => r.status === 'ALREADY').map((r) => `${r.campaign}: ${r.change} — ${plainError(r.error)}`),
+    errors: results.filter((r) => r.status === 'ERROR').map((r) => `${r.campaign}: ${r.change} — ${plainError(r.error)}`) };
 }
 
 async function check(u, id) {

@@ -1,0 +1,15 @@
+SHOPIFY PRODUCT 9948160229659
+Title: Complete Piercing Aftercare Kit + Cleaning Floss
+Variant option: Title
+Variants (SKU: option value):
+  HB0024: Default Title
+
+== Amazon HB0024 / B0D268LC2Z (variant Default Title)
+Title: ['BodyJ4You Piercing Aftercare Spray - Bump Oil Ear Piercing Cleaner Floss']
+Highlight: ['Keloid Bump Removal - Saline Wound Wash Sea Salt Aloe Vera - Ear Nose Septum Belly Button Cartilage Tragus - 60 Floss Sticks']
+B1: COMPLETE 3-IN-1 PIERCING AFTERCARE KIT: Piercing Aftercare Spray, Piercing Bump Solution Drops and 60 Piercing Hole Cleaning Floss Sticks in One Box. Clean, Care for and Freshen New and Older Piercings - Ear, Nose, Septum, Belly Button, Cartilage, Lip and Dermal
+B2: SALINE SPRAY FOR PIERCINGS: 2 Fl Oz Fine Mist Ear Piercing Cleaner With Sea Salt, Aloe Vera and Tea Tree Oil. No Alcohol and No Sting. Spray the Front and Back of the Piercing and Let It Air Dry - No Touching and No Need to Rotate Your Jewelry
+B3: PIERCING BUMP DROPS: 0.33 Fl Oz Dropper Bottle With Jojoba, Grape Seed, Rosemary and Lavender Oils for the Raised Bump Beside a Nose Ring or Cartilage Stud. Massage Two Drops Into the Spot After Cleaning to Soften Its Look and Calm Visible Redness
+B4: PIERCING HOLE CLEANING FLOSS: 60 Single-Use Floss Sticks Pass Through the Earring Hole to Lift Out Buildup From Inside the Piercing That a Spray Never Reaches. Use Once or Twice a Week on Ear Piercings to Keep the Hole Fresh Between Jewelry Changes
+B5: HOW TO USE THE KIT: Wash Your Hands, Then Spray the Piercing Front and Back 2 to 6 Times a Day and Let It Air Dry. If a Bump Forms, Massage Two Drops of Bump Oil Into It Twice a Day. Floss the Hole Once or Twice a Week. External Use Only
+Attributes: {"unit_count": [2.33], "material_feature": ["Natural", "Plant Based", "Cruelty Free", "Fragrance Free", "Vegan"], "product_benefit": ["Cleansing", "Soothing", "Moisturizing", "Hydrating", "Calming"], "skin_type": ["normal", "dry", "oily", "combination", "sensesetive"], "directions": ["Saline spray - directly on piercing and allow to air dry. Apply as needed to the affected areas. Recommended use at least 2 times per day, up to 6 times per day. Bump Drops - Gently Massage Oil into Keloids, Elevated Marks, and Piercing Bumps 2-3 Times per Day."], "safety_warning": ["For external use only. Avoid direct contact with eyes. Discontinue if negative reaction or redness occurs. Keep out of reach of children."], "ingredients": ["Grape Seed Oil, Jojoba Oil, Lavender Oil, Rosemary Leaf Oil, Turmeric Root Oil, Clove Oil, Vitamin E, Rosa Rugosa Flower Oil, Citronella Oil, Pelargonium Graveolens Flower Oil, Boswellia Carterii Oil, Cananga Odorate Flower Oil, Eucalyptus Oil, Purified Water, Mediterranean Sea Salt, Dead Sea Salt, Tea Tree Oil, Aloe Vera, Rosemary Oil, Vitamin E."]}

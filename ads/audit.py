@@ -195,7 +195,8 @@ class Index:
         """Unit-weighted price of the ASINs advertised in an ad group, from parents.json prices."""
         asins = [pa.get("asin") for pa in self.ads_by_ag.get(str(agid), []) if pa.get("state") == "ENABLED"]
         priced = [(a, self.price_by_asin[a]) for a in asins if a in self.price_by_asin]
-        if not priced:
+        if not priced or len(priced) < len(asins):
+            # unpriced ASINs in the ad group (mixed with other products): no reliable price
             return None
         weights = {a: max(self.asin_perf_by_ag.get((str(agid), a), {}).get("orders", 0), 0) for a, _ in priced}
         tot = sum(weights.values())
@@ -210,6 +211,29 @@ class Index:
             if perf and perf["clicks"] >= self.t["min_clicks_for_own_cvr"]:
                 return perf["orders"] / perf["clicks"]
         return None
+
+    def allowable_cpo(self, cid, agid):
+        """Ad dollars one order may cost: price x target ACoS. None without a price."""
+        price = self.adgroup_price(agid)
+        return price * self.target_acos_for_campaign(cid) if price else None
+
+    def clicks_for_no_sale(self, cid, confidence):
+        """Clicks after which zero orders is unlikely at the parent's CVR: ceil(ln(1-conf) / ln(1-cvr))."""
+        cvr = self.parent_cvr(cid)
+        if not cvr or cvr >= 1:
+            return None
+        return int(math.ceil(math.log(1 - confidence) / math.log(1 - cvr)))
+
+    def no_sale_benchmark(self, cid, agid, confidence, lost_orders):
+        """(min_clicks, min_spend, note) for calling a zero-order target wasteful. None values mean fall back to flat thresholds."""
+        clicks = self.clicks_for_no_sale(cid, confidence)
+        cpo = self.allowable_cpo(cid, agid)
+        if clicks is None or cpo is None:
+            return None, None, "flat benchmark (no parent price or CVR)"
+        spend = round(cpo * lost_orders, 2)
+        note = "benchmark %d clicks and %s (CVR %.1f%%, %s allowed per order)" % (
+            clicks, money(spend), 100 * self.parent_cvr(cid), money(cpo))
+        return clicks, spend, note
 
     def starting_bid(self, cid, agid):
         """Playbook section 3: price x parent CVR x target ACoS, when the target has no usable history."""
@@ -228,12 +252,22 @@ class Index:
                     return True
         return False
 
+    def target_acos_for_parent(self, code):
+        """Parent's own target, else the default for its stage, else the account default."""
+        p = self.cfg["parents"].get(code) or {}
+        if p.get("target_acos"):
+            return p["target_acos"]
+        by_stage = self.cfg["account"].get("stage_default_target_acos", {})
+        if p.get("stage") in by_stage:
+            return by_stage[p["stage"]]
+        return self.cfg["account"]["default_target_acos"]
+
     def target_acos_for_campaign(self, camp_id):
         asins = {p.get("asin") for ag in self.ag_by_camp.get(camp_id, []) for p in self.ads_by_ag.get(str(ag["adGroupId"]), [])}
         for a in asins:
             code = self.parent_by_asin.get(a)
             if code:
-                return self.cfg["parents"][code].get("target_acos", self.cfg["account"]["default_target_acos"])
+                return self.target_acos_for_parent(code)
         return self.cfg["account"]["default_target_acos"]
 
     def campaign_name(self, camp_id):
@@ -262,7 +296,7 @@ def rule_structure(snap, ix, out):
     for cid, c in ix.camp.items():
         if c.get("state") != "ENABLED":
             continue
-        ags = ix.ag_by_camp.get(cid, [])
+        ags = [a for a in ix.ag_by_camp.get(cid, []) if a.get("state") != "ARCHIVED"]
         if len(ags) > 1:
             out.append(dict(rule="structure", severity="medium", campaign=c["name"],
                             detail="%d ad groups in one campaign (playbook: one)" % len(ags),
@@ -318,11 +352,16 @@ def rule_search_terms(snap, ix, out):
         cname = ix.campaign_name(cid)
         tgt = ix.target_acos_for_campaign(cid)
         # waste
-        if a["cost"] >= t["waste_spend_min"] and a["orders"] == 0 and not ix.is_negated(cid, agid, term):
+        min_clicks, min_spend, note = ix.no_sale_benchmark(cid, agid, t["waste_confidence"], t["waste_lost_orders"])
+        if min_clicks is None:
+            wasteful = a["cost"] >= t["waste_spend_min"]
+        else:
+            wasteful = a["clicks"] >= min_clicks and a["cost"] >= min_spend
+        if wasteful and a["orders"] == 0 and not ix.is_negated(cid, agid, term):
             is_asin_term = term.startswith("b0") and len(term) == 10
             out.append(dict(rule="waste", severity="high", campaign=cname, adgroup=r.get("adGroupName"),
                             target=term.upper() if is_asin_term else term,
-                            detail="%s spend, %d clicks, 0 orders" % (money(a["cost"]), a["clicks"]),
+                            detail="%s spend, %d clicks, 0 orders; %s" % (money(a["cost"]), a["clicks"], note),
                             action="add negative product target in this campaign" if is_asin_term else "add negative exact in this campaign",
                             dollars=a["cost"]))
         # harvest
@@ -346,7 +385,8 @@ def rule_search_terms(snap, ix, out):
         c = ix.camp.get(cid, {})
         if c.get("state") != "ENABLED":
             continue
-        kws = [k for ag in ix.ag_by_camp.get(cid, []) for k in ix.kw_by_ag.get(str(ag["adGroupId"]), [])]
+        kws = [k for ag in ix.ag_by_camp.get(cid, []) if ag.get("state") != "ARCHIVED"
+               for k in ix.kw_by_ag.get(str(ag["adGroupId"]), []) if k.get("state") == "ENABLED"]
         exact_only = kws and all(k["matchType"] == "EXACT" for k in kws)
         if spend >= t["never_negated_spend_min"] and ix.neg_count_by_camp.get(cid, 0) == 0 and not exact_only:
             out.append(dict(rule="never-negated", severity="medium", campaign=c.get("name"),
@@ -367,15 +407,18 @@ def rule_targets(snap, ix, out):
         aov = a["sales"] / a["orders"] if a["orders"] else 0
         cvr = a["orders"] / a["clicks"] if a["clicks"] else 0
         formula_bid = round(aov * cvr * tgt, 2) if a["clicks"] >= t["min_clicks_for_own_cvr"] and a["orders"] else None
-        if a["clicks"] >= t["pause_min_clicks"] and a["orders"] == 0:
+        p_clicks, p_spend, p_note = ix.no_sale_benchmark(cid, agid, t["pause_confidence"], t["waste_lost_orders"])
+        pause_now = (a["clicks"] >= p_clicks and a["cost"] >= p_spend) if p_clicks else a["clicks"] >= t["pause_min_clicks"]
+        if pause_now and a["orders"] == 0:
             out.append(dict(rule="pause", severity="high", campaign=cname, adgroup=r.get("adGroupName"), target=label,
-                            detail="%d clicks, %s spend, 0 orders" % (a["clicks"], money(a["cost"])),
+                            detail="%d clicks, %s spend, 0 orders; %s" % (a["clicks"], money(a["cost"]), p_note),
                             action="pause target", dollars=a["cost"]))
         elif a["cost"] >= t["waste_spend_min"] and (a["orders"] == 0 or ac > t["bleed_acos"] or ro < t["bleed_roas"]):
             # small steps per playbook: one step down, never below the formula bid in one move
             stepped = round(max(bid - t["bid_step_down"], 0.02), 2)
             ref_bid = formula_bid or ix.starting_bid(cid, agid)
-            new_bid = max(stepped, ref_bid) if ref_bid else stepped
+            # floor at the formula bid only when it is below the current bid; never "lower" to a higher number
+            new_bid = max(stepped, ref_bid) if ref_bid and ref_bid < bid else stepped
             target_note = (", formula bid %s" % money(ref_bid)) if ref_bid else ""
             out.append(dict(rule="bleed", severity="high", campaign=cname, adgroup=r.get("adGroupName"), target=label,
                             detail="%s spend, ACoS %s, ROAS %.1f, bid %s%s" % (money(a["cost"]), pct(ac) if ac != float("inf") else "n/a", ro, money(bid), target_note),
@@ -531,7 +574,9 @@ RULES = [rule_structure, rule_portfolio, rule_branded, rule_search_terms, rule_t
 
 # Playbook section 4: one phase per product. Structural rules apply always.
 PHASE_OF_RULE = {
-    "waste": "profitability", "bleed": "profitability", "pause": "profitability",
+    # "always": removing something that spends money with no sales is actioned in either phase (Denis's call,
+    # overriding Trivium's placement of negation in profitability mode).
+    "waste": "always", "pause": "always", "bleed": "profitability",
     "never-negated": "profitability", "budget-hold": "profitability", "placement-cut": "profitability",
     "scale": "performance", "harvest": "performance", "budget": "performance",
     "placement": "performance", "zombie": "performance",
@@ -610,7 +655,7 @@ def tag_phases(findings, ix):
         x["parent"] = parent or ""
         stage = ix.cfg.get("parents", {}).get(parent, {}).get("stage") if parent else None
         active = stage_phase.get(stage) if stage else None
-        x["deferred"] = bool(active and x["phase"] not in ("structural", "info", active))
+        x["deferred"] = bool(active and x["phase"] not in ("structural", "info", "always", active))
     return findings
 
 
@@ -635,6 +680,8 @@ def run(snap_dir, cfg, out_dir, parents=None, asins=None, min_dollars=None):
                 continue
             if cid in in_scope:
                 x["mixed"] = cid in ix.mixed_campaigns
+                if x["mixed"] and x["rule"] == "zombie":
+                    continue  # a mixed campaign's idle targets mostly serve other products; audit those parents instead
                 kept.append(x)
         findings = kept
     md = t_min = (min_dollars if min_dollars is not None else cfg["thresholds"].get("min_finding_dollars", 0)) or 0

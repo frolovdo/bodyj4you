@@ -1,0 +1,41 @@
+SHOPIFY PRODUCT 4885373878319
+Title: BodyJ4You 24PC Tattoo Choker Necklace Set - Assorted 90s Stretch Chokers
+Variant option: COLOR
+Variants (SKU: option value):
+  NC4085: Colorful Mix
+  NC4340: Black
+  NC4247: All Colors
+  NC4179: Multicolor Mix
+  NC4276: Rainbow Black
+  NC4294: Tropical Colors
+  NC4337: Multicolor Black
+
+== Amazon NC4085 / B01LZHA6ZV (variant Colorful Mix)
+Title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Daisy Flower Y2K Jewelry']
+Highlight: ['Y2K Accessories - 90s Accessories for Women - Stretchy Elastic Necklace - Goth Emo Grunge Scene Jewelry - Flower Choker Pack']
+B1: 24PC TATTOO CHOKER NECKLACE SET: Twenty Four Stretchy Elastic Chokers for Women in One Pack - the Classic 90s Y2K Jewelry Look That Slips On With No Clasp and Stretches to Fit Necks Up to 18 Inches. Soft Non-Toxic Plastic That Pairs With Goth, Emo, Grunge, Scene and Alt Outfits
+B2: Y2K 90S ACCESSORIES FOR WOMEN: The Original 2000s Accessories Look Is Back - Wear a Stretchy Choker With a Little Black Dress, Stack Two for a Layered Grunge Necklace Look, or Pick the Shade That Matches a Festival or Rave Outfit. Trendy Necklaces for Women for Every Season
+B3: GOTH EMO GRUNGE SCENE JEWELRY: Build a Gothic Choker Stack for Concerts, Cosplay and Halloween Costumes, Hand Out Chokers as 90s Party Favors, or Keep a Necklace Pack So Every Outfit Gets One. Pairs With BodyJ4You Velvet Chokers, 2PC Charm Pendant Chokers and 12PC Tattoo Sets
+B4: HOW TO WEAR A TATTOO CHOKER: Stretch the Choker Open With Both Hands, Slip It Over Your Head and Settle It at Your Neck. Wear One for a 90s Look or Stack Two or Three for a Layered Y2K Style. Each Elastic Choker Fits Necks Up to 18 Inches and Springs Back Into Shape Every Time
+B5: SAFE QUALITY YOU CAN TRUST: Soft, Stretchy, Durable Plastic That Is Non-Toxic, Odor-Free, Waterproof and Gentle on Sensitive Skin, for Swimming, the Gym or the Beach. Every BodyJ4You Choker Set Is Backed by a 90-Day Money-Back Guarantee and Over 20 Years of Jewelry Expertise
+Attributes: {"color": ["Black, Rainbow, Pink, Purple, Green, Blue"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+== Amazon NC4340 / B0B6H8T4GK (variant Black)
+Title: ['BodyJ4You 24PC Black Choker Necklace for Women - Tattoo Choker Y2K Jewelry']
+Highlight: ['90s Choker Necklace - Y2K 90s Accessories for Women - Stretchy Tattoo Chokers - Goth Emo Grunge Scene - Halloween Costume']
+B1: 24PC TATTOO CHOKER NECKLACE SET: Twenty Four Stretchy Elastic Chokers for Women in One Pack - the Classic 90s Y2K Jewelry Look That Slips On With No Clasp and Stretches to Fit Necks Up to 18 Inches. Soft Non-Toxic Plastic That Pairs With Goth, Emo, Grunge, Scene and Alt Outfits
+B2: Y2K 90S ACCESSORIES FOR WOMEN: The Original 2000s Accessories Look Is Back - Wear a Stretchy Choker With a Little Black Dress, Stack Two for a Layered Grunge Necklace Look, or Pick the Shade That Matches a Festival or Rave Outfit. Trendy Necklaces for Women for Every Season
+B3: GOTH EMO GRUNGE SCENE JEWELRY: Build a Gothic Halloween Choker Stack for Witch, Vampire and Y2K Costumes, Concerts and Cosplay, Hand Out Chokers as 90s Party Favors, or Keep a Necklace Pack So Every Outfit Gets One. Pairs With BodyJ4You Velvet Chokers, 2PC Charm Pendant Chokers and 12PC Tattoo Sets
+B4: HOW TO WEAR A TATTOO CHOKER: Stretch the Choker Open With Both Hands, Slip It Over Your Head and Settle It at Your Neck. Wear One for a 90s Look or Stack Two or Three for a Layered Y2K Style. Each Elastic Choker Fits Necks Up to 18 Inches and Springs Back Into Shape Every Time
+B5: SAFE QUALITY YOU CAN TRUST: Soft, Stretchy, Durable Plastic That Is Non-Toxic, Odor-Free, Waterproof and Gentle on Sensitive Skin, for Swimming, the Gym or the Beach. Every BodyJ4You Choker Set Is Backed by a 90-Day Money-Back Guarantee and Over 20 Years of Jewelry Expertise
+Attributes: {"color": ["Black"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+-- Amazon NC4247 (All Colors): same bullets as above; title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Rainbow Daisy Y2K Jewelry']; attrs: {"color": ["Black, Rainbow, Pink, Purple, Green, White"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+-- Amazon NC4179 (Multicolor Mix): same bullets as above; title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Disco Ball Y2K Gift Set']; attrs: {"color": ["Black, Rainbow, Pink, Purple, Green, Yellow"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+-- Amazon NC4276 (Rainbow Black): same bullets as above; title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Black Rainbow Y2K Jewelry']; attrs: {"color": ["Black, Rainbow, Pink, Purple, Green, Clear"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+-- Amazon NC4294 (Tropical Colors): same bullets as above; title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Seed Bead Y2K 90s Jewelry']; attrs: {"color": ["Black, Rainbow, Pink, Purple, Green, Aqua"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}
+
+-- Amazon NC4337 (Multicolor Black): same bullets as above; title: ['BodyJ4You 24PC Tattoo Choker Necklace for Women - Colorful Y2K 90s Jewelry']; attrs: {"color": ["Black, Multicolor, Pink, Purple, Green, Blue"], "size": ["Adjustable"], "material": ["Plastic"], "number_of_items": [24], "item_package_quantity": [24], "metal_type": ["No Metal Type"], "gem_type": ["No Gemstone"], "style": ["Y2K 90s Tattoo Choker"]}

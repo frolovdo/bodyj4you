@@ -13,17 +13,17 @@ export default async (req) => {
   try {
     const fam = await family();
     const live = await liveState(fam);
-    let rows, beforeBudgets, hyps = {};
+    let rows, beforeBudgets, hyps = {}, skipped = [];
     if (f.since) {
       ({ rows, beforeBudgets } = await restoreRows(f.since, live));
     } else {
-      ({ rows, beforeBudgets, hyps } = assemble(f, live, fam));
+      ({ rows, beforeBudgets, hyps, skipped } = assemble(f, live, fam));
     }
     const checks = await prechecks(rows, beforeBudgets, fam, { restore: !!f.since });
     const enabled = live.state.campaigns.filter((c) => c.state === 'ENABLED');
     const tb0 = enabled.reduce((s, c) => s + parseFloat(c.budget.budget), 0);
     const tb1 = enabled.reduce((s, c) => { const v = (f['b_' + c.campaignId] ?? '').toString().trim(); return s + (v !== '' ? parseFloat(v) : parseFloat(c.budget.budget)); }, 0);
-    return json({ changes: rows.map((r) => `${r.campaign}: ${r.change}`), hyps: Object.fromEntries(Object.entries(hyps).map(([k, v]) => [k, v.text])), checks, budget: [tb0, tb1] });
+    return json({ changes: rows.map((r) => `${r.campaign}: ${r.change}`), skipped, hyps: Object.fromEntries(Object.entries(hyps).map(([k, v]) => [k, v.text])), checks, budget: [tb0, tb1] });
   } catch (ex) {
     return json({ error: String(ex.message || ex) });
   }
