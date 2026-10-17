@@ -12,3 +12,9 @@ and a second block `FAQPage` built from the description's FAQ section. No produc
 - `golive.py send | rollback`: live write and undo; before-state in ../changes/2026-10-17-live-main-product.before.liquid.
 - llms.txt / agents.md / UCP endpoint are already served by Shopify itself; nothing built for those.
 - `main/` = download of the live theme on 2026-10-17 (reference only).
+
+## Live 2026-10-17
+Published the tested copy (197002625307, "Sleek Clean + agentic schema 2026-10-17"; files identical to the old live
+except the 2 files above). Old live theme kept untouched as "ROLLBACK 10-17 Sleek Clean (pre-schema)" (195676799259).
+Rollback = publish 195676799259 (Online Store > Themes > Publish, or themePublish). Post-publish check: 51/51 live pages OK.
+golive.py is obsolete (it targeted the old theme id).
