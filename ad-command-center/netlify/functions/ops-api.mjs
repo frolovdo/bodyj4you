@@ -41,6 +41,7 @@ const ACT = {
       .gte('created', since).order('created', { ascending: false }).order('id', { ascending: false }).range(off, off + 399);
   },
   addresses: () => db().from('ops_addresses').select('key,country,label,uses,last_used').eq('hidden', false).order('last_used', { ascending: false, nullsFirst: false }),
+  market_list: () => db().from('ops_market').select('channel,checked_at,tried_at,error,orders'),
   ship_start: (a) => {
     const p = a.payload || {};
     if (!['miami', 'china'].includes(p.source) || !Array.isArray(p.items) || !p.items.length || p.items.length > 1500) throw new Error('bad shipment');

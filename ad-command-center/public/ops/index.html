@@ -212,6 +212,9 @@
   .mfield{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12.5px;color:var(--ink-2)}
   .mfield span{width:32px;font-weight:600}
   .mfield input{flex:1;height:30px;border:1px solid var(--line);border-radius:7px;padding:0 9px;font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+  .mline{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line-2);font-size:13px}.mline:last-of-type{border-bottom:0}
+  #mktBody .mstatus,#mktBody .mnote{padding:0 18px 14px}
+  a.btn{display:inline-flex;align-items:center;text-decoration:none}
   .mstatus{font-size:12.5px;margin-top:10px;line-height:1.45}
   .mstatus:empty{display:none}
   .mstatus.err{color:var(--crit);background:var(--crit-tint);padding:8px 10px;border-radius:7px}
@@ -228,10 +231,10 @@
       <button class="nav-item" data-view="inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Inventory <span class="tag" id="navInv">—</span></button>
       <button class="nav-item" data-view="inbound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Inbound shipments <span class="tag" id="navInb">—</span></button>
       <button class="nav-item" data-view="customer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Customer <span class="tag" id="navCust">—</span></button>
-      <button class="nav-item crit" data-view="marketplace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag">1</span></button>
+      <button class="nav-item" data-view="marketplace" id="navMktBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag" id="navMkt">—</span></button>
       <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders &amp; log <span class="tag" id="navOrd">—</span></button>
     </nav>
-    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Walmart, TikTok, returns &amp; marketplace alerts: Oct 12 (not part of the pull yet).</div></div>
+    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked every hour.<br>Returns &amp; Walmart stock: Oct 12 (not live yet).</div></div>
   </aside>
 
   <main class="main">
@@ -244,14 +247,14 @@
       <div class="grid cards4">
         <div class="card stat s-good" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Ship to FBA · Miami</div><div class="v num" id="cMiamiRisk">$64</div><div class="c"><b>at risk</b> · healthy cover · routine top-up</div></div>
         <div class="card stat s-crit" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Order from Bony · China</div><div class="v num" id="cChinaRisk">$5.5k</div><div class="c" id="cChinaCap">at risk · 13 items · <b>top 4 = 75%</b></div></div>
-        <div class="card stat s-crit" data-go="marketplace"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Stuck orders</div><div class="v num">1</div><div class="c">Walmart overdue, no tracking yet</div></div>
+        <div class="card stat s-good" data-go="marketplace" id="cLateCard"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Late orders</div><div class="v num" id="cLate">—</div><div class="c" id="cLateCap">checking marketplaces…</div></div>
         <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Returns to action · 90d</div><div class="v num">831</div><div class="c"><b>HS0002 spike</b> · 155 wrong-item</div></div>
       </div>
       <p class="eyebrow" style="margin-top:30px">Recommended for you</p>
       <div class="block">
         <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t" id="aChinaT">Send China reorder to Bony — $5.5k at risk</span><span class="ch">INVENTORY</span></div><div class="d" id="aChinaD">China's 30-day lead means the urgent money is here.</div></div><div class="act"><button class="btn primary" data-go="inventory">Open Inventory</button></div></div>
         <div class="alert good"><span class="edge"></span><div class="body"><div class="head"><span class="t">Miami FBA is routine this week</span><span class="ch">INVENTORY</span></div><div class="d" id="aMiamiD">Only <b>$64</b> truly at risk — healthy cover across the list. Top up to 30-day cover when convenient.</div></div><div class="act"><button class="btn" data-go="inventory">Review</button></div></div>
-        <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Resolve stuck Walmart order</span><span class="ch">WALMART</span></div><div class="d"><span class="mono">PO 129128321121487</span> · Coltyn Reel · overdue since Oct 9, on MCF but no tracking.</div></div><div class="act"><button class="btn" data-go="marketplace">Review</button></div></div>
+        <div id="aMkt"></div>
         <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Investigate HS0002 return spike</span><span class="ch">CUSTOMER</span></div><div class="d">932 returns/90d on the Saline Spray — customers report &ldquo;not sterile&rdquo; and &ldquo;wrong solution / tea tree&rdquo;. Possible product or mislabel issue.</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>
       </div>
     </section>
@@ -332,16 +335,7 @@
     </section>
 
     <section class="view" id="view-marketplace">
-      <div class="block">
-        <div class="block-h"><h3>Open issues</h3><span class="count">1 critical · 1 to watch</span></div>
-        <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Order overdue &amp; not shipped</span><span class="ch">WALMART</span><span class="pill urgent">Critical</span></div><div class="d"><span class="mono">PO 129128321121487</span> · Coltyn Reel · <span class="mono">BN1798 ×1</span> · ship-by Oct 9. On Amazon MCF but still &ldquo;Planning&rdquo; — no tracking yet.</div></div><div class="act"><button class="btn primary" data-toast="Re-checked MCF status for PO…1487">Check MCF</button></div></div>
-        <div class="alert warn"><span class="edge"></span><div class="body"><div class="head"><span class="t">10 orders due Oct 13</span><span class="ch">WALMART</span><span class="pill warn">Watch</span></div><div class="d">Batch of unshipped Walmart orders approaching ship-by. All routed to MCF, pending.</div></div><div class="act"><button class="btn" data-toast="Opened Walmart due-soon batch">Review batch</button></div></div>
-      </div>
-      <div class="block">
-        <div class="block-h"><h3>Cleared today</h3><span class="count">2 resolved</span></div>
-        <div class="alert good resolved"><span class="edge"></span><div class="body"><div class="head"><span class="t">2 overdue orders cleared</span><span class="ch">WALMART</span><span class="pill good">Resolved</span></div><div class="d">Jean Anderson Saintil &amp; Taylor cherry — USPS tracking uploaded, now Shipped.</div></div></div>
-        <div class="alert good resolved"><span class="edge"></span><div class="body"><div class="head"><span class="t">All eBay orders handled</span><span class="ch">EBAY</span><span class="pill good">Resolved</span></div><div class="d">2 orders placed on MCF &amp; cancelled in Veeqo to avoid double-ship; 1 international order cancelled.</div></div></div>
-      </div>
+      <div id="mktBody"><div class="mstatus">Loading marketplace orders…</div></div>
     </section>
   </main>
 </div>
@@ -527,7 +521,7 @@ renderToday();
 const titles={today:["Today","Your prebuilt list for this morning. Act on what matters, ignore the rest.","live"],
   inventory:["Inventory","What to ship to FBA (Miami) and what to produce (China) — from your reorder skill. Build a cart, create the inbound.","live"],
   customer:["Customer","Returns, reasons and the actual words customers wrote — straight from Amazon's returns report.","live"],
-  marketplace:["Marketplace alerts","Anything stuck or at risk across Walmart and eBay.","live"],
+  marketplace:["Marketplace alerts","Orders we still have to ship ourselves — Walmart, eBay, TikTok and Amazon (seller-shipped). Red = ship-by time has passed.","live"],
   inbound:["Inbound shipments","Every shipment on its way to Amazon or Walmart: status, where it's going, ETA — and which ones came up short.","live"],
   orders:["Orders & log","What's on hold for Bony, every list sent, and a log of every action — saved in Supabase.","live"]};
 function go(view){
@@ -783,6 +777,7 @@ function haveText(){return dataState.source==="page"?`${fmtDay(dataState.date)} 
 function renderProv(view){
   const prov=document.getElementById("vProv");
   if(view==="inbound"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Amazon + Walmart shipments'+(INB.at?" · synced "+fmtTime(INB.at):"");if(!INB.loaded)loadInbound();return;}
+  if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked every hour'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
   if(view==="orders"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Saved in Supabase'+(ordersAt?" · loaded "+fmtTime(ordersAt):"");return;}
   const amazon=view==="today"||view==="inventory";
   const fresh=amazon&&dataState.date>=todayISO();
@@ -831,7 +826,8 @@ const ACT={
   order_status:a=>a.status==="open"?`update public.ops_orders set status='open',shipped_at=null,fba_plan=null,fba_ids=null,matched_at=null,closed_at=null where id=${+a.id}`:`update public.ops_orders set status=${a.status==="received"?"'received'":"'cancelled'"},closed_at=now() where id=${+a.id}`,
   inbound_page:a=>`select id,channel,name,status,closed,created,dest,eta_start,eta_end,carrier,tracking,units,received,short,extra,items,updated_at from public.ops_inbound where created>=current_date-${+a.days} order by created desc, id desc limit 400 offset ${+a.offset}`,
   addresses:()=>"select key,country,label,uses,last_used from public.ops_addresses where not hidden order by last_used desc nulls last",
-  ship_start:a=>`insert into public.ops_refresh (requested_by,kind,payload) values ('ops page','ship',${sq(JSON.stringify(a.payload))}::jsonb) returning id`
+  ship_start:a=>`insert into public.ops_refresh (requested_by,kind,payload) values ('ops page','ship',${sq(JSON.stringify(a.payload))}::jsonb) returning id`,
+  market_list:()=>"select channel,checked_at,tried_at,error,orders from public.ops_market"
 };
 let CSRF="";
 async function api(op,args){
@@ -1165,6 +1161,65 @@ async function webSession(){
   try{const r=await fetch("/api/ops-me",{credentials:"same-origin"});const j=await r.json().catch(()=>({}));if(r.ok&&j.ok){CSRF=j.csrf;return;}}catch(e){}
   await showLogin();
 }
+// Marketplace alerts: open orders we ship ourselves, checked hourly by GitHub (ops/market_sync.py) -> ops_market
+const MKT={rows:[],at:null,loaded:false,err:null,stale:false};
+const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon"};
+const dur=ms=>{const h=Math.max(1,Math.round(Math.abs(ms)/3600e3));return h<48?h+"h":Math.round(h/24)+" days";};
+function mktOrders(){
+  const now=Date.now(),out=[];
+  for(const r of MKT.rows)for(const o of (r.orders||[])){
+    const t=o.ship_by?Date.parse(o.ship_by):null;
+    out.push({...o,ch:r.channel,t,sev:t==null?"ok":t<now?"late":t-now<864e5?"soon":"ok"});
+  }
+  return out.sort((a,b)=>(a.t??9e15)-(b.t??9e15));
+}
+function mktRow(o){
+  const now=Date.now(),late=o.sev==="late";
+  const items=(o.items||[]).map(i=>i.sku?`<span class="mono">${esc(i.sku)} ×${+i.qty||1}</span>`:`${+i.qty||1} item${(+i.qty||1)===1?"":"s"}`).join(", ");
+  const when=o.t==null?"no ship-by date":(late?`ship-by passed ${dur(now-o.t)} ago`:`due in ${dur(o.t-now)}`);
+  const idHtml=o.link?`<a class="mono" href="${esc(o.link)}" target="_blank" rel="noopener">${esc(o.id)} ↗</a>`:`<span class="mono">${esc(o.id)}</span>`;
+  const act=o.link?`<a class="btn${late?" primary":""}" href="${esc(o.link)}" target="_blank" rel="noopener">Open order ↗</a>`:`<button class="btn" data-copy="${esc(o.id)}">Copy order #</button>`;
+  return `<div class="alert ${late?"crit":"warn"}"><span class="edge"></span><div class="body"><div class="head"><span class="t">${late?"Late — ":"Due soon — "}${when}</span><span class="ch">${esc((CHN[o.ch]||o.ch).toUpperCase())}</span><span class="pill ${late?"urgent":"warn"}">${late?"Late":"Watch"}</span></div><div class="d">${idHtml} · ${items||"—"} · ship-by ${o.t==null?"—":fmtTime(o.t)} · ordered ${o.created?fmtTime(o.created):"—"}${o.status&&o.status!=="Not shipped"?` · <b>${esc(o.status)}</b>`:""}</div></div><div class="act">${act}</div></div>`;
+}
+function renderMarket(){
+  const el=document.getElementById("mktBody");
+  const all=mktOrders(),late=all.filter(o=>o.sev==="late"),soon=all.filter(o=>o.sev==="soon");
+  const now=Date.now();
+  const checks=MKT.rows.map(r=>r.checked_at).filter(Boolean).sort();
+  MKT.at=checks[0]||null;MKT.stale=!MKT.at||now-Date.parse(MKT.at)>3*3600e3;
+  const tag=document.getElementById("navMkt"),btn=document.getElementById("navMktBtn");
+  tag.textContent=MKT.loaded?(late.length||soon.length):"—";btn.classList.toggle("crit",late.length>0);
+  document.getElementById("cLate").textContent=MKT.loaded?late.length:"—";
+  document.getElementById("cLateCard").className="card stat "+(late.length?"s-crit":soon.length?"s-warn":"s-good");
+  document.getElementById("cLateCap").innerHTML=!MKT.loaded?(MKT.err?"couldn't load":"checking marketplaces…"):late.length?`<b>ship now</b> · ${[...new Set(late.map(o=>CHN[o.ch]))].join(", ")}`:soon.length?`${soon.length} due in the next 24h`:`all ${all.length} open orders on time`;
+  const a=document.getElementById("aMkt");
+  if(!MKT.loaded)a.innerHTML="";
+  else if(late.length)a.innerHTML=`<div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Ship ${late.length} late order${late.length>1?"s":""}</span><span class="ch">MARKETPLACE</span></div><div class="d">${late.slice(0,4).map(o=>`${CHN[o.ch]} <span class="mono">${esc(o.id)}</span> (${dur(now-o.t)} late)`).join(" · ")}${late.length>4?" · …":""}</div></div><div class="act"><button class="btn primary" data-go="marketplace">Open</button></div></div>`;
+  else if(soon.length)a.innerHTML=`<div class="alert warn"><span class="edge"></span><div class="body"><div class="head"><span class="t">${soon.length} order${soon.length>1?"s":""} due in the next 24 hours</span><span class="ch">MARKETPLACE</span></div><div class="d">Not late yet. Make sure they ship today.</div></div><div class="act"><button class="btn" data-go="marketplace">Review</button></div></div>`;
+  else a.innerHTML=`<div class="alert good"><span class="edge"></span><div class="body"><div class="head"><span class="t">No late orders</span><span class="ch">MARKETPLACE</span></div><div class="d">All ${all.length} open seller-shipped orders are on time.</div></div><div class="act"><button class="btn" data-go="marketplace">Review</button></div></div>`;
+  a.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+  if(!MKT.loaded){el.innerHTML=MKT.err?`<div class="mstatus err">Couldn't load marketplace alerts: ${esc(MKT.err)}</div>`:`<div class="mstatus">Loading marketplace orders…</div>`;return;}
+  let h="";
+  h+=`<div class="block"><div class="block-h"><h3>Late — ship now</h3><span class="count">${late.length}</span></div>${late.length?late.map(mktRow).join(""):`<div class="alert good resolved"><span class="edge"></span><div class="body"><div class="head"><span class="t">Nothing late</span><span class="pill good">OK</span></div><div class="d">No order is past its ship-by time.</div></div></div>`}</div>`;
+  h+=`<div class="block"><div class="block-h"><h3>Due in the next 24 hours</h3><span class="count">${soon.length}</span></div>${soon.length?soon.map(mktRow).join(""):`<div class="mstatus">None.</div>`}</div>`;
+  const rowsBy=Object.fromEntries(MKT.rows.map(r=>[r.channel,r]));
+  h+=`<div class="block"><div class="block-h"><h3>Marketplaces checked</h3><span class="count">every hour, 7am–1am ET</span></div>`+Object.keys(CHN).map(ch=>{
+    const r=rowsBy[ch];
+    if(!r)return `<div class="mline"><span><b>${CHN[ch]}</b></span><span style="color:var(--ink-2)">not connected yet</span></div>`;
+    const os=(r.orders||[]).length,lt=all.filter(o=>o.ch===ch&&o.sev==="late").length;
+    const old=!r.checked_at||now-Date.parse(r.checked_at)>3*3600e3;
+    const err=r.error&&(!r.checked_at||r.tried_at>r.checked_at);
+    return `<div class="mline"><span><b>${CHN[ch]}</b> · ${os} open to ship${lt?` · <b style="color:var(--crit)">${lt} late</b>`:""}</span><span style="color:${err||old?"var(--warn)":"var(--ink-2)"}">${err?`last check failed (${esc(r.error.slice(0,120))}) · `:""}${r.checked_at?"checked "+fmtTime(r.checked_at):"never checked"}</span></div>`;
+  }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves. FBA, WFS and TikTok FBT orders ship themselves and aren't listed.</p></div>`;
+  el.innerHTML=h;
+}
+async function loadMarket(){
+  try{MKT.rows=await api("market_list");MKT.loaded=true;MKT.err=null;}catch(e){if(e&&e.code==="login")return;MKT.err=sqlErrText(e);}
+  renderMarket();
+  if(document.querySelector(".nav-item.active")?.dataset.view==="marketplace")renderProv("marketplace");
+}
+document.addEventListener("click",e=>{const c=e.target.closest("[data-copy]");if(!c)return;navigator.clipboard?.writeText(c.dataset.copy).then(()=>toast("Copied "+c.dataset.copy),()=>toast(c.dataset.copy));});
+setInterval(()=>{if(!document.hidden)loadMarket();},10*60e3);
 // On open: load the latest pulled data and the order memory, then ask to pull fresh
 (async()=>{
   await webSession();
@@ -1172,6 +1227,7 @@ async function webSession(){
   await loadOrders();
   openPull();
   loadInbound();
+  loadMarket();
 })();
 
 let tt;function toast(msg,ms){const el=document.getElementById("toast");document.getElementById("toastMsg").textContent=msg;el.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),ms||2400);}
