@@ -407,9 +407,10 @@ const SECMETA={
   "PJ + FJ JEWELRY":{pill:"family",sub:"factory"},"NC CHOKERS":{pill:"family",sub:"factory"},
   "WFS URGENT":{pill:"urgent",sub:"under 14 days cover"},"WFS PLANNED":{pill:"planned",sub:"14+ days"},
   "ENROLL TO WFS":{pill:"good",sub:"sells ≥1/day · not on WFS yet"},
-  "TIKTOK SHOP":{pill:"family",sub:"preview"}
+  "TIKTOK SHOP":{pill:"urgent",sub:"running short in FBT"},
+  "NEW TO WFS":{pill:"good",sub:"sells on Walmart · nothing in WFS yet · ranked by 30-day sales"},"NEW TO FBT":{pill:"good",sub:"sells on TikTok · nothing in FBT yet · ranked by 30-day sales"}
 };
-const ORDER={miami:["URGENT FBA","PLANNED FBA","UV","STEEL"],china:["PL6328 TAPER PLUGS","GK GAUGES & KITS","PJ + FJ JEWELRY","NC CHOKERS"],walmart:["WFS URGENT","WFS PLANNED"],tiktok:["TIKTOK SHOP"]};
+const ORDER={miami:["URGENT FBA","PLANNED FBA","UV","STEEL"],china:["PL6328 TAPER PLUGS","GK GAUGES & KITS","PJ + FJ JEWELRY","NC CHOKERS"],walmart:["WFS URGENT","WFS PLANNED","NEW TO WFS"],tiktok:["TIKTOK SHOP","NEW TO FBT"]};
 // per-warehouse labels for the cart + create-shipment modal
 const WARECFG={
   miami:{cart:"Miami shipment cart",btn:"Create FBA shipment",mTitle:"Create FBA inbound shipment",mSub:"Creates an inbound plan in Amazon via SP-API and opens it in Seller Central to finalize boxing & labels.",sc:"Open in Seller Central →",href:"https://sellercentral.amazon.com/fba/inbound-shipment-workflow",toast:"Inbound plan created — finish in Seller Central",empty:"a shipment."},
@@ -421,10 +422,10 @@ let TT_LIVE=false,TT_ERR=null,WM_LIVE=false,WM_ERR=null;
 const PLAT=()=>ship&&ship.source==="walmart"?"Walmart":"Amazon";
 const GO_TXT=()=>"Create shipment on "+PLAT();
 const wmBanner=()=>WM_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">Walmart part of the pull failed</span></div><p>${esc(WM_ERR)}</p></div>`:
-  WM_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">Walmart WFS — ship from Miami to Walmart's warehouses</span></div><p><b>On hand</b> = available to sell in WFS (+ units on open WFS inbound shipments). <b>Units sold / day</b> = WFS units sold in the last 30 days. <b>Recommended qty</b> = 30 days of cover + 14-day lead time, minus WFS stock and inbound. Only SKUs that need stock are listed. <b>Create Walmart (WFS) shipment</b> creates the inbound order on Walmart; labels and carrier are finished in Seller Center.</p></div>`:
+  WM_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">Walmart WFS — ship from Miami to Walmart's warehouses</span></div><p><b>Units sold / day</b> = every Walmart order in the last 30 days (WFS and the ones we ship ourselves), so it shows what a SKU would sell from WFS. <b>On hand</b> = available in WFS (+ on open WFS shipments). <b>Recommended qty</b> = 30 days of cover + 14-day lead time, minus WFS stock and inbound. Top: running short. <b>New to WFS</b> below: everything else selling on Walmart with nothing in WFS — add a few while you're shipping anyway (marked ones need converting to WFS in Seller Center first). <b>Create Walmart (WFS) shipment</b> creates the inbound order on Walmart; labels and carrier are finished in Seller Center.</p></div>`:
   `<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">Old example list — click Pull fresh data for the live Walmart list</span></div></div>`;
 const ttBanner=()=>TT_ERR?`<div class="airead" style="background:var(--crit-tint);border-color:#efc4bf"><div class="aihd"><span class="aistat" style="color:var(--crit);font-size:15px">TikTok part of the pull failed</span></div><p>${esc(TT_ERR)}</p></div>`:
-  TT_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">TikTok FBT — ship from Miami to TikTok's warehouses</span></div><p><b>On hand</b> = available in all FBT warehouses (+ reserved and in transit). <b>Units sold / day</b> = units that left FBT on TikTok orders in the last 30 days. <b>Recommended qty</b> = 30 days of cover + 10-day lead time, minus FBT stock and in transit (same rule as Miami). Only SKUs that need stock are listed.</p></div>`:TIKTOK_BANNER;
+  TT_LIVE?`<div class="airead"><div class="aihd"><span class="aibadge">LIVE</span><span class="aistat" style="font-size:15px">TikTok FBT — ship from Miami to TikTok's warehouses</span></div><p><b>Units sold / day</b> = every TikTok order in the last 30 days (FBT and the ones shipped from Amazon/us). <b>On hand</b> = available in all FBT warehouses (+ reserved and in transit). <b>Recommended qty</b> = 30 days of cover + 10-day lead time, minus FBT stock and in transit. Top: running short. <b>New to FBT</b> below: everything else selling on TikTok with nothing in FBT — add a few while you're shipping anyway (marked ones must be added under Goods in the FBT portal first).</p></div>`:TIKTOK_BANNER;
 const TIKTOK_BANNER=`<div class="airead" style="background:var(--warn-tint);border-color:#f0e0bf"><div class="aihd"><span class="aibadge" style="background:var(--warn)">EXAMPLE DATA</span><span class="aistat" style="color:var(--warn);font-size:15px">TikTok isn't part of the pull yet — the rows below are old example data</span></div><p>Your TikTok Shop API works (Claude uses it from your Mac), but the pull runs on GitHub, which doesn't have the TikTok key. Also: TikTok orders ship out of your Amazon FBA stock (TikTok warehouse "MCF FBA"), so TikTok has no inbound shipments of its own — its stock is covered by the Miami list.</p></div>`;
 // Base gauge kit each finished kit maps to, for supplier (Bony) reorder.
 // Steel: finished FBA SKU -> base steel gauge-kit SKU (aftercare is added in Miami).
@@ -465,7 +466,7 @@ function uncart(sku){
 }
 
 function covCell(r){
-  if(r.sec==="ENROLL TO WFS") return '<span class="cov" style="color:var(--good)">new</span>';
+  if(r.sec==="NEW TO WFS"||r.sec==="NEW TO FBT") return '<span class="cov" style="color:var(--good)">new</span>';
   if(r.avail===0) return '<span class="cov oos">OOS</span>';
   const d=r.days; const cls=d<7?"crit":d<15?"warn":"ok";
   return `<span class="cov ${cls}">${d}d</span>`;
@@ -475,15 +476,17 @@ function rowHtml(r,wh){
   const k=bonyKey(wh,r),on=wh==="china"||kit?onQty(k,f):0,sg=suggOf(wh,r),inCart=carts[wh]&&carts[wh].has(r.sku);
   const tag=!on?"":kit?`<div class="onord" title="Ordered from Bony, on the way to Miami">${k!==r.sku?"Base "+k+" ":""}on the way to Miami: ${on} · ${onDates(k,f)}</div>`:`<div class="onord" title="On hold: sent to Bony, not shipped to FBA yet">On hold ${on} · ${onDates(k,f)}</div>`;
   const covered=on>0&&(wh==="china"?sg===0:on>=r.qty);
+  const note=r.note?`<div class="onord" style="background:var(--warn-tint);color:var(--warn)">${esc(r.note)}</div>`:"";
+  const blocked=!!r.blocked;
   const cls=[inCart?"pending":"",covered?"onorder":""].filter(Boolean).join(" ");
   return `<tr data-sku="${r.sku}"${cls?` class="${cls}"`:""}>
-    <td><div class="sku">${r.sku}</div><div class="catline">${CAT[r.cat]||r.cat}</div>${tag}</td>
+    <td><div class="sku">${r.sku}</div><div class="catline">${CAT[r.cat]||esc(r.cat)}</div>${tag}${note}</td>
     <td class="r">${covCell(r)}</td>
-    <td class="r vel">${r.vel}</td>
+    <td class="r vel">${r.vel}${r.sold30!=null?`<span class="inb" style="display:block">${r.sold30} in 30d</span>`:""}</td>
     <td class="r oh">${r.avail}${r.inb?` <span class="inb">+${r.inb}</span>`:""}</td>
     <td class="r rec">${sg}${sg!==r.qty?`<span class="less">${r.qty} − ${r.qty-sg} on hold</span>`:""}</td>
     <td class="r"><span class="stepper"><button data-step="-1" aria-label="decrease"${inCart?" disabled":""}>&minus;</button><input class="num" value="${inCart?0:sg}" inputmode="numeric" aria-label="quantity"${inCart?" disabled":""}><button data-step="1" aria-label="increase"${inCart?" disabled":""}>+</button></span></td>
-    <td class="r"><button class="btn add" data-add${inCart?" disabled":""}>Add</button></td></tr>`;
+    <td class="r">${blocked?`<span class="inb" title="${esc(r.note||"")}">convert first</span>`:`<button class="btn add" data-add${inCart?" disabled":""}>Add</button>`}</td></tr>`;
 }
 function renderWare(wh){
   const rows=REORDER[wh]||[]; let html="";
@@ -492,7 +495,7 @@ function renderWare(wh){
     const units=items.reduce((a,b)=>a+b.qty,0); const m=SECMETA[sec];
     const bony=(sec==="UV"||sec==="STEEL")?`<button class="btn add" data-bony="${sec}" style="margin-left:6px">Send to Bony</button>`:"";
     html+=`<div class="block"><div class="block-h"><h3>${sec}</h3><span class="pill ${m.pill}">${m.sub}</span>${bony}<span class="count">${items.length} SKUs · ${units} units</span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">wtd. 7&ndash;90 day avg</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
+      <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">${wh==="walmart"||wh==="tiktok"?"all orders, last 30 days":"wtd. 7&ndash;90 day avg"}</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
   }
   const top=wh==="tiktok"?ttBanner():wh==="walmart"?wmBanner():summaryHtml(wh);
   document.getElementById("ware-"+wh).innerHTML=top+html;
