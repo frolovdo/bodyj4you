@@ -74,6 +74,7 @@ details summary{cursor:pointer;color:var(--accent);font-size:13px;margin-top:8px
 .hz .chip.good{border-color:var(--good)}
 
 /* Dashboard live block: alarms, yesterday, today, watch list, hypothesis pulse */
+.ask{border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-top:8px;background:var(--surface)}.ask .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .now{border-left:6px solid var(--good)}.now.fire{border-left-color:var(--bad)}.now.warnb{border-left-color:var(--warn)}
 .nowhead{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}.nowhead .btns{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 h2.big{font-size:22px;font-weight:800;letter-spacing:0;text-transform:none;color:var(--fg);margin:0;line-height:1.2}h2.big.bad{color:var(--bad)}

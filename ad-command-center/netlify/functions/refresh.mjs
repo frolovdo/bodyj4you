@@ -30,11 +30,17 @@ async function listRuns(token) {
     status: x.status, conclusion: x.conclusion, started: x.run_started_at, url: x.html_url,
     kind: x.event === 'schedule' ? 'on schedule' : 'by hand',
     started_pt: ptClock(x.run_started_at), when: ptWhen(x.run_started_at),
+    finished: x.status === 'completed' ? x.updated_at : null, finished_when: x.status === 'completed' ? ptWhen(x.updated_at) : '',
     minutes: mins(x.run_started_at, x.status === 'completed' ? x.updated_at : new Date().toISOString()),
   }));
-  const lastFull = runs.find((x) => x.status === 'completed' && x.conclusion === 'success' && x.minutes >= FULL_MIN_MINUTES);
-  return { runs, last_full_minutes: lastFull ? lastFull.minutes : null };
+  // The two kinds of run, by duration (the run list does not carry the "what" input): full = everything (Amazon reports,
+  // ~20 min), light = today's spend and budgets + push (~1 min). Only runs that finished well count as data on the site.
+  const good = runs.filter((x) => x.status === 'completed' && x.conclusion === 'success');
+  const pick = (x) => (x ? { finished: x.finished, when: x.finished_when, minutes: x.minutes } : null);
+  const lastFull = good.find((x) => x.minutes >= FULL_MIN_MINUTES), lastLight = good.find((x) => x.minutes < FULL_MIN_MINUTES);
+  return { runs, last_full_minutes: lastFull ? lastFull.minutes : null, last_full: pick(lastFull), last_light: pick(lastLight) };
 }
+const WHATS = { all: 'everything', light: "today's spend and budgets" };
 
 export default async (req) => {
   const u = await currentUser(req);
@@ -55,11 +61,12 @@ export default async (req) => {
     const where = busy.status === 'in_progress' ? `running (started ${busy.when}, ${busy.kind})` : 'waiting to start';
     return json({ ok: true, started: false, ...state, msg: `A refresh is already ${where}. Nothing new was started. This page updates by itself when it finishes.` });
   }
+  const what = WHATS[f.what] ? f.what : 'all';   // only the two kinds the page offers
   const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, { method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main', inputs: { what: f.what || 'all' } }) });
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main', inputs: { what } }) });
   if (r.status !== 204) return err('The refresh could not be started (the runner refused). Nothing was started. Try again in a few minutes.', 502);
-  await audit(u, 'refresh_all', '', f.what || 'all');
-  const m = state.last_full_minutes;
-  const howLong = m ? `The last full refresh took ${m} min; this one will likely take about as long.` : 'How long it takes is uncertain until this first run finishes.';
-  return json({ ok: true, started: true, ...state, msg: `Refresh started. ${howLong} The pages update by themselves when it finishes.` });
+  await audit(u, what === 'all' ? 'refresh_all' : 'refresh_light', '', what);
+  const prev = what === 'all' ? state.last_full : state.last_light;
+  const howLong = prev ? `The last one like it took ${prev.minutes || 'under a'} min; this one will likely take about as long.` : 'How long it takes is uncertain until this first run finishes.';
+  return json({ ok: true, started: true, ...state, msg: `Refreshing ${WHATS[what]}. ${howLong} The pages update by themselves when it finishes.` });
 };

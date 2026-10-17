@@ -56,6 +56,15 @@ export default function Now({ csrf, user, engine }) {
           </span>
         </div>
         {engine?.msg && <div className="small mut">{engine.msg}</div>}
+        {engine?.choice && (
+          <div className="ask small">
+            <div>{engine.choice.text}</div>
+            <div className="row">
+              <button className="btn sm" onClick={() => engine.choice.pick('light')}>Today's spend only ({engine.choice.lightMin})</button>
+              <button className="btn alt sm" onClick={() => engine.choice.pick('all')}>Everything ({engine.choice.fullMin})</button>
+              <button className="btn alt sm" onClick={engine.choice.cancel}>Cancel</button>
+            </div>
+          </div>)}
         {err && <div className="block small">{err}</div>}
         {d && !fires.length && !watches.length && <p className="small" style={{ margin: '6px 0 0' }}>All normal as of {when(d.at, d.today, d.yday)}.</p>}
         {(fires.length > 0 || watches.length > 0) && <ul className="al">{[...fires, ...watches].map((a, i) => (
