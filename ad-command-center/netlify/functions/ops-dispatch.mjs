@@ -16,6 +16,8 @@ export default async (req) => {
   if (Date.now() - new Date(row.requested_at).getTime() > 10 * 60 * 1000) return err('request too old', 410);
   const token = Netlify.env.get('GITHUB_TOKEN');
   const fail = async (msg) => { await db().from('ops_refresh').update({ status: 'failed', message: msg, finished_at: new Date().toISOString() }).eq('id', id); return err(msg, 502); };
+  // Off while GitHub Actions has no free minutes left (2026-10-18); remove this line to turn it back on.
+  return fail('Out of credits for manual refresh. Nothing was started.');
   if (!token) return fail('GITHUB_TOKEN is not set on the Netlify site');
   const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, { method: 'POST',
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'content-type': 'application/json' },

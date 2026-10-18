@@ -4,7 +4,11 @@
 // If GitHub cannot be read, nothing is started either: a blind start is how duplicate runs happened before.
 import { json, err, body } from '../lib/http.mjs';
 import { currentUser, csrfOk, can } from '../lib/auth.mjs';
-import { audit } from '../lib/supabase.mjs';
+import { audit, db, FAMILY } from '../lib/supabase.mjs';
+
+// Manual refresh is off while GitHub Actions has no free minutes left (2026-10-18). The schedule runs on the Mac
+// (sp-api tools/macjobs) and still refreshes the data 4 times a day. Set to '' to turn the button back on.
+const PAUSED = 'Out of credits for manual refresh.';
 
 const OWNER = 'frolovdo', REPO = 'bodyj4you-amazon-api', WORKFLOW = 'refresh.yml';  // ~/sp-api is this repo
 const FULL_MIN_MINUTES = 5;  // the run list does not say light or full; light runs take about a minute, so >= 5 min means a full run
@@ -18,6 +22,15 @@ function ptWhen(iso) {
   const d = new Date(iso), now = new Date(), day = ptDate(d), today = ptDate(now), yday = ptDate(new Date(now.getTime() - 86400000));
   const word = day === today ? 'today' : day === yday ? 'yesterday' : d.toLocaleDateString('en-US', { timeZone: PT, month: 'short', day: 'numeric' }) + ',';
   return `${word} ${ptClock(iso)}`;
+}
+// "Oct 18, 11:22am PT": when the engine last pushed the pages online (refresh_status row 'push'). The engine
+// writes UTC times without a zone, so a missing zone is read as UTC.
+async function lastUpdated() {
+  const { data } = await db().from('refresh_status').select('source,ok_at').eq('family', FAMILY()).in('source', ['push', 'budget']);
+  const iso = (src) => { const v = (data || []).find((x) => x.source === src)?.ok_at; return v ? (/[zZ]|[+-]\d\d:?\d\d$/.test(v) ? v : v + 'Z') : null; };
+  const fmt = (v) => (v ? `${new Date(v).toLocaleDateString('en-US', { timeZone: PT, month: 'short', day: 'numeric', year: 'numeric' })}, ${ptClock(v)} PT` : '');
+  const at = iso('push');
+  return { last_updated: at, last_updated_when: fmt(at) };
 }
 const mins = (a, b) => (a && b ? Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)) : null);
 const notDone = (x) => x.status !== 'completed';
@@ -46,6 +59,10 @@ export default async (req) => {
   const u = await currentUser(req);
   if (!u) return err('not signed in', 401);
   const token = Netlify.env.get('GITHUB_TOKEN');
+  if (PAUSED) {
+    if (req.method === 'GET') { let lu = {}; try { lu = await lastUpdated(); } catch (e) { /* the line then says uncertain */ } return json({ ok: true, runs: [], paused: PAUSED, ...lu }); }
+    return err(`${PAUSED} Nothing was started. The data still refreshes by itself 4 times a day.`, 403);
+  }
   if (req.method === 'GET') {
     if (!token) return json({ ok: true, runs: [], unknown: true });
     try { return json({ ok: true, ...(await listRuns(token)) }); } catch (e) { return json({ ok: true, runs: [], unknown: true }); }

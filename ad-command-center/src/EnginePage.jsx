@@ -73,7 +73,8 @@ export default function EnginePage({ name, csrf, user }) {
   // Exactly one status sentence under the buttons: what is happening now, or where the data on the page comes from.
   const last = runs.find((r) => r.status === 'completed');
   const spendFrom = lastFull && lastLight && new Date(lastLight.finished) > new Date(lastFull.finished) ? `, today's spend from ${lastLight.when}` : '';
-  const status = eng.unknown ? 'Could not check the refresh status.'
+  const status = eng.paused ? `${eng.paused} Data last updated ${eng.last_updated_when || '(time uncertain)'}.`
+    : eng.unknown ? 'Could not check the refresh status.'
     : running ? (running.status === 'in_progress' ? `A refresh is running (started ${running.when}, ${running.kind}${running.minutes ? `, ${fmtMin(running.minutes)} so far` : ''}). The pages update by themselves when it finishes.` : `A refresh is waiting to start${running.minutes > 10 ? ' and is taking longer than usual (uncertain why)' : ''}. The pages update by themselves when it finishes.`)
     : pending ? 'A refresh is waiting to start. The pages update by themselves when it finishes.'
     : last && last.conclusion !== 'success' ? `The last refresh (${last.kind}, started ${last.when}) did not finish. The pages still show earlier data; press Refresh daily data to try again.`
@@ -87,7 +88,7 @@ export default function EnginePage({ name, csrf, user }) {
   const age = d.produced_at ? Math.round((Date.now() - new Date(d.produced_at)) / 60000) : null;
   return (
     <>
-      {name === 'dashboard' && <Now csrf={csrf} user={user} engine={{ waiting, start: refresh, msg: msg || status, starting, choice }} />}
+      {name === 'dashboard' && <Now csrf={csrf} user={user} engine={{ waiting, start: refresh, msg: msg || status, starting, choice, paused: !!eng.paused }} />}
       {!d.html ? <div className="card"><p>{SOON[name] || 'Not published yet.'}</p></div> : (
         <>
           <p className="mut small">{name === 'dashboard' ? 'Daily analysis below, produced ' : 'Produced '}{age === null ? '' : age < 60 ? `${age} min ago` : `${Math.round(age / 60)} h ago`}{d.data_through ? ` · data through ${d.data_through}` : ''}.</p>
