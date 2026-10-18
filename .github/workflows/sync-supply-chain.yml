@@ -1,18 +1,8 @@
 name: Sync Supply Chain Dashboard
 
 on:
-  schedule:
-    # Every 5 minutes. A run with no new Drive file is a no-op (no commit,
-    # no Netlify build, free GitHub Action minutes on a public repo), so
-    # tight cadence has no real cost. Worst-case "upload to Drive → file
-    # visible in dashboard" latency is ~5 min + ~15s sync run.
-    - cron: '*/5 * * * *'
-  workflow_dispatch: {}    # manual run from the Actions tab
-  push:
-    branches: [main]
-    paths:
-      - 'supply-chain-dashboard/scripts/sync-from-drive.mjs'
-      - '.github/workflows/sync-supply-chain.yml'
+  # Schedule and push triggers removed to save Actions minutes. Run manually from the Actions tab.
+  workflow_dispatch: {}
 
 concurrency:
   group: sync-supply-chain
