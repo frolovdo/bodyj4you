@@ -789,7 +789,7 @@ function haveText(){return dataState.source==="page"?`${fmtDay(dataState.date)} 
 function renderProv(view){
   const prov=document.getElementById("vProv");
   if(view==="inbound"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Amazon + Walmart shipments'+(INB.at?" · synced "+fmtTime(INB.at):"");if(!INB.loaded)loadInbound();return;}
-  if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked every hour'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
+  if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked 4 times a day'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
   if(view==="orders"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Saved in Supabase'+(ordersAt?" · loaded "+fmtTime(ordersAt):"");return;}
   const amazon=view==="today"||view==="inventory";
   const fresh=amazon&&dataState.date>=todayISO();
@@ -1202,7 +1202,7 @@ function renderMarket(){
   const all=mktOrders(),late=all.filter(o=>o.sev==="late"),soon=all.filter(o=>o.sev==="soon");
   const now=Date.now();
   const checks=MKT.rows.map(r=>r.checked_at).filter(Boolean).sort();
-  MKT.at=checks[0]||null;MKT.stale=!MKT.at||now-Date.parse(MKT.at)>3*3600e3;
+  MKT.at=checks[0]||null;MKT.stale=!MKT.at||now-Date.parse(MKT.at)>7*3600e3;
   const tag=document.getElementById("navMkt"),btn=document.getElementById("navMktBtn");
   tag.textContent=MKT.loaded?(late.length||soon.length):"—";btn.classList.toggle("crit",late.length>0);
   document.getElementById("cLate").textContent=MKT.loaded?late.length:"—";
@@ -1219,11 +1219,11 @@ function renderMarket(){
   h+=`<div class="block"><div class="block-h"><h3>Late — ship now</h3><span class="count">${late.length}</span></div>${late.length?late.map(mktRow).join(""):`<div class="alert good resolved"><span class="edge"></span><div class="body"><div class="head"><span class="t">Nothing late</span><span class="pill good">OK</span></div><div class="d">No order is past its ship-by time.</div></div></div>`}</div>`;
   h+=`<div class="block"><div class="block-h"><h3>Due in the next 24 hours</h3><span class="count">${soon.length}</span></div>${soon.length?soon.map(mktRow).join(""):`<div class="mstatus">None.</div>`}</div>`;
   const rowsBy=Object.fromEntries(MKT.rows.map(r=>[r.channel,r]));
-  h+=`<div class="block"><div class="block-h"><h3>Marketplaces checked</h3><span class="count">every hour, 7am–1am ET</span></div>`+Object.keys(CHN).map(ch=>{
+  h+=`<div class="block"><div class="block-h"><h3>Marketplaces checked</h3><span class="count">4 times a day, 7am–1am ET</span></div>`+Object.keys(CHN).map(ch=>{
     const r=rowsBy[ch];
     if(!r)return `<div class="mline"><span><b>${CHN[ch]}</b></span><span style="color:var(--ink-2)">not connected yet</span></div>`;
     const os=(r.orders||[]).length,lt=all.filter(o=>o.ch===ch&&o.sev==="late").length;
-    const old=!r.checked_at||now-Date.parse(r.checked_at)>3*3600e3;
+    const old=!r.checked_at||now-Date.parse(r.checked_at)>7*3600e3;
     const err=r.error&&(!r.checked_at||r.tried_at>r.checked_at);
     return `<div class="mline"><span><b>${CHN[ch]}</b> · ${os} open to ship${lt?` · <b style="color:var(--crit)">${lt} late</b>`:""}</span><span style="color:${err||old?"var(--warn)":"var(--ink-2)"}">${err?`last check failed (${esc(r.error.slice(0,120))}) · `:""}${r.checked_at?"checked "+fmtTime(r.checked_at):"never checked"}</span></div>`;
   }).join("")+`<p class="mnote" style="color:var(--ink-2);font-size:12.5px;margin:10px 0 0">Only orders we ship ourselves; FBA, WFS and TikTok FBT orders ship themselves. Mercado Libre orders are listed for visibility (Mercado Libre Full ships them).</p></div>`;
