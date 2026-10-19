@@ -28,12 +28,31 @@ const ITEMS = [
   { id: 'keyword-ideas', status: 'built', title: 'Keyword ideas from Amazon', where: 'Keywords page, and engine discovery',
     what: 'Amazon’s ranked keyword recommendations for our ASINs, labelled against what we already run, buy through or block, with competitor brands marked. Add them as exact keywords from the Keywords page. In discovery, run ac_kwideas.py before spending Helium 10 calls.',
     todo: ['Merge the engine change (adsops/ac_kwideas.py, same branch claude/searchterm-ngrams) so the nightly model pushes it'] },
+  { id: 'ads-mcp', status: 'planned', title: 'Connect the Amazon Ads MCP server', where: 'claude.ai connectors',
+    what: 'Amazon\u2019s official Ads MCP server (open beta since February 2026, sign-in with Amazon) covers Sponsored Products, Brands, Display, DSP and AMC. Connected as a connector, any Claude session, cloud ones included, could ask the AMC questions above in plain language without the API keys living on the Mac. Check that our API access qualifies, then start read-only.' },
   { id: 'amc-recurring', status: 'planned', title: 'AMC queries on a schedule', where: 'Engine',
     what: 'The 19 saved rosehip AMC queries run by hand today. Run the useful ones weekly and push the results, starting with the audience sizing query below.' },
   { id: 'tags', status: 'later', title: 'Tags on campaigns, targets and terms', where: '-',
     what: 'Naming and families cover most of it today.' },
   { id: 'skip', status: 'skip', title: 'Flow-canvas automation and widget dashboards', where: '-',
     what: 'The scheduled jobs plus the approval queue already do the automation, and a dashboard builder is product work with little payoff for one account.' },
+];
+
+
+// AMC question bank (saved 2026-10-19). Run with the engine's AMC client (amc.py run) or, once connected, the Amazon Ads MCP server.
+const AMC_Q = [
+  { q: 'Did the deal bring new customers?', how: 'New-to-brand vs returning orders, rosehip only, on a deal day vs a normal day vs Prime Big Deal Days; ads and organic.',
+    decides: 'Whether deals are for winning new buyers or for pulling reorders forward, and so how deep and how often to run them (the charter\u2019s deal rules).',
+    have: 'Partly: q1_path_asin_week already counts new-to-brand purchases by week. Not split by deal day yet.' },
+  { q: 'When do rosehip customers come back?', how: 'Most common reorder window after the first order, per size (1oz, 2oz, 4oz, 16oz refill, roller), and value per customer over 12 and 24 months vs the first order.',
+    decides: 'The reorder window for the \u201cpast buyers due to reorder\u201d audience above (replaces our 45 to 365 day guess), the timing of follow-up emails, and how much a new customer is worth paying for.',
+    have: 'No. q4_time_freq covers time from first ad to purchase, not time between purchases.' },
+  { q: 'Which first order makes a loyal customer?', how: 'Repeat rate and 12-month value by the size of the first order.',
+    decides: 'Which size to push in ads to win new customers, and the budget split between sizes. If 1oz first-timers rarely come back, the 1oz is a poor acquisition product even at a low cost per order.',
+    have: 'No.' },
+  { q: 'Are new customers as good as last year\u2019s?', how: '90-day revenue as a multiple of the first order, by the month of first purchase.',
+    decides: 'Whether a big acquisition month (Prime Day, Q4) brings buyers who stick. Fix what happens after the first order before buying more new customers.',
+    have: 'No.' },
 ];
 
 function Pill({ s }) {
@@ -67,6 +86,16 @@ export default function Roadmap() {
           <li>Keep, widen to more campaigns, or remove.</li>
         </ol>
         <p className="small mut">Sources: <a href="https://advertising.amazon.com/resources/whats-new/amc-audiences-for-sponsored-ads" target="_blank" rel="noreferrer">Amazon: AMC audiences for sponsored ads</a> · <a href="https://tinuiti.com/blog/amazon/amc-sponsored-ads/" target="_blank" rel="noreferrer">Tinuiti guide</a> · <a href="https://www.intentwise.com/blog/amazon-marketing-cloud/is-your-amc-audience-ready-for-bid-boosting/" target="_blank" rel="noreferrer">Intentwise on audience size</a></p>
+      </div>
+
+      <h2 id="amc-questions">AMC questions to ask</h2>
+      <div className="card" style={{ borderLeft: '4px solid var(--warn)' }}>
+        <p style={{ marginTop: 0 }}><Pill s="placeholder" /> <b>Saved ideas, none run yet.</b> Four questions another brand answered from AMC in plain language (from Mansour Norouzi’s Claude + AMC post, Oct 2026), turned into rosehip questions. Each one feeds a decision we already make.</p>
+        <div style={{ overflowX: 'auto' }}><table className="kw"><thead><tr><th>Question for rosehip</th><th>What the answer decides</th><th>What we have</th></tr></thead><tbody>
+          {AMC_Q.map((q) => (<tr key={q.q}><td><b>{q.q}</b><div className="small mut">{q.how}</div></td><td className="small">{q.decides}</td><td className="small">{q.have}</td></tr>))}
+        </tbody></table></div>
+        <p className="small"><b>Their findings, as a hint of what to look for:</b> a Best Deal day nearly doubled orders but 2 of 3 buyers were returning customers, so for that product a deal was a reorder tool, not a new-customer tool. Customers reordered later than assumed (day 51 to 130 depending on the product). Coffee buyers who started on a 2-pack or bigger repeated about twice as often, and the best seller had the lowest repeat rate. December brought the most new customers and the weakest repeat.</p>
+        <p className="small"><b>Limits:</b> AMC hides any result row with too few shoppers, so per-size splits for the small sizes may come back empty; new-to-brand looks back a fixed window, not forever; recent days keep filling in.</p>
       </div>
 
       <h2>Everything else we decided</h2>
