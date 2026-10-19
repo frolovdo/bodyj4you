@@ -32,7 +32,7 @@ Live:
 
 Not done / open:
 - Walmart WFS create has not been used for real yet (request verified by dry run only). Seller Center link goes to the home page (exact WFS page unverified).
-- Returns (Customer page) still static Oct 12 data.
+- Returns (Customer page): live since 2026-10-19 — FBA returns report, 90 days, per ASIN, refreshed by each Pull (`ops/returns_sync.py`).
 - No Miami shelf stock visibility.
 - 7 SKUs with $0 cost; cost disagreements EO-ROSEHIP-16oz, EO-JOJOBA-16Oz.
 - KT8100 shows on the Walmart list though it was zeroed on Walmart seller-fulfilled — owner to decide.

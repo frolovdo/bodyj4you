@@ -234,7 +234,7 @@
       <button class="nav-item" data-view="marketplace" id="navMktBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag" id="navMkt">—</span></button>
       <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders &amp; log <span class="tag" id="navOrd">—</span></button>
     </nav>
-    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked 4 times a day.<br>Returns: Oct 12 (not live yet).</div></div>
+    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked 4 times a day.<br>Returns: refreshed with each pull.</div></div>
   </aside>
 
   <main class="main">
@@ -248,14 +248,14 @@
         <div class="card stat s-good" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Ship to FBA · Miami</div><div class="v num" id="cMiamiRisk">$64</div><div class="c"><b>at risk</b> · healthy cover · routine top-up</div></div>
         <div class="card stat s-crit" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Order from Bony · China</div><div class="v num" id="cChinaRisk">$5.5k</div><div class="c" id="cChinaCap">at risk · 13 items · <b>top 4 = 75%</b></div></div>
         <div class="card stat s-good" data-go="marketplace" id="cLateCard"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Late orders</div><div class="v num" id="cLate">—</div><div class="c" id="cLateCap">checking marketplaces…</div></div>
-        <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Returns to action · 90d</div><div class="v num">831</div><div class="c"><b>HS0002 spike</b> · 155 wrong-item</div></div>
+        <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Returns to action · 90d</div><div class="v num" id="cRet">831</div><div class="c" id="cRetCap"><b>HS0002 spike</b> · 155 wrong-item</div></div>
       </div>
       <p class="eyebrow" style="margin-top:30px">Recommended for you</p>
       <div class="block">
         <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t" id="aChinaT">Send China reorder to Bony — $5.5k at risk</span><span class="ch">INVENTORY</span></div><div class="d" id="aChinaD">China's 30-day lead means the urgent money is here.</div></div><div class="act"><button class="btn primary" data-go="inventory">Open Inventory</button></div></div>
         <div class="alert good"><span class="edge"></span><div class="body"><div class="head"><span class="t">Miami FBA is routine this week</span><span class="ch">INVENTORY</span></div><div class="d" id="aMiamiD">Only <b>$64</b> truly at risk — healthy cover across the list. Top up to 30-day cover when convenient.</div></div><div class="act"><button class="btn" data-go="inventory">Review</button></div></div>
         <div id="aMkt"></div>
-        <div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Investigate HS0002 return spike</span><span class="ch">CUSTOMER</span></div><div class="d">932 returns/90d on the Saline Spray — customers report &ldquo;not sterile&rdquo; and &ldquo;wrong solution / tea tree&rdquo;. Possible product or mislabel issue.</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>
+        <div id="aRet"></div>
       </div>
     </section>
 
@@ -306,24 +306,24 @@
 
     <section class="view" id="view-customer">
       <div class="kpis">
-        <div class="card kpi"><div class="k">Returns · 90d</div><div class="v num">3,361</div><div class="delta flat">from Amazon FBA returns report</div></div>
-        <div class="card kpi"><div class="k">Product-fault returns</div><div class="v num">831</div><div class="delta up">defective · not-as-described · missing parts</div></div>
-        <div class="card kpi"><div class="k">Wrong item shipped</div><div class="v num">155</div><div class="delta up">ORDERED_WRONG_ITEM — auto-flagged</div></div>
+        <div class="card kpi"><div class="k">Returns · 90d</div><div class="v num" id="kRetTotal">3,361</div><div class="delta flat" id="kRetRange">from Amazon FBA returns report</div></div>
+        <div class="card kpi"><div class="k">Product-fault returns</div><div class="v num" id="kRetFault">831</div><div class="delta up">defective · not as described · quality · missing parts</div></div>
+        <div class="card kpi"><div class="k">Ordered wrong item</div><div class="v num" id="kRetWrong">155</div><div class="delta flat">customer says they picked the wrong item</div></div>
       </div>
       <div class="block">
-        <div class="block-h"><h3>Returns by reason · 90d</h3><span class="count">3,361 total</span></div>
+        <div class="block-h"><h3>Returns by reason · 90d</h3><span class="count" id="retCount">3,361 total</span></div>
         <div id="reasonBars" style="padding:12px 18px 16px"></div>
       </div>
       <div class="block">
-        <div class="block-h"><h3>Returns running hot</h3><span class="count">top SKUs by volume</span></div>
-        <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Returns 90d</th><th class="r">Defective</th><th class="r">Wrong item</th><th></th></tr></thead><tbody id="hotBody"></tbody></table></div>
+        <div class="block-h"><h3>Returns running hot</h3><span class="count">top products by returns · sibling SKUs added</span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Returns 90d</th><th class="r">Product fault</th><th class="r">Ordered wrong</th></tr></thead><tbody id="hotBody"></tbody></table></div>
       </div>
       <div class="block">
         <div class="block-h"><h3>Voice of customer — what they wrote on return</h3><span class="count">flagged comments</span></div>
-        <div class="flagline"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><b>HS0002 Saline Spray</b> — spike in &ldquo;not sterile / wrong solution / tea tree&rdquo; comments. Likely a product or mislabel issue — needs eyes.</div>
+        <div class="flagline" id="retFlag"></div>
         <div id="vocBody"></div>
       </div>
-      <p class="footnote">100% Amazon SP-API — FBA Customer Returns report (<span class="mono">reason</span> + <span class="mono">customer-comments</span>), last 90 days. Product reviews are not available through Amazon's API and are intentionally excluded.</p>
+      <p class="footnote">Amazon FBA Customer Returns report (<span class="mono">reason</span> + <span class="mono">customer-comments</span>), last 90 days, refreshed with each <b>Pull fresh data</b>. Products are summed per ASIN (sibling SKUs added; the SKU with the most returns is shown). <b>Product fault</b> = defective, not as described, quality unacceptable, missing parts, jewelry defects. Comments are the newest product-fault ones, at most 6 per product; one-word answers are left out. Product reviews are not in Amazon's API and are not included.</p>
     </section>
 
     <section class="view" id="view-orders">
@@ -366,7 +366,7 @@
   <div class="mf"><button class="btn ghost" id="bonyCancel">Cancel</button><button class="btn primary" id="bonySend">Send to Bony &rarr;</button></div>
 </div></div>
 <div class="scrim" id="pullScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="pullTitle">
-  <div class="mh"><h2 id="pullTitle">Pull fresh data?</h2><p style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Pulls today's Amazon FBA inventory report and rebuilds the Miami and China reorder lists. Takes about a minute. Read-only — nothing changes on Amazon.</p></div>
+  <div class="mh"><h2 id="pullTitle">Pull fresh data?</h2><p style="color:var(--ink-2);font-size:13.5px;margin:8px 0 0">Pulls today's Amazon FBA inventory and returns reports and rebuilds the reorder lists and the Customer page. Takes a minute or two. Read-only — nothing changes on Amazon.</p></div>
   <div class="mb"><div class="line"><span>Data on this page</span><b id="pullHave">Oct 12 (built into page)</b></div><div class="mstatus info" id="pullStatus" role="status"></div></div>
   <div class="mf"><button class="btn ghost" id="pullCancel">Not now</button><button class="btn primary" id="pullGo">Pull now</button></div>
 </div></div>
@@ -744,7 +744,7 @@ document.getElementById("bonySend").addEventListener("click",async()=>{
   }
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeBony();});
-const RETURNS={
+let RETURNS={
  reasons:[["Unwanted / changed mind",1197,"a"],["Not as described",503,"w"],["Undeliverable",498,"a"],["Wrong item ordered",155,"c"],["Defective",151,"w"],["Late delivery",92,"a"],["Damaged in FC",90,"w"],["Quality unacceptable",84,"w"],["Other",591,"a"]],
  hot:[
   {sku:"HS0002_FBA",name:"Piercing Aftercare Saline Spray",n:932,def:75,wrong:63,alert:1},
@@ -771,25 +771,42 @@ const RETURNS={
   {sku:"PD-TEATREE-MCT-10-RL",r:"Not as described",t:"Too oily"}
  ]
 };
-(function(){
+let RET_LIVE=false,RET_ERR=null;
+const SKULL=s=>esc(String(s||""));
+function renderReturns(){
+ const R=RETURNS,fmt=n=>(+n||0).toLocaleString();
+ const total=R.total??R.reasons.reduce((a,r)=>a+r[1],0),fault=R.fault??831,wrong=R.wrong??155;
+ document.getElementById("kRetTotal").textContent=fmt(total);document.getElementById("kRetFault").textContent=fmt(fault);document.getElementById("kRetWrong").textContent=fmt(wrong);
+ document.getElementById("kRetRange").textContent=R.from?`${fmtDay(R.from)} – ${fmtDay(R.to)} · Amazon FBA returns`:"Oct 12 data · from Amazon FBA returns report";
+ document.getElementById("retCount").textContent=fmt(total)+" total";
+ document.getElementById("cRet").textContent=fmt(fault);
+ const W=R.worst;
+ document.getElementById("cRetCap").innerHTML=W?`<b>${SKULL(W.sku)}</b> · ${fmt(W.def)} of ${fmt(W.n)} product fault`:"product-fault returns";
+ const flag=document.getElementById("retFlag");
+ if(W&&W.def){flag.hidden=false;flag.innerHTML=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><b>${SKULL(W.sku)}</b> — ${fmt(W.def)} product-fault returns in 90 days (of ${fmt(W.n)} returns)${W.says&&W.says.length?`. Customers wrote: ${W.says.map(t=>"&ldquo;"+SKULL(t)+"&rdquo;").join(" · ")}`:""}</span>`;}
+ else flag.hidden=true;
+ document.getElementById("aRet").innerHTML=W&&W.def?`<div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Investigate ${SKULL(W.sku)} returns</span><span class="ch">CUSTOMER</span></div><div class="d">${fmt(W.n)} returns in 90 days, ${fmt(W.def)} the product's fault${W.name?" — "+SKULL(W.name):""}.${W.says&&W.says[0]?` Top comment: &ldquo;${SKULL(W.says[0])}&rdquo;`:""}</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>`:"";
+ document.getElementById("aRet").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
  const max=Math.max(...RETURNS.reasons.map(r=>r[1]));
  const col={w:"var(--warn)",c:"var(--crit)",a:"var(--accent)"};
  document.getElementById("reasonBars").innerHTML=RETURNS.reasons.map(([lab,n,c])=>`<div style="display:flex;align-items:center;gap:12px;padding:5px 0"><span style="width:168px;font-size:12.5px;color:var(--ink-2)">${lab}</span><span style="flex:1;height:8px;background:var(--line-2);border-radius:4px;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(n/max*100)}%;background:${col[c]}"></span></span><span class="num" style="width:52px;text-align:right;font-weight:600">${n}</span></div>`).join("");
- document.getElementById("hotBody").innerHTML=RETURNS.hot.map(h=>`<tr><td><div class="sku">${h.sku}</div><div class="catline">${h.name}</div></td><td class="r num"><b>${h.n}</b>${h.alert?' <span class="pill urgent">alert</span>':''}</td><td class="r num" style="color:${h.def>=15?'var(--crit)':'var(--ink-2)'}">${h.def}</td><td class="r num">${h.wrong}</td><td class="r"><button class="btn" data-toast="Opened ${h.sku} returns detail">Investigate</button></td></tr>`).join("");
- document.getElementById("vocBody").innerHTML=RETURNS.voc.map(v=>`<div class="rev"><span class="pill ${v.r==='Defective'?'urgent':'warn'}" style="flex:none">${v.r}</span><div class="txt"><div class="q">&ldquo;${v.t}&rdquo;</div><div class="m">${v.sku}</div></div><button class="btn" data-toast="Opened ${v.sku} return">View order</button></div>`).join("");
- document.getElementById("navCust").textContent=RETURNS.hot.filter(h=>h.def>=15).length;
-})();
+ document.getElementById("hotBody").innerHTML=RETURNS.hot.map(h=>`<tr><td><div class="sku">${SKULL(h.sku)}</div><div class="catline" title="${SKULL(h.name)}">${SKULL(h.name)}</div></td><td class="r num"><b>${h.n}</b>${h.alert?' <span class="pill urgent">alert</span>':''}</td><td class="r num" style="color:${h.def>=15?'var(--crit)':'var(--ink-2)'}">${h.def}</td><td class="r num">${h.wrong}</td></tr>`).join("");
+ document.getElementById("vocBody").innerHTML=RETURNS.voc.map(v=>`<div class="rev"><span class="pill ${v.r==='Defective'?'urgent':'warn'}" style="flex:none">${SKULL(v.r)}</span><div class="txt"><div class="q">&ldquo;${SKULL(v.t)}&rdquo;</div><div class="m">${SKULL(v.sku)}${v.date?" · returned "+fmtDay(v.date):""}</div></div></div>`).join("")||'<div class="ord-empty">No product-fault comments in this period.</div>';
+ document.getElementById("navCust").textContent=RETURNS.hot.filter(h=>h.alert).length;
+}
 // ---- Pull fresh data: page -> Supabase ops_refresh row -> GitHub job (Amazon report + reorder math) -> ops_snapshot -> page
 const SB="Supabase",SB_PROJECT="fsxoppdwmtelsfizareg";
 let dataState={date:"2026-10-12",pulledAt:null,source:"page"};
 const fmtDay=d=>new Date(d+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric"});
 const fmtTime=t=>new Date(t).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
 const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+renderReturns();
 function haveText(){return dataState.source==="page"?`${fmtDay(dataState.date)} (built into page)`:`Amazon snapshot ${fmtDay(dataState.date)} · pulled ${fmtTime(dataState.pulledAt)}`;}
 function renderProv(view){
   const prov=document.getElementById("vProv");
   if(view==="inbound"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Amazon + Walmart shipments'+(INB.at?" · synced "+fmtTime(INB.at):"");if(!INB.loaded)loadInbound();return;}
   if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked 4 times a day'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
+  if(view==="customer"){prov.className="provenance "+(RET_LIVE?"live":"preview");prov.innerHTML='<span class="pdot"></span>'+(RET_ERR?"Returns part of the last pull failed — showing older data":RET_LIVE?"Amazon returns "+fmtDay(RETURNS.from)+" – "+fmtDay(RETURNS.to)+(dataState.pulledAt?" · pulled "+fmtTime(dataState.pulledAt):""):"Returns data from Oct 12 — click Pull fresh data");return;}
   if(view==="orders"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Saved in Supabase'+(ordersAt?" · loaded "+fmtTime(ordersAt):"");return;}
   const amazon=view==="today"||view==="inventory";
   const fresh=amazon&&dataState.date>=todayISO();
@@ -811,6 +828,7 @@ function applySnapshot(snap){
     REORDER[wh]=d[wh];carts[wh].clear();renderWare(wh);
   }
   if(d.skus)indexSkus(d.skus);
+  RET_ERR=d.returns_error||null;if(d.returns&&Array.isArray(d.returns.reasons)){RETURNS=d.returns;RET_LIVE=true;}renderReturns();
   CN_IN=Array.isArray(d.cn_inbound)?d.cn_inbound:null;CN_ERR=d.cn_inbound_error||null;renderPending();
   dataState={date:snap.snapshot_date,pulledAt:snap.produced_at,source:"pull"};
   renderCounts();renderToday();renderCart();renderDataAge();
