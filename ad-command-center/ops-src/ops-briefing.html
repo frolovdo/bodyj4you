@@ -234,7 +234,7 @@
       <button class="nav-item" data-view="marketplace" id="navMktBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag" id="navMkt">—</span></button>
       <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders &amp; log <span class="tag" id="navOrd">—</span></button>
     </nav>
-    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked every hour.<br>Returns &amp; Walmart stock: Oct 12 (not live yet).</div></div>
+    <div class="briefing"><div id="dataAge"><b>Amazon data: Oct 12, 2026</b><br>built into the page</div><button class="btn primary" id="pullOpen" style="margin-top:10px;width:100%">Pull fresh data</button><div style="margin-top:10px">Marketplace alerts: checked 4 times a day.<br>Returns: Oct 12 (not live yet).</div></div>
   </aside>
 
   <main class="main">
@@ -1177,7 +1177,7 @@ async function webSession(){
   try{const r=await fetch("/api/ops-me",{credentials:"same-origin"});const j=await r.json().catch(()=>({}));if(r.ok&&j.ok){CSRF=j.csrf;return;}}catch(e){}
   await showLogin();
 }
-// Marketplace alerts: open orders we ship ourselves, checked hourly by GitHub (ops/market_sync.py) -> ops_market
+// Marketplace alerts: open orders we ship ourselves, checked 4x/day by the Mac (ops/market_sync.py) -> ops_market
 const MKT={rows:[],at:null,loaded:false,err:null,stale:false};
 const CHN={walmart:"Walmart",ebay:"eBay",tiktok:"TikTok",amazon:"Amazon",mercadolibre:"Mercado Libre"};
 const dur=ms=>{const h=Math.max(1,Math.round(Math.abs(ms)/3600e3));return h<48?h+"h":Math.round(h/24)+" days";};

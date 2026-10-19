@@ -20,7 +20,7 @@ Publish: `python3 ops-src/export_web.py` → `npx netlify deploy --build --prod 
 - **Jobs:** repo `bodyj4you-amazon-api` (`~/sp-api`), folder `ops/`:
   - Pull: page → `ops_refresh` row → `ops-dispatch` → GitHub `ops-refresh.yml` → `ops_refresh.py` (Amazon lists, holds, TikTok + Walmart lists, inbound sync, marketplace check).
   - Create shipment: `ops_refresh` row kind `ship` → `ops_ship.py` (Amazon Send to Amazon plan, or Walmart WFS inbound order via `walmart_sync.py`).
-  - Marketplace alerts: `ops-market.yml`, hourly 7am–1am ET → `market_sync.py` → `ops_market`.
+  - Marketplace alerts: Mac launchd (`~/sp-api/tools/macjobs`), 4x/day 04:20/10:20/16:20/22:20 Pacific → `market_sync.py` → `ops_market`.
 
 ## Status (2026-10-17)
 Live:
