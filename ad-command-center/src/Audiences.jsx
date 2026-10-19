@@ -1,7 +1,7 @@
 import React from 'react';
 
-// Roadmap: what we decided to build next and why, so nothing gets lost between sessions. Static on purpose: edit this file to
-// change it. Decided 2026-10-19 after comparing the tool with AdLabs' feature list.
+// Audiences: the AMC bid-boost plan and its sizing. Static on purpose: edit this file to change it.
+// The rest of the roadmap is kept as a record in ../ROADMAP.md, not shown on the site.
 const STATUS = {
   built: ['Built', 'var(--good)'],
   next: ['Next', 'var(--accent)'],
@@ -11,37 +11,13 @@ const STATUS = {
   skip: ['Decided not to build', 'var(--mut)'],
 };
 
-const ITEMS = [
-  { id: 'search-terms', status: 'built', title: 'Word-pattern waste (n-grams)', where: 'Search terms page',
-    what: 'Cuts every search into word patterns and adds up clicks and spend per pattern, so waste hidden across many small searches can be judged and blocked as a negative phrase. Same bad-luck rule as the Keywords page.',
-  },
-  { id: 'brand-leak', status: 'built', title: 'Brand leak check', where: 'Search terms page',
-    what: 'Brand searches paid for by generic campaigns. Today it is small, and there is no product-ad brand campaign to catch them, so the page says to leave them running.' },
-  { id: 'sp-brand', status: 'next', title: 'Product-ad brand campaign', where: 'Update campaigns',
-    what: 'Found by the brand leak check: brand searches only have the banner to land on. A small exact-match product-ad campaign on our brand terms would make them cheap and let the generic campaigns block them.' },
-  { id: 'second-family', status: 'next', title: 'Second family under management', where: 'Engine: /ads-discover then /ads-review',
-    what: 'Only rosehip is managed. The discovery and weekly review flow is family-agnostic; onboarding a second family is where most of the remaining money is.' },
-  { id: 'one-rulebook', status: 'planned', title: 'One rulebook', where: 'Engine weekly review',
-    what: 'Waste and bid rules exist twice with different thresholds (ads/audit.py in the public repo, review.py in the engine). Make the weekly review the single source and retire the duplicates before they drift further.' },
-  { id: 'harvest-routing', status: 'planned', title: 'Harvest routing rules', where: 'Keywords page',
-    what: 'Rules that say which campaign a harvested search term goes to (by size, job, or keyword type), instead of picking a destination by hand each time.' },
-  { id: 'keyword-ideas', status: 'built', title: 'Keyword ideas from Amazon', where: 'Keywords page, and engine discovery',
-    what: 'Amazon’s ranked keyword recommendations for our ASINs, labelled against what we already run, buy through or block, with competitor brands marked. Add them as exact keywords from the Keywords page. In discovery, run ac_kwideas.py before spending Helium 10 calls.',
-  },
-  { id: 'amc-recurring', status: 'planned', title: 'AMC queries on a schedule', where: 'Engine',
-    what: 'The 19 saved rosehip AMC queries run by hand today. Run the useful ones weekly and push the results, starting with the audience sizing query below.' },
-  { id: 'tags', status: 'later', title: 'Tags on campaigns, targets and terms', where: '-',
-    what: 'Naming and families cover most of it today.' },
-  { id: 'skip', status: 'skip', title: 'Flow-canvas automation and widget dashboards', where: '-',
-    what: 'The scheduled jobs plus the approval queue already do the automation, and a dashboard builder is product work with little payoff for one account.' },
-];
 
 function Pill({ s }) {
   const [label, color] = STATUS[s];
   return <span className="pill" style={{ borderColor: color, color }}> {label}</span>;
 }
 
-export default function Roadmap() {
+export default function Audiences() {
   return (
     <>
       <h2 id="audiences">AMC audiences as bid boosts</h2>
@@ -69,15 +45,6 @@ export default function Roadmap() {
 
       <p className="small mut">Shopper counts: AMC, read-only, queries in <code>sp-api/intel/AMC/rosehip/audiences/</code>. They count only shoppers who saw one of our ads (the all-purchases table is a paid AMC add-on we do not have), so real audiences are larger. “Viewed or added to cart” could not be counted, because AMC records views and carts for us only next to an order; “clicked, did not buy” replaces it.</p>
 
-      <h2>Roadmap: everything else we decided</h2>
-      <p className="small mut">What we decided to build next and why. Edit <code>ad-command-center/src/Roadmap.jsx</code> to change it.</p>
-      {ITEMS.map((it) => (
-        <div key={it.id} className="card" id={it.id}>
-          <p style={{ margin: 0 }}><b>{it.title}</b> <Pill s={it.status} /> {it.where !== '-' && <span className="small mut"> · {it.where}</span>}</p>
-          <p className="small" style={{ marginBottom: it.todo ? 4 : 0 }}>{it.what}</p>
-          {it.todo && <ul className="small" style={{ margin: 0 }}>{it.todo.map((t, i) => <li key={i}>{t}</li>)}</ul>}
-        </div>
-      ))}
     </>
   );
 }
