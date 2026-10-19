@@ -14,7 +14,7 @@ Node functions for the API, Supabase for state. The engine on the Mac (`~/sp-api
   Blocking sends negative phrase rows through the same preview/send path (backup, log, read-back, undo, History).
   Patterns that would also stop rosehip or brand searches, or that describe our own product, are held back and can only be
   ticked from "Show the watch list and protected words".
-- **Roadmap:** what we decided to build next, with the AMC audiences placeholder first. Static: edit `src/Roadmap.jsx`.
+- **Audiences:** the AMC bid-boost audience plan and its shopper counts. Static: edit `src/Audiences.jsx`. The wider roadmap is a record in `ROADMAP.md`, not shown on the site.
 
 ## Netlify setup
 - Site base directory: `ad-command-center`, build `npm run build`, publish `dist`, Node 20.
