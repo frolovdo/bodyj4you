@@ -120,11 +120,17 @@ export function assemble(form, live, fam) {
         change: `add exact '${r.keywordText}' at $${bid}` });
       levers.add('new keywords');
     } else if (k.startsWith('kneg_') && r.campaignId && r.adGroupId && r.keywordText) {
-      const have = (S.negativeKeywords || []).find((x) => String(x.campaignId) === String(r.campaignId) && String(x.adGroupId) === String(r.adGroupId) && x.matchType === 'NEGATIVE_EXACT' && norm(x.keywordText) === norm(r.keywordText) && x.state === 'ENABLED');
-      if (have) { skipped.push(`'${r.keywordText}' is already blocked in ${camp}, so nothing to add`); continue; }
+      // exact (Keywords page) by default; phrase only when asked (Search terms page: a word pattern across many searches)
+      const mt = r.matchType === 'NEGATIVE_PHRASE' ? 'NEGATIVE_PHRASE' : 'NEGATIVE_EXACT';
+      const word = mt === 'NEGATIVE_PHRASE' ? 'phrase' : 'exact';
+      const inAg = (S.negativeKeywords || []).filter((x) => String(x.campaignId) === String(r.campaignId) && String(x.adGroupId) === String(r.adGroupId) && x.state === 'ENABLED');
+      const same = inAg.find((x) => x.matchType === mt && norm(x.keywordText) === norm(r.keywordText));
+      // a phrase negative already in place covers any longer phrase that contains it ("castor" covers "castor oil")
+      const cover = mt === 'NEGATIVE_PHRASE' && inAg.find((x) => x.matchType === 'NEGATIVE_PHRASE' && (' ' + norm(r.keywordText) + ' ').includes(' ' + norm(x.keywordText) + ' '));
+      if (same || cover) { skipped.push(`'${r.keywordText}' is already blocked in ${camp}${cover && !same ? ` by the phrase '${cover.keywordText}'` : ''}, so nothing to add`); continue; }
       rows.push({ api: 'POST /sp/negativeKeywords', entity: 'negative keyword', campaign: camp, target: r.keywordText,
-        body: { campaignId: r.campaignId, adGroupId: r.adGroupId, keywordText: r.keywordText, matchType: 'NEGATIVE_EXACT', state: 'ENABLED' }, setting: 'negative keyword', before: '-', after: 'negative exact',
-        change: `block exact '${r.keywordText}'` });
+        body: { campaignId: r.campaignId, adGroupId: r.adGroupId, keywordText: r.keywordText, matchType: mt, state: 'ENABLED' }, setting: 'negative keyword', before: '-', after: 'negative ' + word,
+        change: `block ${word} '${r.keywordText}'` });
       levers.add('negative keywords');
     }
   }

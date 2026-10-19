@@ -6,13 +6,17 @@ import History from './History.jsx';
 import Keywords from './Keywords.jsx';
 import Hourly from './Hourly.jsx';
 import Kill from './Kill.jsx';
+import SearchTerms from './SearchTerms.jsx';
+import Roadmap from './Roadmap.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
   ['update', 'Update campaigns'],
   ['hourly', 'Hourly'],
   ['keywords', 'Keywords'],
+  ['searchterms', 'Search terms'],
   ['history', 'History'],
+  ['roadmap', 'Roadmap'],
 ];
 
 export async function api(path, opts = {}) {
@@ -53,7 +57,7 @@ export default function App() {
         <Kill csrf={csrf} user={user} />
       </header>
       <main className="wrap">
-        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'roadmap' ? <Roadmap key="roadmap" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );
