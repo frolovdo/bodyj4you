@@ -12,6 +12,7 @@ export default function Keywords({ csrf }) {
   const [negs, setNegs] = useState({});   // key -> true
   const [allAdv, setAllAdv] = useState(false);
   const [allNeg, setAllNeg] = useState(false);
+  const [allIdea, setAllIdea] = useState(false);
   const [hyps, setHyps] = useState({});
   const [pop, setPop] = useState(null); const [preview, setPreview] = useState(null); const [progress, setProgress] = useState(null); const [result, setResult] = useState(null); const [staged, setStaged] = useState(null);
   useEffect(() => { api('keywords').then((r) => (r.ok ? setD(r) : setError(r.error || 'could not load'))); }, []);
@@ -27,13 +28,23 @@ export default function Keywords({ csrf }) {
   const advList = allAdv ? advAll : advTop.slice(0, 5);
   const negList = allNeg ? negAll.filter((c) => !c.core) : negSafe.slice(0, 5);
   const dests = M?.destinations || [];
+  // Amazon's keyword ideas (engine: ac_kwideas.py): only ones we neither run as exact nor already buy through. They join the same
+  // add flow as harvested terms (same kadd rows, backup, undo); there is no source campaign, so nothing to block in source.
+  const I = d?.ideas;
+  const ideaAll = useMemo(() => (I?.ideas || []).filter((x) => (x.status === 'new' || x.status === 'seen') && !x.ours && !have.adv[norm(x.term)]).map((x) => {
+    const cap = I.be_cpc?.[dests[0]?.cid] || 3;  // never above the destination's break-even cost per click
+    return { key: 'idea|' + x.term, term: x.term, campaignId: null, campaignName: 'Amazon idea', adGroupId: null, orders: x.orders, clicks: x.clicks, cost: x.cost, acos: null,
+      bid: Math.round(Math.max(0.2, Math.min(3, cap, x.bid || 0.5)) * 100) / 100, default: dests[0]?.cid, ok: true, other: (x.other || []).join(', ') || null, idea: x };
+  }), [I, have, dests]);
+  const ideaList = allIdea ? ideaAll : ideaAll.filter((x) => !x.idea.competitor).slice(0, 8);
+  const pool = useMemo(() => [...(M?.advertise || []), ...ideaAll], [M, ideaAll]);
   // campaigns touched: destination campaigns of adds, source campaigns of block-in-source, campaigns of negatives
   const touched = useMemo(() => {
     const m = {};
-    for (const [k, a] of Object.entries(adds)) { const c = (M?.advertise || []).find((x) => x.key === k); if (!c) continue; const dst = dests.find((x) => x.cid === (a.dest || c.default)); if (dst) m[dst.cid] = dst.name; if (a.neg && c.campaignId !== (a.dest || c.default)) m[c.campaignId] = c.campaignName; }
+    for (const [k, a] of Object.entries(adds)) { const c = pool.find((x) => x.key === k); if (!c) continue; const dst = dests.find((x) => x.cid === (a.dest || c.default)); if (dst) m[dst.cid] = dst.name; if (a.neg && c.campaignId && c.campaignId !== (a.dest || c.default)) m[c.campaignId] = c.campaignName; }
     for (const k of Object.keys(negs)) { const c = (M?.negatives || []).find((x) => x.key === k); if (c) m[c.campaignId] = c.campaignName; }
     return m;
-  }, [adds, negs, M]);
+  }, [adds, negs, M, pool]);
   const ids = Object.keys(touched);
   const missing = ids.filter((cid) => (hyps[cid] || '').trim().length < 10);
   const n = Object.keys(adds).length + Object.keys(negs).length;
@@ -41,9 +52,9 @@ export default function Keywords({ csrf }) {
   const form = () => {
     const f = { csrf };
     let i = 0;
-    for (const [k, a] of Object.entries(adds)) { const c = M.advertise.find((x) => x.key === k); const dst = dests.find((x) => x.cid === (a.dest || c.default)); if (!dst) continue;
+    for (const [k, a] of Object.entries(adds)) { const c = pool.find((x) => x.key === k); if (!c) continue; const dst = dests.find((x) => x.cid === (a.dest || c.default)); if (!dst) continue;
       f['kadd_' + i] = JSON.stringify({ campaignId: dst.cid, adGroupId: dst.ag, campaignName: dst.name, keywordText: c.term, bid: a.bid || c.bid });
-      if (a.neg && c.campaignId !== dst.cid) f['kneg_s' + i] = JSON.stringify({ campaignId: c.campaignId, adGroupId: c.adGroupId, campaignName: c.campaignName, keywordText: c.term }); i++; }
+      if (a.neg && c.campaignId && c.campaignId !== dst.cid) f['kneg_s' + i] = JSON.stringify({ campaignId: c.campaignId, adGroupId: c.adGroupId, campaignName: c.campaignName, keywordText: c.term }); i++; }
     for (const k of Object.keys(negs)) { const c = M.negatives.find((x) => x.key === k); f['kneg_' + i] = JSON.stringify({ campaignId: c.campaignId, adGroupId: c.adGroupId, campaignName: c.campaignName, keywordText: c.term }); i++; }
     for (const cid of ids) { f['hyp_' + cid] = hyps[cid] || ''; f['succ_' + cid] = hyps['succ_' + cid] || 'orders_up'; f['days_' + cid] = hyps['days_' + cid] || '14'; }
     return f;
@@ -66,7 +77,7 @@ export default function Keywords({ csrf }) {
   if (!M) return <div className="card">No keyword data yet: the engine has not pushed the keywords model.</div>;
   return (
     <>
-      <p className="small"><a href="#adv">Keywords to advertise</a> · <a href="#neg">Negative keywords</a> · <span className="mut">numbers through {d.produced_at?.slice(0, 10)}</span></p>
+      <p className="small"><a href="#adv">Keywords to advertise</a> · <a href="#ideas">Ideas from Amazon</a> · <a href="#neg">Negative keywords</a> · <span className="mut">numbers through {d.produced_at?.slice(0, 10)}</span></p>
       <h2 id="adv" style={{ marginTop: 0 }}>Keywords to advertise</h2>
       <div className="card">
         <p><b>Why these:</b> shoppers typed these exact words and bought, but we only reached them by accident through broad, auto or deal campaigns. <b>Why add them as exact keywords:</b> you set the bid for that exact phrase yourself, Amazon learns that your listing belongs to it (which helps organic rank), and the spend stops depending on how the auto campaign feels that day. <b>Block in source</b> stops the old campaign bidding on the same word, so you do not pay twice.</p>
@@ -81,6 +92,23 @@ export default function Keywords({ csrf }) {
               <td><select style={{ minHeight: 36 }} value={dst} onChange={(e) => setAdds((s) => ({ ...s, [c.key]: { ...(s[c.key] || { bid: c.bid }), dest: e.target.value, neg: c.campaignId !== e.target.value } }))}>{dests.map((x) => <option key={x.cid} value={x.cid}>{x.name.replace(' - AI', '')}</option>)}</select></td>
               <td><label className="small"><input type="checkbox" disabled={!srcNeg} checked={!!a?.neg && srcNeg} onChange={(e) => setAdds((s) => ({ ...s, [c.key]: { ...(s[c.key] || { dest: c.default, bid: c.bid }), neg: e.target.checked } }))} /> block in source</label></td></tr>); })}
         </tbody></table></div>
+      </div>
+      <h2 id="ideas">Ideas from Amazon</h2>
+      <div className="card">
+        <p><b>Where these come from:</b> Amazon's own keyword recommendations for our ASINs, ranked by the conversions Amazon expects. Free, so no Helium 10 calls. <b>Shown here:</b> ideas we do not run as an exact keyword yet and have not bought through in 30 days (those are in the list above). <b>Read the rank as a lead, not a verdict:</b> Amazon does not know our margins and its suggested bids tend to run high, so the starting bid is Amazon's suggestion capped at the destination campaign's break-even cost per click.</p>
+        {!I ? <p className="mut">No ideas yet: the engine has not pushed them (adsops/ac_kwideas.py, with the nightly model).</p> : (<>
+          <p className="small">{I.counts.new} new · {I.counts.seen} typed by shoppers here without an order yet · {I.counts.converting} already buying (listed above) · {I.counts.advertised} already exact keywords · <span className="mut">asked {String(d.ideas_at || I.built_at).slice(0, 10)}, Amazon API v{I.version}</span>
+            {' · '}<a href="#ideas" onClick={(e) => { e.preventDefault(); setAllIdea(!allIdea); }}>{allIdea ? 'Show the top 8 only' : `Show all ${ideaAll.length}, competitor brands included`}</a></p>
+          <div style={{ overflowX: 'auto' }}><table className="kw"><thead><tr><th>Add</th><th>Keyword</th><th>Amazon rank</th><th>Amazon's bid range</th><th>Our last 30 days</th><th>Bid $</th><th>Add to</th></tr></thead><tbody>
+            {ideaList.map((c) => { const a = adds[c.key]; const dst = a?.dest || c.default; const x = c.idea; return (
+              <tr key={c.key}><td><input type="checkbox" checked={!!a} aria-label={'add ' + c.term} onChange={(e) => setAdds((s) => { const n2 = { ...s }; if (e.target.checked) n2[c.key] = { dest: c.default, bid: c.bid, neg: false }; else delete n2[c.key]; return n2; })} /></td>
+                <td><b>{c.term}</b>{x.core ? <span className="pill"> core</span> : null}{x.competitor ? <span className="pill"> competitor: {x.competitor}</span> : null}{c.other ? <span className="pill"> already {c.other}</span> : null}</td>
+                <td>#{x.rank}</td><td>{x.bid_low != null ? `${money(x.bid_low, 2)} to ${money(x.bid_high, 2)}` : money(x.bid, 2)}</td>
+                <td className="small">{x.clicks ? `${x.clicks} click${x.clicks === 1 ? '' : 's'}, ${money(x.cost, 2)}, no order` : <span className="mut">not seen</span>}</td>
+                <td><input style={{ width: 70, minHeight: 36, fontSize: 15 }} value={a?.bid ?? c.bid.toFixed(2)} onChange={(e) => setAdds((s) => ({ ...s, [c.key]: { ...(s[c.key] || { dest: c.default, neg: false }), bid: e.target.value } }))} inputMode="decimal" /></td>
+                <td><select style={{ minHeight: 36 }} value={dst} onChange={(e) => setAdds((s) => ({ ...s, [c.key]: { ...(s[c.key] || { bid: c.bid }), dest: e.target.value, neg: false } }))}>{dests.map((y) => <option key={y.cid} value={y.cid}>{y.name.replace(' - AI', '')}</option>)}</select></td></tr>); })}
+            {!ideaList.length && <tr><td colSpan={7} className="mut">Nothing new: every idea Amazon has is already running or already buying.</td></tr>}
+          </tbody></table></div></>)}
       </div>
       <h2 id="neg">Negative keywords</h2>
       <div className="card">

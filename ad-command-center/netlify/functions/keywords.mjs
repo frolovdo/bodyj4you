@@ -1,4 +1,4 @@
-// Keywords page: candidates to advertise and to block, from the model the engine pushed. Sending goes through /api/preview and /api/send
+// Keywords page: candidates to advertise and to block, from the model the engine pushed, plus Amazon's own keyword ideas. Sending goes through /api/preview and /api/send
 // with kadd_<i> / kneg_<i> JSON rows, so the same backup, log, read-back and History apply.
 // Also returns what Amazon holds right now (enabled exact keywords and exact negatives in the managed campaigns), so a term that was
 // added an hour ago is not offered again before the engine rebuilds the model overnight.
@@ -24,5 +24,7 @@ export default async (req) => {
   } catch (ex) {
     have.error = String(ex.message || ex);  // the page still works from the model; the send step checks again anyway
   }
-  return json({ ok: true, model: d.payload, produced_at: d.produced_at, have, can_send: ['approver', 'owner'].includes(u.role) });
+  const ideas = await dataset('keyword_ideas').catch(() => null);  // Amazon's keyword recommendations, pushed by the engine (ac_kwideas.py)
+  return json({ ok: true, model: d.payload, produced_at: d.produced_at, have, ideas: ideas?.payload || null, ideas_at: ideas?.produced_at || null,
+    can_send: ['approver', 'owner'].includes(u.role) });
 };
