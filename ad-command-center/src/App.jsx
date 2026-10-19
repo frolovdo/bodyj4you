@@ -15,8 +15,8 @@ const NAV = [
   ['hourly', 'Hourly'],
   ['keywords', 'Keywords'],
   ['searchterms', 'Search terms'],
+  ['audiences', 'Audiences'],
   ['history', 'History'],
-  ['roadmap', 'Roadmap'],
 ];
 
 export async function api(path, opts = {}) {
@@ -27,7 +27,8 @@ export async function api(path, opts = {}) {
 }
 
 function route() {
-  const h = (location.hash || '#/dashboard').replace(/^#\/?/, '');
+  let h = (location.hash || '#/dashboard').replace(/^#\/?/, '');
+  if (h === 'roadmap') h = 'audiences';   // old links
   return NAV.some(([k]) => k === h) ? h : 'dashboard';
 }
 
@@ -57,7 +58,7 @@ export default function App() {
         <Kill csrf={csrf} user={user} />
       </header>
       <main className="wrap">
-        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'roadmap' ? <Roadmap key="roadmap" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Roadmap key="audiences" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );
