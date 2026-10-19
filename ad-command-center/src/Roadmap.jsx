@@ -28,8 +28,6 @@ const ITEMS = [
   { id: 'keyword-ideas', status: 'built', title: 'Keyword ideas from Amazon', where: 'Keywords page, and engine discovery',
     what: 'Amazon’s ranked keyword recommendations for our ASINs, labelled against what we already run, buy through or block, with competitor brands marked. Add them as exact keywords from the Keywords page. In discovery, run ac_kwideas.py before spending Helium 10 calls.',
     todo: ['Merge the engine change (adsops/ac_kwideas.py, same branch claude/searchterm-ngrams) so the nightly model pushes it'] },
-  { id: 'ads-mcp', status: 'planned', title: 'Connect the Amazon Ads MCP server', where: 'claude.ai connectors',
-    what: 'Amazon\u2019s official Ads MCP server (open beta since February 2026, sign-in with Amazon) covers Sponsored Products, Brands, Display, DSP and AMC. Connected as a connector, any Claude session, cloud ones included, could ask the AMC questions above in plain language without the API keys living on the Mac. Check that our API access qualifies, then start read-only.' },
   { id: 'amc-recurring', status: 'planned', title: 'AMC queries on a schedule', where: 'Engine',
     what: 'The 19 saved rosehip AMC queries run by hand today. Run the useful ones weekly and push the results, starting with the audience sizing query below.' },
   { id: 'tags', status: 'later', title: 'Tags on campaigns, targets and terms', where: '-',
@@ -39,7 +37,7 @@ const ITEMS = [
 ];
 
 
-// AMC question bank (saved 2026-10-19). Run with the engine's AMC client (amc.py run) or, once connected, the Amazon Ads MCP server.
+// AMC question bank (saved 2026-10-19). Runs through our own Ads API connection: the engine's AMC client (amc.py run "<sql>").
 const AMC_Q = [
   { q: 'Did the deal bring new customers?', how: 'New-to-brand vs returning orders, rosehip only, on a deal day vs a normal day vs Prime Big Deal Days; ads and organic.',
     decides: 'Whether deals are for winning new buyers or for pulling reorders forward, and so how deep and how often to run them (the charter\u2019s deal rules).',
@@ -90,7 +88,7 @@ export default function Roadmap() {
 
       <h2 id="amc-questions">AMC questions to ask</h2>
       <div className="card" style={{ borderLeft: '4px solid var(--warn)' }}>
-        <p style={{ marginTop: 0 }}><Pill s="placeholder" /> <b>Saved ideas, none run yet.</b> Four questions another brand answered from AMC in plain language (from Mansour Norouzi’s Claude + AMC post, Oct 2026), turned into rosehip questions. Each one feeds a decision we already make.</p>
+        <p style={{ marginTop: 0 }}><Pill s="placeholder" /> <b>Saved ideas, none run yet.</b> Four questions another brand answered from AMC (from Mansour Norouzi’s Claude + AMC post, Oct 2026), turned into rosehip questions. Each one feeds a decision we already make. <b>Nothing new to set up:</b> they run through our own Ads API connection with the engine’s AMC client, the same way the 19 saved rosehip queries do. Ask Claude the question, it writes the SQL and runs it.</p>
         <div style={{ overflowX: 'auto' }}><table className="kw"><thead><tr><th>Question for rosehip</th><th>What the answer decides</th><th>What we have</th></tr></thead><tbody>
           {AMC_Q.map((q) => (<tr key={q.q}><td><b>{q.q}</b><div className="small mut">{q.how}</div></td><td className="small">{q.decides}</td><td className="small">{q.have}</td></tr>))}
         </tbody></table></div>
