@@ -97,5 +97,5 @@ details.fold>summary{margin:0;list-style:none;cursor:pointer;color:var(--fg)}det
 .pill.st.tooearly,.pill.st.checkrank,.pill.st.uncertain{background:color-mix(in srgb,var(--warn) 16%,var(--card));color:var(--warn)}.pill.st.undone{color:var(--mut)}
 
 /* family picker in the header */
-.famsel{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--surface);color:var(--fg);width:auto;max-width:230px;flex:0 0 auto;cursor:pointer}
+.famsel{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--surface);color:var(--fg);width:auto;max-width:300px;flex:0 0 auto;cursor:pointer}
 header nav{flex:0 1 auto;min-width:max-content}
