@@ -199,6 +199,9 @@
   .pend-o select{width:100%;margin-top:8px;height:30px;border:1px solid var(--line);border-radius:7px;font-size:12px;padding:0 6px;background:var(--panel);color:var(--ink)}
   .stp{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:20px;margin-top:5px}
   .stp.open{background:var(--warn-tint);color:var(--warn)}.stp.shipped{background:var(--accent-tint);color:var(--accent-ink)}.stp.matched{background:var(--good-tint);color:var(--good)}
+  .use60{border:1px dashed var(--line);background:transparent;color:var(--ink-2);font:inherit;font-variant-numeric:tabular-nums;padding:2px 8px;border-radius:6px;cursor:pointer}
+  .use60:hover{border-color:var(--accent-ink);color:var(--accent-ink)}
+  .use60:disabled{opacity:.4;cursor:not-allowed}
   .rec .less{display:block;font-size:10.5px;color:var(--accent-ink);font-weight:600}
   .ord{padding:14px 18px;border-bottom:1px solid var(--line-2)}.ord:last-child{border-bottom:0}
   .ord-h{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
@@ -272,7 +275,7 @@
           <div class="ware" id="ware-china"></div>
           <div class="ware" id="ware-walmart"></div>
           <div class="ware" id="ware-tiktok"></div>
-          <p class="footnote">Live from the Amazon <b>FBA Inventory Planning report</b>, summed <b>per ASIN</b> (sibling SKUs added, most-recent SKU shown). <b>Days of cover</b> = supply &divide; daily sales; <b>Units sold / day</b> = your reorder-skill blend of units shipped t7/t30/t60/t90; <b>Recommended qty</b> tops each item up to ~30-day cover plus the warehouse's lead time. The dollar figures in the summary are <b>revenue at risk</b> — the sales an empty shelf would cost before a lead-time replenishment lands.</p>
+          <p class="footnote">Live from the Amazon <b>FBA Inventory Planning report</b>, summed <b>per ASIN</b> (sibling SKUs added, most-recent SKU shown). <b>Days of cover</b> = supply &divide; daily sales; <b>Units sold / day</b> = your reorder-skill blend of units shipped t7/t30/t60/t90; <b>Recommended qty</b> tops each item up to ~30-day cover plus the warehouse's lead time; <b>60-day qty</b> tops it up to 60 days (click it to put it in Qty to add). The dollar figures in the summary are <b>revenue at risk</b> — the sales an empty shelf would cost before a lead-time replenishment lands.</p>
         </div>
         <div class="side"><aside class="cart card">
           <div class="block-h"><h3 id="cartTitle">Miami shipment cart</h3><span class="count" id="cartCount">0 items</span></div>
@@ -455,6 +458,9 @@ const onDates=(k,f)=>[...new Set((ONORDER[f].get(k)||{orders:[]}).orders.map(o=>
 const bonyKey=(wh,r)=>wh==="miami"&&(r.sec==="STEEL"||r.sec==="UV")?baseKitFor(r):r.sku;
 // China list: suggested qty minus what's already on order
 const suggOf=(wh,r)=>wh==="china"?Math.max(0,r.qty-onQty(r.sku,"cn")):r.qty;
+// 60-day suggestion: same math topped up to 60 days of cover (+ lead time); rows from before the field existed add 30 days of sales
+const q60Of=r=>r.q60!=null?r.q60:Math.max(r.qty,Math.ceil((r.qty+30*(r.vel||0))/10)*10);
+const sugg60Of=(wh,r)=>wh==="china"?Math.max(0,q60Of(r)-onQty(r.sku,"cn")):q60Of(r);
 let activeWare="miami";
 const recOf=(wh,sku)=>{const r=REORDER[wh].find(x=>x.sku===sku);return r?suggOf(wh,r):0;};
 // remove from cart and re-enable its (grayed) row in the reorder list
@@ -487,6 +493,7 @@ function rowHtml(r,wh){
     <td class="r vel">${r.vel}${r.sold30!=null?`<span class="inb" style="display:block">${r.sold30} in 30d</span>`:""}</td>
     <td class="r oh">${r.avail}${r.inb?` <span class="inb">+${r.inb}</span>`:""}</td>
     <td class="r rec">${sg}${sg!==r.qty?`<span class="less">${r.qty} − ${r.qty-sg} on hold</span>`:""}</td>
+    <td class="r rec"><button class="use60" data-use60="${sugg60Of(wh,r)}" title="Use the 60-day qty"${inCart?" disabled":""}>${sugg60Of(wh,r)}</button></td>
     <td class="r"><span class="stepper"><button data-step="-1" aria-label="decrease"${inCart?" disabled":""}>&minus;</button><input class="num" value="${inCart?0:sg}" inputmode="numeric" aria-label="quantity"${inCart?" disabled":""}><button data-step="1" aria-label="increase"${inCart?" disabled":""}>+</button></span></td>
     <td class="r">${blocked?`<span class="inb" title="${escH(r.note||"")}">convert first</span>`:`<button class="btn add" data-add${inCart?" disabled":""}>Add</button>`}</td></tr>`;
 }
@@ -497,7 +504,7 @@ function renderWare(wh){
     const units=items.reduce((a,b)=>a+b.qty,0); const m=SECMETA[sec];
     const bony=(sec==="UV"||sec==="STEEL")?`<button class="btn add" data-bony="${sec}" style="margin-left:6px">Send to Bony</button>`:"";
     html+=`<div class="block"><div class="block-h"><h3>${sec}</h3><span class="pill ${m.pill}">${m.sub}</span>${bony}<span class="count">${items.length} SKUs · ${units} units</span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">${wh==="walmart"||wh==="tiktok"?"all orders, last 30 days":"wtd. 7&ndash;90 day avg"}</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
+      <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Days of cover<span class="hint">supply &divide; daily sales</span></th><th class="r">Units sold / day<span class="hint">${wh==="walmart"||wh==="tiktok"?"all orders, last 30 days":"wtd. 7&ndash;90 day avg"}</span></th><th class="r">On hand<span class="hint">available + inbound</span></th><th class="r">Recommended qty<span class="hint">to reach 30-day cover</span></th><th class="r">60-day qty<span class="hint">click to use</span></th><th class="r">Qty to add</th><th></th></tr></thead><tbody>${items.map(r=>rowHtml(r,wh)).join("")}</tbody></table></div></div>`;
   }
   const top=wh==="tiktok"?ttBanner():wh==="walmart"?wmBanner():summaryHtml(wh);
   document.getElementById("ware-"+wh).innerHTML=top+html;
@@ -555,6 +562,8 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
 
 document.addEventListener("click",e=>{
   const step=e.target.closest("[data-step]");
+  const u60=e.target.closest("[data-use60]");
+  if(u60){const inp=u60.closest("tr").querySelector(".stepper input");if(inp&&!inp.disabled)inp.value=u60.dataset.use60;return;}
   if(step){const inp=step.parentElement.querySelector("input");let v=parseInt(inp.value||"0",10)+(+step.dataset.step)*10;inp.value=Math.max(0,v);return;}
   const cstep=e.target.closest("[data-cstep]");
   if(cstep){const sku=cstep.dataset.sku;const it=carts[activeWare].get(sku);if(it){it.qty=Math.max(0,it.qty+(+cstep.dataset.cstep)*10);if(it.qty===0){uncart(sku);}else{renderCart();}}return;}
