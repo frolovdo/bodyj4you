@@ -12,7 +12,12 @@ export function db() {
   return client;
 }
 
-export const FAMILY = () => Netlify.env.get('AC_FAMILY') || 'EO-ROSEHIP';
+// The family a request works on: the page sends it (x-family header), set once per request in currentUser().
+// One request runs at a time per function instance, so a module variable is safe here.
+let CURRENT = null;
+const FAMILY_OK = /^[A-Z0-9][A-Z0-9-]{1,40}$/;
+export function useFamily(f) { CURRENT = f && FAMILY_OK.test(f) ? f : null; }
+export const FAMILY = () => CURRENT || Netlify.env.get('AC_FAMILY') || 'EO-ROSEHIP';
 
 export async function dataset(name, family = FAMILY()) {
   const { data, error } = await db().from('datasets').select('payload, data_through, produced_at, rows').eq('family', family).eq('name', name).maybeSingle();

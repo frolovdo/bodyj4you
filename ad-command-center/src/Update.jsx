@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { api } from './App.jsx';
+import { api, FAM } from './App.jsx';
 import Popup from './Popup.jsx';
 
 const money = (v, d = 0) => (v == null || isNaN(v) ? '-' : '$' + Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }));
@@ -114,7 +114,7 @@ export default function Update({ csrf }) {
   return (
     <>
       <p className="mut small">Live settings read {d.live_at} PT · numbers through {d.endm} (newer days still filling in) · <a href="#/update" onClick={(e) => { e.preventDefault(); load(); }}>refresh</a></p>
-      <div className="card strip"><span>Share of 'rosehip oil' purchases <b>{d.strip?.share != null ? pct(d.strip.share, 1) : '-'}</b></span><span>Organic rank <b>#{d.strip?.rank ?? '-'}</b> <span className="mut">(best #{d.strip?.rank_best ?? '-'})</span></span><a href="#/dashboard" style={{ marginLeft: 'auto' }}>Full analysis →</a></div>
+      <div className="card strip"><span>Share of '{FAM.head}' purchases <b>{d.strip?.share != null ? pct(d.strip.share, 1) : '-'}</b></span><span>Organic rank <b>#{d.strip?.rank ?? '-'}</b> <span className="mut">(best #{d.strip?.rank_best ?? '-'})</span></span><a href="#/dashboard" style={{ marginLeft: 'auto' }}>Full analysis →</a></div>
       <FiveNumbers five={d.five} />
       <Response response={d.response} />
       {hyps._prefill && <div className="note pend">Values from {hyps._prefill} are filled in below (highlighted). Check them, write why, then review and send.</div>}

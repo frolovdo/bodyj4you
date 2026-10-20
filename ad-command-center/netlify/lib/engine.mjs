@@ -191,7 +191,7 @@ export async function prechecks(rows, beforeBudgets, fam, { emergency = false, e
       for (const f of floors) if (name.includes(f.campaign_name_contains) && f.min_tos_pct && tos < f.min_tos_pct) { add('floor', 'block', `${name} top-of-search ${tos}% is below the floor ${f.min_tos_pct}%`); floorHit = true; }
     }
     if (r.api === 'PUT /sp/keywords' && 'bid' in b) {
-      for (const f of floors) if (name.includes(f.campaign_name_contains) && /rosehip oil \[EXACT\]/i.test(r.target || '') && b.bid < (f.min_bid_exact_head || 0)) { add('floor', 'block', `${name} bid $${b.bid} is below the head-term floor $${f.min_bid_exact_head}`); floorHit = true; }
+      for (const f of floors) if (name.includes(f.campaign_name_contains) && (r.target || '').toLowerCase() === `${(fam?.managed?.terms?.head || 'rosehip oil').toLowerCase()} [exact]` && b.bid < (f.min_bid_exact_head || 0)) { add('floor', 'block', `${name} bid $${b.bid} is below the head-term floor $${f.min_bid_exact_head}`); floorHit = true; }
     }
   }
   if (!floorHit) add('floor', 'ok', 'no floor touched');

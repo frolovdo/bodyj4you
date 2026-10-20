@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api } from './App.jsx';
+import { api, FAM } from './App.jsx';
 
 // Top of the Dashboard, in this order: Urgent (alarms), Today so far, Yesterday, Recent changes, Hypothesis pulse.
 // Numbers come from the hourly feed and from Amazon directly (see /api/live, /api/review). Campaigns are ranked by sales.
@@ -133,7 +133,7 @@ export default function Now({ csrf, user, engine }) {
               <details className="pe" key={j}><summary><b>{short(e.campaign)}</b> <span className={'pill st ' + e.status.replace(/\s/g, '')}>{e.status}</span> <span className="mut small">“{e.hypothesis.length > 60 ? e.hypothesis.slice(0, 60) + '…' : e.hypothesis}”</span></summary>
                 <p>{e.sentences.join(' ')}</p></details>))}
           </div>))}
-        {rv && (rv.share != null || rv.rank != null) && <div className="small mut">Market pulse from the weekly scoreboard: share of 'rosehip oil' purchases {rv.share != null ? rv.share.toFixed(1) + '%' : '–'}, organic rank #{rv.rank ?? '–'} (both lag; see the scoreboard below).</div>}
+        {rv && (rv.share != null || rv.rank != null) && <div className="small mut">Market pulse from the weekly scoreboard: share of '{FAM.head}' purchases {rv.share != null ? rv.share.toFixed(1) + '%' : '–'}, organic rank #{rv.rank ?? '–'} (both lag; see the scoreboard below).</div>}
       </details>
     </>
   );

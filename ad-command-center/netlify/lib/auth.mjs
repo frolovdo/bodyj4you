@@ -1,6 +1,6 @@
 // PIN login, same hashing as the Mac tool (PBKDF2-HMAC-SHA256, 200000 rounds, hex salt), sessions in Supabase.
 import crypto from 'node:crypto';
-import { db, audit } from './supabase.mjs';
+import { db, audit, useFamily } from './supabase.mjs';
 import { cookies } from './http.mjs';
 
 export const ROLES = { viewer: 0, analyst: 1, approver: 2, owner: 3 };
@@ -39,6 +39,7 @@ export async function createSession(user) {
 }
 
 export async function currentUser(req) {
+  useFamily(req.headers.get('x-family') || new URL(req.url).searchParams.get('family'));
   const tok = cookies(req).ac;
   if (!tok) return null;
   const { data: s } = await db().from('sessions').select('token, csrf, expires_at, users(id, name, role, active)').eq('token', tok).maybeSingle();

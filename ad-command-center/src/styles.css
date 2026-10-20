@@ -95,3 +95,6 @@ details.pe>summary{margin:0;color:inherit;font-size:15px;cursor:pointer}details.
 details.fold>summary{margin:0;list-style:none;cursor:pointer;color:var(--fg)}details.fold>summary::-webkit-details-marker{display:none}details.fold>summary .lbl{margin:0;display:inline}details.fold>summary::before{content:"▸ ";color:var(--accent)}details.fold[open]>summary::before{content:"▾ "}details.fold[open]>summary{margin-bottom:8px}
 .pill.st{color:var(--fg)}.pill.st.ontrack{background:color-mix(in srgb,var(--good) 18%,var(--card));color:var(--good)}.pill.st.notyet{background:color-mix(in srgb,var(--bad) 14%,var(--card));color:var(--bad)}
 .pill.st.tooearly,.pill.st.checkrank,.pill.st.uncertain{background:color-mix(in srgb,var(--warn) 16%,var(--card));color:var(--warn)}.pill.st.undone{color:var(--mut)}
+
+/* family picker in the header */
+.famsel { font: inherit; font-weight: 700; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--bd); background: var(--card, transparent); color: inherit; max-width: 60vw; }
