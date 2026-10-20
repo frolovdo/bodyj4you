@@ -51,7 +51,7 @@ export default function Now({ csrf, user, engine }) {
           <span className="mut small">{watches.length ? `${watches.length} to watch · ` : ''}{d ? `checked ${when(d.at, d.today, d.yday)}${d.cached ? ' (cached)' : ''}` : err ? '' : 'reading…'}</span>
           <span className="btns">
             <button className="btn alt sm" onClick={refresh} disabled={busy}>{busy ? 'Reading Amazon…' : 'Refresh live numbers'}</button>
-            {engine && <button className="btn alt sm" onClick={engine.start} disabled={engine.paused || engine.starting || engine.waiting} title={engine.paused ? 'Out of credits for manual refresh' : undefined}>{engine.paused ? 'Refresh daily data (off)' : engine.starting ? 'Starting…' : engine.waiting ? 'Daily refresh running…' : 'Refresh daily data'}</button>}
+            {engine && !engine.paused && <button className="btn alt sm" onClick={engine.start} disabled={engine.paused || engine.starting || engine.waiting} title={engine.paused ? 'Out of credits for manual refresh' : undefined}>{engine.paused ? 'Refresh daily data (off)' : engine.starting ? 'Starting…' : engine.waiting ? 'Daily refresh running…' : 'Refresh daily data'}</button>}
             <button className="btn alt sm" onClick={review} disabled={rvBusy}>{rvBusy ? 'Reviewing…' : 'Review hypotheses now'}</button>
           </span>
         </div>

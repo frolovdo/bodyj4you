@@ -73,7 +73,9 @@ export default function EnginePage({ name, csrf, user }) {
   // Exactly one status sentence under the buttons: what is happening now, or where the data on the page comes from.
   const last = runs.find((r) => r.status === 'completed');
   const spendFrom = lastFull && lastLight && new Date(lastLight.finished) > new Date(lastFull.finished) ? `, today's spend from ${lastLight.when}` : '';
-  const status = eng.paused ? `${eng.paused} Data last updated ${eng.last_updated_when || '(time uncertain)'}.`
+  const agoMin = eng.last_updated ? Math.max(0, Math.round((Date.now() - new Date(eng.last_updated)) / 60000)) : null;
+  const status = eng.paused ? (agoMin === null ? 'Daily data: last update time uncertain. It refreshes by itself 4 times a day.'
+      : `Daily data updated ${agoMin < 60 ? `${agoMin} min` : agoMin < 2880 ? `${Math.round(agoMin / 60)} h` : `${Math.round(agoMin / 1440)} days`} ago (${eng.last_updated_when}). It refreshes by itself 4 times a day.`)
     : eng.unknown ? 'Could not check the refresh status.'
     : running ? (running.status === 'in_progress' ? `A refresh is running (started ${running.when}, ${running.kind}${running.minutes ? `, ${fmtMin(running.minutes)} so far` : ''}). The pages update by themselves when it finishes.` : `A refresh is waiting to start${running.minutes > 10 ? ' and is taking longer than usual (uncertain why)' : ''}. The pages update by themselves when it finishes.`)
     : pending ? 'A refresh is waiting to start. The pages update by themselves when it finishes.'
