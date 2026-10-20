@@ -46,7 +46,7 @@ export default function App() {
   useEffect(() => { api('me').then((d) => {
     if (d.ok) {
       const list = d.families || [];
-      const cur = list.find((f) => f.family === (FAM.id || d.family)) || list.find((f) => f.family === d.family);
+      const cur = list.find((f) => f.family && f.family === (FAM.id || d.family)) || list.find((f) => f.family === d.family) || list.find((f) => f.family);
       if (cur) { FAM.id = cur.family; FAM.label = cur.label; FAM.head = cur.head; }
       setFams(list);
     }
@@ -64,8 +64,12 @@ export default function App() {
   return (
     <>
       <header>
-        {fams.length > 1
-          ? <select className="famsel" value={FAM.id} onChange={(e) => pickFamily(e.target.value)} aria-label="Product family">{fams.map((f) => <option key={f.family} value={f.family}>{f.label} ({f.family})</option>)}</select>
+        {fams.length > 0
+          ? <select className="famsel" value={FAM.id} onChange={(e) => pickFamily(e.target.value)} aria-label="Product family (top 10 parent SKUs by revenue, last 30 days)" title="Top 10 parent SKUs by revenue, last 30 days">
+              {fams.map((f) => <option key={f.parent_sku} value={f.family || ''} disabled={!f.family}>
+                {f.rank ? '#' + f.rank + ' ' : ''}{f.parent_sku}{f.sales_30d ? ' · $' + Math.round(f.sales_30d / 1000) + 'k' : ''}{f.family ? '' : ' · not set up yet'}
+              </option>)}
+            </select>
           : <b>{FAM.id || 'EO-ROSEHIP'}</b>}
         <b>Action Center</b>
         <nav>{NAV.filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP').map(([k, label]) => <a key={k} href={'#/' + k} className={page === k ? 'on' : ''}>{label}</a>)}</nav>
