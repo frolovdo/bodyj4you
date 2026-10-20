@@ -2,13 +2,14 @@
 import { json, err } from '../lib/http.mjs';
 import { currentUser } from '../lib/auth.mjs';
 import { family, model, liveState } from '../lib/engine.mjs';
+import { dataset } from '../lib/supabase.mjs';
 
 export default async (req) => {
   const u = await currentUser(req);
   if (!u) return err('not signed in', 401);
   try {
     const fam = await family();
-    const [M, live] = await Promise.all([model(), liveState(fam)]);
+    const [M, live, S] = await Promise.all([model(), liveState(fam), dataset('suggestions').catch(() => null)]);
     const byId = Object.fromEntries(M.campaigns.map((c) => [c.id, c]));
     const sp = live.state.campaigns.map((c) => {
       const m = byId[c.campaignId] || {};
@@ -23,7 +24,7 @@ export default async (req) => {
     const order = M.campaigns.map((c) => c.id);
     const camps = [...sb, ...sp].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
     return json({ ok: true, live_at: live.at, model_at: M.built_at, end: M.end, endm: M.endm, be: M.be, tgt: M.tgt, five: M.five, response: M.response, strip: M.strip, charter: M.charter,
-      spent7: M.spent7, campaigns: camps, can_send: ['approver', 'owner'].includes(u.role) });
+      spent7: M.spent7, campaigns: camps, suggestions: S?.payload || null, can_send: ['approver', 'owner'].includes(u.role) });
   } catch (ex) {
     return err(String(ex.message || ex), 502);
   }

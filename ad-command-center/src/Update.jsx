@@ -41,6 +41,27 @@ export function Response({ response }) {
   );
 }
 
+
+// Plan suggestions pushed by the engine (intel/<family>/notes/suggestions.json). "Fill in" only puts the numbers in the form below;
+// nothing is sent until the operator writes why, reviews and confirms in the popup, like any other change.
+function Suggestions({ s, onFill, filled }) {
+  if (!s?.items?.length) return null;
+  return (
+    <div className="card block sugg">
+      <h2 style={{ marginTop: 0 }}>Suggested changes <span className="mut small">{s.plan} · made {s.made}{s.status ? ' · ' + s.status : ''}</span></h2>
+      <p className="mut small">"Fill in" puts the numbers in the form below (highlighted). Nothing goes to Amazon until you review and send. Items marked "by hand" can't be sent from this page yet.</p>
+      <ol>{s.items.map((it) => (
+        <li key={it.id} style={{ marginBottom: 10 }}>
+          <b>{it.title}</b>{it.priority ? <span className="mut small"> · {it.priority}</span> : null}
+          <div className="small">{it.why}</div>
+          {it.effect && <div className="small mut">Expected: {it.effect}</div>}
+          {it.set?.length ? <button type="button" className="btn ghost sm" onClick={() => onFill(it)}>{filled[it.id] ? 'Filled in ✓' : 'Fill in'}</button> : null}
+          {it.manual && <div className="small"><b>By hand:</b> {it.manual}</div>}
+        </li>))}</ol>
+    </div>
+  );
+}
+
 export default function Update({ csrf }) {
   const [d, setD] = useState(null);
   const [error, setError] = useState('');
@@ -51,6 +72,7 @@ export default function Update({ csrf }) {
   const [progress, setProgress] = useState(null);
   const [result, setResult] = useState(null);
   const [staged, setStaged] = useState(null);
+  const [filled, setFilled] = useState({});
 
   const load = () => api('campaigns').then((r) => { if (r.ok) setD(r); else setError(r.error || 'could not load'); });
   useEffect(() => { load(); }, []);
@@ -118,6 +140,11 @@ export default function Update({ csrf }) {
       <FiveNumbers five={d.five} />
       <Response response={d.response} />
       {hyps._prefill && <div className="note pend">Values from {hyps._prefill} are filled in below (highlighted). Check them, write why, then review and send.</div>}
+      <Suggestions s={d.suggestions} filled={filled} onFill={(it) => {
+        setVals((v) => { const n = { ...v }; for (const x of it.set) { for (const k of ['b', 't', 'p', 'r']) if (x[k] != null) n[`${k}_${x.cid}`] = String(x[k]); if (x.kw) n['kw_' + x.kw] = String(x.v); if (x.tg) n['tg_' + x.tg] = String(x.v); } return n; });
+        setHyps((h) => ({ ...h, _prefill: h._prefill && !h._prefill.includes(it.title) ? h._prefill + '; ' + it.title + ': ' + it.why : (h._prefill || it.title + ': ' + it.why) }));
+        setFilled((f) => ({ ...f, [it.id]: true }));
+      }} />
       <h2>Campaigns: change the numbers here</h2>
       <div className="totals"><span>Total daily budget we set <b>{money(tbNow)}</b> {Math.abs(tbNow - tbLive) >= 0.5 && <span className="mut">({tbNow > tbLive ? '+' : '−'}{money(Math.abs(tbNow - tbLive))} vs live)</span>}</span><span>Spent per day, last 7 days <b>{money(d.spent7)}</b></span><span>Used <b>{tbNow ? pct((100 * d.spent7) / tbNow) : '-'}</b></span></div>
       {d.campaigns.map((c) => {
