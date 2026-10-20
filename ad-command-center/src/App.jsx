@@ -67,7 +67,7 @@ export default function App() {
         {fams.length > 0
           ? <select className="famsel" value={FAM.id} onChange={(e) => pickFamily(e.target.value)} aria-label="Product family (top 10 parent SKUs by revenue, last 30 days)" title="Top 10 parent SKUs by revenue, last 30 days">
               {fams.map((f) => <option key={f.parent_sku} value={f.family || ''} disabled={!f.family}>
-                {f.rank ? '#' + f.rank + ' ' : ''}{f.parent_sku}{f.sales_30d ? ' · $' + Math.round(f.sales_30d / 1000) + 'k' : ''}{f.family ? '' : ' · not set up yet'}
+                {f.parent_sku.replace(/-Master$/, '')}{f.sales_30d ? ' · $' + Math.round(f.sales_30d / 1000) + 'k' : ''}{f.family ? '' : ' (not set up)'}
               </option>)}
             </select>
           : <b>{FAM.id || 'EO-ROSEHIP'}</b>}
