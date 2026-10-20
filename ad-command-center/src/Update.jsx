@@ -44,20 +44,40 @@ export function Response({ response }) {
 
 // Plan suggestions pushed by the engine (intel/<family>/notes/suggestions.json). "Fill in" only puts the numbers in the form below;
 // nothing is sent until the operator writes why, reviews and confirms in the popup, like any other change.
-function Suggestions({ s, onFill, filled }) {
+// Where each suggested value lands on this page: the campaign it belongs to, and its live state. A suggestion whose campaign
+// is not on this family's page cannot be filled in; one whose campaign is paused says so before anything else.
+function sugTargets(it, camps) {
+  const out = [];
+  for (const x of it.set || []) {
+    let c = null;
+    if (x.cid) c = camps.find((k) => String(k.id) === String(x.cid));
+    else if (x.kw) c = camps.find((k) => k.keywords?.some((w) => String(w.keywordId) === String(x.kw)));
+    else if (x.tg) c = camps.find((k) => k.targets?.some((w) => String(w.targetId) === String(x.tg)));
+    out.push({ x, c });
+  }
+  return out;
+}
+
+function Suggestions({ s, onFill, filled, camps, fam }) {
   if (!s?.items?.length) return null;
   return (
     <div className="card block sugg">
-      <h2 style={{ marginTop: 0 }}>Suggested changes <span className="mut small">{s.plan} · made {s.made}{s.status ? ' · ' + s.status : ''}</span></h2>
-      <p className="mut small">"Fill in" puts the numbers in the form below (highlighted). Nothing goes to Amazon until you review and send. Items marked "by hand" can't be sent from this page yet.</p>
-      <ol>{s.items.map((it) => (
+      <h2 style={{ marginTop: 0 }}>Suggested changes for {fam || 'this family'} <span className="mut small">{s.plan} · made {s.made}{s.status ? ' · ' + s.status : ''}</span></h2>
+      <p className="mut small">"Fill in" puts the numbers in the form below (highlighted) and writes the reason into that campaign's "why" box. Nothing goes to Amazon until you review and send. Items marked "by hand" can't be sent from this page.</p>
+      <ol>{s.items.map((it) => {
+        const T = sugTargets(it, camps);
+        const lost = T.filter((t) => !t.c).length;
+        const paused = [...new Set(T.filter((t) => t.c && t.c.state !== 'ENABLED').map((t) => t.c.name + ' is ' + String(t.c.state).toLowerCase()))];
+        return (
         <li key={it.id} style={{ marginBottom: 10 }}>
           <b>{it.title}</b>{it.priority ? <span className="mut small"> · {it.priority}</span> : null}
+          {paused.length > 0 && <div className="small bad"><b>Check first:</b> {paused.join('; ')} right now. Turn it on first (by hand), or skip this item.</div>}
           <div className="small">{it.why}</div>
           {it.effect && <div className="small mut">Expected: {it.effect}</div>}
-          {it.set?.length ? <button type="button" className="btn ghost sm" onClick={() => onFill(it)}>{filled[it.id] ? 'Filled in ✓' : 'Fill in'}</button> : null}
+          {it.set?.length ? (lost ? <div className="small bad">Can't fill in: {lost} of its campaigns/keywords is not on this family's page.</div>
+            : <button type="button" className="btn ghost sm" onClick={() => onFill(it, T)}>{filled[it.id] ? 'Filled in ✓ (click to fill again)' : 'Fill in'}</button>) : null}
           {it.manual && <div className="small"><b>By hand:</b> {it.manual}</div>}
-        </li>))}</ol>
+        </li>); })}</ol>
     </div>
   );
 }
@@ -124,7 +144,7 @@ export default function Update({ csrf }) {
     const s3 = await post('send', { csrf, step: 'verify', id: s1.id });
     steps[2] = { ...steps[2], state: s3.ok ? 'done' : 'fail' }; setProgress([...steps]);
     setResult({ ok: s2.ok && s3.ok, sentAny: (s2.sent || 0) > 0, skipped: s2.skipped, text: `${s1.title}: ${s2.summary || `${s2.sent || 0} sent, ${s2.failed || 0} failed`}. ${s3.diffs?.length ? '' : 'Amazon holds what was asked.'}`, diffs: s3.diffs, errors: s2.errors });
-    load(); setVals({}); setHyps({});
+    load(); setVals({}); setHyps({}); setFilled({});
   };
   const close = async () => { if (staged && !result && progress) { /* mid-flight: leave it */ } else if (staged && !result) await post('send', { csrf, step: 'cancel', id: staged }); setPop(null); setStaged(null); };
 
@@ -140,9 +160,10 @@ export default function Update({ csrf }) {
       <FiveNumbers five={d.five} />
       <Response response={d.response} />
       {hyps._prefill && <div className="note pend">Values from {hyps._prefill} are filled in below (highlighted). Check them, write why, then review and send.</div>}
-      <Suggestions s={d.suggestions} filled={filled} onFill={(it) => {
+      <Suggestions s={d.suggestions} filled={filled} camps={d.campaigns || []} fam={(() => { try { return localStorage.getItem('ac_family'); } catch { return ''; } })()} onFill={(it, T) => {
         setVals((v) => { const n = { ...v }; for (const x of it.set) { for (const k of ['b', 't', 'p', 'r']) if (x[k] != null) n[`${k}_${x.cid}`] = String(x[k]); if (x.kw) n['kw_' + x.kw] = String(x.v); if (x.tg) n['tg_' + x.tg] = String(x.v); } return n; });
-        setHyps((h) => ({ ...h, _prefill: h._prefill && !h._prefill.includes(it.title) ? h._prefill + '; ' + it.title + ': ' + it.why : (h._prefill || it.title + ': ' + it.why) }));
+        // the reason goes only into the campaigns this item changes; the operator can still edit it
+        setHyps((h) => { const n = { ...h }; for (const t of T) if (t.c && !(n[t.c.id] || '').includes(it.title)) n[t.c.id] = (n[t.c.id] ? n[t.c.id] + ' ' : '') + it.title + ': ' + it.why; return n; });
         setFilled((f) => ({ ...f, [it.id]: true }));
       }} />
       <h2>Campaigns: change the numbers here</h2>
@@ -186,7 +207,7 @@ export default function Update({ csrf }) {
           </div>);
       })}
       <div className="bar"><span className="mut">{touched.length ? `${touched.length} campaign${touched.length > 1 ? 's' : ''} changing${missing.length ? ` - write one sentence under ${missing.length} of them` : ' - ready'}` : 'No changes yet'}</span>
-        <button type="button" className="btn ghost" onClick={() => { setVals({}); setHyps({}); }}>Reset edits</button>
+        <button type="button" className="btn ghost" onClick={() => { setVals({}); setHyps({}); setFilled({}); }}>Reset edits</button>
         <button type="button" className="btn cta" aria-disabled={!touched.length || missing.length > 0 || !d.can_send} onClick={review}>Review and send to Amazon</button></div>
       <Popup open={!!pop} title={pop?.title} label={pop?.label} preview={preview} progress={progress} result={result} onConfirm={confirm} onClose={close} />
     </>
