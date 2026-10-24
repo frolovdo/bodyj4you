@@ -9,7 +9,8 @@ export default async (req) => {
   if (!u) return err('not signed in', 401);
   const name = new URL(req.url).searchParams.get('name') || 'dashboard';
   if (!/^[a-z_]+$/.test(name)) return err('bad page name');
-  const d = await dataset('page_' + name);
+  // the daily ads brief is account-wide (all families), the same copy the morning email sends
+  const d = name === 'brief' ? await dataset('page_brief', '_system') : await dataset('page_' + name);
   if (!d) return json({ ok: true, html: null, produced_at: null });
-  return json({ ok: true, html: d.payload.html, css: d.payload.css || '', produced_at: d.produced_at, data_through: d.data_through });
+  return json({ ok: true, html: d.payload.html, emailed_at: d.payload.emailed_at || null, css: d.payload.css || '', produced_at: d.produced_at, data_through: d.data_through });
 };

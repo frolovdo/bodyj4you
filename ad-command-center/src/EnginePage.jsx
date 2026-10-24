@@ -2,6 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { api } from './App.jsx';
 import Now from './Now.jsx';
 
+// Daily ads brief: the top 10 across all families, built once each morning; the email sends this same copy.
+function Brief() {
+  const [b, setB] = useState(null);
+  const [open, setOpen] = useState(true);
+  useEffect(() => { api('page?name=brief').then((r) => { if (r.ok && r.html) setB(r); }); }, []);
+  if (!b) return null;
+  const when = b.produced_at ? new Date(b.produced_at).toLocaleString('en-US', { timeZone: 'America/Los_Angeles', weekday: 'short', hour: 'numeric', minute: '2-digit' }) : '';
+  return (
+    <div className="card block" style={{ marginBottom: 12 }}>
+      <p className="mut small" style={{ margin: '0 0 8px' }}>
+        Daily ads brief, all families · built {when} Pacific{b.emailed_at ? ' · emailed to denis@bodyj4you.com' : ' · not emailed yet'} ·{' '}
+        <a href="#" onClick={(e) => { e.preventDefault(); setOpen(!open); }}>{open ? 'hide' : 'show'}</a>
+      </p>
+      {open && <div dangerouslySetInnerHTML={{ __html: b.html }} />}
+    </div>
+  );
+}
+
 // Each page is produced by the engine and pushed to Supabase; this shows it with its age. The Dashboard gets the live block on top
 // (alarms, yesterday, today so far, hypothesis pulse) read straight from Amazon and the hourly feed.
 const SOON = {
@@ -90,6 +108,7 @@ export default function EnginePage({ name, csrf, user }) {
   const age = d.produced_at ? Math.round((Date.now() - new Date(d.produced_at)) / 60000) : null;
   return (
     <>
+      {name === 'dashboard' && <Brief />}
       {name === 'dashboard' && <Now csrf={csrf} user={user} engine={{ waiting, start: refresh, msg: msg || status, starting, choice, paused: !!eng.paused }} />}
       {!d.html ? <div className="card"><p>{SOON[name] || 'Not published yet.'}</p></div> : (
         <>
