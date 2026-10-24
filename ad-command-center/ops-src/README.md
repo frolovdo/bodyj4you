@@ -32,7 +32,7 @@ Live:
 
 Not done / open:
 - Walmart WFS create has not been used for real yet (request verified by dry run only). Seller Center link goes to the home page (exact WFS page unverified).
-- Returns (Customer page): live since 2026-10-19 — FBA returns report, 90 days, per ASIN, refreshed by each Pull (`ops/returns_sync.py`).
+- Customer issues page: live since 2026-10-23 (replaced the 2026-10-19 returns view). Each Pull runs `ops/voc_sync.py` -> snapshot `data.voc`: Amazon FBA returns + return rate, Amazon review topics, account health, Walmart and TikTok returns, eBay feedback -> ranked issues with one action each. Done / On it / Snooze / Not a problem are saved in Supabase `ops_voc_actions` (page actions `voc_list` / `voc_set`); Done issues show returns per week before vs since.
 - No Miami shelf stock visibility.
 - 7 SKUs with $0 cost; cost disagreements EO-ROSEHIP-16oz, EO-JOJOBA-16Oz.
 - KT8100 shows on the Walmart list though it was zeroed on Walmart seller-fulfilled — owner to decide.
