@@ -143,6 +143,45 @@
   .stars.bad{color:var(--crit)}.stars.mid{color:var(--warn)}
   .rev .txt{flex:1}.rev .txt .q{font-size:13.5px;font-style:italic}.rev .txt .m{font-size:12px;color:var(--ink-3);margin-top:3px}
   .flagline{display:flex;align-items:center;gap:8px;padding:12px 18px;background:var(--crit-tint);border-bottom:1px solid #f3d9d6;font-size:13px;color:var(--crit)}.flagline b{font-weight:700}
+  .vx-hero{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:18px;padding:18px;margin-bottom:18px}
+  @media(max-width:900px){.vx-hero{grid-template-columns:1fr}}
+  .vx-n{font-size:56px;font-weight:800;letter-spacing:-2px;line-height:1;color:var(--crit)}
+  .vx-nl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-top:4px}
+  .vx-sub{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.5}
+  .vx-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .vx-tile{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--panel-2)}
+  .vx-tile .k{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+  .vx-tile .v{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-top:2px}
+  .vx-tile .c{font-size:11.5px;color:var(--ink-2)}
+  .vx-up{color:var(--crit);font-weight:700}.vx-down{color:var(--good);font-weight:700}.vx-flat{color:var(--ink-3);font-weight:600}
+  .vx-card{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-2)}
+  .vx-card:last-child{border-bottom:0}.vx-card.doing{background:var(--warn-tint)}
+  .vx-rank{width:30px;height:30px;border-radius:50%;background:var(--crit);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .vx-hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .vx-hd .t{font-weight:700;font-size:14.5px}
+  .vx-cause{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:5px;background:var(--crit-tint);color:var(--crit)}
+  .vx-cause.c-review{background:var(--uv-tint);color:var(--uv)}.vx-cause.c-delivery,.vx-cause.c-money{background:var(--warn-tint);color:var(--warn)}.vx-cause.c-health,.vx-cause.c-feedback{background:var(--steel-tint);color:var(--steel)}
+  .vx-badge{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:5px;background:var(--crit);color:#fff}.vx-badge.new{background:var(--uv)}.vx-badge.doing{background:var(--warn)}
+  .vx-name{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+  .vx-nums{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin:10px 0 6px}
+  .vx-nums .b{font-size:26px;font-weight:800;letter-spacing:-.8px;line-height:1}.vx-nums .l{font-size:11px;color:var(--ink-3);font-weight:600}
+  .vx-q{font-size:13px;font-style:italic;color:var(--ink);margin:3px 0;padding-left:10px;border-left:3px solid var(--line)}
+  .vx-do{margin-top:9px;font-size:13.5px;font-weight:700;color:var(--ink)}.vx-do:before{content:"→ ";color:var(--crit)}
+  .vx-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .vx-btns .btn{font-size:12px;padding:5px 10px}
+  .vx-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:1000px){.vx-two{grid-template-columns:1fr}}
+  .vx-row{display:flex;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--line-2);font-size:13px}.vx-row:last-child{border-bottom:0}
+  .vx-row .grow{flex:1;min-width:0}.vx-row .m{font-size:11.5px;color:var(--ink-3)}
+  .vx-chips{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  .vx-chip{border:1px solid var(--line);background:var(--panel);border-radius:20px;font-size:11.5px;font-weight:600;padding:3px 10px;cursor:pointer;color:var(--ink-2)}.vx-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .vx-tbl td{vertical-align:top}.vx-tbl tr.vx-x>td{background:var(--panel-2)}
+  .vx-topic{padding:12px 18px;border-bottom:1px solid var(--line-2)}.vx-topic:last-child{border-bottom:0}
+  .vx-bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 52px;gap:10px;align-items:center;font-size:12.5px;margin:5px 0}
+  .vx-bar .tr{position:relative;height:10px;background:var(--line-2);border-radius:5px;overflow:hidden}
+  .vx-bar .me{position:absolute;left:0;top:0;bottom:0;background:var(--crit);border-radius:5px}
+  .vx-bar .cat{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+  .vx-dismissed{margin:0 0 18px}.vx-dismissed summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+  .vx-good{color:var(--good);font-weight:700}.vx-bad{color:var(--crit);font-weight:700}
   .scrim{position:fixed;inset:0;background:rgba(15,26,30,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
   .scrim.open{display:flex}
   .modal{background:var(--panel);border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);overflow:hidden}
@@ -233,7 +272,7 @@
       <button class="nav-item active" data-view="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Today</button>
       <button class="nav-item" data-view="inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>Inventory <span class="tag" id="navInv">—</span></button>
       <button class="nav-item" data-view="inbound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Inbound shipments <span class="tag" id="navInb">—</span></button>
-      <button class="nav-item" data-view="customer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Customer <span class="tag" id="navCust">—</span></button>
+      <button class="nav-item" data-view="customer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Customer issues <span class="tag" id="navCust">—</span></button>
       <button class="nav-item" data-view="marketplace" id="navMktBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Marketplace <span class="tag" id="navMkt">—</span></button>
       <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>Orders &amp; log <span class="tag" id="navOrd">—</span></button>
     </nav>
@@ -251,7 +290,7 @@
         <div class="card stat s-good" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Ship to FBA · Miami</div><div class="v num" id="cMiamiRisk">$64</div><div class="c"><b>at risk</b> · healthy cover · routine top-up</div></div>
         <div class="card stat s-crit" data-go="inventory"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Order from Bony · China</div><div class="v num" id="cChinaRisk">$5.5k</div><div class="c" id="cChinaCap">at risk · 13 items · <b>top 4 = 75%</b></div></div>
         <div class="card stat s-good" data-go="marketplace" id="cLateCard"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Late orders</div><div class="v num" id="cLate">—</div><div class="c" id="cLateCap">checking marketplaces…</div></div>
-        <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Returns to action · 90d</div><div class="v num" id="cRet">831</div><div class="c" id="cRetCap"><b>HS0002 spike</b> · 155 wrong-item</div></div>
+        <div class="card stat s-crit" data-go="customer"><span class="stripe"></span><span class="arrow">&rarr;</span><div class="k">Customer issues</div><div class="v num" id="cRet">—</div><div class="c" id="cRetCap">pull fresh data to load</div></div>
       </div>
       <p class="eyebrow" style="margin-top:30px">Recommended for you</p>
       <div class="block">
@@ -308,25 +347,33 @@
     </section>
 
     <section class="view" id="view-customer">
-      <div class="kpis">
-        <div class="card kpi"><div class="k">Returns · 90d</div><div class="v num" id="kRetTotal">3,361</div><div class="delta flat" id="kRetRange">from Amazon FBA returns report</div></div>
-        <div class="card kpi"><div class="k">Product-fault returns</div><div class="v num" id="kRetFault">831</div><div class="delta up">defective · not as described · quality · missing parts</div></div>
-        <div class="card kpi"><div class="k">Ordered wrong item</div><div class="v num" id="kRetWrong">155</div><div class="delta flat">customer says they picked the wrong item</div></div>
+      <div id="vxErr"></div>
+      <div class="vx-hero card">
+        <div class="vx-big"><div class="vx-n num" id="vxOpen">—</div><div class="vx-nl">issues to act on</div><div class="vx-sub" id="vxSub">Click <b>Pull fresh data</b> to load returns, reviews and feedback from every channel.</div></div>
+        <div class="vx-tiles" id="vxTiles"></div>
       </div>
       <div class="block">
-        <div class="block-h"><h3>Returns by reason · 90d</h3><span class="count" id="retCount">3,361 total</span></div>
-        <div id="reasonBars" style="padding:12px 18px 16px"></div>
+        <div class="block-h"><h3>Do these today</h3><span class="count" id="vxTodayCount">biggest first · one per product · about 10–15 minutes</span></div>
+        <div id="vxToday"><div class="ord-empty">No data yet.</div></div>
+      </div>
+      <div class="vx-two">
+        <div class="block"><div class="block-h"><h3>Getting worse</h3><span class="count">last 14 days vs the 76 before</span></div><div id="vxRising"></div></div>
+        <div class="block"><div class="block-h"><h3>Fixed — is it working?</h3><span class="count">returns per week, before vs since</span></div><div id="vxTrack"></div></div>
       </div>
       <div class="block">
-        <div class="block-h"><h3>Returns running hot</h3><span class="count">top products by returns · sibling SKUs added</span></div>
-        <div style="overflow-x:auto"><table><thead><tr><th>SKU / Item</th><th class="r">Returns 90d</th><th class="r">Product fault</th><th class="r">Ordered wrong</th></tr></thead><tbody id="hotBody"></tbody></table></div>
+        <div class="block-h"><h3>All open issues</h3><div class="vx-chips" id="vxChips"></div></div>
+        <div style="overflow-x:auto"><table class="vx-tbl"><thead><tr><th>Issue</th><th class="r">90d</th><th class="r">14d</th><th class="r">% of sold</th><th>12 weeks</th><th></th></tr></thead><tbody id="vxAll"></tbody></table></div>
       </div>
       <div class="block">
-        <div class="block-h"><h3>Voice of customer — what they wrote on return</h3><span class="count">flagged comments</span></div>
-        <div class="flagline" id="retFlag"></div>
-        <div id="vocBody"></div>
+        <div class="block-h"><h3>What reviews complain about</h3><span class="count">Amazon review topics · this product vs its category</span></div>
+        <div id="vxTopics"></div>
       </div>
-      <p class="footnote">Amazon FBA Customer Returns report (<span class="mono">reason</span> + <span class="mono">customer-comments</span>), last 90 days, refreshed with each <b>Pull fresh data</b>. Products are summed per ASIN (sibling SKUs added; the SKU with the most returns is shown). <b>Product fault</b> = defective, not as described, quality unacceptable, missing parts, jewelry defects. Comments are the newest product-fault ones, at most 6 per product; one-word answers are left out. Product reviews are not in Amazon's API and are not included.</p>
+      <div class="block">
+        <div class="block-h"><h3>Customers' own words</h3><span class="count">newest return comments (not "changed mind" or delivery)</span></div>
+        <div id="vxQuotes"></div>
+      </div>
+      <details class="vx-dismissed" id="vxDisWrap"><summary>Dismissed issues <span id="vxDisN"></span></summary><div id="vxDis"></div></details>
+      <p class="footnote" id="vxFoot">Sources, refreshed on every <b>Pull fresh data</b>: Amazon FBA customer returns (reason + comment) and units sold (last 90 days), Amazon review topics (Amazon's Customer Feedback API, top sellers, about weekly), Amazon account health, Walmart returns, TikTok returns, eBay feedback. Not available by API: individual Amazon reviews, Amazon seller feedback, eBay returns. Products are matched across channels by SKU and summed per ASIN. Delivery problems count only on Walmart and TikTok (we ship those through Amazon MCF); Amazon FBA delivery is Amazon's. <b>Done</b> starts tracking: returns can lag a sale by 2–4 weeks, so give a fix about 3 weeks before judging it.</p>
     </section>
 
     <section class="view" id="view-orders">
@@ -537,7 +584,7 @@ renderToday();
 
 const titles={today:["Today","Your prebuilt list for this morning. Act on what matters, ignore the rest.","live"],
   inventory:["Inventory","What to ship to FBA (Miami) and what to produce (China) — from your reorder skill. Build a cart, create the inbound.","live"],
-  customer:["Customer","Returns, reasons and the actual words customers wrote — straight from Amazon's returns report.","live"],
+  customer:["Customer issues","Returns, reviews and feedback from every channel, turned into a short list of things to fix today.","live"],
   marketplace:["Marketplace alerts","Orders still to ship — Walmart, eBay, TikTok, Amazon (seller-shipped) and Mercado Libre. Red = ship-by time has passed.","live"],
   inbound:["Inbound shipments","Every shipment on its way to Amazon or Walmart: status, where it's going, ETA — and which ones came up short.","live"],
   orders:["Orders & log","What's on hold for Bony, every list sent, and a log of every action — saved in Supabase.","live"]};
@@ -781,28 +828,131 @@ let RETURNS={
  ]
 };
 let RET_LIVE=false,RET_ERR=null;
-const SKULL=s=>esc(String(s||""));
-function renderReturns(){
- const R=RETURNS,fmt=n=>(+n||0).toLocaleString();
- const total=R.total??R.reasons.reduce((a,r)=>a+r[1],0),fault=R.fault??831,wrong=R.wrong??155;
- document.getElementById("kRetTotal").textContent=fmt(total);document.getElementById("kRetFault").textContent=fmt(fault);document.getElementById("kRetWrong").textContent=fmt(wrong);
- document.getElementById("kRetRange").textContent=R.from?`${fmtDay(R.from)} – ${fmtDay(R.to)} · Amazon FBA returns`:"Oct 12 data · from Amazon FBA returns report";
- document.getElementById("retCount").textContent=fmt(total)+" total";
- document.getElementById("cRet").textContent=fmt(fault);
- const W=R.worst;
- document.getElementById("cRetCap").innerHTML=W?`<b>${SKULL(W.sku)}</b> · ${fmt(W.def)} of ${fmt(W.n)} product fault`:"product-fault returns";
- const flag=document.getElementById("retFlag");
- if(W&&W.def){flag.hidden=false;flag.innerHTML=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><b>${SKULL(W.sku)}</b> — ${fmt(W.def)} product-fault returns in 90 days (of ${fmt(W.n)} returns)${W.says&&W.says.length?`. Customers wrote: ${W.says.map(t=>"&ldquo;"+SKULL(t)+"&rdquo;").join(" · ")}`:""}</span>`;}
- else flag.hidden=true;
- document.getElementById("aRet").innerHTML=W&&W.def?`<div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">Investigate ${SKULL(W.sku)} returns</span><span class="ch">CUSTOMER</span></div><div class="d">${fmt(W.n)} returns in 90 days, ${fmt(W.def)} the product's fault${W.name?" — "+SKULL(W.name):""}.${W.says&&W.says[0]?` Top comment: &ldquo;${SKULL(W.says[0])}&rdquo;`:""}</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>`:"";
- document.getElementById("aRet").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
- const max=Math.max(...RETURNS.reasons.map(r=>r[1]));
- const col={w:"var(--warn)",c:"var(--crit)",a:"var(--accent)"};
- document.getElementById("reasonBars").innerHTML=RETURNS.reasons.map(([lab,n,c])=>`<div style="display:flex;align-items:center;gap:12px;padding:5px 0"><span style="width:168px;font-size:12.5px;color:var(--ink-2)">${lab}</span><span style="flex:1;height:8px;background:var(--line-2);border-radius:4px;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(n/max*100)}%;background:${col[c]}"></span></span><span class="num" style="width:52px;text-align:right;font-weight:600">${n}</span></div>`).join("");
- document.getElementById("hotBody").innerHTML=RETURNS.hot.map(h=>`<tr><td><div class="sku">${SKULL(h.sku)}</div><div class="catline" title="${SKULL(h.name)}">${SKULL(h.name)}</div></td><td class="r num"><b>${h.n}</b>${h.alert?' <span class="pill urgent">alert</span>':''}</td><td class="r num" style="color:${h.def>=15?'var(--crit)':'var(--ink-2)'}">${h.def}</td><td class="r num">${h.wrong}</td></tr>`).join("");
- document.getElementById("vocBody").innerHTML=RETURNS.voc.map(v=>`<div class="rev"><span class="pill ${v.r==='Defective'?'urgent':'warn'}" style="flex:none">${SKULL(v.r)}</span><div class="txt"><div class="q">&ldquo;${SKULL(v.t)}&rdquo;</div><div class="m">${SKULL(v.sku)}${v.date?" · returned "+fmtDay(v.date):""}</div></div></div>`).join("")||'<div class="ord-empty">No product-fault comments in this period.</div>';
- document.getElementById("navCust").textContent=RETURNS.hot.filter(h=>h.alert).length;
+const SKULL=s=>escH(String(s||""));
+// ---- Customer issues (ops/voc_sync.py -> snapshot data.voc; what was done -> Supabase ops_voc_actions)
+let VOC=null,VOC_ERR=null,VXA={},VXA_LOADED=false,VXA_ERR=null,VX_FILTER="all";
+const VX_CH={amazon:"Amazon",walmart:"Walmart",tiktok:"TikTok",ebay:"eBay",review:"Review"};
+const vxFmt=n=>(+n||0).toLocaleString();
+function vxToday(){return VOC&&VOC.today||todayISO();}
+function vxState(i){const a=VXA[i.key];if(!a)return"open";if(a.status==="snoozed"&&a.snooze_until&&a.snooze_until<=todayISO())return"open";return a.status;}
+function vxOpen(i){const s=vxState(i);return s==="open"||s==="doing";}
+function vxDays(key,from,to){const L=(VOC.series||{})[key]||[];let n=0;for(const [d,c] of L)if(d>=from&&d<to)n+=c;return n;}
+function vxAdd(d,k){const x=new Date(d+"T12:00:00");x.setDate(x.getDate()+k);return x.toISOString().slice(0,10);}
+function vxWeeks(key){const t=vxToday(),w=Array(12).fill(0),L=(VOC.series||{})[key]||[];for(const [d,c] of L){const k=Math.floor((new Date(t+"T12:00:00")-new Date(d+"T12:00:00"))/864e5/7);if(k>=0&&k<12)w[11-k]+=c;}return w;}
+function vxSpark(w,col){const m=Math.max(1,...w);return `<svg width="${w.length*7}" height="26" viewBox="0 0 ${w.length*7} 26" aria-hidden="true">${w.map((v,i)=>`<rect x="${i*7}" y="${26-Math.max(v?2:1,Math.round(v/m*24))}" width="5" height="${Math.max(v?2:1,Math.round(v/m*24))}" rx="1" fill="${v?(col||(i>=10?"var(--crit)":"#c9cfd4")):"#e8ecef"}"/>`).join("")}</svg>`;}
+function vxTrendTxt(i){if(i.n14==null)return"";if(i.new)return'<span class="vx-badge new">NEW</span>';if(i.rising)return`<span class="vx-badge">RISING · ${i.n14} in 14d vs ~${Math.round(i.exp14)} usual</span>`;return"";}
+function vxTitle(i){if(i.type==="product")return(i.sku||"")+" · "+i.cause;return i.cause==="Account health"?i.name:i.cause;}
+function vxLinks(i){
+  const L=[];
+  if(i.asin){L.push(["Amazon page ↗","https://www.amazon.com/dp/"+i.asin]);if(i.type==="review"||i.bucket==="defect"||i.bucket==="not_described")L.push(["Critical reviews ↗","https://www.amazon.com/product-reviews/"+i.asin+"?filterByStar=critical"]);}
+  if(i.sku&&i.type==="product")L.push(["Seller Central ↗","https://sellercentral.amazon.com/myinventory/inventory?searchField=all&searchTerm="+encodeURIComponent(i.sku)]);
+  if(i.link)L.push(["Open ↗",i.link]);
+  if(i.bucket==="switcheroo")L.push(["Seller Central support ↗","https://sellercentral.amazon.com/help/hub/support"]);
+  if(i.bucket==="delivery"||i.bucket==="wrong_sent")L.push(["Veeqo ↗","https://app.veeqo.com/orders"]);
+  return L.map(([t,u])=>`<a class="btn" href="${escH(u)}" target="_blank" rel="noopener">${t}</a>`).join("");
 }
+function vxCopy(i){
+  if(i.orders&&i.orders.length)return `<button class="btn" data-vxcopy="${escH(i.orders.join("\n"))}" data-vxn="${i.orders.length} order numbers">Copy ${i.orders.length} order #s</button>`;
+  if(i.bucket==="defect"&&i.quotes.length){const t=`Hi Bony,\n\nCustomers are returning ${i.sku} as defective (${i.n90} returns in 90 days${i.n14?", "+i.n14+" in the last 2 weeks":""}). What they wrote:\n`+i.quotes.map(q=>"- \""+q.t+"\"").join("\n")+"\n\nCan you check the current batch?\n\nThank you!";return `<button class="btn" data-vxcopy="${escH(t)}" data-vxn="note for Bony">Copy note for Bony</button>`;}
+  return"";
+}
+function vxStatusBtns(i){
+  const s=vxState(i),k=escH(i.key);
+  if(s==="done")return `<button class="btn" data-vxs="open" data-k="${k}">Reopen</button>`;
+  if(s==="ignored"||s==="snoozed")return `<button class="btn" data-vxs="open" data-k="${k}">Bring back</button>`;
+  return (s==="doing"?"":`<button class="btn" data-vxs="doing" data-k="${k}">On it</button>`)+`<button class="btn primary" data-vxs="done" data-k="${k}">Done ✓</button><button class="btn" data-vxs="snoozed" data-k="${k}">Snooze 7 days</button><button class="btn" data-vxs="ignored" data-k="${k}">Not a problem</button>`;
+}
+function vxNums(i){
+  const N=[];
+  if(i.type==="review"){N.push([Math.round(i.pct)+"%","of negative reviews"],[Math.round(i.catpct||0)+"%","in the category"]);if(i.impact)N.push([(i.impact>0?"+":"")+i.impact.toFixed(2)+"★","effect on rating"]);}
+  else{N.push([vxFmt(i.n90),i.type==="health"?"open":"returns · 90 days"]);if(i.n14!=null)N.push([vxFmt(i.n14),"last 14 days"]);if(i.rate)N.push([i.rate+"%","of units sold (Amazon)"]);}
+  const ch=Object.entries(i.ch||{}).filter(([c])=>c!=="review").map(([c,n])=>VX_CH[c]+" "+n).join(" · ");
+  return `<div class="vx-nums">${N.map(([b,l])=>`<div><div class="b num">${b}</div><div class="l">${l}</div></div>`).join("")}${i.type!=="review"&&i.type!=="health"&&(VOC.series||{})[i.key]?`<div>${vxSpark(vxWeeks(i.key))}<div class="l">12 weeks</div></div>`:""}${ch?`<div class="l" style="align-self:flex-end">${ch}</div>`:""}</div>`;
+}
+function vxCard(i,rank,more){
+  const s=vxState(i);
+  return `<div class="vx-card ${s}"><div class="vx-rank">${rank}</div><div>
+   <div class="vx-hd"><span class="vx-cause c-${escH(i.type==="product"?i.bucket:i.type==="channel"?"delivery":i.type)}">${escH(i.cause)}</span><span class="t">${escH(i.type==="product"||i.type==="review"?(i.sku||i.asin):i.name)}</span>${vxTrendTxt(i)}${s==="doing"?'<span class="vx-badge doing">ON IT</span>':""}</div>
+   ${i.type==="product"||i.type==="review"?`<div class="vx-name">${escH(i.name)}</div>`:""}
+   ${vxNums(i)}
+   ${i.type==="channel"?`<div class="vx-name">${(i.quotes||[]).map(q=>escH(q.t)).join(" · ")}</div>`:(i.quotes||[]).slice(0,3).map(q=>`<div class="vx-q">&ldquo;${escH(q.t)}&rdquo;${q.d?` <span class="m" style="font-style:normal;color:var(--ink-3);font-size:11px">${fmtDay(q.d)}</span>`:""}</div>`).join("")}
+   <div class="vx-do">${escH(i.action)}</div>
+   ${more?`<div class="m" style="font-size:11.5px;color:var(--ink-3);margin-top:4px">${more}</div>`:""}
+   <div class="vx-btns">${vxCopy(i)}${vxLinks(i)}${vxStatusBtns(i)}</div></div></div>`;
+}
+function vxTrack(i,a){
+  const t=vxToday(),since=a.acted_at.slice(0,10),days=Math.max(1,Math.round((new Date(t)-new Date(since))/864e5));
+  if(!(VOC.series||{})[i.key]&&i.type!=="product"&&i.type!=="channel")return `<div class="vx-row"><div class="grow"><b>${escH(vxTitle(i))}</b><div class="m">done ${fmtDay(since)}</div></div><span class="vx-flat">no weekly numbers for this kind</span><button class="btn" data-vxs="open" data-k="${escH(i.key)}">Reopen</button></div>`;
+  const before=vxDays(i.key,vxAdd(since,-28),since)/4,after=vxDays(i.key,since,vxAdd(t,1))/(days/7);
+  let v;if(days<14)v=`<span class="vx-flat">too early (${days}d)</span>`;else if(before===0)v=`<span class="vx-flat">${after.toFixed(1)}/wk</span>`;else{const r=after/before;v=r<=.7?`<span class="vx-good">↓ ${Math.round((1-r)*100)}% better</span>`:r>=1.2?`<span class="vx-bad">↑ not better</span>`:`<span class="vx-flat">about the same</span>`;}
+  return `<div class="vx-row"><div class="grow"><b>${escH(vxTitle(i))}</b><div class="m">done ${fmtDay(since)} · before ${before.toFixed(1)}/wk → since ${after.toFixed(1)}/wk${a.note?" · "+escH(a.note):""}</div></div>${vxSpark(vxWeeks(i.key),"var(--accent)")}${v}<button class="btn" data-vxs="open" data-k="${escH(i.key)}">Reopen</button></div>`;
+}
+function renderReturns(){renderVoc();}
+function renderVoc(){
+  const el=id=>document.getElementById(id);
+  el("vxErr").innerHTML=(VOC_ERR?`<div class="flagline">Customer issues part of the last pull failed: ${escH(VOC_ERR)} — showing the previous data.</div>`:"")+(VOC&&VOC.errors&&Object.keys(VOC.errors).length?`<div class="flagline" style="background:var(--warn-tint);color:var(--warn)">Missing this time: ${Object.entries(VOC.errors).map(([k,v])=>escH(k)+" ("+escH(v)+")").join(" · ")}</div>`:"")+(VXA_ERR?`<div class="flagline">Couldn't load what was already done: ${escH(VXA_ERR)}</div>`:"");
+  if(!VOC){document.getElementById("navCust").textContent="—";return;}
+  const all=VOC.issues||[],open=all.filter(vxOpen),rising=open.filter(i=>i.rising||i.new),done=all.filter(i=>vxState(i)==="done");
+  // done issues that dropped off the list still get tracked
+  for(const [k,a] of Object.entries(VXA))if(a.status==="done"&&!all.some(i=>i.key===k))done.push({key:k,type:"product",cause:a.title||k,sku:"",name:"",bucket:""});
+  el("vxOpen").textContent=open.length;
+  el("vxSub").innerHTML=`<b>${rising.length}</b> getting worse · <b>${open.filter(i=>vxState(i)==="doing").length}</b> in progress · <b>${done.length}</b> fixed and being tracked.<br>Returns ${fmtDay(VOC.from)} – ${fmtDay(VOC.to)}.`;
+  const C=VOC.channels||{},tile=(k,v,c)=>`<div class="vx-tile"><div class="k">${k}</div><div class="v num">${v}</div><div class="c">${c}</div></div>`;
+  const arrow=(a,b)=>{if(!b)return'<span class="vx-flat">—</span>';const r=a/b;return r>=1.25?`<span class="vx-up">↑ ${Math.round((r-1)*100)}%</span>`:r<=.8?`<span class="vx-down">↓ ${Math.round((1-r)*100)}%</span>`:'<span class="vx-flat">≈ same</span>';};
+  let T="";for(const ch of ["amazon","walmart","tiktok"]){const c=C[ch];if(!c)continue;T+=tile(VX_CH[ch]+" returns · 14d",vxFmt(c.n14),`${arrow(c.n14,c.prev14)} vs ${vxFmt(c.prev14)} the 2 weeks before<div style="margin-top:4px">${vxSpark(c.weeks.slice(-12),"#9aa5ad")}</div>`);}
+  if(VOC.ebay)T+=tile("eBay feedback · 90d",(VOC.ebay.bad||[]).length+" bad",`of ${VOC.ebay.total90} left`);
+  const H=VOC.health;if(H)T+=tile("Amazon account health",H.ahr!=null?Math.round(H.ahr):"—",`${escH((H.ahr_status||"").toLowerCase())}${(H.violations||[]).length?` · <span class="vx-up">${H.violations.reduce((a,v)=>a+v[1],0)} violations</span>`:""}`);
+  el("vxTiles").innerHTML=T;
+  // today: top 5 open, one per product
+  const seen=new Set(),top=[],extra={};
+  for(const i of open.slice().sort((a,b)=>(vxState(b)==="doing")-(vxState(a)==="doing")||b.score-a.score)){const p=i.asin||i.key;if(seen.has(p)){extra[p]=(extra[p]||0)+1;continue;}seen.add(p);if(top.length<5)top.push(i);}
+  el("vxToday").innerHTML=top.map((i,n)=>vxCard(i,n+1,extra[i.asin||i.key]?`+ ${extra[i.asin||i.key]} more issue${extra[i.asin||i.key]>1?"s":""} on this product in the list below`:"")).join("")||'<div class="ord-empty">Nothing open — every issue is done, snoozed or dismissed.</div>';
+  el("vxRising").innerHTML=rising.slice(0,8).map(i=>`<div class="vx-row"><div class="grow"><b>${escH(vxTitle(i))}</b><div class="m">${escH(i.name)}</div></div>${vxSpark(vxWeeks(i.key))}<span class="vx-up num">${i.n14} <span style="font-weight:500;color:var(--ink-3)">vs ~${Math.round(i.exp14||0)}</span></span></div>`).join("")||'<div class="ord-empty">Nothing is getting worse right now.</div>';
+  el("vxTrack").innerHTML=done.map(i=>vxTrack(i,VXA[i.key])).join("")||'<div class="ord-empty">Mark an issue <b>Done</b> and it shows here with returns per week before vs since.</div>';
+  const F={all:"All",product:"Products",review:"Reviews",channel:"Delivery",money:"Money back",health:"Account",feedback:"eBay"};
+  el("vxChips").innerHTML=Object.entries(F).map(([k,l])=>{const n=k==="all"?open.length:open.filter(i=>i.type===k).length;return n||k==="all"?`<button class="vx-chip ${VX_FILTER===k?"on":""}" data-vxf="${k}">${l} ${n}</button>`:"";}).join("");
+  const rows=open.filter(i=>VX_FILTER==="all"||i.type===VX_FILTER);
+  el("vxAll").innerHTML=rows.map((i,n)=>`<tr data-vxrow="${n}" style="cursor:pointer"><td><span class="vx-cause c-${escH(i.type==="product"?i.bucket:i.type==="channel"?"delivery":i.type)}">${escH(i.cause)}</span> <b>${escH(i.sku||(i.type==="review"?i.asin:""))}</b> ${vxTrendTxt(i)}<div class="catline">${escH(i.name)}</div></td><td class="r num"><b>${i.type==="review"?Math.round(i.pct)+"%":vxFmt(i.n90)}</b></td><td class="r num">${i.n14==null?"":i.n14}</td><td class="r num">${i.rate?i.rate+"%":""}</td><td>${(VOC.series||{})[i.key]?vxSpark(vxWeeks(i.key)):""}</td><td class="r"><span class="arrow" style="color:var(--ink-3)">▾</span></td></tr>`).join("")||'<tr><td colspan="6" class="ord-empty">Nothing open.</td></tr>';
+  el("vxAll").querySelectorAll("[data-vxrow]").forEach(tr=>tr.addEventListener("click",()=>{const nx=tr.nextElementSibling;if(nx&&nx.classList.contains("vx-x")){nx.remove();return;}const x=document.createElement("tr");x.className="vx-x";x.innerHTML=`<td colspan="6" style="padding:0">${vxCard(rows[+tr.dataset.vxrow],"•")}</td>`;tr.after(x);}));
+  el("vxTopics").innerHTML=(VOC.topics||[]).filter(p=>p.neg&&p.neg.length).slice(0,12).map(p=>`<details class="vx-topic"><summary style="cursor:pointer"><b>${escH(p.name)}</b> <span class="m" style="color:var(--ink-3);font-size:11.5px">· ${vxFmt(p.units90)} sold in 90d · top complaint: ${escH(p.neg[0].topic)} (${Math.round(p.neg[0].pct||0)}%)</span></summary>
+    ${p.neg.map(x=>`<div class="vx-bar"><span>${escH(x.topic)} <span style="color:var(--ink-3)">· ${x.mentions}</span></span><span class="tr"><span class="me" style="width:${Math.min(100,x.pct||0)}%"></span>${x.cat!=null?`<span class="cat" style="left:${Math.min(100,x.cat)}%" title="category ${x.cat}%"></span>`:""}</span><span class="num" style="text-align:right;font-weight:700">${Math.round(x.pct||0)}%</span></div>${(x.snips||[]).slice(0,2).map(t=>`<div class="vx-q">&ldquo;${escH(t)}&rdquo;</div>`).join("")}`).join("")}
+    ${p.pos&&p.pos.length?`<div class="m" style="margin-top:8px;font-size:12px;color:var(--good)">Customers like: ${p.pos.map(x=>escH(x.topic)).join(" · ")}</div>`:""}
+    <div class="vx-btns"><a class="btn" href="https://www.amazon.com/product-reviews/${escH(p.asin)}?filterByStar=critical" target="_blank" rel="noopener">Read critical reviews ↗</a></div></details>`).join("")+'<div class="m" style="padding:8px 18px 12px;font-size:11.5px;color:var(--ink-3)">Red bar = share of this product\'s negative reviews that mention the topic · black tick = the same share across its Amazon category.</div>';
+  el("vxQuotes").innerHTML=(VOC.quotes||[]).slice(0,14).map(q=>`<div class="rev"><span class="pill warn" style="flex:none">${escH(q.b)}</span><div class="txt"><div class="q">&ldquo;${escH(q.t)}&rdquo;</div><div class="m">${escH(q.sku)} · returned ${fmtDay(q.d)}</div></div></div>`).join("")||'<div class="ord-empty">No comments in this period.</div>';
+  const dis=all.filter(i=>["ignored","snoozed"].includes(vxState(i)));
+  el("vxDisN").textContent=dis.length?"("+dis.length+")":"";
+  el("vxDis").innerHTML=dis.map(i=>`<div class="vx-row"><div class="grow"><b>${escH(vxTitle(i))}</b><div class="m">${vxState(i)==="snoozed"?"snoozed until "+fmtDay(VXA[i.key].snooze_until):"marked not a problem "+fmtDay(VXA[i.key].acted_at.slice(0,10))}</div></div>${vxStatusBtns(i)}</div>`).join("");
+  // Today page + nav
+  document.getElementById("navCust").textContent=open.length;
+  const t0=top[0];
+  el("cRet").textContent=open.length;
+  el("cRetCap").innerHTML=t0?`<b>${escH(t0.sku||t0.cause)}</b> · ${rising.length} getting worse`:"nothing open";
+  el("aRet").innerHTML=t0?`<div class="alert crit"><span class="edge"></span><div class="body"><div class="head"><span class="t">${escH(vxTitle(t0))}</span><span class="ch">CUSTOMER</span></div><div class="d">${escH(t0.action)}</div></div><div class="act"><button class="btn primary" data-go="customer">Open</button></div></div>`:"";
+  el("aRet").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+}
+async function loadVocActions(){
+  try{const r=await api("voc_list");VXA={};for(const a of r)VXA[a.key]=a;VXA_LOADED=true;VXA_ERR=null;}
+  catch(e){if(e&&e.code==="login")return;VXA_ERR=sqlErrText(e);}
+  renderVoc();
+}
+async function vxSet(key,status){
+  const i=(VOC.issues||[]).find(x=>x.key===key)||{key,cause:(VXA[key]||{}).title||key,sku:""};
+  let note=null;
+  if(status==="done"){note=prompt("What did you change? (optional — shows next to the tracking)","");if(note===null)return;}
+  const until=status==="snoozed"?vxAdd(todayISO(),7):null;
+  try{
+    await api("voc_set",{key,status,title:vxTitle(i),note:note||null,snooze_until:until});
+    await api("log_add",{action:"Customer issue: "+({open:"reopened",doing:"on it",done:"done",snoozed:"snoozed 7 days",ignored:"not a problem"}[status]),detail:vxTitle(i)+(note?" — "+note:""),ref:key}).catch(()=>{});
+    if(status==="open")delete VXA[key];else VXA[key]={key,status,title:vxTitle(i),note,acted_at:new Date().toISOString(),snooze_until:until};
+    toast({open:"Back on the list",doing:"Marked: on it",done:"Done — tracking returns from today",snoozed:"Snoozed for 7 days",ignored:"Dismissed"}[status]);
+    renderVoc();
+  }catch(e){if(e&&e.code==="login")return;toast("Couldn't save: "+sqlErrText(e),5000);}
+}
+document.addEventListener("click",e=>{
+  const s=e.target.closest("[data-vxs]");if(s){e.stopPropagation();vxSet(s.dataset.k,s.dataset.vxs);return;}
+  const f=e.target.closest("[data-vxf]");if(f){VX_FILTER=f.dataset.vxf;renderVoc();return;}
+  const c=e.target.closest("[data-vxcopy]");if(c){e.stopPropagation();navigator.clipboard?.writeText(c.dataset.vxcopy).then(()=>toast("Copied "+c.dataset.vxn),()=>toast("Couldn't copy"));}
+});
 // ---- Pull fresh data: page -> Supabase ops_refresh row -> GitHub job (Amazon report + reorder math) -> ops_snapshot -> page
 const SB="Supabase",SB_PROJECT="fsxoppdwmtelsfizareg";
 let dataState={date:"2026-10-12",pulledAt:null,source:"page"};
@@ -815,7 +965,7 @@ function renderProv(view){
   const prov=document.getElementById("vProv");
   if(view==="inbound"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Amazon + Walmart shipments'+(INB.at?" · synced "+fmtTime(INB.at):"");if(!INB.loaded)loadInbound();return;}
   if(view==="marketplace"){prov.className="provenance "+(MKT.stale?"preview":"live");prov.innerHTML='<span class="pdot"></span>Checked 4 times a day'+(MKT.at?" · last check "+fmtTime(MKT.at):"");return;}
-  if(view==="customer"){prov.className="provenance "+(RET_LIVE?"live":"preview");prov.innerHTML='<span class="pdot"></span>'+(RET_ERR?"Returns part of the last pull failed — showing older data":RET_LIVE?"Amazon returns "+fmtDay(RETURNS.from)+" – "+fmtDay(RETURNS.to)+(dataState.pulledAt?" · pulled "+fmtTime(dataState.pulledAt):""):"Returns data from Oct 12 — click Pull fresh data");return;}
+  if(view==="customer"){prov.className="provenance "+(VOC?"live":"preview");prov.innerHTML='<span class="pdot"></span>'+(VOC?"All channels · returns "+fmtDay(VOC.from)+" – "+fmtDay(VOC.to)+(dataState.pulledAt?" · pulled "+fmtTime(dataState.pulledAt):""):"Not loaded yet — click Pull fresh data");if(!VXA_LOADED)loadVocActions();return;}
   if(view==="orders"){prov.className="provenance live";prov.innerHTML='<span class="pdot"></span>Saved in Supabase'+(ordersAt?" · loaded "+fmtTime(ordersAt):"");return;}
   const amazon=view==="today"||view==="inventory";
   const fresh=amazon&&dataState.date>=todayISO();
@@ -837,7 +987,8 @@ function applySnapshot(snap){
     REORDER[wh]=d[wh];carts[wh].clear();renderWare(wh);
   }
   if(d.skus)indexSkus(d.skus);
-  RET_ERR=d.returns_error||null;if(d.returns&&Array.isArray(d.returns.reasons)){RETURNS=d.returns;RET_LIVE=true;}renderReturns();
+  RET_ERR=d.returns_error||null;if(d.returns&&Array.isArray(d.returns.reasons)){RETURNS=d.returns;RET_LIVE=true;}
+  VOC_ERR=d.voc_error||null;if(d.voc&&Array.isArray(d.voc.issues))VOC=d.voc;renderVoc();if(VOC&&!VXA_LOADED)loadVocActions();
   CN_IN=Array.isArray(d.cn_inbound)?d.cn_inbound:null;CN_ERR=d.cn_inbound_error||null;renderPending();
   dataState={date:snap.snapshot_date,pulledAt:snap.produced_at,source:"pull"};
   renderCounts();renderToday();renderCart();renderDataAge();
@@ -867,7 +1018,9 @@ const ACT={
   inbound_page:a=>`select id,channel,name,status,closed,created,dest,eta_start,eta_end,carrier,tracking,units,received,short,extra,items,updated_at from public.ops_inbound where created>=current_date-${+a.days} order by created desc, id desc limit 400 offset ${+a.offset}`,
   addresses:()=>"select key,country,label,uses,last_used from public.ops_addresses where not hidden order by last_used desc nulls last",
   ship_start:a=>`insert into public.ops_refresh (requested_by,kind,payload) values ('ops page','ship',${sq(JSON.stringify(a.payload))}::jsonb) returning id`,
-  market_list:()=>"select channel,checked_at,tried_at,error,orders from public.ops_market"
+  market_list:()=>"select channel,checked_at,tried_at,error,orders from public.ops_market",
+  voc_list:()=>"select key,status,title,note,acted_at,snooze_until from public.ops_voc_actions",
+  voc_set:a=>a.status==="open"?`delete from public.ops_voc_actions where key=${sq(a.key)}`:`insert into public.ops_voc_actions (key,status,title,note,snooze_until,acted_at,updated_at) values (${sq(a.key)},${sq(a.status)},${a.title==null?"null":sq(a.title)},${a.note==null?"null":sq(a.note)},${a.snooze_until?sq(a.snooze_until)+"::date":"null"},now(),now()) on conflict (key) do update set status=excluded.status,title=excluded.title,note=coalesce(excluded.note,ops_voc_actions.note),snooze_until=excluded.snooze_until,acted_at=case when ops_voc_actions.status=excluded.status then ops_voc_actions.acted_at else now() end,updated_at=now()`
 };
 let CSRF="";
 async function api(op,args){

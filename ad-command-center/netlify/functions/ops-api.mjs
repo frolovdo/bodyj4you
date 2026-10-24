@@ -42,6 +42,17 @@ const ACT = {
   },
   addresses: () => db().from('ops_addresses').select('key,country,label,uses,last_used').eq('hidden', false).order('last_used', { ascending: false, nullsFirst: false }),
   market_list: () => db().from('ops_market').select('channel,checked_at,tried_at,error,orders'),
+  voc_list: () => db().from('ops_voc_actions').select('key,status,title,note,acted_at,snooze_until'),
+  voc_set: async (a) => {
+    const key = str(a.key, 300);
+    if (!key) throw new Error('bad key');
+    if (a.status === 'open') return db().from('ops_voc_actions').delete().eq('key', key);
+    if (!['doing', 'done', 'snoozed', 'ignored'].includes(a.status)) throw new Error('bad status');
+    const cur = rows(await db().from('ops_voc_actions').select('status,acted_at,note').eq('key', key))[0];
+    const until = a.snooze_until && /^\d{4}-\d{2}-\d{2}$/.test(a.snooze_until) ? a.snooze_until : null;
+    return db().from('ops_voc_actions').upsert({ key, status: a.status, title: str(a.title, 300), note: str(a.note, 1000) ?? cur?.note ?? null,
+      snooze_until: until, acted_at: cur && cur.status === a.status ? cur.acted_at : now(), updated_at: now() });
+  },
   ship_start: (a) => {
     const p = a.payload || {};
     if (!['miami', 'china', 'walmart'].includes(p.source) || !Array.isArray(p.items) || !p.items.length || p.items.length > 1500) throw new Error('bad shipment');
@@ -50,7 +61,7 @@ const ACT = {
     return db().from('ops_refresh').insert({ requested_by: 'ops page', kind: 'ship', payload }).select('id');
   },
 };
-const WRITES = new Set(['pull_start', 'log_add', 'order_create', 'order_status', 'ship_start']);
+const WRITES = new Set(['voc_set', 'pull_start', 'log_add', 'order_create', 'order_status', 'ship_start']);
 
 export default async (req) => {
   if (req.method !== 'POST') return err('POST only', 405);
