@@ -8,6 +8,7 @@ import Hourly from './Hourly.jsx';
 import Kill from './Kill.jsx';
 import SearchTerms from './SearchTerms.jsx';
 import Audiences from './Audiences.jsx';
+import Account from './Account.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -33,6 +34,7 @@ export async function api(path, opts = {}) {
 function route() {
   let h = (location.hash || '#/dashboard').replace(/^#\/?/, '');
   if (h === 'roadmap') h = 'audiences';   // old links
+  if (FAM.id === 'ACCOUNT') return 'dashboard';   // the whole-account page has one view
   return NAV.some(([k]) => k === h) ? h : 'dashboard';
 }
 
@@ -72,14 +74,14 @@ export default function App() {
             </select>
           : <b>{FAM.id || 'EO-ROSEHIP'}</b>}
         <b>Action Center</b>
-        <nav>{NAV.filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP').map(([k, label]) => <a key={k} href={'#/' + k} className={page === k ? 'on' : ''}>{label}</a>)}</nav>
+        <nav>{NAV.filter(([k]) => FAM.id !== 'ACCOUNT' || k === 'dashboard').filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP').map(([k, label]) => <a key={k} href={'#/' + k} className={page === k ? 'on' : ''}>{label}</a>)}</nav>
         <button className="btn alt sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? 'Light' : 'Dark'} mode</button>
         <span className="mut">{user.name} · {user.role}</span>
         <button className="btn alt sm" onClick={signOut}>Sign out</button>
         <Kill csrf={csrf} user={user} />
       </header>
       <main className="wrap">
-        {page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+        {FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );

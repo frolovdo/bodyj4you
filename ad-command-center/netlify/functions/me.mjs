@@ -15,5 +15,7 @@ export default async (req) => {
     family: p.family && byFam[p.family] ? p.family : null, ...(p.family ? meta(p.family) : { label: p.parent_sku, head: '' }),
   }));
   if (!families.length) families = (fams || []).map((r) => ({ family: r.family, parent_sku: r.family, ...meta(r.family) }));  // ranking not pushed yet
+  // first entry: the whole account (daily brief for all families + one line per family), see account.mjs
+  families.unshift({ rank: 0, parent_sku: 'Whole account', name: 'all families', family: 'ACCOUNT', label: 'Whole account', head: '' });
   return json({ ok: true, user: { name: u.name, role: u.role }, csrf: u.csrf, family: FAMILY(), families, ranking_window: rank?.payload?.window || null });
 };

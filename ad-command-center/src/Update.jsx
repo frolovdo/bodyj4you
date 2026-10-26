@@ -6,7 +6,7 @@ const money = (v, d = 0) => (v == null || isNaN(v) ? '-' : '$' + Number(v).toLoc
 const pct = (v, d = 0) => (v == null || isNaN(v) ? '-' : Number(v).toFixed(d) + '%');
 const SUCC = [['orders_up', 'more orders/day'], ['acos_down', 'lower ad cost per $100'], ['spend_up_acos_ok', 'more spend at acceptable ad cost'], ['rank_up', 'better organic rank']];
 
-function Move({ now, ref_, up }) {
+export function Move({ now, ref_, up }) {
   if (now == null || !ref_) return <span className="mut">n/a</span>;
   const d = (100 * (now - ref_)) / ref_;
   if (Math.abs(d) < 5) return <span className="mut">flat</span>;
@@ -96,6 +96,9 @@ export default function Update({ csrf }) {
 
   const load = () => api('campaigns').then((r) => { if (r.ok) setD(r); else setError(r.error || 'could not load'); });
   useEffect(() => { load(); }, []);
+  // opened from the Whole account page: #/update?focus=<campaignId> scrolls to that campaign and marks it
+  const focus = new URLSearchParams((location.hash.split('?')[1] || '')).get('focus') || '';
+  useEffect(() => { if (d && focus) setTimeout(() => document.getElementById('c_' + focus)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80); }, [d, focus]);
   useEffect(() => {  // values carried from the Dashboard: #/update?set=cid:b=93;cid:t=10&why=...
     const q = new URLSearchParams((location.hash.split('?')[1] || ''));
     const set = q.get('set'); if (!set) return;
@@ -174,11 +177,11 @@ export default function Update({ csrf }) {
         const isTouched = touched.includes(c.id);
         const sugg = [...(c.keywords || []), ...(c.targets || [])].filter((x) => x.suggest != null);
         if (c.typ !== 'SP') return (
-          <div className="card camp" key={c.id}><div className="chead"><span className="nm">{c.name}</span><span className="pill">SB {c.state}</span></div>
+          <div className={'card camp' + (String(c.id) === focus ? ' changed' : '')} id={'c_' + c.id} key={c.id}><div className="chead"><span className="nm">{c.name}</span><span className="pill">SB {c.state}</span></div>
             <div className="stats"><span>spend/day <b>{money((k30.cost || 0) / (c.act30 || 30))}</b></span><span>orders/day <b>{((k30.orders || 0) / (c.act30 || 30)).toFixed(1)}</b></span><span>ad cost per $100 <b>{money(k30.acos)}</b></span></div>
             <div className="edit"><label>Daily budget<span className="big">{money(c.budget)}</span></label><span className="bspent">Banner: counted in the total budget above, never edited by this tool (charter).</span></div></div>);
         return (
-          <div className={'card camp' + (isTouched ? ' changed' : '')} key={c.id}>
+          <div className={'card camp' + (isTouched || String(c.id) === focus ? ' changed' : '')} id={'c_' + c.id} key={c.id}>
             <div className="chead"><span className="nm">{c.name}</span><span className="pill">SP {c.state}</span>{c.job && <span className="pill">{c.job}</span>}</div>
             <div className="stats"><span>spend/day <b>{money((k0.cost || 0) / (c.act7 || 7))}</b></span><span>orders <b>{k0.orders ?? '-'}</b></span><span>ad cost per $100 <b>{acosT(k0)}</b></span>{c.new ? <span className="small mut">new: {c.act7} days of spend</span> : c.early != null && c.early <= 16 ? <span className="small">budget gone ~{c.early}:00</span> : null}</div>
             <div className="avg">ad cost now <b>{acosT(k0)}</b>, 30d <b>{acosT(k30)}</b> | orders/day now <b>{((k0.orders || 0) / (c.act7 || 7)).toFixed(1)}</b>, 30d <b>{((k30.orders || 0) / (c.act30 || 30)).toFixed(1)}</b></div>
