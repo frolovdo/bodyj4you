@@ -44,11 +44,11 @@ export async function buildAccount() {
   names.sort((a, b) => b.name.length - a.name.length);
   const targets = (it) => {
     const out = [];
-    const text = `${it.head || ''} ${it.do || ''}`;
+    const text = `${it.head || ''} ${it.do || ''} ${(it.why || []).join(' ')}`;   // campaigns are often named only in the evidence lines
     if (it.cid && famOf[it.cid]) out.push({ cid: String(it.cid), fam: famOf[it.cid], name: names.find((n) => n.cid === String(it.cid))?.name || '' });
     for (const n of names) if (out.length < 4 && n.name.length >= 6 && text.includes(n.name) && !out.some((o) => o.cid === n.cid)) out.push(n);
     if (!out.length) {
-      const f = families.find((x) => text.startsWith(x.label + ':') || text.startsWith(x.family + ':') || text.startsWith(x.parent_sku + ':'));
+      const f = families.find((x) => [x.label, x.family, x.parent_sku].some((p) => p && (text.startsWith(p + ':') || text.startsWith(p + ' '))));
       if (f) out.push({ fam: f.family, name: '' });
     }
     return out;

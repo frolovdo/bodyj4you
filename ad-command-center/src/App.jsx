@@ -32,7 +32,7 @@ export async function api(path, opts = {}) {
 }
 
 function route() {
-  let h = (location.hash || '#/dashboard').replace(/^#\/?/, '');
+  let h = (location.hash || '#/dashboard').replace(/^#\/?/, '').split('?')[0];   // #/update?focus=... keeps its query for the page
   if (h === 'roadmap') h = 'audiences';   // old links
   if (FAM.id === 'ACCOUNT') return 'dashboard';   // the whole-account page has one view
   return NAV.some(([k]) => k === h) ? h : 'dashboard';

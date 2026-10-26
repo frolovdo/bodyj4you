@@ -41,7 +41,7 @@ export default function Account() {
   const Cell = ({ five, k }) => {
     const t = (five || []).find((x) => x.key === k);
     if (!t || t.v7 == null) return <td className="mut">-</td>;
-    return <td><b>{fmt(k, t.v7)}</b> <span className="small"><Move now={t.v7} ref_={t.v30} up={t.up} /></span></td>;
+    return <td><b>{fmt(k, t.v7)}</b> {t.v30 != null && <span className="small"><Move now={t.v7} ref_={t.v30} up={t.up} /></span>}</td>;
   };
   return (
     <>
