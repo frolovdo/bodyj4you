@@ -36,8 +36,8 @@ function labels(series, x, y) {
 
 function Chart({ t, weeks, ourLabel }) {
   const [hov, setHov] = useState(null);
-  const latest = t.weeks[t.latest] || {};
-  // series: us (purchase share from SQP) and each ASIN in the latest top 3 (purchase share from Brand Analytics)
+  const latest = t.weeks[t.pos_week || t.latest] || {};
+  // series: us (purchase share from SQP) and each ASIN in the newest top 3 (purchase share from Brand Analytics)
   const series = useMemo(() => {
     const S = [{ key: 'us', label: ourLabel, color: COL[0], v: weeks.map((w) => t.weeks[w]?.purch_share ?? null) }];
     (latest.top || []).slice(0, 3).forEach((x, i) => {
