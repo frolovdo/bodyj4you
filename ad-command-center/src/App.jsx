@@ -9,6 +9,7 @@ import Kill from './Kill.jsx';
 import SearchTerms from './SearchTerms.jsx';
 import Audiences from './Audiences.jsx';
 import Account from './Account.jsx';
+import Top3 from './Top3.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -16,6 +17,7 @@ const NAV = [
   ['hourly', 'Hourly'],
   ['keywords', 'Keywords'],
   ['searchterms', 'Search terms'],
+  ['top3', 'Top 3'],
   ['audiences', 'Audiences'],
   ['history', 'History'],
 ];
@@ -81,7 +83,7 @@ export default function App() {
         <Kill csrf={csrf} user={user} />
       </header>
       <main className="wrap">
-        {FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+        {FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
       </main>
     </>
   );

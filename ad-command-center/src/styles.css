@@ -121,3 +121,18 @@ header nav{flex:0 1 auto;min-width:max-content}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-top:8px;align-items:center}.legend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
 .tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:var(--shadow);z-index:6;white-space:nowrap}
 .tbar{display:flex;align-items:flex-end;gap:8px;height:86px;padding-top:18px;margin-top:4px}.tbar div{flex:1;background:var(--bd);border-radius:4px 4px 0 0;position:relative;min-height:3px}.tbar div span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
+
+/* Top 3 page (Top3.jsx): one card per tracked search, chart of purchase share by week + the latest week's table */
+.t3hd{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-bottom:10px}
+.t3grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.t3grid{grid-template-columns:1fr}}
+.t3chart{position:relative}.t3chart svg{width:100%;height:auto;display:block}.t3chart svg text{fill:var(--mut);font-size:10px}.t3chart .grid{stroke:var(--bd);stroke-width:1}
+.t3tip{position:absolute;top:0;left:40px;font-size:12px;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:4px 8px;display:flex;flex-wrap:wrap;gap:2px 10px;pointer-events:none;box-shadow:var(--shadow)}
+.t3 .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--fg);margin-top:4px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.t3 table{width:100%;border-collapse:collapse;font-size:13px}.t3 th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);font-weight:500}
+.t3 td,.t3 th{padding:6px 6px;border-bottom:1px solid var(--bd);text-align:right;vertical-align:top}.t3 td.nm,.t3 th.nm{text-align:left}.t3 td:first-child,.t3 th:first-child{text-align:center;width:28px}
+.t3 tr.us td{background:color-mix(in srgb,var(--q-protect) 9%,var(--card))}
+.rk{display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:999px;color:#fff;font-size:11px;font-weight:600;text-align:center}
+.pos{font-size:11px;padding:2px 9px;border-radius:999px;color:#fff;font-weight:500}
+.t3sum{display:flex;flex-wrap:wrap;gap:6px 26px;align-items:baseline;font-size:14px;border-left:4px solid var(--accent)}.t3sum b{font-size:18px}
