@@ -120,4 +120,4 @@ header nav{flex:0 1 auto;min-width:max-content}
 .mix{height:8px;border-radius:4px;background:var(--bd);overflow:hidden;display:flex;margin:4px 0 2px}.mix i{display:block;height:100%}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-top:8px;align-items:center}.legend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
 .tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:var(--shadow);z-index:6;white-space:nowrap}
-.tbar{display:flex;align-items:flex-end;gap:8px;height:70px;margin-top:6px}.tbar div{flex:1;background:var(--bd);border-radius:4px 4px 0 0;position:relative;min-height:3px}.tbar div span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
+.tbar{display:flex;align-items:flex-end;gap:8px;height:86px;padding-top:18px;margin-top:4px}.tbar div{flex:1;background:var(--bd);border-radius:4px 4px 0 0;position:relative;min-height:3px}.tbar div span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
