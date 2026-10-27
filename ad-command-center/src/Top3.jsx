@@ -85,8 +85,8 @@ function Term({ t, weeks, ourLabel }) {
       <div className="t3hd">
         <b style={{ fontSize: 17 }}>{t.term}</b>
         <span className="pill">{t.src === 'owns' ? 'owned keyword' : t.src === 'list' ? 'tracked' : 'top search for us'}</span>
-        <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos ? COL[1] : COL[3] }}>{pos}</span>
-        <span className="mut small">week of {wk(t.latest)} · {num(e.volume)} searches · {num(e.total_purch)} purchases ({num((e.total_purch || 0) / 7)}/day)</span>
+        <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos ? COL[1] : COL[3] }}>{pos}{t.pos_week && t.pos_week !== t.latest ? ` · week of ${wk(t.pos_week)}` : ''}</span>
+        <span className="mut small">our numbers: week of {wk(t.latest)} · {num(e.volume)} searches · {num(e.total_purch)} purchases ({num((e.total_purch || 0) / 7)}/day)</span>
       </div>
       <div className="t3grid">
         <Chart t={t} weeks={weeks} ourLabel={ourLabel} />
