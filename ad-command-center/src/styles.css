@@ -136,3 +136,5 @@ header nav{flex:0 1 auto;min-width:max-content}
 .rk{display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:999px;color:#fff;font-size:11px;font-weight:600;text-align:center}
 .pos{font-size:11px;padding:2px 9px;border-radius:999px;color:#fff;font-weight:500}
 .t3sum{display:flex;flex-wrap:wrap;gap:6px 26px;align-items:baseline;font-size:14px;border-left:4px solid var(--accent)}.t3sum b{font-size:18px}
+/* Hourly page: the timing boxes (3-hour blocks, weekdays) sit in one horizontal row that wraps on narrow screens */
+.tm{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:flex-end;margin:6px 0}
