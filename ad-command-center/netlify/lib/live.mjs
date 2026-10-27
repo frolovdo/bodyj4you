@@ -3,7 +3,7 @@
 // Every number here is provisional by design: traffic lands within an hour or two, orders keep filling in for days. The page says so.
 // Thresholds are plain common sense to start with and live in RULES so they can be tuned without touching the logic.
 import { db, dataset, putDataset, FAMILY } from './supabase.mjs';
-import { ads, spList } from './ads.mjs';
+import { ads, spList, sbCampaigns } from './ads.mjs';
 import { family, nowPT, ptStamp, ptDate } from './engine.mjs';
 import { hourlyRows, foldDays } from './stream.mjs';
 
@@ -112,13 +112,17 @@ export function budgetSpans(evs, cid) {
   return out;
 }
 
-async function budgetUsage(spIds) {
-  try {
-    const r = await ads('POST', '/sp/campaigns/budget/usage', { body: { campaignIds: spIds } });
-    const u = {};
-    for (const x of r.success || []) u[String(x.campaignId)] = { pct: x.budgetUsagePercent, budget: x.budget, at: x.usageUpdatedTimestamp };
-    return { usage: u };
-  } catch (ex) { return { usage: {}, error: String(ex.message || ex).slice(0, 160) }; }
+async function budgetUsage(spIds, sbIds = []) {
+  // Amazon reports budget usage per ad type: product ads and banner (Sponsored Brands) campaigns have separate endpoints
+  const u = {}, errors = [];
+  for (const [path, list] of [['/sp/campaigns/budget/usage', spIds], ['/sb/campaigns/budget/usage', sbIds]]) {
+    if (!list.length) continue;
+    try {
+      const r = await ads('POST', path, { body: { campaignIds: list } });
+      for (const x of r.success || []) u[String(x.campaignId)] = { pct: x.budgetUsagePercent, budget: x.budget, at: x.usageUpdatedTimestamp };
+    } catch (ex) { errors.push(String(ex.message || ex).slice(0, 160)); }
+  }
+  return errors.length ? { usage: u, error: errors.join('; ') } : { usage: u };
 }
 
 /** Sends in the last `hours` grouped into batches (one per queue item, or per minute for Mac-era rows). */
@@ -144,6 +148,7 @@ export async function buildLive() {
   const camps = fam.managed.campaigns;
   const ids = Object.keys(camps);
   const sp = ids.filter((c) => (camps[c].type || 'SP') === 'SP');
+  const sb = ids.filter((c) => (camps[c].type || 'SP') === 'SB');
   const now = nowPT(), today = ptDate(), hourNow = now.getUTCHours(), minuteNow = now.getUTCMinutes();
   const yday = addDays(today, -1), d2 = addDays(today, -2);
   _today = today; _yday = yday;
@@ -152,9 +157,9 @@ export async function buildLive() {
 
   const [streamR, usageR, evR, liveR, sends, dpR, killR, rsR, schR, modelR] = await Promise.allSettled([
     hourlyRows(ids, from),
-    budgetUsage(sp),
-    inBudgetEvents(sp, 10),
-    spList('/sp/campaigns/list', 'spCampaign', 'campaigns', { campaignIdFilter: { include: sp } }),
+    budgetUsage(sp, sb),
+    inBudgetEvents(ids, 10),
+    Promise.all([spList('/sp/campaigns/list', 'spCampaign', 'campaigns', { campaignIdFilter: { include: sp } }), sb.length ? sbCampaigns(sb) : []]).then(([a, b]) => [...a, ...b]),
     recentSends(RULES.watch_hours),
     db().from('daypart_log').select('at, campaign, status, error').gte('at', new Date(Date.now() - 24 * 3600000).toISOString()),
     dataset('kill_switch', '_system'),
@@ -210,7 +215,7 @@ export async function buildLive() {
     const y = dayTotals(dm, yday), p = dayTotals(dm, d2), b = avgDays(dm, base);
     const lc = liveCamps[cid];
     const state = lc?.state || (isSP ? 'unknown' : 'ENABLED');
-    const budget = lc ? parseFloat(lc.budget?.budget || 0) : null;
+    const budget = lc ? parseFloat(lc.budget?.budget ?? lc.budget ?? 0) : null;  // product ads: budget.budget; banner: budget
     const u = usage.usage[cid];
     const spans = evs ? budgetSpans(evs, cid) : {};
     const ySpan = spans[yday] || { hoursOut: 0, firstOut: null }, tSpan = spans[today] || { hoursOut: 0, firstOut: null };
