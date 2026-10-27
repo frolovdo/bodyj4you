@@ -99,3 +99,25 @@ details.fold>summary{margin:0;list-style:none;cursor:pointer;color:var(--fg)}det
 /* family picker in the header */
 .famsel{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--surface);color:var(--fg);width:auto;max-width:300px;flex:0 0 auto;cursor:pointer}
 header nav{flex:0 1 auto;min-width:max-content}
+
+/* Whole account: KPI tiles with sparklines, profitability bubble chart. Quadrant colours: three validated hues + neutral for Evaluate. */
+:root{--q-protect:#1baf7a;--q-maintain:#2a78d6;--q-evaluate:#6b7385;--q-investigate:#eb6834}
+:root[data-theme="dark"]{--q-protect:#199e70;--q-maintain:#3987e5;--q-evaluate:#9aa4ba;--q-investigate:#d95926}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:8px 0 14px}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
+.kpi .tl{margin-bottom:2px}.kpi .v{font-size:22px;font-weight:700;line-height:1.1}.kpi .d{font-size:12px;color:var(--mut);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
+.kpi svg{display:block;width:100%;height:36px;margin-top:6px}
+.seg{display:inline-flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden}.seg button{background:var(--card);color:var(--fg);border:0;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer;min-height:34px}
+.seg button.on{background:var(--surface);color:var(--accent);font-weight:600}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:4px 0 8px;font-size:13px}.ctl label{display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:500}
+.ctl input[type=number]{width:70px;min-height:34px;padding:4px 8px;font-size:14px}
+.viz{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px}@media (max-width:860px){.viz{grid-template-columns:1fr}}
+.viz svg.plot{display:block;width:100%;height:auto;touch-action:manipulation}
+.viz .dot{cursor:pointer;stroke:var(--card);stroke-width:2;transition:opacity .12s}.viz .dot.dim{opacity:.35}.viz .dot.sel{stroke:var(--fg);stroke-width:2.5}
+.viz .qlab{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}.viz .ax{font-size:11px;fill:var(--mut)}.viz .grid{stroke:var(--bd);stroke-dasharray:3 3}
+.panel{border:1px solid var(--bd);border-radius:10px;padding:12px 14px;background:var(--surface);min-height:200px}
+.panel .big{font-size:20px;font-weight:700;line-height:1.1}.panel .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:8px 0}.panel .kv b{display:block;font-size:17px}
+.mix{height:8px;border-radius:4px;background:var(--bd);overflow:hidden;display:flex;margin:4px 0 2px}.mix i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-top:8px;align-items:center}.legend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-size:12px;box-shadow:var(--shadow);z-index:6;white-space:nowrap}
+.tbar{display:flex;align-items:flex-end;gap:8px;height:70px;margin-top:6px}.tbar div{flex:1;background:var(--bd);border-radius:4px 4px 0 0;position:relative;min-height:3px}.tbar div span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
