@@ -90,6 +90,7 @@
   .cov.crit{color:var(--crit)} .cov.warn{color:var(--warn)} .cov.ok{color:var(--ink-2)} .cov.oos{color:#fff;background:var(--crit);padding:1px 7px;border-radius:5px;font-size:11px}
   .vel,.oh{font-variant-numeric:tabular-nums;color:var(--ink-2)}
   .oh .inb{color:var(--accent-ink);font-size:11px}
+  .basekit{font-size:11px;color:var(--ink-2);margin-top:2px}.basekit .mono{font-weight:600}
   .rec{color:var(--ink-3);font-variant-numeric:tabular-nums}
   .stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
   .stepper button{width:24px;height:28px;border:0;background:var(--panel-2);color:var(--ink-2);font-size:15px;cursor:pointer;line-height:1}
@@ -535,7 +536,7 @@ function rowHtml(r,wh){
   const blocked=!!r.blocked;
   const cls=[inCart?"pending":"",covered?"onorder":""].filter(Boolean).join(" ");
   return `<tr data-sku="${r.sku}"${cls?` class="${cls}"`:""}>
-    <td><div class="sku">${r.sku}</div><div class="catline" title="${escH(CAT[r.cat]||r.cat)}">${CAT[r.cat]||escH(r.cat)}</div>${tag}${note}</td>
+    <td><div class="sku">${r.sku}</div><div class="catline" title="${escH(CAT[r.cat]||r.cat)}">${CAT[r.cat]||escH(r.cat)}</div>${kit?`<div class="basekit" title="Bony's base gauge kit for this ${r.sec==="UV"?"UV":"steel"} kit (what Send to Bony orders)">Base kit: <span class="mono">${escH(baseKitFor(r))}</span></div>`:""}${tag}${note}</td>
     <td class="r">${covCell(r)}</td>
     <td class="r vel">${r.vel}${r.sold30!=null?`<span class="inb" style="display:block">${r.sold30} in 30d</span>`:""}</td>
     <td class="r oh">${r.avail}${r.inb?` <span class="inb">+${r.inb}</span>`:""}</td>
