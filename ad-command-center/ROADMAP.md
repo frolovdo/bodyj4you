@@ -104,7 +104,7 @@ Recorded 2026-10-29. Status after the same-day pass; building the rest starts af
 - Build: advertised ASIN vs purchased ASIN from the purchased-product reports (Sponsored Products and Brands), per family, so 1 oz ads driving 4 oz and 16 oz sales is visible before changing what the banner advertises.
 
 ## 13. Profit layer
-- Status: Decision needed on the source. Sellerboard is a manual export today; Helium 10 has profit-and-loss calls but they are capped. Deal days can be flagged on every chart from the price history.
+- Decided 2026-10-29: Sellerboard is the profit source. Today it is a manual export; the owner sets up a Sellerboard report by link (CSV URL, daily profit per SKU with fees, COGS and promotions) and puts the URL in the vault, then the engine pulls it daily. Deal days are flagged on every chart from the price history.
 
 ## 14. Organic rank report
 - Status: Decision needed: where Koby's daily rank report is produced. The tool's own tracker covers the head term per family (Helium 10 notes file).
@@ -117,6 +117,9 @@ Recorded 2026-10-29. Status after the same-day pass; building the rest starts af
 2. Source of truth for our clicks and spend: the ads console data. Brand Analytics only for share and competitors. Every number is labelled.
 3. Dayparting: a schedule is approved once in the tool and then runs by itself, as the Sponsored Products hourly job does today; banners the same way.
 4. Targets per SKU (position, organic share, review date) are set by the owner on Koby's proposal and stored in managed.json.
+
+## North star (decided 2026-10-29)
+- Status: Built 2026-10-29. The goal per search is a position and the units a day that position sells; our units a day are measured against it on the Top 3 page (goal pill, dashed goal line, North star table) and on the Whole account page. Goals: intel/<family>/goals.json (position, optional units a day, set and review dates); searches without an entry get a default goal.
 
 ## Build order after Halloween
 7 (rule pill) → 4 (placement split) → 1 (windows) → 8 (goal columns) → 6 (banner schedule, out-of-budget strip, hourly orders) → 10 (test log on History) → 11 → 12 → 9 → 2 (Sponsored Display, portfolios) → 13 and 14 after their decisions.

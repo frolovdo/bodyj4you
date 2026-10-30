@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from './App.jsx';
+import { NorthStar } from './Top3.jsx';
 import { Move } from './Update.jsx';
 
 // "Whole account" in the family menu: account KPIs with 90-day sparklines, the advertising profitability chart
@@ -274,6 +275,7 @@ export default function Account() {
   if (!d) return <p className="mut">Loading the account…</p>;
   const b = d.brief, m = d.model;
   const labels = Object.fromEntries((d.families || []).map((f) => [f.family, f.parent_sku || f.label || f.family]));
+  const rankOf = Object.fromEntries((d.families || []).map((f) => [f.family, f.rank || 99]));
   const fmt = (k, v) => (k === 'ord_d' ? Number(v).toFixed(0) : k === 'cpc' ? money(v, 2) : k === 'acos' ? money(v) : pct(v));
   const Cell = ({ five, k }) => {
     const t = (five || []).find((x) => x.key === k);
@@ -284,6 +286,8 @@ export default function Account() {
     <>
       <h2 style={{ margin: '4px 0 8px' }}>Whole account · last 7 days, the move against the week before and the 30-day average, 90 days drawn</h2>
       {m?.series ? <Kpis s={m.series} /> : <div className="card"><p className="mut">No account model yet. The engine builds it every morning after the 04:30 PT run.</p></div>}
+
+      {d.north_star?.length > 0 && <NorthStar rows={[...d.north_star].sort((x, y) => (rankOf[x.family] || 99) - (rankOf[y.family] || 99) || (x.source === 'set' ? 0 : 1) - (y.source === 'set' ? 0 : 1))} famLabel={(f) => labels[f] || f} />}
 
       <h2 style={{ margin: '14px 0 8px' }}>Advertising profitability, last 30 days</h2>
       {m?.asins ? <Profitability model={m} labels={labels} /> : null}

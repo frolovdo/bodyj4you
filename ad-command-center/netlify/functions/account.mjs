@@ -12,12 +12,13 @@ export default async (req) => {
 };
 
 export async function buildAccount() {
-  const [{ data: fams }, rank, brief, { data: sets }, model] = await Promise.all([
+  const [{ data: fams }, rank, brief, { data: sets }, model, star] = await Promise.all([
     db().from('families').select('family, managed'),
     dataset('parent_ranking', '_system').catch(() => null),
     dataset('page_brief', '_system').catch(() => null),
     db().from('datasets').select('family, name, payload, data_through, produced_at').in('name', ['campaign_model', 'suggestions']).neq('family', '_system'),
     dataset('account_model', '_system').catch(() => null),   // ac_account_viz.py: per-ASIN profit vs ad spend, 90-day account series
+    dataset('north_star', '_system').catch(() => null),      // ac_top3.py: the goal per search (position, units a day) against our units a day
   ]);
   const label = Object.fromEntries((fams || []).map((r) => [r.family, r.managed?.terms?.label || r.family]));
   const parents = rank?.payload?.parents || [];
@@ -57,7 +58,7 @@ export async function buildAccount() {
   const b = brief?.payload || null;
   const items = (list) => (list || []).map((it) => ({ tone: it.tone, head: it.head, why: it.why || [], do: it.do, impact: it.impact, targets: targets(it) }));
   return {
-    ok: true, families,
+    ok: true, families, north_star: star?.payload?.rows || [],
     brief: b ? { date: b.date, built_at: b.built_at, emailed_at: b.emailed_at, data_through: b.data_through, since: b.since, through: b.through, other: b.other, top: items(b.top), more: items(b.more) } : null,
     produced_at: brief?.produced_at || null,
     model: model?.payload || null,

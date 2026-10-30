@@ -34,7 +34,7 @@ function labels(series, x, y) {
   return L;
 }
 
-function Chart({ t, weeks, ourLabel }) {
+function Chart({ t, weeks, ourLabel, goalShare }) {
   const [hov, setHov] = useState(null);
   const latest = t.weeks[t.pos_week || t.latest] || {};
   // series: us (purchase share from SQP) and each ASIN in the newest top 3 (purchase share from Brand Analytics)
@@ -47,7 +47,7 @@ function Chart({ t, weeks, ourLabel }) {
     return S;
   }, [t, weeks]);
   const W = 560, H = 170, L = 34, R = 100, T = 10, B = 24;
-  const max = Math.max(5, ...series.flatMap((s) => s.v.filter((x) => x != null)));
+  const max = Math.max(5, goalShare || 0, ...series.flatMap((s) => s.v.filter((x) => x != null)));
   const yMax = Math.ceil(max / 10) * 10 || 10;
   const x = (i) => L + (weeks.length > 1 ? (i * (W - L - R)) / (weeks.length - 1) : (W - L - R) / 2);
   const y = (v) => T + (H - T - B) * (1 - v / yMax);
@@ -59,6 +59,7 @@ function Chart({ t, weeks, ourLabel }) {
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Purchase share by week on "${t.term}": ${series.map((s) => s.label).join(', ')}`}>
         {ticks.map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} className="grid" /><text x={L - 6} y={y(v) + 3} textAnchor="end">{v}%</text></g>)}
         {weeks.map((w, i) => (i === 0 || i === weeks.length - 1 || weeks.length <= 5 || i % 2 === 0) && <text key={w} x={x(i)} y={H - 6} textAnchor="middle">{wk(w)}</text>)}
+        {goalShare > 0 && <g><line x1={L} x2={W - R} y1={y(goalShare)} y2={y(goalShare)} stroke="var(--fg)" strokeDasharray="5 4" strokeWidth="1.2" /><text x={L + 4} y={y(goalShare) - 4} style={{ fill: 'var(--fg)', fontSize: 11, fontWeight: 700 }}>goal</text></g>}
         {series.map((s) => <path key={s.key} d={path(s.v)} fill="none" stroke={s.color} strokeWidth={s.key === 'us' ? 2.5 : 2} strokeLinejoin="round" strokeLinecap="round" />)}
         {series.map((s) => s.v.map((p, i) => p != null && <circle key={s.key + i} cx={x(i)} cy={y(p)} r={hov === i ? 4.5 : 3} fill={s.color} stroke="var(--card)" strokeWidth="1.5" />))}
         {labels(series, x, y).map((l) => <text key={'l' + l.key} x={l.x} y={l.y} style={{ fill: 'var(--fg)', fontSize: 11 }}>{l.text}</text>)}
@@ -80,16 +81,19 @@ function Term({ t, weeks, ourLabel }) {
   const need = t.need || {};
   const nextUp = t.pos ? (t.pos > 1 ? need['p' + (t.pos - 1)] : null) : (need.p3 ?? need.p2 ?? need.p1);
   const nextLabel = t.pos ? (t.pos > 1 ? `#${t.pos - 1}` : null) : (need.p3 != null ? '#3' : need.p2 != null ? '#2' : '#1');
+  const g = t.goal || {};
+  const goalShare = g.units_day && e.total_purch ? (100 * g.units_day * 7) / e.total_purch : 0;
   return (
     <div className="card t3">
       <div className="t3hd">
         <b style={{ fontSize: 17 }}>{t.term}</b>
         <span className="pill">{t.src === 'owns' ? 'owned keyword' : t.src === 'list' ? 'tracked' : 'top search for us'}</span>
         <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos ? COL[1] : COL[3] }}>{pos}{t.pos_week && t.pos_week !== t.latest ? ` · week of ${wk(t.pos_week)}` : ''}</span>
+        {g.units_day != null && <span className="pill goal" title={g.source === 'default' ? 'Default goal: one position better than today, or #3 from outside. Set yours in intel/' + 'family/goals.json.' : `Goal set ${g.set || ''}${g.note ? ': ' + g.note : ''}`}>goal #{g.position} · {Math.round(g.units_day)} a day{g.source === 'default' ? ' (default)' : ''}</span>}
         <span className="mut small">our numbers: week of {wk(t.latest)} · {num(e.volume)} searches · {num(e.total_purch)} purchases ({num((e.total_purch || 0) / 7)}/day)</span>
       </div>
       <div className="t3grid">
-        <Chart t={t} weeks={weeks} ourLabel={ourLabel} />
+        <Chart t={t} weeks={weeks} ourLabel={ourLabel} goalShare={goalShare} />
         <div>
           <div className="small mut" style={{ marginBottom: 4 }}>Sources: the top 3 from Brand Analytics (their share of every click and purchase on the search), our row from Search Query Performance. Neither is the ads console, which counts only paid clicks on our ads.</div>
           <table>
@@ -114,6 +118,32 @@ function Term({ t, weeks, ourLabel }) {
   );
 }
 
+// The north star: per search, the goal position and the units a day that position sells, against our units a day.
+export function NorthStar({ rows, famLabel }) {
+  return (
+    <div className="card ns">
+      <div className="t3hd"><b style={{ fontSize: 17 }}>North star</b><span className="mut small">the goal is units a day on each search; everything else serves it</span></div>
+      <div className="wrap"><table>
+        <thead><tr>{famLabel && <th className="nm">Family</th>}<th className="nm">Search</th><th>Now</th><th>Goal</th><th>Units a day</th><th>Ad orders a day</th><th>Review</th></tr></thead>
+        <tbody>{rows.map((g) => {
+          const p = g.pct == null ? null : Math.min(100, g.pct);
+          const tone = g.pct == null ? 'var(--line)' : g.pct >= 100 ? 'var(--q-protect)' : g.pct >= 60 ? 'var(--q-maintain)' : 'var(--q-investigate)';
+          return (<tr key={(g.family || '') + g.term}>
+            {famLabel && <td className="nm"><b>{famLabel(g.family)}</b></td>}
+            <td className="nm"><b>{g.term}</b>{g.source === 'default' && <span className="mut small"> default goal</span>}</td>
+            <td>{g.pos ? `#${g.pos}` : 'outside top 3'}</td>
+            <td><b>#{g.position}</b>{g.holder ? <div className="mut small">{(g.holder.name || g.holder.asin).replace(/\s*[|,(-].*$/, '').split(' ').slice(0, 2).join(' ')} sells ~{Math.round(g.units_day)}</div> : g.how === 'hold' ? <div className="mut small">hold it</div> : null}</td>
+            <td><b>{g.now_day == null ? '-' : Math.round(g.now_day)}</b> of {Math.round(g.units_day)}{p != null && <div className="prog"><i style={{ width: p + '%', background: tone }} /></div>}<div className="mut small">{g.pct != null ? g.pct + '% · ' : ''}week of {g.now_week ? wk(g.now_week) : '-'}</div></td>
+            <td>{g.ad_day == null ? '-' : Math.round(g.ad_day)}<div className="mut small">last 7 days, filling in</div></td>
+            <td>{g.review ? wk(g.review) : <span className="mut">-</span>}</td>
+          </tr>);
+        })}</tbody>
+      </table></div>
+      <p className="small mut" style={{ margin: '6px 0 0' }}>Units a day = our purchases on the search in the newest Search Query Performance week, over 7. The goal is what the ASIN holding the goal position sold a day on that search in the newest Brand Analytics week. Ad orders a day are the daily leading number (ads search-term reports, 7-day attributed), not the same count. Goals live in intel/&lt;family&gt;/goals.json.</p>
+    </div>
+  );
+}
+
 export default function Top3() {
   const [d, setD] = useState(null);
   const [error, setError] = useState('');
@@ -126,8 +156,10 @@ export default function Top3() {
   const inside = terms.filter((t) => t.pos).length;
   const top1 = terms.filter((t) => t.pos === 1).length;
   const ourLabel = 'Us';
+  const goals = terms.filter((t) => t.goal?.units_day != null && (t.goal.source === 'set' || t.src === 'owns'));
   return (
     <>
+      {goals.length > 0 && <NorthStar rows={goals.map((t) => ({ ...t.goal, term: t.term, pos: t.pos })).sort((a, b) => (a.source === 'set' ? 0 : 1) - (b.source === 'set' ? 0 : 1))} />}
       <div className="card t3sum"><span>Searches tracked <b>{terms.length}</b></span><span>In the top 3 <b>{inside}</b></span><span>Holding #1 <b>{top1}</b></span>
         <span className="mut">weeks {wk(M.weeks[0])} to {wk(M.weeks[M.weeks.length - 1])} · built {M.built_at?.replace('T', ' ')}</span></div>
       {terms.map((t) => <Term key={t.term} t={t} weeks={M.weeks} ourLabel={ourLabel} />)}

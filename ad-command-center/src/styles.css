@@ -139,3 +139,6 @@ header nav{flex:0 1 auto;min-width:max-content}
 /* Hourly page: the timing boxes (3-hour blocks, weekdays) sit in one horizontal row that wraps on narrow screens */
 .tm{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:flex-end;margin:6px 0}
 .edit .tosb{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-top:2px}.edit .tosb input.want{font-size:14px;min-height:32px;width:64px;border-width:1px}
+.pill.goal{background:var(--fg);color:var(--card);font-weight:700}
+.ns table{width:100%;border-collapse:collapse;font-size:13px}.ns th,.ns td{padding:5px 8px;text-align:right;border-top:1px solid var(--line);vertical-align:top}.ns th.nm,.ns td.nm{text-align:left}.ns thead th{border-top:0;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)}
+.ns .prog{height:6px;background:var(--line);border-radius:3px;margin:3px 0 2px;overflow:hidden;min-width:90px}.ns .prog i{display:block;height:100%;border-radius:3px}
