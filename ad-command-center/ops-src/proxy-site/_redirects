@@ -1,3 +1,3 @@
-# bodyj4you-ops-briefing.netlify.app = the live Ops tool (PIN login), served from the Action Center site
+# ops.bodyj4you.com (also bodyj4you-ops-briefing.netlify.app) = the live Ops tool (PIN login), served from the Action Center site
 /api/*  https://bodyj4you-ad-command-center.netlify.app/api/:splat  200!
 /*      https://bodyj4you-ad-command-center.netlify.app/ops/:splat  200!

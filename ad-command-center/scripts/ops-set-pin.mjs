@@ -23,4 +23,4 @@ let r = await fetch(url.replace(/\/$/, '') + '/rest/v1/ops_auth?on_conflict=id',
   headers: { ...h, Prefer: 'resolution=merge-duplicates' }, body: JSON.stringify({ id: 1, pin_hash: hash, pin_salt: salt, set_at: new Date().toISOString() }) });
 if (!r.ok) { console.error('failed:', r.status, await r.text()); process.exit(1); }
 await fetch(url.replace(/\/$/, '') + '/rest/v1/ops_sessions?token=neq.x', { method: 'DELETE', headers: h });
-console.log('Ops PIN set. Open https://bodyj4you-ops-briefing.netlify.app');
+console.log('Ops PIN set. Open https://ops.bodyj4you.com');
