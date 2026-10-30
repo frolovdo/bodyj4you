@@ -1,6 +1,6 @@
 # BodyJ4You Ops tool — source and status
 
-**Operator link:** https://ops.bodyj4you.com (old link https://bodyj4you-ops-briefing.netlify.app still works) (PIN login; PIN set with `node scripts/ops-set-pin.mjs <PIN>`).
+**Operator link:** https://bodyj4you-ops.netlify.app (old link https://bodyj4you-ops-briefing.netlify.app still works) (PIN login; PIN set with `node scripts/ops-set-pin.mjs <PIN>`).
 **Owner copy:** claude.ai artifact https://claude.ai/artifact/Lc3twVXq84CQanQopchsgk (same page, talks to Supabase through the connector).
 
 ## Files here
