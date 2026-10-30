@@ -74,7 +74,7 @@ export default function Now({ csrf, user, engine }) {
 
       {d && (
         <div className="card">
-          <H sub={hh ? `data to ${hh}` : 'no data from today yet'} about={`Spend and clicks from the hourly feed, which runs about ${d.feed_lag_h != null ? d.feed_lag_h : 1} hour behind: the newest complete hour is up to ${hh || '–'}. Each number is against the usual for the same hours over the 7 days before. Budget used is live from Amazon.`}>Today so far</H>
+          <H sub={hh ? `real hourly data to ${hh}` : 'no data from today yet'} about={`Real spend and clicks per hour from Amazon Marketing Stream, not an estimate. The feed runs about ${d.feed_lag_h != null ? d.feed_lag_h : 1} hour behind: the newest complete hour is up to ${hh || '–'}. Each number is against the usual for the same hours over the 7 days before. Budget used is live from Amazon.`}>Today so far</H>
           <div className="hz">{d.today_rows.filter((r) => r.state === 'ENABLED' || r.spent).map((r) => (
             <div className={'chip' + (r.outNow ? ' out' : '')} key={r.cid}><div className="n">{short(r.name)}</div>
               <b>{money(r.spent)} <span className="mut small">usual {money(r.usual)}</span></b>

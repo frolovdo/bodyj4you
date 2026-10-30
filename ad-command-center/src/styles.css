@@ -138,3 +138,4 @@ header nav{flex:0 1 auto;min-width:max-content}
 .t3sum{display:flex;flex-wrap:wrap;gap:6px 26px;align-items:baseline;font-size:14px;border-left:4px solid var(--accent)}.t3sum b{font-size:18px}
 /* Hourly page: the timing boxes (3-hour blocks, weekdays) sit in one horizontal row that wraps on narrow screens */
 .tm{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:flex-end;margin:6px 0}
+.edit .tosb{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-top:2px}.edit .tosb input.want{font-size:14px;min-height:32px;width:64px;border-width:1px}

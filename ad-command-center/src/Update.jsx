@@ -86,6 +86,7 @@ export default function Update({ csrf }) {
   const [d, setD] = useState(null);
   const [error, setError] = useState('');
   const [vals, setVals] = useState({});
+  const [want, setWant] = useState({});   // wanted effective top-of-search bid per campaign, typed by the operator
   const [hyps, setHyps] = useState({});
   const [pop, setPop] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -173,6 +174,9 @@ export default function Update({ csrf }) {
       <div className="totals"><span>Total daily budget we set <b>{money(tbNow)}</b> {Math.abs(tbNow - tbLive) >= 0.5 && <span className="mut">({tbNow > tbLive ? '+' : '−'}{money(Math.abs(tbNow - tbLive))} vs live)</span>}</span><span>Spent per day, last 7 days <b>{money(d.spent7)}</b></span><span>Used <b>{tbNow ? pct((100 * d.spent7) / tbNow) : '-'}</b></span></div>
       {d.campaigns.map((c) => {
         const k0 = c.k0 || {}, k30 = c.k30 || {};
+        const tosMod = Number(vals['t_' + c.id] ?? live['t_' + c.id] ?? 0) || 0;   // effective top-of-search bid = base × (1 + modifier)
+        const tosBids = [...(c.keywords || []).map((k) => 'kw_' + k.keywordId), ...(c.targets || []).map((t) => 'tg_' + t.targetId)].map((f) => Number(vals[f] ?? live[f])).filter((b) => b > 0).sort((a, b) => a - b);
+        const tosBase = tosBids.length ? tosBids[Math.floor(tosBids.length / 2)] : 0;
         const acosT = (k) => (k.acos == null && k.cost > 0 ? `no sales (${money(k.cost)} spent)` : money(k.acos));
         const isTouched = touched.includes(c.id);
         const sugg = [...(c.keywords || []), ...(c.targets || [])].filter((x) => x.suggest != null);
@@ -188,6 +192,7 @@ export default function Update({ csrf }) {
             <div className="edit">
               <label className="hot">Daily budget $<Input name={'b_' + c.id} hot /></label>
               <label className="hot">Top of search +%<Input name={'t_' + c.id} hot /></label>
+              {tosBase > 0 && <span className="small tosb">At top of search a ${tosBase.toFixed(2)} base bids <b>${(tosBase * (1 + tosMod / 100)).toFixed(2)}</b> (base × (1 + {tosMod}%)) · want $<input className="want" value={want[c.id] ?? ''} placeholder="2.25" inputMode="decimal" onChange={(e) => { const v = e.target.value; setWant((w) => ({ ...w, [c.id]: v })); const E = Number(v); if (E > 0) set('t_' + c.id, String(Math.min(900, Math.max(0, Math.round(100 * (E / tosBase - 1)))))); }} /> at top of search → sets the +%</span>}
               <label>Product pages +%<Input name={'p_' + c.id} /></label>
               <label>Rest of search +%<Input name={'r_' + c.id} /></label>
               <span className="bspent">Budget set <b>{money(c.budget)}</b> · spent <b>{money((k30.cost || 0) / (c.act30 || 30))}</b>/day over {c.act30} active days ({c.budget ? pct((100 * (k30.cost || 0)) / (c.act30 || 30) / c.budget) : '-'})</span>
@@ -203,9 +208,9 @@ export default function Update({ csrf }) {
               <details open={isTouched && changed.some(([k]) => k.startsWith('kw_') || k.startsWith('tg_'))}><summary>{(c.keywords?.length || 0) + (c.targets?.length || 0)} keywords and targets (bid $){sugg.length ? <> · <b>{sugg.length} suggestion{sugg.length === 1 ? '' : 's'}</b></> : null}</summary>
                 <p className="mut small">Suggested bid = what a click is worth at your target ad cost (sales per click × target), kept inside a 25% step. Rank campaigns use their higher allowance. Hover a suggestion for the numbers.</p>
                 {sugg.length > 0 && <button type="button" className="btn ghost sm" onClick={() => setVals((s) => { const n = { ...s }; for (const x of sugg) n[x.keywordId ? 'kw_' + x.keywordId : 'tg_' + x.targetId] = x.suggest.toFixed(2); return n; })}>Fill {sugg.length} suggested bid{sugg.length === 1 ? '' : 's'}</button>}
-                <div className="wrap"><table className="kw"><thead><tr><th>Target</th><th>Bid → suggested</th><th>Orders 30d</th><th>Spend 30d</th><th>Ad cost per $100</th></tr></thead><tbody>
+                <div className="wrap"><table className="kw"><thead><tr><th>Target</th><th>Bid → suggested</th><th>At top of search</th><th>Orders 30d</th><th>Spend 30d</th><th>Ad cost per $100</th></tr></thead><tbody>
                   {[...(c.keywords || []).map((k) => ({ ...k, field: 'kw_' + k.keywordId, label: <>{k.text} <span className="mut">[{k.match.toLowerCase()}]</span></> })), ...(c.targets || []).map((t) => ({ ...t, field: 'tg_' + t.targetId, label: t.text }))].map((x) => (
-                    <tr key={x.field}><td>{x.label}</td><td><Input name={x.field} />{x.suggest != null ? <div className="small"><a href="#" className="sug" title={x.why} onClick={(e) => { e.preventDefault(); set(x.field, x.suggest.toFixed(2)); }}>→ ${x.suggest.toFixed(2)}</a></div> : x.why ? <div className="mut small" title={x.why}>{x.why.startsWith('already') ? 'no change' : 'not enough data'}</div> : null}</td><td>{x.orders}</td><td>{money(x.cost)}</td><td>{money(x.acos)}</td></tr>))}
+                    <tr key={x.field}><td>{x.label}</td><td><Input name={x.field} />{x.suggest != null ? <div className="small"><a href="#" className="sug" title={x.why} onClick={(e) => { e.preventDefault(); set(x.field, x.suggest.toFixed(2)); }}>→ ${x.suggest.toFixed(2)}</a></div> : x.why ? <div className="mut small" title={x.why}>{x.why.startsWith('already') ? 'no change' : 'not enough data'}</div> : null}</td><td>{Number(vals[x.field] ?? live[x.field]) > 0 ? '$' + (Number(vals[x.field] ?? live[x.field]) * (1 + tosMod / 100)).toFixed(2) : '-'}</td><td>{x.orders}</td><td>{money(x.cost)}</td><td>{money(x.acos)}</td></tr>))}
                 </tbody></table></div></details>)}
           </div>);
       })}

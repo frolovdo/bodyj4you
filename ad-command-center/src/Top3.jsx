@@ -91,6 +91,7 @@ function Term({ t, weeks, ourLabel }) {
       <div className="t3grid">
         <Chart t={t} weeks={weeks} ourLabel={ourLabel} />
         <div>
+          <div className="small mut" style={{ marginBottom: 4 }}>Sources: the top 3 from Brand Analytics (their share of every click and purchase on the search), our row from Search Query Performance. Neither is the ads console, which counts only paid clicks on our ads.</div>
           <table>
             <thead><tr><th>#</th><th className="nm">Who</th><th>Clicks</th><th>Purchases</th><th>CVR</th><th>Orders/day</th></tr></thead>
             <tbody>
