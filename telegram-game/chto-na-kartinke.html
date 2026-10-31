@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Что на картинке?</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --card:#ffffff; --ink:#1d1b18; --muted:#7a746a;
+    --accent:#2f6fed; --ok:#1f9d55; --bad:#d64545; --line:#e4dfd4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#16171a; --card:#222429; --ink:#f1efe9; --muted:#9a968e;
+      --accent:#5b8cff; --ok:#34c172; --bad:#ff6b6b; --line:#33363d; }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;justify-content:center;}
+  .app{width:100%;max-width:440px;min-height:100%;padding:16px;display:flex;flex-direction:column;gap:14px}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--muted)}
+  .top b{color:var(--ink)}
+  .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+  .timer{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+  .timer i{display:block;height:100%;width:100%;background:var(--ok)}
+  .pic{background:var(--card);border:1px solid var(--line);border-radius:24px;
+    aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    font-size:min(52vw,220px);line-height:1;user-select:none;position:relative;overflow:hidden}
+  .pic.pop{animation:pop .35s ease}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .pic.shake{animation:shake .4s}
+  @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .q{text-align:center;font-size:20px;font-weight:600;margin:2px 0}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  button{font:inherit;border:none;cursor:pointer}
+  .opt{background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:16px;
+    padding:18px 10px;font-size:18px;font-weight:600;min-height:64px;transition:transform .1s}
+  .opt:active{transform:scale(.97)}
+  .opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+  .opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt:disabled{cursor:default}
+  .msg{text-align:center;min-height:22px;font-size:15px;color:var(--muted)}
+  .screen{display:none;flex-direction:column;gap:16px;align-items:center;text-align:center;margin:auto 0}
+  .screen.on{display:flex}
+  .big{font-size:96px;line-height:1}
+  h1{margin:0;font-size:28px}
+  p{margin:0;color:var(--muted);font-size:16px;line-height:1.4}
+  .main{background:var(--accent);color:#fff;border-radius:16px;padding:16px 28px;font-size:18px;font-weight:700;width:100%}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .chip{background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;font-size:15px}
+  .chip.on{border-color:var(--accent);color:var(--accent);font-weight:700}
+  #game{display:none}
+  #game.on{display:flex;flex-direction:column;gap:14px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Старт -->
+  <section id="start" class="screen on">
+    <div class="big">🤔</div>
+    <h1>Что на картинке?</h1>
+    <p>Смотри на картинку и выбирай один из двух вариантов. Чем быстрее ответ, тем больше очков.</p>
+    <div class="row" id="levels">
+      <button class="chip on" data-n="10">10 раундов</button>
+      <button class="chip" data-n="20">20 раундов</button>
+      <button class="chip" data-n="0">Все</button>
+    </div>
+    <div class="row" id="modes">
+      <button class="chip on" data-t="8">⏱ 8 сек</button>
+      <button class="chip" data-t="0">Без таймера</button>
+    </div>
+    <button class="main" id="go">Играть</button>
+    <p id="best"></p>
+  </section>
+
+  <!-- Игра -->
+  <section id="game">
+    <div class="top"><span>Раунд <b id="round">1</b>/<b id="total">10</b></span><span>🔥 <b id="streak">0</b></span><span>Очки: <b id="score">0</b></span></div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="pic" id="pic"></div>
+    <div class="timer" id="timerWrap"><i id="timer"></i></div>
+    <div class="q">Что это?</div>
+    <div class="opts">
+      <button class="opt" id="a"></button>
+      <button class="opt" id="b"></button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </section>
+
+  <!-- Финал -->
+  <section id="end" class="screen">
+    <div class="big" id="endEmoji">🏆</div>
+    <h1 id="endTitle"></h1>
+    <p id="endText"></p>
+    <button class="main" id="again">Ещё раз</button>
+  </section>
+</div>
+
+<script>
+// [картинка, правильный ответ, неправильный ответ]
+const ITEMS = [
+  ["🐆","Леопард","Тигр"],["🦓","Зебра","Лошадь"],["🦒","Жираф","Верблюд"],
+  ["🦔","Ёж","Бобёр"],["🦦","Выдра","Тюлень"],["🦭","Тюлень","Дельфин"],
+  ["🦫","Бобёр","Хомяк"],["🦥","Ленивец","Енот"],["🦝","Енот","Барсук"],
+  ["🦨","Скунс","Белка"],["🦡","Барсук","Енот"],["🐿️","Бурундук","Мышь"],
+  ["🦘","Кенгуру","Заяц"],["🐊","Крокодил","Ящерица"],["🦎","Ящерица","Змея"],
+  ["🦩","Фламинго","Аист"],["🦚","Павлин","Попугай"],["🦜","Попугай","Колибри"],
+  ["🦉","Сова","Орёл"],["🦢","Лебедь","Утка"],["🐧","Пингвин","Чайка"],
+  ["🦈","Акула","Кит"],["🐡","Рыба-фугу","Медуза"],["🦑","Кальмар","Осьминог"],
+  ["🐙","Осьминог","Краб"],["🦞","Омар","Креветка"],["🦐","Креветка","Улитка"],
+  ["🐌","Улитка","Черепаха"],["🦋","Бабочка","Стрекоза"],["🐞","Божья коровка","Жук"],
+  ["🦂","Скорпион","Паук"],["🦗","Сверчок","Муравей"],["🦙","Лама","Овца"],
+  ["🦬","Бизон","Бык"],["🦏","Носорог","Бегемот"],["🦛","Бегемот","Слон"],
+  ["🥝","Киви","Лайм"],["🥭","Манго","Персик"],["🍐","Груша","Яблоко"],
+  ["🍑","Персик","Абрикос"],["🫐","Черника","Виноград"],["🍈","Дыня","Арбуз"],
+  ["🥥","Кокос","Орех"],["🍋","Лимон","Апельсин"],["🍆","Баклажан","Кабачок"],
+  ["🥬","Салат","Брокколи"],["🫑","Сладкий перец","Помидор"],["🥑","Авокадо","Груша"],
+  ["🧄","Чеснок","Лук"],["🥨","Крендель","Круассан"],["🥯","Бублик","Пончик"],
+  ["🧇","Вафля","Блин"],["🥟","Пельмень","Пирожок"],["🌮","Тако","Шаурма"],
+  ["🍣","Суши","Пирожное"],["🧁","Капкейк","Мороженое"],["🫖","Заварочный чайник","Кофейник"],
+  ["🎻","Скрипка","Гитара"],["🪗","Аккордеон","Пианино"],["🎺","Труба","Саксофон"],
+  ["🪘","Барабан","Бубен"],["🔭","Телескоп","Микроскоп"],["🧭","Компас","Часы"],
+  ["⚓","Якорь","Крюк"],["🪃","Бумеранг","Банан"],["🛶","Каноэ","Плот"],
+  ["🚁","Вертолёт","Самолёт"],["🛸","НЛО","Шляпа"],["🚜","Трактор","Грузовик"],
+  ["🛴","Самокат","Велосипед"],["🗿","Моаи","Сфинкс"],["🌋","Вулкан","Гора"],
+  ["🏜️","Пустыня","Пляж"],["🌵","Кактус","Ёлка"],["🍄","Гриб","Зонтик"],
+  ["🪐","Сатурн","Луна"],["☄️","Комета","Звезда"],["🧲","Магнит","Подкова"],
+  ["🪓","Топор","Молоток"],["🧯","Огнетушитель","Баллон"],["🪆","Матрёшка","Кукла"],
+  ["🧶","Клубок","Мяч"],["🪁","Воздушный змей","Флаг"],["🥌","Кёрлинг","Шайба"]
+];
+
+const $ = id => document.getElementById(id);
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { try { tg.ready(); tg.expand(); } catch(e){} }
+
+function haptic(type){
+  try{
+    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(type);
+    else if (navigator.vibrate) navigator.vibrate(type==="success"?30:[60,40,60]);
+  }catch(e){}
+}
+function getBest(){ try{ return +localStorage.getItem("ctnk_best")||0 }catch(e){ return 0 } }
+function setBest(v){ try{ localStorage.setItem("ctnk_best", v) }catch(e){} }
+
+let rounds=10, timeLimit=8, deck=[], i=0, score=0, streak=0, bestStreak=0, correct=0;
+let locked=false, tStart=0, tRaf=0;
+
+function pick(groupId, attr, set){
+  $(groupId).addEventListener("click", e=>{
+    const b=e.target.closest(".chip"); if(!b) return;
+    [...$(groupId).children].forEach(c=>c.classList.remove("on"));
+    b.classList.add("on"); set(+b.dataset[attr]);
+  });
+}
+pick("levels","n",v=>rounds=v);
+pick("modes","t",v=>timeLimit=v);
+
+function shuffle(a){ for(let k=a.length-1;k>0;k--){const j=Math.random()*(k+1)|0;[a[k],a[j]]=[a[j],a[k]]} return a }
+
+function show(id){
+  ["start","game","end"].forEach(s=>$(s).classList.toggle("on", s===id));
+}
+
+function start(){
+  deck = shuffle(ITEMS.slice());
+  if (rounds) deck = deck.slice(0, rounds);
+  i=0; score=0; streak=0; bestStreak=0; correct=0;
+  $("total").textContent = deck.length;
+  $("timerWrap").style.visibility = timeLimit ? "visible" : "hidden";
+  show("game"); next();
+}
+
+function next(){
+  if (i >= deck.length) return finish();
+  const [emoji, right, wrong] = deck[i];
+  locked=false;
+  $("round").textContent=i+1; $("score").textContent=score; $("streak").textContent=streak;
+  $("prog").style.width = (i/deck.length*100)+"%";
+  const pic=$("pic"); pic.textContent=emoji; pic.className="pic"; void pic.offsetWidth; pic.classList.add("pop");
+  const opts = Math.random()<.5 ? [right,wrong] : [wrong,right];
+  [$("a"),$("b")].forEach((btn,k)=>{ btn.textContent=opts[k]; btn.className="opt"; btn.disabled=false; });
+  $("msg").textContent="";
+  tStart=performance.now(); cancelAnimationFrame(tRaf);
+  if (timeLimit) tick();
+}
+
+function tick(){
+  const left = 1 - (performance.now()-tStart)/(timeLimit*1000);
+  const t=$("timer");
+  t.style.width = Math.max(0,left*100)+"%";
+  t.style.background = left>.5 ? "var(--ok)" : left>.25 ? "#e0a100" : "var(--bad)";
+  if (left<=0) return answer(null);
+  tRaf=requestAnimationFrame(tick);
+}
+
+function answer(btn){
+  if (locked) return; locked=true; cancelAnimationFrame(tRaf);
+  const right = deck[i][1];
+  const ok = btn && btn.textContent===right;
+  [$("a"),$("b")].forEach(b=>{
+    b.disabled=true;
+    if (b.textContent===right) b.classList.add("ok");
+    else if (b===btn) b.classList.add("bad");
+  });
+  if (ok){
+    const secs=(performance.now()-tStart)/1000;
+    const speed = timeLimit ? Math.max(0, Math.round((1-secs/timeLimit)*50)) : 0;
+    streak++; bestStreak=Math.max(bestStreak,streak); correct++;
+    const bonus = Math.min(streak-1,5)*10;
+    const pts = 100+speed+bonus; score+=pts;
+    $("msg").textContent = `+${pts} ${streak>=3?"🔥 серия "+streak:"✅"}`;
+    haptic("success");
+  } else {
+    streak=0;
+    $("msg").textContent = btn ? `Нет, это ${right.toLowerCase()}` : `Время вышло! Это ${right.toLowerCase()}`;
+    $("pic").classList.add("shake");
+    haptic("error");
+  }
+  $("score").textContent=score; $("streak").textContent=streak;
+  i++; setTimeout(next, ok?700:1400);
+}
+
+function finish(){
+  $("prog").style.width="100%";
+  const pct = correct/deck.length;
+  const best = getBest(), isBest = score>best;
+  if (isBest) setBest(score);
+  $("endEmoji").textContent = pct===1?"🏆":pct>=.8?"🥇":pct>=.5?"👍":"🙈";
+  $("endTitle").textContent = `${correct} из ${deck.length}`;
+  $("endText").innerHTML = `Очки: <b>${score}</b><br>Лучшая серия: ${bestStreak}<br>` +
+    (isBest ? "🎉 Новый рекорд!" : `Рекорд: ${best}`);
+  show("end");
+}
+
+$("a").onclick=e=>answer(e.currentTarget);
+$("b").onclick=e=>answer(e.currentTarget);
+$("go").onclick=start;
+$("again").onclick=()=>{ show("start"); $("best").textContent = getBest()?`Рекорд: ${getBest()}`:""; };
+$("best").textContent = getBest()?`Рекорд: ${getBest()}`:"";
+</script>
+</body>
+</html>
