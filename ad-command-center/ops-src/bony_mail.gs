@@ -5,9 +5,9 @@
  *
  * Setup (once), signed in as denis@bodyj4you.com:
  *  1. script.google.com > New project > name it "Ops Send to Bony" > paste this file over Code.gs > Save.
- *  2. Project Settings (gear) > Script properties > Add: TOKEN = vault ad-command-center/BONY_MAIL_TOKEN (copy it with: grep BONY_MAIL_TOKEN ~/bodyj4you/ad-command-center/.env | cut -d= -f2- | pbcopy).
- *  3. Run > testSelf once and allow Gmail access (it emails you one test with a small Excel).
- *  4. Deploy > New deployment > type Web app > Execute as: Me > Who has access: Anyone > Deploy.
+ *  2. Run > testSelf once and allow Gmail access. It makes the TOKEN (Script property) if there is none,
+ *     prints it in the Execution log and emails you one test. That TOKEN goes in Netlify env BONY_MAIL_TOKEN.
+ *  3. Deploy > New deployment > type Web app > Execute as: Me > Who has access: Anyone > Deploy.
  *     Copy the Web app URL (ends in /exec) and give it to Claude (it goes in Netlify env BONY_MAIL_URL).
  * Anyone with the URL still needs the TOKEN; without it nothing is sent.
  */
@@ -36,7 +36,10 @@ function send_(m) {
   GmailApp.sendEmail(to.join(','), String(m.subject).slice(0, 300), m.text || '', opt);
 }
 
-function testSelf() {   // run once from the editor: authorizes Gmail and emails you a test
+function testSelf() {   // run once from the editor: authorizes Gmail, makes the TOKEN, emails you a test
+  const props = PropertiesService.getScriptProperties();
+  if (!props.getProperty('TOKEN')) props.setProperty('TOKEN', Utilities.getUuid() + Utilities.getUuid().slice(0, 8));
+  console.log('TOKEN=' + props.getProperty('TOKEN'));
   const me = Session.getActiveUser().getEmail();
   const csv = Utilities.base64Encode('SKU,Qty\nTEST,1\n');
   send_({ to: [me], subject: '[TEST] Ops Send to Bony', text: 'Test from the Ops Send to Bony script.',
