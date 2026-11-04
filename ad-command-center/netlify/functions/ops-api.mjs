@@ -53,6 +53,21 @@ const ACT = {
     return db().from('ops_voc_actions').upsert({ key, status: a.status, title: str(a.title, 300), note: str(a.note, 1000) ?? cur?.note ?? null,
       snooze_until: until, acted_at: cur && cur.status === a.status ? cur.acted_at : now(), updated_at: now() });
   },
+  // Send to Bony with the Excel attached: hands the email to the Apps Script web app in denis@bodyj4you.com (ops-src/bony_mail.gs).
+  bony_send: async (a) => {
+    const url = process.env.BONY_MAIL_URL, token = process.env.BONY_MAIL_TOKEN;
+    if (!url || !token) throw new Error('not_set_up');
+    const addr = (l) => (Array.isArray(l) ? l : []).map((x) => str(x, 200)).filter((x) => /^[^@\s,;]+@[^@\s,;]+\.[^@\s,;]+$/.test(x));
+    const to = addr(a.to), cc = addr(a.cc);
+    const att = a.attachment || {};
+    if (!to.length || !a.subject || !att.content || String(att.content).length > 2000000) throw new Error('bad email');
+    const r = await fetch(url, { method: 'POST', redirect: 'follow', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token, to, cc, subject: str(a.subject, 300), text: str(a.text, 5000), html: str(a.html, 20000),
+        attachments: [{ filename: str(att.filename, 120), mimeType: str(att.mimeType, 120), content: String(att.content) }] }) });
+    const j = await r.json().catch(() => null);
+    if (!j || !j.ok) throw new Error('Gmail script: ' + ((j && j.error) || ('HTTP ' + r.status)));
+    return [{ sent: true, at: j.at }];
+  },
   ship_start: (a) => {
     const p = a.payload || {};
     if (!['miami', 'china', 'walmart'].includes(p.source) || !Array.isArray(p.items) || !p.items.length || p.items.length > 1500) throw new Error('bad shipment');
@@ -61,7 +76,7 @@ const ACT = {
     return db().from('ops_refresh').insert({ requested_by: 'ops page', kind: 'ship', payload }).select('id');
   },
 };
-const WRITES = new Set(['voc_set', 'pull_start', 'log_add', 'order_create', 'order_status', 'ship_start']);
+const WRITES = new Set(['voc_set', 'pull_start', 'log_add', 'order_create', 'order_status', 'ship_start', 'bony_send']);
 
 export default async (req) => {
   if (req.method !== 'POST') return err('POST only', 405);

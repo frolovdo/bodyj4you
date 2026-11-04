@@ -772,7 +772,22 @@ document.getElementById("bonySend").addEventListener("click",async()=>{
   const d=new Date(),ymd=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
   const po="PO-"+ymd+(bony.kind==="PO"?"":"-"+bony.kind);
   const m=bonyEmail(rows,po,subj);
-  if(WEB){ // Netlify copy has no Gmail access: download the Excel, open a filled-in Gmail draft, save the hold
+  if(WEB){ // website: send through the Gmail script (bony_send); if that isn't available, fall back to download + Gmail draft
+    const sb0=document.getElementById("bonySend");bonySending=true;sb0.disabled=true;sb0.textContent="Sending…";bonyStatus("Sending from your Gmail with the Excel attached…","info");
+    let sent=null,why="";
+    try{await api("bony_send",{to,cc,subject:m.subject,text:m.body,html:m.htmlBody,attachment:m.att});sent=true;}
+    catch(e){why=e&&e.message||"";if(e&&e.code==="login"){bonySending=false;sb0.disabled=false;sb0.innerHTML="Send to Bony &rarr;";bonyStatus("Log in again, then click Send.","err");return;}}
+    bonySending=false;
+    if(sent){
+      if(bony.fromCart){[...carts.china.keys()].forEach(uncart);}
+      const at=new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+      sb0.textContent="Sent ✓";
+      const saved=await saveOrder({kind:bony.kind,subject:m.subject,po,to,cc,rows});
+      bonyStatus(`✓ Sent to Bony at ${at}: "${esc(m.subject)}" (${m.units} units, <b>${esc(m.att.filename)}</b> attached). It's in your Gmail Sent folder. `+(saved.ok?`Saved as hold #${saved.id}.`:`⚠ Not saved to order history (${esc(saved.err)}) — tell Claude to add it.`),saved.ok?"ok":"err",true);
+      toast(`Sent to Bony ✓ ${m.subject}`,6000);
+      return;
+    }
+    if(!/not_set_up/.test(why)){sb0.disabled=false;sb0.innerHTML="Send to Bony &rarr;";bonyStatus("Gmail didn't confirm the send ("+why+"). Check your Sent folder before clicking Send again.","err");return;}
     const bin=atob(m.att.content),buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
     const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:m.att.mimeType}));a.download=m.att.filename;document.body.appendChild(a);a.click();a.remove();
     const q=new URLSearchParams({view:"cm",fs:"1",authuser:"denis@bodyj4you.com",to:to.join(","),su:m.subject,body:m.body});if(cc.length)q.set("cc",cc.join(","));
@@ -780,7 +795,7 @@ document.getElementById("bonySend").addEventListener("click",async()=>{
     if(bony.fromCart){[...carts.china.keys()].forEach(uncart);}
     const saved=await saveOrder({kind:bony.kind,subject:m.subject,po,to,cc,rows});
     const sb=document.getElementById("bonySend");sb.textContent="Draft opened ✓";sb.disabled=true;
-    bonyStatus(`Gmail opened with the email filled in and <b>${esc(m.att.filename)}</b> downloaded — attach the file in Gmail and click Send there. `+(saved.ok?`Saved as hold #${saved.id}. If you don't send it, release the hold on Orders &amp; log.`:`⚠ Not saved (${esc(saved.err)}).`),"ok",true);
+    bonyStatus(`Sending from the website isn't set up yet, so Gmail opened with the email filled in and <b>${esc(m.att.filename)}</b> downloaded — attach the file in Gmail and click Send there. `+(saved.ok?`Saved as hold #${saved.id}. If you don't send it, release the hold on Orders &amp; log.`:`⚠ Not saved (${esc(saved.err)}).`),"ok",true);
     return;
   }
   const input={to,subject:m.subject,htmlBody:m.htmlBody,body:m.body,attachments:[m.att]};
