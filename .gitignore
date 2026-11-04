@@ -25,3 +25,10 @@ __pycache__/
 
 # Local Netlify folder
 .netlify
+
+# Secrets and local build state (added by secret scan 2026-11-04)
+.env.*
+!.env.example
+creds.json
+*.pem
+*.p12
