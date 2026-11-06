@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Runs the local test suite before every push. Enable once per machine:
+#   git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/scripts/test-local.sh"
