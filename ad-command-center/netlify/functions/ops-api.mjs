@@ -1,6 +1,6 @@
 // Ops page (/ops) data endpoint: the page's named actions only (same list as ACT in the page), behind the Ops PIN session.
-// Writes go to the same Supabase tables the claude.ai copy uses; "pull" and "ship" rows start the GitHub job via the
-// existing ops_refresh trigger -> ops-dispatch.
+// Writes go to the same Supabase tables the claude.ai copy uses; "pull" and "ship" rows in ops_refresh are picked up
+// and run on the Mac by ~/sp-api.
 import { json, err, body } from '../lib/http.mjs';
 import { db } from '../lib/supabase.mjs';
 import { opsSession } from '../lib/opsauth.mjs';

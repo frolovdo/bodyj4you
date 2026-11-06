@@ -987,7 +987,7 @@ document.addEventListener("click",e=>{
   const f=e.target.closest("[data-vxf]");if(f){VX_FILTER=f.dataset.vxf;renderVoc();return;}
   const c=e.target.closest("[data-vxcopy]");if(c){e.stopPropagation();navigator.clipboard?.writeText(c.dataset.vxcopy).then(()=>toast("Copied "+c.dataset.vxn),()=>toast("Couldn't copy"));}
 });
-// ---- Pull fresh data: page -> Supabase ops_refresh row -> GitHub job (Amazon report + reorder math) -> ops_snapshot -> page
+// ---- Pull fresh data: page -> Supabase ops_refresh row -> Mac job in ~/sp-api (Amazon report + reorder math) -> ops_snapshot -> page
 const SB="Supabase",SB_PROJECT="fsxoppdwmtelsfizareg";
 let dataState={date:"2026-10-12",pulledAt:null,source:"page"};
 const fmtDay=d=>new Date(d+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric"});

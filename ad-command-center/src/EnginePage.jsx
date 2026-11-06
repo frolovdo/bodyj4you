@@ -40,7 +40,7 @@ export default function EnginePage({ name, csrf, user }) {
     }, 30000);
     return () => clearInterval(t);
   }, [name, !!running]);
-  // After a start, GitHub lists the new run 5 to 20 s later: look again at 8, 20 and 45 s; give up after 2 minutes.
+  // After a start, the queued run is normally listed at once: look again at 8, 20 and 45 s; give up after 2 minutes.
   useEffect(() => {
     if (!pending) return undefined;
     const ts = [8000, 20000, 45000].map((ms) => setTimeout(async () => { const r = await loadRuns(); if (r && r.ok && (r.runs || []).find((x) => x.status !== 'completed')) { setPending(0); setMsg(''); } }, ms));   // from here the live status line speaks
@@ -75,14 +75,14 @@ export default function EnginePage({ name, csrf, user }) {
   const last = runs.find((r) => r.status === 'completed');
   const spendFrom = lastFull && lastLight && new Date(lastLight.finished) > new Date(lastFull.finished) ? `, today's spend from ${lastLight.when}` : '';
   const agoMin = eng.last_updated ? Math.max(0, Math.round((Date.now() - new Date(eng.last_updated)) / 60000)) : null;
-  const status = eng.paused ? (agoMin === null ? 'Daily data: last update time uncertain. It refreshes by itself 4 times a day.'
-      : `Daily data updated ${agoMin < 60 ? `${agoMin} min` : agoMin < 2880 ? `${Math.round(agoMin / 60)} h` : `${Math.round(agoMin / 1440)} days`} ago (${eng.last_updated_when}). It refreshes by itself 4 times a day.`)
-    : eng.unknown ? 'Could not check the refresh status.'
-    : running ? (running.status === 'in_progress' ? `A refresh is running (started ${running.when}, ${running.kind}${running.minutes ? `, ${fmtMin(running.minutes)} so far` : ''}). The pages update by themselves when it finishes.` : `A refresh is waiting to start${running.minutes > 10 ? ' and is taking longer than usual (uncertain why)' : ''}. The pages update by themselves when it finishes.`)
-    : pending ? 'A refresh is waiting to start. The pages update by themselves when it finishes.'
-    : last && last.conclusion !== 'success' ? `The last refresh (${last.kind}, started ${last.when}) did not finish. The pages still show earlier data; press Refresh daily data to try again.`
+  const updatedAgo = agoMin === null ? '' : `Daily data updated ${agoMin < 60 ? `${agoMin} min` : agoMin < 2880 ? `${Math.round(agoMin / 60)} h` : `${Math.round(agoMin / 1440)} days`} ago (${eng.last_updated_when}).`;
+  const offline = eng.runner_online === false ? ' The Mac runner is offline, so it starts when the Mac is back.' : '';
+  const status = eng.unknown ? 'Could not check the refresh status.'
+    : running ? (running.status === 'in_progress' ? `A refresh is running on the Mac (started ${running.when}${running.minutes ? `, ${fmtMin(running.minutes)} so far` : ''}). The pages update by themselves when it finishes.` : `A refresh is waiting to start.${offline || (running.minutes > 10 ? ' It is taking longer than usual (uncertain why).' : '')} The pages update by themselves when it finishes.`)
+    : pending ? `A refresh is waiting to start.${offline} The pages update by themselves when it finishes.`
+    : last && last.conclusion !== 'success' ? `The last refresh (started ${last.when}) did not finish${last.message ? `: ${last.message}` : ''}. The pages still show earlier data; press Refresh daily data to try again.`
+    : updatedAgo ? `${updatedAgo}${spendFrom ? ` Today's spend from ${lastLight.when}.` : ''} It also refreshes by itself 4 times a day.`
     : lastFull ? `Data from ${lastFull.when}${spendFrom}. A full refresh takes ${about(lastFull, 'time uncertain')}.`
-    : last ? `Last refresh finished ${last.when} (${last.kind}), took ${fmtMin(last.minutes)}.`
     : '';
   const waiting = !!running || !!pending;
 

@@ -1,66 +1,44 @@
-// Proxy: dashboard → this function → GitHub workflow_dispatch.
+// "Refresh from Drive": dashboard → this function → Supabase job_requests → the Mac runner
+// (automation/local-runner.mjs) regenerates the Miami + China xlsx files. Nothing runs on GitHub.
 //
-// The browser cannot POST to GitHub directly because the call needs a
-// repo-scoped PAT. We hold that PAT here as a Netlify environment variable
-// (GITHUB_TOKEN — set in Site settings → Environment variables) so it never
-// ships in any JS bundle.
+// POST  asks for a reorder run (or returns the one already waiting/running) → { ok, id }
+// GET ?id=N  status of that run → { ok, status, message, runner_online }
 //
-// Triggers the `sync-reorder.yml` workflow on branch `main`, which is the
-// same workflow the cron tick runs every 30 minutes. Inside ~30 seconds the
-// Action re-reads 00_IN_FBA, regenerates the Miami + China xlsx files, and
-// uploads them to the OUT folders.
+// Needs SUPABASE_URL and SUPABASE_SERVICE_KEY on this Netlify site (same as Ad Command Center).
 
-const REPO_OWNER = 'frolovdo';
-const REPO_NAME = 'bodyj4you';
-const WORKFLOW_FILE = 'sync-reorder.yml';
-const REF = 'main';
+const JOB = 'reorder';
+const ONLINE_MS = 2 * 60_000;   // the runner checks in every 10 s
 
 export default async (req) => {
-  if (req.method !== 'POST') {
-    return json({ ok: false, error: 'Method not allowed' }, 405);
-  }
+  const url = Netlify.env.get('SUPABASE_URL'), key = Netlify.env.get('SUPABASE_SERVICE_KEY');
+  if (!url || !key) return json({ ok: false, error: 'SUPABASE_URL / SUPABASE_SERVICE_KEY are not set on this Netlify site.' }, 500);
+  const sb = async (path, init = {}) => {
+    const r = await fetch(`${url}/rest/v1/${path}`, { ...init, headers: { apikey: key, Authorization: `Bearer ${key}`, 'content-type': 'application/json', ...(init.headers || {}) } });
+    if (!r.ok) throw new Error(`Supabase ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  };
+  const runnerOnline = async () => {
+    const rows = await sb(`job_runners?jobs=cs.{${JOB}}&select=seen_at&order=seen_at.desc&limit=1`);
+    return !!rows[0] && Date.now() - new Date(rows[0].seen_at).getTime() < ONLINE_MS;
+  };
 
-  const token = Netlify.env.get('GITHUB_TOKEN');
-  if (!token) {
-    return json(
-      {
-        ok: false,
-        error:
-          'GITHUB_TOKEN is not set on this Netlify site. Add a fine-grained PAT with Actions: write under Site settings → Environment variables.',
-      },
-      500,
-    );
-  }
-
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`;
-  let res;
   try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'content-type': 'application/json',
-        'User-Agent': 'bodyj4you-dashboard',
-      },
-      body: JSON.stringify({ ref: REF }),
-    });
+    if (req.method === 'GET') {
+      const id = parseInt(new URL(req.url).searchParams.get('id'), 10);
+      if (!id) return json({ ok: false, error: 'missing id' }, 400);
+      const [row] = await sb(`job_requests?id=eq.${id}&job=eq.${JOB}&select=status,message`);
+      if (!row) return json({ ok: false, error: 'no such request' }, 404);
+      return json({ ok: true, ...row, runner_online: await runnerOnline() }, 200);
+    }
+    if (req.method !== 'POST') return json({ ok: false, error: 'Method not allowed' }, 405);
+    const [busy] = await sb(`job_requests?job=eq.${JOB}&status=in.(requested,running)&select=id&order=id.desc&limit=1`);
+    const id = busy ? busy.id : (await sb('job_requests', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ job: JOB, requested_by: 'reorder dashboard' }) }))[0].id;
+    return json({ ok: true, id, already: !!busy, runner_online: await runnerOnline() }, 202);
   } catch (e) {
-    return json({ ok: false, error: `Network error: ${e.message || e}` }, 502);
+    return json({ ok: false, error: e.message || String(e) }, 502);
   }
-
-  if (!res.ok) {
-    const text = (await res.text()).slice(0, 400);
-    return json({ ok: false, error: `GitHub returned ${res.status}: ${text}` }, 502);
-  }
-
-  return json({ ok: true, message: 'Workflow dispatched on main' }, 202);
 };
 
 function json(body, status) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  });
+  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 }

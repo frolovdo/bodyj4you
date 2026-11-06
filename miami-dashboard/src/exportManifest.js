@@ -13,7 +13,7 @@ import { loadCatalogMap, resolveFbaSku } from './catalogMapping.js';
 // For each cart item we resolve the actual FBA SKU from catalog.xlsx at
 // export time. The cart's stored fbaSku is only a fallback — the catalog
 // is the source of truth and updates the moment a new catalog.xlsx is
-// deployed, without needing the GitHub Action to regenerate Drive files.
+// deployed, without needing the Mac runner to regenerate Drive files.
 
 const TEMPLATE_PATH = `${import.meta.env.BASE_URL}ManifestFileUpload_Template_MPL.xlsx`;
 const SHEET_NAME = 'Create workflow – template'; // U+2013 en-dash, exact match required

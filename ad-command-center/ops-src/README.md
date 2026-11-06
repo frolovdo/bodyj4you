@@ -18,7 +18,7 @@ Publish: `python3 ops-src/export_web.py` → `npx netlify deploy --build --prod 
 - **Web API:** `netlify/functions/ops-api.mjs` (named actions; list must match `ACT` in the page), `ops-login.mjs`, `ops-me.mjs`, `netlify/lib/opsauth.mjs`.
 - **Data:** Supabase project ad-command-center: `ops_snapshot`, `ops_refresh`, `ops_orders`, `ops_log`, `ops_inbound`, `ops_addresses`, `ops_market`, `ops_tokens`, `ops_auth`/`ops_sessions`.
 - **Jobs:** repo `bodyj4you-amazon-api` (`~/sp-api`), folder `ops/`:
-  - Pull: page → `ops_refresh` row → `ops-dispatch` → GitHub `ops-refresh.yml` → `ops_refresh.py` (Amazon lists, holds, TikTok + Walmart lists, inbound sync, marketplace check).
+  - Pull: page → `ops_refresh` row → picked up on the Mac by `~/sp-api` → `ops_refresh.py` (Amazon lists, holds, TikTok + Walmart lists, inbound sync, marketplace check).
   - Create shipment: `ops_refresh` row kind `ship` → `ops_ship.py` (Amazon Send to Amazon plan, or Walmart WFS inbound order via `walmart_sync.py`).
   - Marketplace alerts: Mac launchd (`~/sp-api/tools/macjobs`), 4x/day 04:20/10:20/16:20/22:20 Pacific → `market_sync.py` → `ops_market`.
 

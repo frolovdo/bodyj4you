@@ -41,5 +41,6 @@ It drives one runner on Denis's machine:
 - OUT_CHINA (China dashboard): `1MBGCoI4yTltZdRlnOHcpl9pg5ZaubluF`
 
 ## Manual path (unchanged)
-Upload an FBA CSV to IN and click "Refresh from Drive". The GitHub Action
-`sync-reorder.yml` then runs the same full recount.
+Upload an FBA CSV to IN and click "Refresh from Drive". The Mac runner
+(`automation/local-runner.mjs`, see `LOCAL_RUNNER.md`) then runs the same full recount.
+By hand: `node automation/local-runner.mjs run reorder`.

@@ -1,17 +1,13 @@
-// "Refresh daily data": starts the engine run on GitHub Actions (workflow_dispatch). The engine pushes its results to
-// Supabase when done. GET lists the latest runs (status, Pacific clock, minutes taken, how long the last full run took);
-// POST starts one unless a run is already queued or in progress, in which case it says so and starts nothing.
-// If GitHub cannot be read, nothing is started either: a blind start is how duplicate runs happened before.
+// "Refresh daily data": queues an engine run in Supabase job_requests; the Mac runner (bodyj4you/automation/local-runner.mjs)
+// runs it in ~/sp-api and the engine pushes its results to Supabase. Nothing runs on GitHub.
+// GET lists the latest runs (status, Pacific clock, minutes taken, how long the last full run took);
+// POST queues one unless a run is already waiting or running, in which case it says so and queues nothing.
 import { json, err, body } from '../lib/http.mjs';
 import { currentUser, csrfOk, can } from '../lib/auth.mjs';
 import { audit, db, FAMILY } from '../lib/supabase.mjs';
 
-// Manual refresh is off while GitHub Actions has no free minutes left (2026-10-18). The schedule runs on the Mac
-// (sp-api tools/macjobs) and still refreshes the data 4 times a day. Set to '' to turn the button back on.
-const PAUSED = 'Out of credits for manual refresh.';
-
-const OWNER = 'frolovdo', REPO = 'bodyj4you-amazon-api', WORKFLOW = 'refresh.yml';  // ~/sp-api is this repo
-const FULL_MIN_MINUTES = 5;  // the run list does not say light or full; light runs take about a minute, so >= 5 min means a full run
+const JOBS = { all: 'engine_all', light: 'engine_light' };
+const ONLINE_MS = 2 * 60_000;   // the runner checks in every 10 s
 const PT = 'America/Los_Angeles';
 
 const ptClock = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-US', { timeZone: PT, hour: 'numeric', minute: '2-digit' }).replace(/\s+/g, '').toLowerCase() : '');
@@ -35,55 +31,53 @@ async function lastUpdated() {
 const mins = (a, b) => (a && b ? Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)) : null);
 const notDone = (x) => x.status !== 'completed';
 
-async function listRuns(token) {
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=50`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
-  if (!r.ok) throw new Error(`run list ${r.status}`);
-  const d = await r.json();
-  const runs = (d.workflow_runs || []).map((x) => ({
-    status: x.status, conclusion: x.conclusion, started: x.run_started_at, url: x.html_url,
-    kind: x.event === 'schedule' ? 'on schedule' : 'by hand',
-    started_pt: ptClock(x.run_started_at), when: ptWhen(x.run_started_at),
-    finished: x.status === 'completed' ? x.updated_at : null, finished_when: x.status === 'completed' ? ptWhen(x.updated_at) : '',
-    minutes: mins(x.run_started_at, x.status === 'completed' ? x.updated_at : new Date().toISOString()),
-  }));
-  // The two kinds of run, by duration (the run list does not carry the "what" input): full = everything (Amazon reports,
-  // ~20 min), light = today's spend and budgets + push (~1 min). Only runs that finished well count as data on the site.
-  const good = runs.filter((x) => x.status === 'completed' && x.conclusion === 'success' && x.minutes != null);
+async function listRuns() {
+  const { data, error } = await db().from('job_requests').select('id,job,status,requested_at,started_at,finished_at,message')
+    .in('job', Object.values(JOBS)).order('id', { ascending: false }).limit(50);
+  if (error) throw error;
+  const runs = (data || []).map((x) => {
+    const started = x.started_at || x.requested_at, done = x.status === 'done' || x.status === 'failed';
+    return {
+      status: done ? 'completed' : x.status === 'running' ? 'in_progress' : 'queued',
+      conclusion: done ? (x.status === 'done' ? 'success' : 'failure') : null,
+      what: x.job === JOBS.all ? 'all' : 'light', kind: 'by hand', message: x.message, started,
+      started_pt: ptClock(started), when: ptWhen(started),
+      finished: done ? x.finished_at : null, finished_when: done ? ptWhen(x.finished_at) : '',
+      minutes: mins(started, done ? x.finished_at : new Date().toISOString()),
+    };
+  });
+  const good = runs.filter((x) => x.conclusion === 'success' && x.finished);
   const pick = (x) => (x ? { finished: x.finished, when: x.finished_when, minutes: x.minutes } : null);
-  const lastFull = good.find((x) => x.minutes >= FULL_MIN_MINUTES), lastLight = good.find((x) => x.minutes < FULL_MIN_MINUTES);
-  return { runs, last_full_minutes: lastFull ? lastFull.minutes : null, last_full: pick(lastFull), last_light: pick(lastLight) };
+  const lastFull = good.find((x) => x.what === 'all'), lastLight = good.find((x) => x.what === 'light');
+  const { data: seen } = await db().from('job_runners').select('seen_at').contains('jobs', [JOBS.all]).order('seen_at', { ascending: false }).limit(1);
+  const runner_online = !!seen?.[0] && Date.now() - new Date(seen[0].seen_at).getTime() < ONLINE_MS;
+  return { runs, runner_online, last_full_minutes: lastFull ? lastFull.minutes : null, last_full: pick(lastFull), last_light: pick(lastLight), ...(await lastUpdated()) };
 }
 const WHATS = { all: 'everything', light: "today's spend and budgets" };
 
 export default async (req) => {
   const u = await currentUser(req);
   if (!u) return err('not signed in', 401);
-  const token = Netlify.env.get('GITHUB_TOKEN');
-  if (PAUSED) {
-    if (req.method === 'GET') { let lu = {}; try { lu = await lastUpdated(); } catch (e) { /* the line then says uncertain */ } return json({ ok: true, runs: [], paused: PAUSED, ...lu }); }
-    return err(`${PAUSED} Nothing was started. The data still refreshes by itself 4 times a day.`, 403);
-  }
   if (req.method === 'GET') {
-    if (!token) return json({ ok: true, runs: [], unknown: true });
-    try { return json({ ok: true, ...(await listRuns(token)) }); } catch (e) { return json({ ok: true, runs: [], unknown: true }); }
+    try { return json({ ok: true, ...(await listRuns()) }); } catch (e) { return json({ ok: true, runs: [], unknown: true }); }
   }
   const f = await body(req);
   if (!csrfOk(u, req, f)) return err('bad request', 403);
   if (!can(u, 'analyst')) return err('Your sign-in does not allow starting a refresh.', 403);
-  if (!token) return err('The refresh is not connected on this site, so nothing was started. Ask for help setting it up.', 500);
   let state;
-  try { state = await listRuns(token); } catch (e) { return err('Could not check whether a refresh is already running, so nothing was started. Try again in a few minutes.', 502); }
+  try { state = await listRuns(); } catch (e) { return err('Could not check whether a refresh is already running, so nothing was started. Try again in a few minutes.', 502); }
   const busy = state.runs.find(notDone);
   if (busy) {
-    const where = busy.status === 'in_progress' ? `running (started ${busy.when}, ${busy.kind})` : 'waiting to start';
+    const where = busy.status === 'in_progress' ? `running on the Mac (started ${busy.when})` : 'waiting for the Mac';
     return json({ ok: true, started: false, ...state, msg: `A refresh is already ${where}. Nothing new was started. This page updates by itself when it finishes.` });
   }
   const what = f.what === 'light' ? 'light' : 'all';   // only the two kinds the page offers
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`, { method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main', inputs: { what } }) });
-  if (r.status !== 204) return err('The refresh could not be started (the runner refused). Nothing was started. Try again in a few minutes.', 502);
+  const { error } = await db().from('job_requests').insert({ job: JOBS[what], requested_by: u.name || 'ad command center' });
+  if (error) return err('The refresh could not be queued. Nothing was started. Try again in a few minutes.', 502);
   await audit(u, what === 'all' ? 'refresh_all' : 'refresh_light', '', what);
+  const next = await listRuns().catch(() => state);
   const prev = what === 'all' ? state.last_full : state.last_light;
   const howLong = prev ? `The last one like it took ${prev.minutes || 'under a'} min; this one will likely take about as long.` : 'How long it takes is uncertain until this first run finishes.';
-  return json({ ok: true, started: true, ...state, msg: `Refreshing ${WHATS[what]}. ${howLong} The pages update by themselves when it finishes.` });
+  const offline = state.runner_online ? '' : ' The Mac runner is offline right now, so it will start when the Mac is back.';
+  return json({ ok: true, started: true, ...next, msg: `Refreshing ${WHATS[what]} on the Mac. ${howLong}${offline} The pages update by themselves when it finishes.` });
 };

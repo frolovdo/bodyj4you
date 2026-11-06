@@ -4,13 +4,13 @@ Web app that reads the weekly **`Miami Warehouse - MM.DD.YY.xlsx`** snapshots (p
 `component-reorder` skill) and lets you build a Purchase Order to send to **FAT WIN TRADING
 LIMITED (Bony)**, exported as a PDF.
 
-The dashboard pulls snapshots from a Google Drive folder via a scheduled GitHub Action — no
+The dashboard pulls snapshots from a Google Drive folder by running the sync on the Mac (never on GitHub) — no
 manual file upload. The newest snapshot is the default view; an in-header dropdown switches
 between archived weeks.
 
 This project lives inside the `bodyj4you` monorepo as a sibling of `miami-dashboard/` and
-`china-dashboard/`. The sync workflow is at the repo root
-(`.github/workflows/sync-supply-chain.yml`) and is scoped to this subfolder.
+`china-dashboard/`. The sync runs locally: `npm run sync` here, or
+`node automation/local-runner.mjs run supply_chain` from the repo root (see `automation/LOCAL_RUNNER.md`).
 
 ## Run locally
 
@@ -38,8 +38,8 @@ The architecture is intentionally split into two pieces that update independentl
 
 Flow:
 
-1. **Drive sync** (`scripts/sync-from-drive.mjs`) — runs hourly via the GitHub Action
-   `.github/workflows/sync-supply-chain.yml`. Lists every file in the Drive folder
+1. **Drive sync** (`scripts/sync-from-drive.mjs`) — runs on the Mac via
+   `node automation/local-runner.mjs run supply_chain`. Lists every file in the Drive folder
    whose name contains `Miami Warehouse`, downloads new/changed ones into
    `data/supply-chain/archive/`, writes `data/supply-chain/manifest.json`, prunes
    files no longer in Drive, commits + pushes back to `main`.
@@ -66,38 +66,35 @@ a Google Sheet (auto-converted on export). Label and sort order are derived from
 
 ## One-time setup — Drive credentials
 
-The sync script and the GitHub Action both need:
+The sync needs:
 
 | Variable | Where it lives | What it is |
 | --- | --- | --- |
-| `GDRIVE_FOLDER_ID` (local) / `SUPPLY_CHAIN_GDRIVE_FOLDER_ID` (repo secret) | `.env` locally; repo Action secret in CI | The Drive folder ID (the part after `/folders/` in the URL). Currently: `1WILT2WleC0ztjwdgNo1-cvFrrBcwcK3e` |
-| `GDRIVE_SA_KEY` | `.env` locally; repo Action secret in CI | The full service-account JSON, on a single line. Reuses the same secret as the miami/china dashboards. |
+| `GDRIVE_FOLDER_ID` (here) / `SUPPLY_CHAIN_GDRIVE_FOLDER_ID` (runner) | this folder's `.env`; `automation/.env` for the runner | The Drive folder ID (the part after `/folders/` in the URL). Currently: `1WILT2WleC0ztjwdgNo1-cvFrrBcwcK3e` |
+| `GDRIVE_SA_KEY` | this folder's `.env`; `automation/.env` for the runner | The full service-account JSON, on a single line. Reuses the same secret as the miami/china dashboards. |
 
 Steps:
 
 1. In Google Cloud Console, create a service account (or reuse the one already used by your
    `miami-dashboard` / `china-dashboard`). Download its JSON key.
 2. Share the Drive folder with the service account's email, **Viewer** access.
-3. Add both secrets under **Settings → Secrets and variables → Actions** in this repo.
-4. For local sync: copy `.env.example` → `.env` and fill both vars.
+3. Copy `.env.example` → `.env` and fill both vars (and the same values in `automation/.env` for the runner).
 
 ## Running the sync
 
 ```
 npm run sync          # local (reads .env)
-npm run sync:ci       # CI / GitHub Action (reads env vars directly)
+npm run sync:ci       # reads env vars directly (used by automation/local-runner.mjs)
 ```
 
-The GitHub Action `.github/workflows/sync.yml` runs every 15 minutes by default, on manual
-dispatch, and on pushes to the sync script itself. It commits any changes under `public/data/`
-back to `main`, which triggers Netlify (or wherever you deploy) to redeploy.
+`node automation/local-runner.mjs run supply_chain` runs the sync and commits any changes under
+`data/supply-chain/` back to `main`, which triggers Netlify to redeploy.
 
 ## Things you may want to edit
 
 - `src/lib/format.js` — `coverage()` defines the days-covered color buckets (≤14 red, ≤30
   orange, ≤60 yellow, else green) and the OUT OF STOCK / No Demand logic.
 - `src/pdf.js` — `SUPPLIER` constant and the PO PDF layout.
-- `.github/workflows/sync-supply-chain.yml` — change the cron interval if 15 min is too aggressive.
 
 ## Architecture notes
 

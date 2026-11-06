@@ -190,7 +190,7 @@ function TopBar({ nav, snapshot, statusCounts }) {
 }
 
 function renderBody(p) {
-  if (p.manifestError) return <ErrorBox title="Manifest unavailable" body={p.manifestError} hint='Run "npm run sync" locally, or trigger the Sync Drive GitHub Action.' />
+  if (p.manifestError) return <ErrorBox title="Manifest unavailable" body={p.manifestError} hint='Run "npm run sync" locally, or "node automation/local-runner.mjs run supply_chain".' />
   if (!p.manifest) return <Center>Loading manifest…</Center>
   if (!p.manifest.files?.length) return <ErrorBox title="No snapshots yet" body={`Drive folder ${p.manifest.folderId} doesn't contain any "Miami Warehouse" file.`} tone="amber" />
   if (p.loading) return <Center>Loading snapshot {p.snapshot}…</Center>
