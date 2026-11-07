@@ -165,6 +165,10 @@ export const isDuplicate = (raw) => /duplicateValueError|already exists/i.test(S
 export async function prechecks(rows, beforeBudgets, fam, { emergency = false, exceptItem = null, restore = false } = {}) {
   const ch = fam.charter, out = [], add = (name, level, detail) => out.push({ name, level, detail });
   const today = ptDate();
+  // a campaign owned by another family (managed.json readonly/owner) is never changed from this family's pages
+  const mc = fam?.managed?.campaigns || {};
+  const foreign = [...new Set(rows.map((r) => r.campaign || '').filter((n) => Object.values(mc).some((c) => c.name === n && c.readonly)))];
+  add('owner', foreign.length ? 'block' : 'ok', foreign.length ? `managed by another family: ${foreign.map((n) => `${n} (${Object.values(mc).find((c) => c.name === n)?.owner})`).join(', ')}` : 'all campaigns are this family\'s own');
   const lock = (ch.lock_windows || []).find((w) => w.start <= today && today <= w.end);
   add('lock_window', lock ? (emergency ? 'ok' : 'block') : 'ok', lock ? `inside lock window ${lock.start}..${lock.end}: ${lock.reason}` : 'not inside a lock window');
   const cd = ch.change_rules?.changes_day || 'Monday';
