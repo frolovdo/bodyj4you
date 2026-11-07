@@ -130,10 +130,16 @@ export async function recentSends(hours) {
   const since = new Date(Date.now() - hours * 3600000).toISOString();
   const { data: logs } = await db().from('applied_log').select('at, item_id, campaign, change, status, error').gte('at', since).order('at');
   const ids = [...new Set((logs || []).map((l) => l.item_id).filter(Boolean))];
-  const { data: items } = ids.length ? await db().from('queue_items').select('id, proposed_by, approver, title, status').in('id', ids) : { data: [] };
+  const { data: items } = ids.length ? await db().from('queue_items').select('id, family, proposed_by, approver, title, status').in('id', ids) : { data: [] };
   const who = Object.fromEntries((items || []).map((i) => [i.id, i.approver && i.approver !== i.proposed_by ? `${i.proposed_by} (approved by ${i.approver})` : i.proposed_by]));
+  // only this family's sends: by the queue item's family, or (Mac-era rows without an item) by campaign name in this family's managed list
+  const itemFam = Object.fromEntries((items || []).map((i) => [i.id, i.family]));
+  let mine = null;
+  try { const fam = await family(); mine = new Set(Object.values(fam?.managed?.campaigns || {}).map((c) => c.name)); } catch { mine = null; }
   const by = {};
   for (const l of logs || []) {
+    if (l.item_id && itemFam[l.item_id] && itemFam[l.item_id] !== FAMILY()) continue;
+    if (!l.item_id && mine && l.campaign && !mine.has(l.campaign)) continue;
     const k = l.item_id || 'cli:' + l.at.slice(0, 16);
     const b = (by[k] ||= { id: l.item_id, at: l.at, who: who[l.item_id] || 'owner, via the engine', campaigns: {}, ok: 0, failed: 0, already: 0, errors: [] });
     if (l.status === 'OK') { b.ok++; (b.campaigns[l.campaign] ||= []).push(l.change); }
