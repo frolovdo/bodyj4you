@@ -47,7 +47,8 @@ export default function App() {
   const [page, setPage] = useState(route());
   const [theme, setTheme] = useState(() => { try { return localStorage.getItem('ac_theme') || 'light'; } catch { return 'light'; } });
 
-  useEffect(() => { api('me').then((d) => {
+  // Loads the user and the family list; runs on page load and again right after sign-in.
+  const loadMe = () => api('me').then((d) => {
     if (d.ok) {
       const list = d.families || [];
       const cur = list.find((f) => f.family && f.family === (FAM.id || d.family)) || list.find((f) => f.family === d.family) || list.find((f) => f.family);
@@ -55,13 +56,14 @@ export default function App() {
       setFams(list);
     }
     setUser(d.ok ? d.user : null); setCsrf(d.csrf || '');
-  }); }, []);
+  });
+  useEffect(() => { loadMe(); }, []);
   const pickFamily = (f) => { try { localStorage.setItem('ac_family', f); } catch {} location.hash = '#/dashboard'; location.reload(); };
   useEffect(() => { const f = () => setPage(route()); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); try { localStorage.setItem('ac_theme', theme); } catch {} }, [theme]);
 
   if (user === undefined) return <main className="wrap"><p className="mut">Loading…</p></main>;
-  if (!user) return <Login onLogin={(u, c) => { setUser(u); setCsrf(c); }} />;
+  if (!user) return <Login onLogin={(u, c) => { setUser(u); setCsrf(c); loadMe(); }} />;
 
   const signOut = async () => { await api('logout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ csrf }) }); setUser(null); };
 
@@ -69,7 +71,7 @@ export default function App() {
     <>
       <header>
         {fams.length > 0
-          ? <select className="famsel" value={FAM.id} onChange={(e) => pickFamily(e.target.value)} aria-label="Product family (top 10 parent SKUs by revenue, last 30 days)" title="Top 10 parent SKUs by revenue, last 30 days">
+          ? <select className="famsel" value={FAM.id} onChange={(e) => pickFamily(e.target.value)} aria-label="Product family (top 20 parent SKUs by revenue, last 30 days)" title="Top 20 parent SKUs by revenue, last 30 days">
               {fams.map((f) => <option key={f.parent_sku} value={f.family || ''} disabled={!f.family}>
                 {f.parent_sku}{f.family ? '' : ' (not set up)'}
               </option>)}
