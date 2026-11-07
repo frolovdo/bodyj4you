@@ -184,6 +184,10 @@ export default function Update({ csrf }) {
           <div className={'card camp' + (String(c.id) === focus ? ' changed' : '')} id={'c_' + c.id} key={c.id}><div className="chead"><span className="nm">{c.name}</span><span className="pill">SB {c.state}</span></div>
             <div className="stats"><span>spend/day <b>{money((k30.cost || 0) / (c.act30 || 30))}</b></span><span>orders/day <b>{((k30.orders || 0) / (c.act30 || 30)).toFixed(1)}</b></span><span>ad cost per $100 <b>{money(k30.acos)}</b></span></div>
             <div className="edit"><label>Daily budget<span className="big">{money(c.budget)}</span></label><span className="bspent">Banner: counted in the total budget above, never edited by this tool (charter).</span></div></div>);
+        if (c.readonly) return (
+          <div className="card camp" id={'c_' + c.id} key={c.id}><div className="chead"><span className="nm">{c.name}</span><span className="pill">SP {c.state}</span><span className="pill">managed by {c.owner}</span></div>
+            <div className="stats"><span>your ASINs' spend/day <b>{money((k0.cost || 0) / (c.act7 || 7))}</b></span><span>orders <b>{k0.orders ?? '-'}</b></span><span>ad cost per $100 <b>{acosT(k0)}</b></span></div>
+            <div className="edit"><label>Daily budget<span className="big">{money(c.budget)}</span></label><span className="bspent">This campaign belongs to {c.owner}: your ASINs take {c.share != null ? pct(100 * c.share) : '-'} of its spend, and only those are counted above. Change it from the {c.owner} page.</span></div></div>);
         return (
           <div className={'card camp' + (isTouched || String(c.id) === focus ? ' changed' : '')} id={'c_' + c.id} key={c.id}>
             <div className="chead"><span className="nm">{c.name}</span><span className="pill">SP {c.state}</span>{c.job && <span className="pill">{c.job}</span>}</div>
