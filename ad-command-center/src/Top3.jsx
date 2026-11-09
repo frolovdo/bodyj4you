@@ -77,7 +77,7 @@ function Term({ t, weeks, ourLabel }) {
   const us = R.find((r) => r.ours);
   const first = weeks.find((w) => t.weeks[w]?.purch_share != null);
   const delta = first && first !== t.latest && e.purch_share != null ? e.purch_share - t.weeks[first].purch_share : null;
-  const pos = t.pos ? `#${t.pos} of the top 3` : 'outside the top 3';
+  const pos = t.pos == null ? 'position by purchases unknown' : t.pos <= 3 ? `#${t.pos} of the top 3 by purchases` : `#${t.pos}: outside the top 3 by purchases`;
   const need = t.need || {};
   const nextUp = t.pos ? (t.pos > 1 ? need['p' + (t.pos - 1)] : null) : (need.p3 ?? need.p2 ?? need.p1);
   const nextLabel = t.pos ? (t.pos > 1 ? `#${t.pos - 1}` : null) : (need.p3 != null ? '#3' : need.p2 != null ? '#2' : '#1');
@@ -88,8 +88,8 @@ function Term({ t, weeks, ourLabel }) {
       <div className="t3hd">
         <b style={{ fontSize: 17 }}>{t.term}</b>
         <span className="pill">{t.src === 'owns' ? 'owned keyword' : t.src === 'list' ? 'tracked' : 'top search for us'}</span>
-        <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos ? COL[1] : COL[3] }}>{pos}{t.pos_week && t.pos_week !== t.latest ? ` · week of ${wk(t.pos_week)}` : ''}</span>
-        {g.units_day != null && <span className="pill goal" title={g.source === 'default' ? 'Default goal: one position better than today, or #3 from outside. Set yours in intel/' + 'family/goals.json.' : `Goal set ${g.set || ''}${g.note ? ': ' + g.note : ''}`}>goal #{g.position} · {Math.round(g.units_day)} a day{g.source === 'default' ? ' (default)' : ''}</span>}
+        <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos && t.pos <= 3 ? COL[1] : COL[3] }}>{pos}{t.pos_week && t.pos_week !== t.latest ? ` · week of ${wk(t.pos_week)}` : ''}</span>
+        {g.units_day != null && <span className="pill goal" title={g.source === 'default' ? 'Default goal: one position better than today, or #3 from outside. Set yours in intel/' + 'family/goals.json.' : `Goal set ${g.set || ''}${g.note ? ': ' + g.note : ''}`}>goal #{g.position}{g.how === 'raised' ? ` (#${g.position_set} met)` : ''} · {Math.round(g.units_day)} a day{g.source === 'default' ? ' (default)' : ''}</span>}
         <span className="mut small">our numbers: week of {wk(t.latest)} · {num(e.volume)} searches · {num(e.total_purch)} purchases ({num((e.total_purch || 0) / 7)}/day)</span>
       </div>
       <div className="t3grid">
