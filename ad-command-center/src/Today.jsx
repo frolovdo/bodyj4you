@@ -29,7 +29,7 @@ function Delta({ p, up, small }) {
 const Cell = ({ v, fmt, p, up }) => <td><b>{fmt(v)}</b><div><Delta p={p} up={up} small /></div></td>;
 
 // ---------------------------------------------------------------- 1. status line
-function Status({ t, live, engine }) {
+function Status({ t, live, engine, actions }) {
   const g = t?.goal, n = t?.numbers, f = t?.data;
   const WORD = { win: ['Winning', 'good'], met: ['Goal met', 'warn'], behind: ['Behind', 'bad'] };
   const goal = g ? (() => { const [w, c] = WORD[g.state] || ['', 'mut']; return <span>'{g.term}': <b className={c}>{w}</b> {g.state === 'met' ? `#${g.position_set} by purchases, aiming #${g.position}` : `goal #${g.position}${g.pos ? `, now #${g.pos}` : ''}`} · {g.now_day} of {g.units_day} units/day{g.state === 'win' ? '' : ` (${g.pct}%)`}</span>; })()
@@ -41,7 +41,11 @@ function Status({ t, live, engine }) {
       <div className="st1">{goal}</div>
       {n && <div className="st2 small">{n.orders_day != null && <span><b>{n.orders_day}</b> ad orders a day{vs30}</span>}{n.acos != null && <span><b>{money(n.acos)}</b> per $100 of ad sales <span className="mut">(target {money(n.target)}, break-even {money(n.breakeven)})</span></span>}{n.tacos != null && <span>ads <b>{n.tacos}%</b> of all revenue <span className="mut">(aim {n.tacos_aim}%)</span></span>}</div>}
       <div className="st3 small mut">{fresh}{live?.at ? `${fresh ? ' · ' : ''}live numbers ${when(live.at, live.today, live.yday)}` : ''}{!t && ' · today\'s move not built yet for this family: it arrives with the next engine run'}</div>
-      {engine?.msg && <div className="small mut">{engine.msg}</div>}
+      <div className="st4" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
+        <button className="btn alt sm" onClick={actions.refresh} disabled={actions.busy}>{actions.busy ? 'Reading Amazon…' : 'Get live numbers'}</button>
+        {engine && !engine.paused && <button className="btn alt sm" onClick={engine.start} disabled={engine.paused || engine.starting || engine.waiting}>{engine.starting ? 'Starting…' : engine.waiting ? 'Daily refresh running…' : 'Get daily data'}</button>}
+        {engine?.msg && <span className="small mut">{engine.msg}</span>}
+      </div>
     </div>
   );
 }
@@ -127,10 +131,8 @@ function More({ d, rv, page, engine, actions }) {
   const age = page?.produced_at ? Math.round((Date.now() - new Date(page.produced_at)) / 60000) : null;
   return (
     <details className="card fold more">
-      <summary><span className="lbl">More: today by campaign, yesterday's table, scoreboard, strategies, context, data</span></summary>
+      <summary><span className="lbl">More: today by campaign, yesterday's table, scoreboard, strategies, context, data, check recent changes</span></summary>
       <div className="row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', margin: '8px 0' }}>
-        <button className="btn alt sm" onClick={actions.refresh} disabled={actions.busy}>{actions.busy ? 'Reading Amazon…' : 'Refresh live numbers'}</button>
-        {engine && !engine.paused && <button className="btn alt sm" onClick={engine.start} disabled={engine.paused || engine.starting || engine.waiting}>{engine.starting ? 'Starting…' : engine.waiting ? 'Daily refresh running…' : 'Refresh daily data'}</button>}
         <button className="btn alt sm" onClick={actions.review} disabled={actions.rvBusy}>{actions.rvBusy ? 'Checking…' : 'Check recent changes'}</button>
         <span className="small mut">Daily analysis produced {age === null ? '–' : age < 60 ? `${age} min ago` : `${Math.round(age / 60)} h ago`}{page?.data_through ? ` · data through ${page.data_through}` : ''}.</span>
       </div>
@@ -230,7 +232,7 @@ export default function Today({ csrf, engine, page }) {
   const fires = (d?.alerts || []).filter((a) => a.level === 'fire');
   return (
     <>
-      <Status t={t} live={d} engine={engine} />
+      <Status t={t} live={d} engine={engine} actions={{ refresh, busy }} />
       {fires.length > 0 && <div className="card now fire"><div className="nowhead"><h2 className="big bad">Urgent: {fires.length}</h2><span className="mut small">checked {when(d.at, d.today, d.yday)}{d.cached ? ' (cached)' : ''}</span></div><Alerts list={fires} /></div>}
       {err && !d && <div className="card block small">{err}</div>}
       {t === undefined ? <div className="card move"><div className="lbl">Today's move</div><p className="mut" style={{ margin: 0 }}>Loading…</p></div> : <Move t={t} />}
