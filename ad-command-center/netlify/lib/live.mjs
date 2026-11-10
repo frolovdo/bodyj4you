@@ -242,7 +242,7 @@ export async function buildLive() {
     if (state !== 'ENABLED') continue;  // paused campaigns raise nothing
     spansOf[name] = spans;
     // money threshold: a $20 campaign that stopped showing is not an emergency; the alarm stays, one level down
-    const why = (level, kind, short, reason, detail, link = '#/update') => (issues[name] ||= []).push({ level: level === 'fire' && b.cost < RULES.fire_min_usual_spend && (budget || 0) < 4 * RULES.fire_min_usual_spend ? 'watch' : level, kind, short, reason, detail, link });
+    const why = (level, kind, short, reason, detail, link = '#/update') => (issues[name] ||= []).push({ level: level === 'fire' && b.cost < RULES.fire_min_usual_spend ? 'watch' : level, kind, short, reason, detail, link });
     const bc = cpcOf(b), yc = cpcOf(y), tc = cpcOf(t), tuc = cpcOf(tu);
     const spendCollapsed = b.cost >= RULES.spend_drop_min_usual && y.cost <= b.cost * (1 - RULES.spend_drop_pct / 100);
     // nothing spent today although it usually has by now

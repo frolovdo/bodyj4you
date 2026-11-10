@@ -56,7 +56,9 @@ function Lines({ m }) {
   return <div className="mv-ev">{L.map(([k, v]) => <React.Fragment key={k}><span className="k">{k}</span><span>{v}</span></React.Fragment>)}</div>;
 }
 function StageBtn({ m, cta }) {
-  if (m.set) return <a className={'btn' + (cta ? ' cta' : ' ghost')} style={{ textDecoration: 'none' }} href={`#/update?set=${encodeURIComponent(m.set)}&why=${encodeURIComponent(m.why_param || m.title)}`}>Stage this change</a>;
+  // the why box on Update starts with the engine's own hypothesis (title + expected effect); the operator can still edit it before sending
+  const why = `${m.why_param || m.title}${m.expected ? `. Expected: ${m.expected.slice(0, 160)}` : ''}`;
+  if (m.set) return <a className={'btn' + (cta ? ' cta' : ' ghost')} style={{ textDecoration: 'none' }} href={`#/update?set=${encodeURIComponent(m.set)}&why=${encodeURIComponent(why)}`}>Stage this change</a>;
   if (m.link) return <a className={'btn' + (cta ? ' cta' : ' ghost')} style={{ textDecoration: 'none' }} href={m.link}>Open the Keywords page</a>;
   return null;
 }
