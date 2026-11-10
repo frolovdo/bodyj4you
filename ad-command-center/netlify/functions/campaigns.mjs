@@ -17,6 +17,7 @@ export default async (req) => {
       const bids = Object.fromEntries([...live.state.keywords.filter((k) => k.campaignId === c.campaignId).map((k) => ['kw_' + k.keywordId, k]), ...(live.state.targets || []).filter((t) => t.campaignId === c.campaignId).map((t) => ['tg_' + t.targetId, t])]);
       return { id: c.campaignId, name: c.name, typ: 'SP', state: c.state, budget: parseFloat(c.budget?.budget || 0), pb,
         keywords: (m.keywords || []).map((k) => ({ ...k, bid: parseFloat(bids['kw_' + k.keywordId]?.bid || 0), live: !!bids['kw_' + k.keywordId] })).filter((k) => k.live),
+        adGroups: (live.state.adGroups || []).filter((g) => g.campaignId === c.campaignId).map((g) => ({ adGroupId: g.adGroupId, name: g.name, state: g.state, defaultBid: parseFloat(g.defaultBid || 0) })),
         targets: (m.targets || []).map((t) => ({ ...t, bid: parseFloat(bids['tg_' + t.targetId]?.bid || 0), live: !!bids['tg_' + t.targetId] })).filter((t) => t.live),
         k0: m.k0, k1: m.k1, k30: m.k30, act7: m.act7, act30: m.act30, new: m.new, early: m.early, job: m.job, rank: m.rank, floors: m.floors,
         readonly: !!m.readonly, owner: m.owner || null, share: m.share ?? null };

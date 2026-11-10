@@ -88,6 +88,7 @@ export async function sbCampaigns(ids) {
 // PUT batches, same shape as the Mac apply.py
 export const API = {
   'PUT /sp/campaigns': ['spCampaign', 'campaigns', 'campaignId'],
+  'PUT /sp/adGroups': ['spAdGroup', 'adGroups', 'adGroupId'],
   'PUT /sp/keywords': ['spKeyword', 'keywords', 'keywordId'],
   'PUT /sp/targets': ['spTargetingClause', 'targetingClauses', 'targetId'],
   'POST /sp/keywords': ['spKeyword', 'keywords', 'keywordId'],

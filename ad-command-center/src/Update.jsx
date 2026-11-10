@@ -107,7 +107,7 @@ export default function Update({ csrf }) {
     const set = q.get('set'); if (!set) return;
     const v = {};
     let first = '';
-    for (const part of set.split(';')) { const m = /^(\d+):(\w+)=([\d.]+)$/.exec(part); if (!m) continue; const [, cid, key, val] = m; if (!first) first = cid; v[key === 'b' || key === 't' || key === 'p' || key === 'r' ? `${key}_${cid}` : key.startsWith('k') ? 'kw_' + key.slice(1) : key] = val; }
+    for (const part of set.split(';')) { const m = /^(\d+):(\w+)=([\d.]+)$/.exec(part); if (!m) continue; const [, cid, key, val] = m; if (!first) first = cid; v[key === 'b' || key === 't' || key === 'p' || key === 'r' ? `${key}_${cid}` : key.startsWith('k') ? 'kw_' + key.slice(1) : key.startsWith('g') ? 'ag_' + key.slice(1) : key] = val; }
     setVals(v);
     if (first) setFocus(first);
     const why = q.get('why'); if (why) setHyps((h) => ({ ...h, _prefill: why }));
@@ -120,10 +120,11 @@ export default function Update({ csrf }) {
       m['b_' + c.id] = String(c.budget); m['t_' + c.id] = String(c.pb.PLACEMENT_TOP || 0); m['p_' + c.id] = String(c.pb.PLACEMENT_PRODUCT_PAGE || 0); m['r_' + c.id] = String(c.pb.PLACEMENT_REST_OF_SEARCH || 0);
       for (const k of c.keywords) m['kw_' + k.keywordId] = String(k.bid);
       for (const t of c.targets) m['tg_' + t.targetId] = String(t.bid);
+      for (const g of c.adGroups || []) m['ag_' + g.adGroupId] = String(g.defaultBid);
     }
     return m;
   }, [d]);
-  const cidOfField = (f) => { if (/^[btpr]_/.test(f)) return f.slice(2); for (const c of d?.campaigns || []) { if (c.keywords?.some((k) => 'kw_' + k.keywordId === f) || c.targets?.some((t) => 'tg_' + t.targetId === f)) return c.id; } return null; };
+  const cidOfField = (f) => { if (/^[btpr]_/.test(f)) return f.slice(2); for (const c of d?.campaigns || []) { if (c.keywords?.some((k) => 'kw_' + k.keywordId === f) || c.targets?.some((t) => 'tg_' + t.targetId === f) || c.adGroups?.some((g) => 'ag_' + g.adGroupId === f)) return c.id; } return null; };
   const changed = Object.entries(vals).filter(([k, v]) => k in live && String(v).trim() !== '' && String(v).trim() !== live[k]);
   const touched = [...new Set(changed.map(([k]) => cidOfField(k)).filter(Boolean))];
   const missing = touched.filter((cid) => ((hyps[cid] || hyps._prefill || '').trim().length < 10));
@@ -202,6 +203,7 @@ export default function Update({ csrf }) {
               {tosBase > 0 && <span className="small tosb">At top of search a ${tosBase.toFixed(2)} base bids <b>${(tosBase * (1 + tosMod / 100)).toFixed(2)}</b> (base × (1 + {tosMod}%)) · want $<input className="want" value={want[c.id] ?? ''} placeholder="2.25" inputMode="decimal" onChange={(e) => { const v = e.target.value; setWant((w) => ({ ...w, [c.id]: v })); const E = Number(v); if (E > 0) set('t_' + c.id, String(Math.min(900, Math.max(0, Math.round(100 * (E / tosBase - 1)))))); }} /> at top of search → sets the +%</span>}
               <label>Product pages +%<Input name={'p_' + c.id} /></label>
               <label>Rest of search +%<Input name={'r_' + c.id} /></label>
+              {(c.adGroups || []).filter((g) => g.state === 'ENABLED').map((g) => <label key={g.adGroupId} title="What a keyword or target bids when it has no bid of its own. Keywords and targets with their own bid below ignore it.">Default bid ${(c.adGroups || []).length > 1 ? <span className="small mut"> {g.name}</span> : null}<Input name={'ag_' + g.adGroupId} /></label>)}
               <span className="bspent">Budget set <b>{money(c.budget)}</b> · spent <b>{money((k30.cost || 0) / (c.act30 || 30))}</b>/day over {c.act30} active days ({c.budget ? pct((100 * (k30.cost || 0)) / (c.act30 || 30) / c.budget) : '-'})</span>
             </div>
             {isTouched && (

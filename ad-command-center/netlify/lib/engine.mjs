@@ -4,8 +4,10 @@
 import { db, dataset, FAMILY } from './supabase.mjs';
 import { spState, sbCampaigns, send as adsSend } from './ads.mjs';
 
-export const ORDER = ['PUT /sp/campaigns', 'PUT /sp/keywords', 'PUT /sp/targets', 'POST /sp/keywords', 'POST /sp/negativeKeywords'];
+export const ORDER = ['PUT /sp/campaigns', 'PUT /sp/adGroups', 'PUT /sp/keywords', 'PUT /sp/targets', 'POST /sp/keywords', 'POST /sp/negativeKeywords'];
 const PT_OFFSET_H = -7;
+/** which live list and id field an api row belongs to */
+export const kindOf = (api) => api.includes('/campaigns') ? ['campaigns', 'campaignId'] : api.includes('/adGroups') ? ['adGroups', 'adGroupId'] : api.includes('/targets') ? ['targets', 'targetId'] : ['keywords', 'keywordId'];
 
 export const nowPT = () => new Date(Date.now() + PT_OFFSET_H * 3600 * 1000);
 export const ptDate = () => nowPT().toISOString().slice(0, 10);
@@ -38,7 +40,7 @@ const num = (v, lo, hi, what) => {
   return x;
 };
 
-/** Form -> rows. form keys: b_<cid>, t_<cid>, p_<cid>, r_<cid>, kw_<keywordId>, tg_<targetId>, hyp_<cid>, succ_<cid>, days_<cid> */
+/** Form -> rows. form keys: b_<cid>, t_<cid>, p_<cid>, r_<cid>, ag_<adGroupId> (default bid), kw_<keywordId>, tg_<targetId>, hyp_<cid>, succ_<cid>, days_<cid> */
 export function assemble(form, live, fam) {
   const rows = [], levers = new Set(), beforeBudgets = {};
   const S = live.state;
@@ -81,6 +83,17 @@ export function assemble(form, live, fam) {
     if (Math.abs(nb - parseFloat(k.bid || 0)) > 1e-9) {
       rows.push({ api: 'PUT /sp/keywords', entity: 'keyword', campaign: cname[k.campaignId], target: `${k.keywordText} [${k.matchType}]`, body: { keywordId: k.keywordId, bid: nb },
         setting: `bid ${k.keywordText} [${k.matchType}]`, before: '$' + k.bid, after: '$' + nb, change: `bid $${k.bid} -> $${nb}` });
+      levers.add('bid');
+    }
+  }
+  // ad group default bid: what a keyword or target bids when it has no bid of its own (auto campaigns mostly)
+  for (const g of S.adGroups || []) {
+    const v = (form['ag_' + g.adGroupId] ?? '').toString().trim();
+    if (g.state !== 'ENABLED' || v === '') continue;
+    const nb = Math.round(num(v, 0.02, 10, 'default bid for ' + g.name) * 100) / 100;
+    if (Math.abs(nb - parseFloat(g.defaultBid || 0)) > 1e-9) {
+      rows.push({ api: 'PUT /sp/adGroups', entity: 'ad group', campaign: cname[g.campaignId], target: `${g.name} (default bid)`, body: { adGroupId: g.adGroupId, defaultBid: nb },
+        setting: 'default bid ' + g.name, before: '$' + g.defaultBid, after: '$' + nb, change: `default bid $${g.defaultBid} -> $${nb}` });
       levers.add('bid');
     }
   }
@@ -219,10 +232,11 @@ export function backupFor(rows, live) {
   for (const c of S.campaigns) idx['campaigns:' + c.campaignId] = c;
   for (const k of S.keywords) idx['keywords:' + k.keywordId] = k;
   for (const t of S.targets || []) idx['targets:' + t.targetId] = t;
+  for (const g of S.adGroups || []) idx['adGroups:' + g.adGroupId] = g;
   const before = {}, rollback = [];
   for (const r of rows) {
     const b = r.body || {};
-    const [kind, idk] = r.api.includes('/campaigns') ? ['campaigns', 'campaignId'] : r.api.includes('/targets') ? ['targets', 'targetId'] : ['keywords', 'keywordId'];
+    const [kind, idk] = kindOf(r.api);
     if (r.api.startsWith('PUT')) {
       const old = idx[kind + ':' + b[idk]];
       if (!old) continue;
@@ -243,13 +257,13 @@ export async function execute(rows) {
   for (const api of ORDER) {
     const items = groups[api];
     if (!items) continue;
-    const idk = api.includes('/campaigns') ? 'campaignId' : api.includes('/targets') ? 'targetId' : 'keywordId';
+    const idk = kindOf(api)[1];
     for (let i = 0; i < items.length; i += 100) {
       const chunk = items.slice(i, i + 100);
       let ok = {}, err = {};
       try {
         const resp = await adsSend(api, chunk.map((r) => r.body));
-        const wrap = api.includes('negativeKeywords') ? 'negativeKeywords' : api.includes('/targets') ? 'targetingClauses' : api.includes('/keywords') ? 'keywords' : 'campaigns';
+        const wrap = api.includes('negativeKeywords') ? 'negativeKeywords' : api.includes('/targets') ? 'targetingClauses' : api.includes('/keywords') ? 'keywords' : api.includes('/adGroups') ? 'adGroups' : 'campaigns';
         const res = resp[wrap] || resp;
         for (const s of res.success || []) ok[s.index] = s;
         for (const e of res.error || []) err[e.index] = e;
@@ -271,14 +285,16 @@ export function verify(rows, after) {
   for (const c of after.state.campaigns) idx['campaigns:' + c.campaignId] = c;
   for (const k of after.state.keywords) idx['keywords:' + k.keywordId] = k;
   for (const t of after.state.targets || []) idx['targets:' + t.targetId] = t;
+  for (const g of after.state.adGroups || []) idx['adGroups:' + g.adGroupId] = g;
   const diffs = [];
   for (const r of rows) {
     if (!r.api.startsWith('PUT')) continue;
-    const b = r.body, [kind, idk] = r.api.includes('/campaigns') ? ['campaigns', 'campaignId'] : r.api.includes('/targets') ? ['targets', 'targetId'] : ['keywords', 'keywordId'];
+    const b = r.body, [kind, idk] = kindOf(r.api);
     const now = idx[kind + ':' + b[idk]];
     if (!now) { diffs.push(`${r.campaign}: ${kind} ${b[idk]} not found on read-back`); continue; }
     if (b.budget && Math.abs(parseFloat(now.budget?.budget) - b.budget.budget) > 0.005) diffs.push(`${r.campaign}: budget is $${now.budget?.budget}, asked $${b.budget.budget}`);
     if ('bid' in b && Math.abs(parseFloat(now.bid) - b.bid) > 0.005) diffs.push(`${r.campaign} ${r.target}: bid is $${now.bid}, asked $${b.bid}`);
+    if ('defaultBid' in b && Math.abs(parseFloat(now.defaultBid) - b.defaultBid) > 0.005) diffs.push(`${r.campaign} ${r.target}: default bid is $${now.defaultBid}, asked $${b.defaultBid}`);
     if ('state' in b && now.state !== b.state) diffs.push(`${r.campaign} ${r.target || ''}: state is ${now.state}, asked ${b.state}`);
     if (b.dynamicBidding) {
       const want = Object.fromEntries((b.dynamicBidding.placementBidding || []).map((p) => [p.placement, p.percentage]));

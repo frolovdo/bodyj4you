@@ -214,7 +214,7 @@ export async function buildLive() {
   for (const p of problems) add('watch', 'source', '', p, '', '#/dashboard', p.split(':')[0]);
 
   // --- per campaign
-  const rows = [], todayRows = [], issues = {}, spansOf = {};
+  const rows = [], todayRows = [], issues = {}, spansOf = {}, usualDay = {};
   const tot = { y: Z(), p: Z(), b: Z(), t: Z(), tu: Z() };
   for (const cid of ids) {
     const m = camps[cid], name = m.name, isSP = (m.type || 'SP') === 'SP';
@@ -241,6 +241,7 @@ export async function buildLive() {
 
     if (state !== 'ENABLED') continue;  // paused campaigns raise nothing
     spansOf[name] = spans;
+    usualDay[name] = b.cost;
     // money threshold: a $20 campaign that stopped showing is not an emergency; the alarm stays, one level down
     const why = (level, kind, short, reason, detail, link = '#/update') => (issues[name] ||= []).push({ level: level === 'fire' && b.cost < RULES.fire_min_usual_spend ? 'watch' : level, kind, short, reason, detail, link });
     const bc = cpcOf(b), yc = cpcOf(y), tc = cpcOf(t), tuc = cpcOf(tu);
@@ -294,7 +295,7 @@ export async function buildLive() {
       const have = (issues[c.name] || []).map((i) => i.kind);
       const fresh = c.flags.filter((f) => !((/cost per click/.test(f) && (have.includes('cpc_jump') || have.includes('cpc_jump_today'))) || (/ran out of budget/.test(f) && (have.includes('inbudget_drop') || have.includes('oob_now')))));
       const reason = `changed ${whenPT(t0)} by ${b.who} (${c.n} change${c.n === 1 ? '' : 's'}: ${c.changes.slice(0, 2).join('; ')}${c.n > 2 ? '; …' : ''})${fresh.length ? ': ' + fresh.join(', ') + ' since' : ''}`;
-      (issues[c.name] ||= []).push({ level: fresh.length ? 'fire' : 'watch', kind: 'after_change', short: fresh.length ? fresh[0].replace(/ \(\+\d+%\)/, '').replace(/^cost per click \$([\d.]+) vs usual \$([\d.]+)$/, 'cost per click $$$1, usually $$$2').replace(/^ran out of budget (.*?) \(.*$/, 'out of budget $1').replace(/^shown (\d+)% less$/, 'shown $1% less than usual').replace(/^nothing spent since the change$/, '$0 spent since the change') : 'changed lately', reason, detail: `Since the change (${hours} h): $${c.since.spend} spent vs usual $${c.usual.spend} for the same hours, ${c.since.clicks} clicks vs ${c.usual.clicks}, ${c.since.orders} orders vs ${c.usual.orders}. Restore is one button on History.`, link: '#/history' });
+      (issues[c.name] ||= []).push({ level: fresh.length && (usualDay[c.name] ?? Infinity) >= RULES.fire_min_usual_spend ? 'fire' : 'watch', kind: 'after_change', short: fresh.length ? fresh[0].replace(/ \(\+\d+%\)/, '').replace(/^cost per click \$([\d.]+) vs usual \$([\d.]+)$/, 'cost per click $$$1, usually $$$2').replace(/^ran out of budget (.*?) \(.*$/, 'out of budget $1').replace(/^shown (\d+)% less$/, 'shown $1% less than usual').replace(/^nothing spent since the change$/, '$0 spent since the change') : 'changed lately', reason, detail: `Since the change (${hours} h): $${c.since.spend} spent vs usual $${c.usual.spend} for the same hours, ${c.since.clicks} clicks vs ${c.usual.clicks}, ${c.since.orders} orders vs ${c.usual.orders}. Restore is one button on History.`, link: '#/history' });
     }
   }
   // one alarm per campaign, worst level, reasons joined; campaigns with only an "after change" note and nothing wrong stay off the alarm list
