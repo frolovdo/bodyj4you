@@ -142,3 +142,12 @@ header nav{flex:0 1 auto;min-width:max-content}
 .pill.goal{background:var(--fg);color:var(--card);font-weight:700}
 .ns table{width:100%;border-collapse:collapse;font-size:13px}.ns th,.ns td{padding:5px 8px;text-align:right;border-top:1px solid var(--line);vertical-align:top}.ns th.nm,.ns td.nm{text-align:left}.ns thead th{border-top:0;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)}
 .ns .prog{height:6px;background:var(--line);border-radius:3px;margin:3px 0 2px;overflow:hidden;min-width:90px}.ns .prog i{display:block;height:100%;border-radius:3px}
+
+/* Dashboard since 2026-11-09: status line, today's move, watch list */
+.status{display:flex;flex-direction:column;gap:4px;padding:10px 16px}.status .st1{font-size:16px}.status .st2{display:flex;flex-wrap:wrap;gap:2px 18px}.status .warn{color:var(--warn)}
+.move{border-left:6px solid var(--accent)}.move.none{border-left-color:var(--bd)}.move h2.big{margin:2px 0 8px}
+.mv-ev{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:14px;margin:10px 0}.mv-ev .k{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+table.kw.mv{margin:6px 0}table.kw.mv th,table.kw.mv td{padding:4px 8px;font-size:14px}
+.alt{border-top:1px solid var(--bd);padding:10px 0 4px;margin-top:6px}.alt>b{font-size:15px}.alt .pill{margin-left:8px}
+.watchl{margin:4px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14px}.watchl li{padding:6px 10px;border:1px solid var(--bd);border-radius:8px}.watchl li a{color:var(--accent);text-decoration:none}
+details.more>summary{padding:4px 0}.more .engine h2.sec:first-of-type{margin-top:12px}

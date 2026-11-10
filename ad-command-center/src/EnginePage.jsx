@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { api } from './App.jsx';
-import Now from './Now.jsx';
-import { go } from './Account.jsx';
+import Today from './Today.jsx';
 
-// Each page is produced by the engine and pushed to Supabase; this shows it with its age. The Dashboard gets the live block on top
-// (alarms, yesterday, today so far, hypothesis pulse) read straight from Amazon and the hourly feed.
+// Each page is produced by the engine and pushed to Supabase; this shows it with its age. The Dashboard is composed by Today.jsx
+// (status line, today's move, watch list, then the engine HTML under More); this component keeps the refresh-run machinery.
 const SOON = {
   update: 'Update campaigns moves online in phase 1 (live settings, preview, send with backup and read-back, restore). Until then it runs on the Mac.',
   hourly: 'Hourly moves online in phase 2 with the schedule runner as a scheduled function.',
@@ -87,15 +86,14 @@ export default function EnginePage({ name, csrf, user }) {
   const waiting = !!running || !!pending;
 
   if (error) return <div className="card block">{error}</div>;
+  if (name === 'dashboard') return <Today csrf={csrf} user={user} engine={{ waiting, start: refresh, msg: msg || status, starting, choice, paused: !!eng.paused }} page={d} />;
   if (!d) return <p className="mut">Loading…</p>;
   const age = d.produced_at ? Math.round((Date.now() - new Date(d.produced_at)) / 60000) : null;
   return (
     <>
-      {name === 'dashboard' && <p className="mut small" style={{ margin: '0 0 8px' }}>The daily ads brief for all families is on the <a href="#" onClick={(e) => { e.preventDefault(); go('ACCOUNT'); }}>Whole account</a> page (first entry in the family menu).</p>}
-      {name === 'dashboard' && <Now csrf={csrf} user={user} engine={{ waiting, start: refresh, msg: msg || status, starting, choice, paused: !!eng.paused }} />}
       {!d.html ? <div className="card"><p>{SOON[name] || 'Not published yet.'}</p></div> : (
         <>
-          <p className="mut small">{name === 'dashboard' ? 'Daily analysis below, produced ' : 'Produced '}{age === null ? '' : age < 60 ? `${age} min ago` : `${Math.round(age / 60)} h ago`}{d.data_through ? ` · data through ${d.data_through}` : ''}.</p>
+          <p className="mut small">Produced {age === null ? '' : age < 60 ? `${age} min ago` : `${Math.round(age / 60)} h ago`}{d.data_through ? ` · data through ${d.data_through}` : ''}.</p>
           {d.css && <style dangerouslySetInnerHTML={{ __html: d.css }} />}
           <div className="engine" dangerouslySetInnerHTML={{ __html: d.html }} />
         </>)}

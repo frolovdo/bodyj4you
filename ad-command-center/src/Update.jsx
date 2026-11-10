@@ -99,14 +99,17 @@ export default function Update({ csrf }) {
   const load = () => api('campaigns').then((r) => { if (r.ok) setD(r); else setError(r.error || 'could not load'); });
   useEffect(() => { load(); }, []);
   // opened from the Whole account page: #/update?focus=<campaignId> scrolls to that campaign and marks it
-  const focus = new URLSearchParams((location.hash.split('?')[1] || '')).get('focus') || '';
-  useEffect(() => { if (d && focus) setTimeout(() => document.getElementById('c_' + focus)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80); }, [d, focus]);
+  // opened from the Whole account page (#/update?focus=<campaignId>) or from Today's move (#/update?set=...): scroll to that campaign and mark it
+  const [focus, setFocus] = useState(new URLSearchParams((location.hash.split('?')[1] || '')).get('focus') || '');
+  useEffect(() => { if (d && focus) setTimeout(() => document.getElementById('c_' + focus)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120); }, [d, focus]);
   useEffect(() => {  // values carried from the Dashboard: #/update?set=cid:b=93;cid:t=10&why=...
     const q = new URLSearchParams((location.hash.split('?')[1] || ''));
     const set = q.get('set'); if (!set) return;
     const v = {};
-    for (const part of set.split(';')) { const m = /^(\d+):(\w+)=([\d.]+)$/.exec(part); if (!m) continue; const [, cid, key, val] = m; v[key === 'b' || key === 't' || key === 'p' || key === 'r' ? `${key}_${cid}` : key.startsWith('k') ? 'kw_' + key.slice(1) : key] = val; }
+    let first = '';
+    for (const part of set.split(';')) { const m = /^(\d+):(\w+)=([\d.]+)$/.exec(part); if (!m) continue; const [, cid, key, val] = m; if (!first) first = cid; v[key === 'b' || key === 't' || key === 'p' || key === 'r' ? `${key}_${cid}` : key.startsWith('k') ? 'kw_' + key.slice(1) : key] = val; }
     setVals(v);
+    if (first) setFocus(first);
     const why = q.get('why'); if (why) setHyps((h) => ({ ...h, _prefill: why }));
   }, []);
 
@@ -162,8 +165,7 @@ export default function Update({ csrf }) {
     <>
       <p className="mut small">Live settings read {d.live_at} PT · numbers through {d.endm} (newer days still filling in) · <a href="#/update" onClick={(e) => { e.preventDefault(); load(); }}>refresh</a></p>
       <div className="card strip"><span>Share of '{FAM.head}' purchases <b>{d.strip?.share != null ? pct(d.strip.share, 1) : '-'}</b></span><span>Organic rank <b>#{d.strip?.rank ?? '-'}</b> <span className="mut">(best #{d.strip?.rank_best ?? '-'})</span></span><a href="#/dashboard" style={{ marginLeft: 'auto' }}>Full analysis →</a></div>
-      <FiveNumbers five={d.five} />
-      <Response response={d.response} />
+      {d.response?.length > 0 && <details className="fold" style={{ margin: '0 0 12px' }}><summary className="small mut">Before you change a bid: what a 10% higher bid did in the past, per campaign</summary><Response response={d.response} /></details>}
       {hyps._prefill && <div className="note pend">Values from {hyps._prefill} are filled in below (highlighted). Check them, write why, then review and send.</div>}
       <Suggestions s={d.suggestions} filled={filled} camps={d.campaigns || []} fam={(() => { try { return localStorage.getItem('ac_family'); } catch { return ''; } })()} onFill={(it, T) => {
         setVals((v) => { const n = { ...v }; for (const x of it.set) { for (const k of ['b', 't', 'p', 'r']) if (x[k] != null) n[`${k}_${x.cid}`] = String(x[k]); if (x.kw) n['kw_' + x.kw] = String(x.v); if (x.tg) n['tg_' + x.tg] = String(x.v); } return n; });

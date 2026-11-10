@@ -18,6 +18,7 @@ export const RULES = {
   oob_early_hour: 18,        // out of budget before this hour (PT) counts as early
   inbudget_share_drop: 0.25, // in-budget share of the day fell by this much against the 7-day average
   pace_ratio: 1.6,           // budget used / share of the day gone: above this it will not last the day
+  fire_min_usual_spend: 5,   // a campaign that usually spends less than this a day never raises a fire on its own numbers: watch at most
   watch_hours: 72,           // a campaign changed within this many hours stays on the watch list
   stream_stale_h: 4,         // the hourly feed is normally 1 to 2 hours behind; beyond this it is a problem
   cache_minutes: 10,
@@ -240,7 +241,8 @@ export async function buildLive() {
 
     if (state !== 'ENABLED') continue;  // paused campaigns raise nothing
     spansOf[name] = spans;
-    const why = (level, kind, short, reason, detail, link = '#/update') => (issues[name] ||= []).push({ level, kind, short, reason, detail, link });
+    // money threshold: a $20 campaign that stopped showing is not an emergency; the alarm stays, one level down
+    const why = (level, kind, short, reason, detail, link = '#/update') => (issues[name] ||= []).push({ level: level === 'fire' && b.cost < RULES.fire_min_usual_spend && (budget || 0) < 4 * RULES.fire_min_usual_spend ? 'watch' : level, kind, short, reason, detail, link });
     const bc = cpcOf(b), yc = cpcOf(y), tc = cpcOf(t), tuc = cpcOf(tu);
     const spendCollapsed = b.cost >= RULES.spend_drop_min_usual && y.cost <= b.cost * (1 - RULES.spend_drop_pct / 100);
     // nothing spent today although it usually has by now
