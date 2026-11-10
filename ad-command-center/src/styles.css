@@ -237,3 +237,7 @@ details.more>summary{padding:4px 0}
 .btn.ghost{background:var(--panel-2);color:var(--ink);border-color:var(--line)}
 .btn.no{background:var(--btn-no);border-color:var(--btn-no);color:#fff}.btn.no:hover{filter:brightness(.92)}
 .btn.go{background:var(--good);border-color:var(--good);color:var(--goodfg)}
+
+/* Weekly report page: the report renders in its own frame */
+.weekly { display: flex; flex-direction: column; gap: 8px; }
+.weekly-frame { width: 100%; height: calc(100vh - 170px); min-height: 600px; border: 1px solid var(--line); border-radius: 10px; background: #f5f7f8; }

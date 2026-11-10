@@ -10,6 +10,7 @@ import SearchTerms from './SearchTerms.jsx';
 import Audiences from './Audiences.jsx';
 import Account from './Account.jsx';
 import Top3 from './Top3.jsx';
+import Weekly from './Weekly.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -18,6 +19,7 @@ const NAV = [
   ['keywords', 'Keywords'],
   ['searchterms', 'Search terms'],
   ['top3', 'Top 3'],
+  ['weekly', 'Weekly report'],
   ['audiences', 'Audiences'],
   ['history', 'History'],
 ];
@@ -32,6 +34,7 @@ const ICON = {
   searchterms: sv(<><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></>),
   top3: sv(<><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></>),
   audiences: sv(<><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21a7 7 0 0 0-4-6.3"/></>),
+  weekly: sv(<><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h4M7 17h7"/></>),
   history: sv(<><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></>),
 };
 
@@ -119,7 +122,7 @@ export default function App() {
           <div className="topbar-act"><Kill csrf={csrf} user={user} /></div>
         </div>
         <main className="wrap">
-          {FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+          {FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
         </main>
       </div>
     </div>
