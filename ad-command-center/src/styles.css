@@ -242,3 +242,11 @@ details.more>summary{padding:4px 0}
 .weekly { display: flex; flex-direction: column; gap: 8px; }
 .weekly-frame { width: 100%; height: calc(100vh - 170px); min-height: 600px; border: 1px solid var(--line); border-radius: 10px; background: #f5f7f8; }
 .weekly-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Campaign Judge page */
+.judge-tbl td.r,.judge-tbl th.r{text-align:right;font-variant-numeric:tabular-nums}
+.judge-tbl td{vertical-align:top}
+.judge-tbl td.small{max-width:360px}
+.judge-strip{display:inline-flex;gap:2px}
+.judge-strip .js{display:inline-block;width:14px;height:16px;line-height:16px;text-align:center;font-size:10px;font-style:normal;font-weight:700;border-radius:3px;background:var(--line-2);color:var(--ink-2)}
+.judge-strip .js.ontrack{background:var(--good-tint);color:var(--good)}.judge-strip .js.notyet{background:var(--crit-tint);color:var(--crit)}.judge-strip .js.tooearly{background:var(--warn-tint);color:var(--warn)}.judge-strip .js.undone{opacity:.5}
