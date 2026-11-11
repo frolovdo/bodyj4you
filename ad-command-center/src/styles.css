@@ -241,3 +241,4 @@ details.more>summary{padding:4px 0}
 /* Weekly report page: the report renders in its own frame */
 .weekly { display: flex; flex-direction: column; gap: 8px; }
 .weekly-frame { width: 100%; height: calc(100vh - 170px); min-height: 600px; border: 1px solid var(--line); border-radius: 10px; background: #f5f7f8; }
+.weekly-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
