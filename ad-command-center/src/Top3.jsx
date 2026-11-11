@@ -84,7 +84,7 @@ function Term({ t, weeks, ourLabel }) {
   const nextUp = t.pos && t.pos <= 3 && t.pos > 1 ? need['p' + (t.pos - 1)] : null;
   const nextLabel = t.pos && t.pos <= 3 && t.pos > 1 ? `#${t.pos - 1}` : null;
   const g = t.goal || {};
-  const goalShare = g.units_day && e.total_purch ? (100 * g.units_day * 7) / e.total_purch : 0;
+  const goalShare = g.units_day && pw.total_purch ? (100 * g.units_day * 7) / pw.total_purch : 0;
   return (
     <div className="card t3">
       <div className="t3hd">
