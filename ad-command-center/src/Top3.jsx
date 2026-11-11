@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './App.jsx';
 
 // Top 3 by search: for each tracked search, the three ASINs Amazon shoppers click most (Brand Analytics: click share and
-// purchase share of the whole query) next to us (Search Query Performance), week by week. Position is by purchase share.
+// conversion share of the whole query), week by week. Position is by conversion share among those three, ASIN against ASIN,
+// all from Brand Analytics. Our family's own count (Search Query Performance) is shown apart and never ranked against them.
 // Data: dataset <family>/top3 from the engine (adsops/ac_top3.py), weekly.
 const COL = ['var(--q-protect)', 'var(--q-maintain)', 'var(--q-investigate)', 'var(--q-evaluate)'];   // us, then the top 3 in order
 const pct = (v, d = 1) => (v == null || isNaN(v) ? '-' : Number(v).toFixed(d) + '%');
@@ -17,12 +18,11 @@ function rows(t, w, ourLabel) {
   const mk = e.mkt_cvr;   // query-wide conversion %, from SQP
   const out = top.map((x, i) => ({
     key: x.asin, label: x.ours ? ourLabel : (x.brand || short(x.name) || x.asin), sub: x.asin, ours: x.ours, pos: i + 1, color: COL[i + 1],
-    click: x.click, purch: x.conv, cvr: x.ours && e.our_clicks ? 100 * e.our_purch / e.our_clicks : (x.click && mk != null ? mk * x.conv / x.click : null),
-    perday: e.total_purch ? x.conv * e.total_purch / 100 / 7 : null, est: !x.ours,
+    click: x.click, purch: x.conv, cvr: x.click && mk != null ? mk * x.conv / x.click : null,
+    perday: e.total_purch ? x.conv * e.total_purch / 100 / 7 : null, est: true,
   }));
-  if (!top.some((x) => x.ours) && e.purch_share != null) {
-    out.push({ key: 'us', label: ourLabel, sub: 'outside the top 3', ours: true, pos: null, color: COL[0], click: e.click_share, purch: e.purch_share,
-      cvr: e.our_clicks ? 100 * e.our_purch / e.our_clicks : null, perday: e.our_purch / 7, est: false });
+  if (top.length && !top.some((x) => x.ours)) {
+    out.push({ key: 'us', label: ourLabel, sub: "not in Amazon's top 3", ours: true, pos: null, color: COL[0], click: null, purch: null, cvr: null, perday: null, est: false });
   } else for (const r of out) if (r.ours) r.color = COL[0];
   return out;
 }
@@ -37,9 +37,10 @@ function labels(series, x, y) {
 function Chart({ t, weeks, ourLabel, goalShare }) {
   const [hov, setHov] = useState(null);
   const latest = t.weeks[t.pos_week || t.latest] || {};
-  // series: us (purchase share from SQP) and each ASIN in the newest top 3 (purchase share from Brand Analytics)
+  // series: our best ASIN and each competitor ASIN in the newest top 3, all conversion share from Brand Analytics (a gap = we were not in the top 3)
   const series = useMemo(() => {
-    const S = [{ key: 'us', label: ourLabel, color: COL[0], v: weeks.map((w) => t.weeks[w]?.purch_share ?? null) }];
+    const ourConv = (w) => { const m = (t.weeks[w]?.top || []).filter((y) => y.ours); return m.length ? Math.max(...m.map((y) => y.conv)) : null; };
+    const S = [{ key: 'us', label: ourLabel, color: COL[0], v: weeks.map(ourConv) }];
     (latest.top || []).slice(0, 3).forEach((x, i) => {
       if (x.ours) return;
       S.push({ key: x.asin, label: x.brand || short(x.name) || x.asin, color: COL[i + 1], v: weeks.map((w) => (t.weeks[w]?.top || []).find((y) => y.asin === x.asin)?.conv ?? null) });
@@ -56,7 +57,7 @@ function Chart({ t, weeks, ourLabel, goalShare }) {
   const hv = hov != null ? series.map((s) => ({ ...s, val: s.v[hov] })).filter((s) => s.val != null) : null;
   return (
     <div className="t3chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Purchase share by week on "${t.term}": ${series.map((s) => s.label).join(', ')}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Conversion share by week on "${t.term}": ${series.map((s) => s.label).join(', ')}`}>
         {ticks.map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} className="grid" /><text x={L - 6} y={y(v) + 3} textAnchor="end">{v}%</text></g>)}
         {weeks.map((w, i) => (i === 0 || i === weeks.length - 1 || weeks.length <= 5 || i % 2 === 0) && <text key={w} x={x(i)} y={H - 6} textAnchor="middle">{wk(w)}</text>)}
         {goalShare > 0 && <g><line x1={L} x2={W - R} y1={y(goalShare)} y2={y(goalShare)} stroke="var(--fg)" strokeDasharray="5 4" strokeWidth="1.2" /><text x={L + 4} y={y(goalShare) - 4} style={{ fill: 'var(--fg)', fontSize: 11, fontWeight: 700 }}>goal</text></g>}
@@ -66,21 +67,22 @@ function Chart({ t, weeks, ourLabel, goalShare }) {
         {weeks.map((w, i) => <rect key={'h' + w} x={x(i) - (W - L - R) / Math.max(1, weeks.length - 1) / 2} y={0} width={(W - L - R) / Math.max(1, weeks.length - 1)} height={H} fill="transparent" onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} />)}
       </svg>
       {hv && hv.length > 0 && <div className="t3tip">week of {wk(weeks[hov])}: {hv.map((s) => <span key={s.key}><i className="sw" style={{ background: s.color }} />{s.label} {pct(s.val)}</span>)}</div>}
-      <div className="leg">{series.map((s) => <span key={s.key}><i className="sw" style={{ background: s.color }} />{s.label}</span>)}<span className="mut">purchase share of the search, by week</span></div>
+      <div className="leg">{series.map((s) => <span key={s.key}><i className="sw" style={{ background: s.color }} />{s.label}</span>)}<span className="mut">conversion share (share of all purchases on the search), Brand Analytics, by week; gaps = not in the top 3</span></div>
     </div>
   );
 }
 
 function Term({ t, weeks, ourLabel }) {
   const e = t.weeks[t.latest] || {};
-  const R = rows(t, t.latest, ourLabel);
+  const R = rows(t, t.pos_week || t.latest, ourLabel);
+  const pw = t.weeks[t.pos_week || t.latest] || {};
   const us = R.find((r) => r.ours);
   const first = weeks.find((w) => t.weeks[w]?.purch_share != null);
   const delta = first && first !== t.latest && e.purch_share != null ? e.purch_share - t.weeks[first].purch_share : null;
-  const pos = t.pos == null ? 'position by purchases unknown' : t.pos <= 3 ? `#${t.pos} of the top 3 by purchases` : `#${t.pos}: outside the top 3 by purchases`;
+  const pos = t.pos == null ? 'position unknown' : t.pos <= 3 ? `#${t.pos} of Amazon's top 3 by purchases` : "not in Amazon's top 3";
   const need = t.need || {};
-  const nextUp = t.pos ? (t.pos > 1 ? need['p' + (t.pos - 1)] : null) : (need.p3 ?? need.p2 ?? need.p1);
-  const nextLabel = t.pos ? (t.pos > 1 ? `#${t.pos - 1}` : null) : (need.p3 != null ? '#3' : need.p2 != null ? '#2' : '#1');
+  const nextUp = t.pos && t.pos <= 3 && t.pos > 1 ? need['p' + (t.pos - 1)] : null;
+  const nextLabel = t.pos && t.pos <= 3 && t.pos > 1 ? `#${t.pos - 1}` : null;
   const g = t.goal || {};
   const goalShare = g.units_day && e.total_purch ? (100 * g.units_day * 7) / e.total_purch : 0;
   return (
@@ -90,12 +92,12 @@ function Term({ t, weeks, ourLabel }) {
         <span className="pill">{t.src === 'owns' ? 'owned keyword' : t.src === 'list' ? 'tracked' : 'top search for us'}</span>
         <span className="pos" style={{ background: t.pos === 1 ? COL[0] : t.pos && t.pos <= 3 ? COL[1] : COL[3] }}>{pos}{t.pos_week && t.pos_week !== t.latest ? ` · week of ${wk(t.pos_week)}` : ''}</span>
         {g.units_day != null && <span className="pill goal" title={g.source === 'default' ? 'Default goal: one position better than today, or #3 from outside. Set yours in intel/' + 'family/goals.json.' : `Goal set ${g.set || ''}${g.note ? ': ' + g.note : ''}`}>goal #{g.position}{g.how === 'raised' ? ` (#${g.position_set} met)` : ''} · {Math.round(g.units_day)} a day{g.source === 'default' ? ' (default)' : ''}</span>}
-        <span className="mut small">our numbers: week of {wk(t.latest)} · {num(e.volume)} searches · {num(e.total_purch)} purchases ({num((e.total_purch || 0) / 7)}/day)</span>
+        <span className="mut small">top 3: week of {wk(t.pos_week || t.latest)} · {num(pw.volume)} searches · {num(pw.total_purch)} purchases ({num((pw.total_purch || 0) / 7)}/day)</span>
       </div>
       <div className="t3grid">
         <Chart t={t} weeks={weeks} ourLabel={ourLabel} goalShare={goalShare} />
         <div>
-          <div className="small mut" style={{ marginBottom: 4 }}>Sources: the top 3 from Brand Analytics (their share of every click and purchase on the search), our row from Search Query Performance. Neither is the ads console, which counts only paid clicks on our ads.</div>
+          <div className="small mut" style={{ marginBottom: 4 }}>Amazon Brand Analytics: the 3 most-clicked ASINs and each one's share of every click and purchase on the search (ads + organic). Not the ads console, which counts only paid clicks on our ads.</div>
           <table>
             <thead><tr><th>#</th><th className="nm">Who</th><th>Clicks</th><th>Purchases</th><th>CVR</th><th>Orders/day</th></tr></thead>
             <tbody>
@@ -107,11 +109,12 @@ function Term({ t, weeks, ourLabel }) {
             </tbody>
           </table>
           <p className="small" style={{ marginTop: 8 }}>
-            {us && delta != null && <>Our purchase share {delta >= 0 ? 'up' : 'down'} <b>{Math.abs(delta).toFixed(1)} pts</b> since {wk(first)}. </>}
             {nextUp != null && nextLabel && (nextUp > 0 ? <>About <b>{nextUp.toFixed(0)} more orders a day</b> from this search to pass {nextLabel}.</> : <>Level with {nextLabel} on purchases.</>)}
-            {t.pos === 1 && <>We hold the top spot{need.p2 != null ? '' : ''}.</>}
+            {t.pos === 1 && <>We hold the top spot.</>}
+            {t.pos > 3 && g.units_day != null && <>Not in Amazon's top 3; the #{g.position} spot sells about <b>{Math.round(g.units_day)} a day</b>.</>}
           </p>
-          <p className="small mut">Competitor CVR and orders/day are estimates from click and purchase share; our numbers are exact.</p>
+          {e.purch_share != null && <p className="small mut">Our own count, all sizes (Search Query Performance, week of {wk(t.latest)}): {num(e.our_purch)} of {num(e.total_purch)} purchases ({pct(e.purch_share)}){delta != null ? `, ${delta >= 0 ? 'up' : 'down'} ${Math.abs(delta).toFixed(1)} pts since ${wk(first)}` : ''}. A different count from Brand Analytics, so it is not ranked against the top 3.</p>}
+          <p className="small mut">CVR and orders/day are estimates for every row alike (conversion share x all purchases on the search).</p>
         </div>
       </div>
     </div>
@@ -131,15 +134,15 @@ export function NorthStar({ rows, famLabel }) {
           return (<tr key={(g.family || '') + g.term}>
             {famLabel && <td className="nm"><b>{famLabel(g.family)}</b></td>}
             <td className="nm"><b>{g.term}</b>{g.source === 'default' && <span className="mut small"> default goal</span>}</td>
-            <td>{g.pos ? `#${g.pos}` : 'outside top 3'}</td>
+            <td>{g.pos == null ? '-' : g.pos <= 3 ? `#${g.pos}` : 'not in top 3'}</td>
             <td><b>#{g.position}</b>{g.holder ? <div className="mut small">{(g.holder.name || g.holder.asin).replace(/\s*[|,(-].*$/, '').split(' ').slice(0, 2).join(' ')} sells ~{Math.round(g.units_day)}</div> : g.how === 'hold' ? <div className="mut small">hold it</div> : null}</td>
-            <td><b>{g.now_day == null ? '-' : Math.round(g.now_day)}</b> of {Math.round(g.units_day)}{p != null && <div className="prog"><i style={{ width: p + '%', background: tone }} /></div>}<div className="mut small">{g.pct != null ? g.pct + '% · ' : ''}week of {g.now_week ? wk(g.now_week) : '-'}</div></td>
+            <td><b>{g.now_day == null ? '-' : Math.round(g.now_day)}</b> of {Math.round(g.units_day)}{p != null && <div className="prog"><i style={{ width: p + '%', background: tone }} /></div>}<div className="mut small">{g.now_day == null ? "not in Amazon's top 3" : `${g.pct != null ? g.pct + '% · ' : ''}week of ${g.now_week ? wk(g.now_week) : '-'}`}</div></td>
             <td>{g.ad_day == null ? '-' : Math.round(g.ad_day)}<div className="mut small">last 7 days, filling in</div></td>
             <td>{g.review ? wk(g.review) : <span className="mut">-</span>}</td>
           </tr>);
         })}</tbody>
       </table></div>
-      <p className="small mut" style={{ margin: '6px 0 0' }}>Units a day = our purchases on the search in the newest Search Query Performance week, over 7. The goal is what the ASIN holding the goal position sold a day on that search in the newest Brand Analytics week. Ad orders a day are the daily leading number (ads search-term reports, 7-day attributed), not the same count. Goals live in intel/&lt;family&gt;/goals.json.</p>
+      <p className="small mut" style={{ margin: '6px 0 0' }}>Units a day = conversion share x all purchases on the search / 7, for our ASIN and the ASIN holding the goal position alike (newest Brand Analytics week). When we are not in Amazon's top 3 there is no comparable number for us. Ad orders a day are the daily leading number (ads search-term reports, 7-day attributed), not the same count. Goals live in intel/&lt;family&gt;/goals.json.</p>
     </div>
   );
 }
@@ -153,7 +156,7 @@ export default function Top3() {
   const M = d.model;
   if (!M || !M.terms?.length) return <div className="card"><b>No top-3 data yet.</b> The engine builds it weekly from Brand Analytics (<code>adsops/ac_top3.py</code>) after the first full run with this step.</div>;
   const terms = [...M.terms].sort((a, b) => (a.src === 'owns' ? 0 : 1) - (b.src === 'owns' ? 0 : 1) || (b.weeks[b.latest]?.volume || 0) - (a.weeks[a.latest]?.volume || 0));
-  const inside = terms.filter((t) => t.pos).length;
+  const inside = terms.filter((t) => t.pos && t.pos <= 3).length;
   const top1 = terms.filter((t) => t.pos === 1).length;
   const ourLabel = 'Us';
   const goals = terms.filter((t) => t.goal?.units_day != null && (t.goal.source === 'set' || t.src === 'owns'));
@@ -163,7 +166,7 @@ export default function Top3() {
       <div className="card t3sum"><span>Searches tracked <b>{terms.length}</b></span><span>In the top 3 <b>{inside}</b></span><span>Holding #1 <b>{top1}</b></span>
         <span className="mut">weeks {wk(M.weeks[0])} to {wk(M.weeks[M.weeks.length - 1])} · built {M.built_at?.replace('T', ' ')}</span></div>
       {terms.map((t) => <Term key={t.term} t={t} weeks={M.weeks} ourLabel={ourLabel} />)}
-      <p className="small mut">Top 3 = the three ASINs with the most clicks on the search (Amazon Brand Analytics, weekly). Purchase share is that ASIN's share of every purchase made from the search. Our line comes from Search Query Performance for the family's ASINs together. Tracked searches: the keywords our campaigns own plus the searches that bring us the most purchases; <code>intel/&lt;family&gt;/top3_terms.txt</code> overrides the list.</p>
+      <p className="small mut">Top 3 = the three ASINs with the most clicks on the search (Amazon Brand Analytics, weekly). Conversion share is that ASIN's share of every purchase made from the search. Our position compares our ASIN with competitor ASINs on these Brand Analytics numbers only; our family's own count (Search Query Performance) is shown separately. Tracked searches: the keywords our campaigns own plus the searches that bring us the most purchases; <code>intel/&lt;family&gt;/top3_terms.txt</code> overrides the list.</p>
     </>
   );
 }

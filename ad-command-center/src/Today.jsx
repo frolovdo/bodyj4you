@@ -32,7 +32,7 @@ const Cell = ({ v, fmt, p, up }) => <td><b>{fmt(v)}</b><div><Delta p={p} up={up}
 function Status({ t, live, engine, actions }) {
   const g = t?.goal, n = t?.numbers, f = t?.data;
   const WORD = { win: ['Winning', 'good'], met: ['Goal met', 'warn'], behind: ['Behind', 'bad'] };
-  const goal = g ? (() => { const [w, c] = WORD[g.state] || ['', 'mut']; return <span>'{g.term}': <b className={c}>{w}</b> {g.state === 'met' ? `#${g.position_set} by purchases, aiming #${g.position}` : `goal #${g.position}${g.pos ? `, now #${g.pos}` : ''}`} · {g.now_day} of {g.units_day} units/day{g.state === 'win' ? '' : ` (${g.pct}%)`}</span>; })()
+  const goal = g ? (() => { const [w, c] = WORD[g.state] || ['', 'mut']; return <span>'{g.term}': <b className={c}>{w}</b> {g.state === 'met' ? `#${g.position_set} by purchases, aiming #${g.position}` : `goal #${g.position}${g.pos ? (g.pos <= 3 ? `, now #${g.pos}` : ", not in Amazon's top 3") : ''}`} · {g.now_day == null ? `#${g.position} sells ~${g.units_day} units/day` : <>{g.now_day} of {g.units_day} units/day{g.state === 'win' ? '' : ` (${g.pct}%)`}</>}</span>; })()
     : <span className="mut">no goal set for this family yet</span>;
   const vs30 = n?.orders_vs30 == null ? '' : Math.abs(n.orders_vs30) < 5 ? ', flat vs 30 days' : `, ${n.orders_vs30 > 0 ? 'up' : 'down'} ${Math.abs(n.orders_vs30)}% vs 30 days`;
   const fresh = f ? [`spend through ${md(f.spend_through)}`, `orders judged through ${md(f.judged_through)}`, f.rank_stale_days != null && f.rank_stale_days > 7 ? `rank data ${f.rank_stale_days} days old (resets ${md(f.h10_reset)})` : null].filter(Boolean).join(' · ') : '';
