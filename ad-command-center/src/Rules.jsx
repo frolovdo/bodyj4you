@@ -1,120 +1,130 @@
 import React, { useEffect, useState } from 'react';
 import { FAM } from './App.jsx';
 
-// Rules: portfolios → campaigns. For each campaign: what we can change, how it ran over 90 days against its category
-// benchmark, the 30-day trend, suggestions phrased as outcomes, and three rule layers (Optimistic / Realistic /
-// Conservative) with the outcome each would have produced. A layer applies to a whole portfolio in one click, or to one
-// campaign. Built daily on the Mac (adsops/ac_rulebook.py); choices go to Supabase and into the hourly judge's rules.
+// Rules. Top: apply one grade to every campaign shown. Then portfolios (folders) and campaigns inside, each folded to one
+// reading line and the three grades with what each would do per month. Unfold a campaign: every parameter a rule can be set
+// on, its 90-day and 30-day marks, the reading, and the graded rules (cut / reward) with the outcome each would have had.
+// Grades: Conservative = sure, Moderate = likely, Radical = worth a try. A rule's own grade beats the campaign's, which beats
+// the portfolio's, which beats "all". Built daily on the Mac (adsops/ac_rulebook.py); choices go to Supabase and into the
+// hourly judge (shadow mode; nothing is sent to Amazon from here).
 const hdr = (fam) => (fam ? { 'x-family': fam } : {});
 const load = (fam) => fetch('/api/rulebook', { credentials: 'same-origin', headers: hdr(fam) }).then((r) => r.json()).catch(() => ({ ok: false, error: 'Could not load the rules.' }));
 const save = (fam, csrf, patch) => fetch('/api/rulebook', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json', ...hdr(fam) }, body: JSON.stringify({ csrf, ...patch }) }).then((r) => r.json()).catch(() => ({ ok: false, error: 'Could not save.' }));
 
-const LAYERS = ['optimistic', 'realistic', 'conservative'];
-const money = (v) => (v == null ? '–' : (v < 0 ? '−$' : '$') + Math.round(Math.abs(v)).toLocaleString());
-const pct = (v, d = 0) => (v == null ? '–' : (v * 100).toFixed(d) + '%');
-const num = (v, d = 1) => (v == null ? '–' : Number(v).toFixed(d));
-const sgn = (v, unit = '%') => (v == null ? '–' : (v >= 0 ? '+' : '−') + Math.abs(Math.round(v * 100)) + unit);
+const GRADES = ['conservative', 'moderate', 'radical'];
 const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : '');
+const pct = (v, d = 0) => (v == null ? '–' : (v * 100).toFixed(d) + '%');
+const fmt = (kind, v) => {
+  if (v == null) return '–';
+  if (kind === 'x' || kind === 'num1') return Number(v).toFixed(1);
+  if (kind === 'pct2') return pct(v, 2);
+  if (kind === 'pct1') return pct(v, 1);
+  if (kind === 'pct0') return pct(v, 0);
+  if (kind === 'money2') return '$' + Number(v).toFixed(2);
+  if (kind === 'money0') return '$' + Math.round(v);
+  return String(v);
+};
+const moneyOrders = (s, o) => {
+  s = Math.round(s); o = Math.round(o);
+  if (s < 0 && o <= 0) return `saves ~$${-s} a month, gives up ~${-o} orders`;
+  if (s >= 0 && o >= 0) return `about +${o} orders a month for +$${s}`;
+  if (s < 0) return `about +${o} orders a month while saving ~$${-s}`;
+  return `costs ~$${s} a month and loses ~${-o} orders`;
+};
 
-function Spark({ data }) {
-  if (!data || !data.length) return null;
-  const w = 120, h = 28, max = Math.max(1, ...data);
-  const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - (v / max) * (h - 2) - 1}`).join(' ');
-  return <svg className="rb-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none"><polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>;
-}
+// The grade that applies: own choice, else the level above. 'off' = no rule.
+const eff = (own, above) => (own ? (own === 'off' ? null : own) : above);
+const srcOf = (own, aboveSrc) => (own ? 'own' : aboveSrc);
 
-function Metric({ label, value, vs, better }) {
-  const cls = vs ? (vs.verdict === 'better' ? 'good' : vs.verdict === 'worse' ? 'bad' : '') : '';
-  return <div className={'rb-m ' + cls}><div className="tl mut small">{label}</div><div className="v">{value}</div>{vs && <div className="d">{vs.verdict}{better != null ? ` · ${better}` : ''}</div>}</div>;
-}
-
-function Strip({ strip }) {
-  return <span className="judge-strip">{(strip || []).map((s) => <i key={s.d} className={'js ' + (s.v === 'R' ? 'ontrack' : s.v === 'S' ? 'notyet' : 'plain')} title={s.d.slice(5)}>{s.v === ' ' ? '' : s.v}</i>)}</span>;
-}
-
-function LayerButtons({ value, suggested, inherited, onPick, busy, totals }) {
-  return <div className="rb-layers">
-    {LAYERS.map((k) => {
+function Grades({ value, own, onPick, busy, texts, small }) {
+  // value = effective grade; own = this level has its own choice; texts[k] = what that grade does per month
+  return <div className={'rb-grades' + (small ? ' small' : '')}>
+    {GRADES.map((k) => {
       const on = value === k;
-      const t = totals?.[k];
-      return <button key={k} type="button" disabled={busy} className={'btn rb-lbtn ' + k + (on ? ' on' : '') + (inherited && on ? ' inh' : '')} onClick={() => onPick(on && !inherited ? null : k)} title={on ? (inherited ? 'Follows the portfolio. Click to set it on this campaign.' : 'Applied. Click to remove.') : 'Apply ' + cap(k)}>
-        {cap(k)}{suggested === k ? ' ★' : ''}{t ? <span className="small mut"> {sgn(t.orders_month / 100, '')} orders · {money(t.spend_month)}/mo</span> : null}
+      return <button key={k} type="button" disabled={busy} className={'rb-g ' + k + (on ? ' on' : '') + (on && !own ? ' inh' : '')} onClick={() => onPick(on && own ? null : k)}
+        title={on ? (own ? 'Applied here. Click to let it follow the level above.' : 'Follows the level above. Click to set it here.') : 'Apply ' + cap(k)}>
+        <b>{cap(k)}</b>{texts?.[k] ? <span>{texts[k]}</span> : null}
       </button>;
     })}
-    {value && !inherited && <button type="button" disabled={busy} className="btn rb-lbtn off" onClick={() => onPick(null)}>None</button>}
+    <button type="button" disabled={busy} className={'rb-g off' + (own && value == null ? ' on' : '')} onClick={() => onPick(own && value == null ? null : 'off')} title="No rule here">Off</button>
   </div>;
 }
 
-function Campaign({ c, choices, today, csrf, onSave, busy, hourlyFamilies }) {
+function Param({ p, cid, choices, above, aboveSrc, today, onSave, busy }) {
+  const trend = p.trend ? <span className={'rb-trend ' + p.trend}>{p.trend}</span> : null;
+  return <div className="rb-param">
+    <div className="rb-phd">
+      <b>{p.label}</b>
+      <span className="rb-marks"><span>90 days <b>{fmt(p.fmt, p.m90)}</b></span><span>last 30 <b>{fmt(p.fmt, p.m30)}</b></span>{trend}</span>
+    </div>
+    <p className="small rb-read">{p.read}</p>
+    {p.note && <p className="small mut">{p.note}</p>}
+    {['cut', 'reward'].filter((d) => p.rules?.[d]).map((d) => {
+      const key = p.key + '.' + d;
+      const own = choices.rules?.[cid]?.[key] || null;
+      const g = eff(own, above);
+      const rec = today?.rules?.[key];
+      return <div key={d} className={'rb-rule ' + d}>
+        <div className="rb-rtitle small"><b>{d === 'cut' ? 'Cut' : 'Reward'}</b>{rec ? <span className="mut"> · last 14 days: fired {rec.fired}, held {rec.held}{rec.today_hour != null ? ` · fired today at ${rec.today_hour}:00` : ''}</span> : null}</div>
+        {GRADES.map((k) => {
+          const r = p.rules[d][k];
+          if (!r) return null;
+          const on = g === k;
+          return <div key={k} className={'rb-row' + (on ? ' on' : '') + (on && !own ? ' inh' : '')}>
+            <button type="button" disabled={busy} className={'rb-g sm ' + k + (on ? ' on' : '') + (on && !own ? ' inh' : '')} onClick={() => onSave({ rules: { [cid]: { [key]: on && own ? null : k } } })} title={on ? (own ? 'Applied on this rule. Click to follow the campaign.' : 'Follows the ' + aboveSrc + '. Click to set it on this rule.') : 'Apply ' + cap(k) + ' to this rule'}>{cap(k)}</button>
+            <div className="rb-rtext"><div>{r.text}</div><div className="small mut">{r.o.text}</div></div>
+          </div>;
+        })}
+        <button type="button" disabled={busy} className={'rb-g sm off' + (own === 'off' ? ' on' : '')} onClick={() => onSave({ rules: { [cid]: { [key]: own === 'off' ? null : 'off' } } })}>{own === 'off' ? 'Off (click to follow)' : 'Off'}</button>
+      </div>;
+    })}
+  </div>;
+}
+
+function Campaign({ c, choices, above, aboveSrc, today, onSave, busy }) {
   const [open, setOpen] = useState(false);
   const own = choices.campaigns?.[c.cid] || null;
-  const fromPort = choices.portfolios?.[c.pid] || null;
-  const eff = own || fromPort;
+  const g = eff(own, above);
+  const src = srcOf(own, aboveSrc);
   const t = today[c.cid];
-  const p = c.p90, tr = c.trend;
   const st = t?.status || '';
-  const pill = st.startsWith('REWARD') ? ['ontrack', 'Reward fired ' + (t.hour != null ? `by ${t.hour}:00` : '')] : st.startsWith('SLOW') ? ['notyet', 'Slow-down fired'] : st.startsWith('waiting') ? ['', 'Hourly: waiting'] : eff ? ['', cap(eff) + (own ? '' : ' (portfolio)')] : ['undone', 'No layer'];
+  const pill = st.startsWith('CUT') ? ['notyet', st] : st.startsWith('REWARD') ? ['ontrack', st] : st.startsWith('watching') ? ['', st] : st ? ['undone', st] : null;
+  const texts = Object.fromEntries(GRADES.map((k) => [k, c.nets[k].text]));
   return <div className={'card rb-camp' + (c.state !== 'ENABLED' ? ' paused' : '')}>
-    <div className="rule-head">
-      <div><b>{c.name}</b> <span className="mut small">· {c.type}{c.state !== 'ENABLED' ? ' · ' + c.state.toLowerCase() : ''}{c.job ? ' · ' + c.job : ''}{c.family ? ' · ' + c.family : ''}{c.hourly ? ' · hourly rules' : ''}</span></div>
-      <div><span className={'pill st ' + pill[0]}>{pill[1]}</span></div>
+    <div className="rb-chead" onClick={() => setOpen(!open)}>
+      <div><b>{open ? '▾' : '▸'} {c.name}</b> <span className="mut small">· {c.type}{c.state !== 'ENABLED' ? ' · ' + c.state.toLowerCase() : ''}{c.hourly ? ' · hourly' : ''} · {c.n_rules} rules</span></div>
+      {pill && <span className={'pill st ' + pill[0]}>{pill[1]}</span>}
     </div>
-    <div className="rb-chips">{c.can_change.map((x) => <span key={x.what} className="rb-chip"><span className="mut">{x.what}</span> {x.now}</span>)}</div>
-    <div className="rb-metrics">
-      <Metric label="Orders / day" value={num(p.orders_day)} />
-      <Metric label="Spend / day" value={money(p.spend_day)} />
-      <Metric label="ACoS" value={pct(p.acos)} vs={c.vs.acos} />
-      <Metric label="ROAS" value={num(p.roas)} vs={c.vs.roas} />
-      <Metric label="CTR" value={pct(p.ctr, 2)} vs={c.vs.ctr} />
-      <Metric label="CVR" value={pct(p.cvr)} vs={c.vs.cvr} />
-      <Metric label="CPC" value={p.cpc == null ? '–' : '$' + num(p.cpc, 2)} vs={c.vs.cpc} />
-      <div className="rb-m"><div className="tl mut small">Budget ran out</div><div className="v">{c.capped.days}<span className="small mut"> of {p.active_days} days</span></div><div className="d">{c.capped.days30} of the last 30</div></div>
-      <div className="rb-m trend"><div className="tl mut small">Orders, last 30 days</div><Spark data={tr.orders_series} /><div className="d">{sgn(tr.orders_pct)} orders · {sgn(tr.spend_pct)} spend{tr.acos_pts != null ? ` · ACoS ${sgn(tr.acos_pts, ' pts')}` : ''}</div></div>
-    </div>
-    <p className="small" style={{ margin: '8px 0 2px' }}>{c.comment}</p>
-    <p className="small mut" style={{ margin: '0 0 8px' }}>{c.trend_comment}</p>
-    <div className="rb-sugg">{c.suggestions.map((s, i) => <div key={i} className={'rb-s ' + s.kind}><b>{s.do}.</b> {s.get}</div>)}</div>
-    <div className="rb-layer-row">
-      <div className="small mut">Layer{eff ? '' : ' (none applied)'} · suggested: <b>{cap(c.suggested_layer)}</b> — {c.suggested_why}</div>
-      <LayerButtons value={eff} suggested={c.suggested_layer} inherited={!own && !!fromPort} busy={busy} onPick={(k) => onSave({ campaigns: { [c.cid]: k } })} />
-    </div>
-    <div className="rb-outcomes">
-      {LAYERS.map((k) => { const L = c.layers[k]; return <div key={k} className={'rb-o ' + k + (eff === k ? ' on' : '')}>
-        <div className="small"><b>{cap(k)}</b>{c.suggested_layer === k ? ' ★' : ''}</div>
-        <div className="small">{L.outcome.text}</div>
-        <Strip strip={L.outcome.strip} />
-        {open && <div className="small mut rb-rules"><div><b>Reward:</b> {L.reward}</div><div><b>Slow down:</b> {L.slow}</div></div>}
-      </div>; })}
-    </div>
-    <div className="small mut rb-foot">
-      <button type="button" className="linkbtn" onClick={() => setOpen(!open)}>{open ? 'Hide the rules' : 'Show the rules behind each layer'}</button>
-      {t?.calls ? <span> · Hourly check, last 14 days: rewards right {t.calls.reward[1]} of {t.calls.reward[0]}, slow-downs right {t.calls.slow[1]} of {t.calls.slow[0]}{t.layer ? ` · running the ${cap(t.layer)} layer` : ''}</span> : (eff && !c.hourly ? <span> · Not in the hourly judge yet: the layer is checked nightly on the day's numbers until {c.family || 'its family'} is onboarded.</span> : null)}
-    </div>
+    <p className="rb-read">{c.read}</p>
+    <div className="rb-apply"><span className="small mut">{g ? `${cap(g)} ${src === 'own' ? 'applied here' : 'from ' + src}` : 'No rules applied'}</span>
+      <Grades value={g} own={!!own} busy={busy} texts={texts} onPick={(k) => onSave({ campaigns: { [c.cid]: k } })} /></div>
+    {open && <div className="rb-params">
+      <p className="small mut">Settings now: budget ${c.settings.budget ?? '–'}{c.settings.tos != null ? ` · top of search +${c.settings.tos}%` : ''}{c.settings.bids?.length ? ` · default bid $${c.settings.bids[0].toFixed(2)}` : ''}{c.target_acos ? ` · target ACoS ${pct(c.target_acos)}` : ''}. Same-day rules: cuts watch 10:00–22:00, rewards 12:00–20:00; everything returns to base at midnight.</p>
+      {c.params.map((p) => <Param key={p.key} p={p} cid={c.cid} choices={choices} above={g} aboveSrc={src === 'own' ? 'campaign' : src} today={t} onSave={onSave} busy={busy} />)}
+    </div>}
   </div>;
 }
 
-function Portfolio({ p, choices, today, csrf, onSave, busy, openDefault }) {
+function Portfolio({ p, choices, above, today, onSave, busy, openDefault }) {
   const [open, setOpen] = useState(openDefault);
-  const val = choices.portfolios?.[p.pid] || null;
-  const own = p.campaigns.filter((c) => choices.campaigns?.[c.cid]).length;
+  const own = choices.portfolios?.[p.pid] || null;
+  const g = eff(own, above);
+  const src = own ? 'portfolio' : 'all';
+  const texts = Object.fromEntries(GRADES.map((k) => [k, p.nets[k].text]));
   return <div className="rb-port">
     <div className="card rb-phead">
-      <div className="rb-ptitle" onClick={() => setOpen(!open)}>
-        <b>{open ? '▾' : '▸'} {p.name}</b> <span className="pill">{p.category}</span>
-        <span className="mut small"> · {p.n_enabled} of {p.campaigns.length} campaigns on{p.families.length ? ' · ' + p.families.join(', ') : ''}</span>
+      <div className="rb-chead" onClick={() => setOpen(!open)}>
+        <div><b>{open ? '▾' : '▸'} {p.name}</b> <span className="pill">{p.category}</span> <span className="mut small">· {p.n_enabled} of {p.campaigns.length} campaigns on{p.families.length ? ' · ' + p.families.join(', ') : ''}</span></div>
+        <span className="small mut">{Math.round(p.marks.orders_day)} orders/day · ${p.marks.spend_day}/day · ACoS {pct(p.marks.acos)}</span>
       </div>
-      <div className="rb-pkpis small">
-        <span><b>{num(p.p90.orders_day)}</b> orders/day</span>
-        <span><b>{money(p.p90.spend_day)}</b> /day</span>
-        <span className={p.vs_acos ? (p.vs_acos.verdict === 'better' ? 'good' : p.vs_acos.verdict === 'worse' ? 'bad' : '') : ''}><b>{pct(p.p90.acos)}</b> ACoS{p.vs_acos ? ` (${p.vs_acos.verdict} than ${p.category})` : ''}</span>
-        <span><b>{sgn(p.trend_orders_pct)}</b> orders, 30 days</span>
-      </div>
-      <div className="rb-layer-row">
-        <div className="small mut">Apply to every campaign in this portfolio · suggested: <b>{cap(p.suggested_layer)}</b>{own ? ` · ${own} campaign${own > 1 ? 's' : ''} set on their own` : ''}</div>
-        <LayerButtons value={val} suggested={p.suggested_layer} busy={busy} totals={p.layers} onPick={(k) => onSave({ portfolios: { [p.pid]: k } })} />
-      </div>
+      <p className="rb-read">{p.read}</p>
+      <div className="rb-apply"><span className="small mut">{g ? `${cap(g)} ${own ? 'applied to this portfolio' : 'from all'}` : 'No rules applied'} · applies to every campaign inside</span>
+        <Grades value={g} own={!!own} busy={busy} texts={texts} onPick={(k) => onSave({ portfolios: { [p.pid]: k } })} /></div>
+      {open && <div className="rb-params rb-pparams">
+        {p.params.map((q) => <div key={q.key} className="rb-param"><div className="rb-phd"><b>{q.label}</b><span className="rb-marks"><span>90 days <b>{fmt(q.fmt, q.m90)}</b></span><span>last 30 <b>{fmt(q.fmt, q.m30)}</b></span>{q.trend ? <span className={'rb-trend ' + q.trend}>{q.trend}</span> : null}</span></div><p className="small rb-read">{q.read}</p></div>)}
+      </div>}
     </div>
-    {open && p.campaigns.map((c) => <Campaign key={c.cid} c={c} choices={choices} today={today} csrf={csrf} onSave={onSave} busy={busy} />)}
+    {open && p.campaigns.map((c) => <Campaign key={c.cid} c={c} choices={choices} above={g} aboveSrc={src} today={today} onSave={onSave} busy={busy} />)}
   </div>;
 }
 
@@ -132,27 +142,29 @@ export default function Rules({ csrf, user }) {
   const onSave = async (patch) => {
     setBusy(true); setMsg('');
     const r = await save(fam, csrf, patch);
-    if (r.ok) { setD({ ...d, choices: r.choices }); setMsg('Saved. Managed campaigns pick it up at the next hourly run; nothing is sent to Amazon from here.'); } else setMsg(r.error || 'Could not save.');
+    if (r.ok) { setD({ ...d, choices: r.choices }); setMsg('Saved. The hourly judge picks it up at the next run; nothing is sent to Amazon from here.'); } else setMsg(r.error || 'Could not save.');
     setBusy(false);
   };
-  const a = rb.account;
-  const bm = Object.values(rb.benchmarks || {});
   const ports = rb.portfolios || [];
+  const ch = d.choices;
+  const top = ch.all === 'off' ? null : ch.all || null;
+  const nCamps = ports.reduce((n, p) => n + p.campaigns.length, 0);
+  const texts = Object.fromEntries(GRADES.map((k) => {
+    const s = ports.reduce((n, p) => n + p.nets[k].spend_month, 0), o = ports.reduce((n, p) => n + p.nets[k].orders_month, 0);
+    return [k, moneyOrders(s, o)];
+  }));
+  const own = Object.keys(ch.portfolios || {}).length + Object.keys(ch.campaigns || {}).length + Object.values(ch.rules || {}).reduce((n, s) => n + Object.keys(s).length, 0);
   return <div className="rules">
-    <div className="card">
-      <div className="kpis">
-        <div className="kpi"><div className="tl mut small">90 days, whole account</div><div className="v">{num(a.orders_day, 0)} <span className="small mut">orders a day</span></div><div className="d">{money(a.spend_day)} a day · ACoS {pct(a.acos)} · ROAS {num(a.roas)}</div></div>
-        <div className="kpi"><div className="tl mut small">Shown here</div><div className="v">{ports.length} <span className="small mut">portfolios</span></div><div className="d">{ports.reduce((n, p) => n + p.campaigns.length, 0)} campaigns · {rb.window[0]} to {rb.window[1]}</div></div>
-        <div className="kpi"><div className="tl mut small">Layers applied</div><div className="v">{Object.keys(d.choices.portfolios || {}).length} <span className="small mut">portfolios</span> · {Object.keys(d.choices.campaigns || {}).length} <span className="small mut">campaigns</span></div><div className="d">hourly rules run for {rb.hourly_families.join(', ') || 'no family yet'}</div></div>
-      </div>
-      <table className="tbl rb-bench"><thead><tr><th>Category benchmark</th><th>Campaigns</th><th>ACoS</th><th>ROAS</th><th>CTR</th><th>CVR</th><th>CPC</th><th>Median orders/day</th></tr></thead>
-        <tbody>{bm.map((b) => <tr key={b.name}><td><b>{b.name}</b></td><td>{b.campaigns}</td><td>{pct(b.acos)}</td><td>{num(b.roas)}</td><td>{pct(b.ctr, 2)}</td><td>{pct(b.cvr)}</td><td>${num(b.cpc, 2)}</td><td>{num(b.orders_day_median)}</td></tr>)}</tbody></table>
+    <div className="card rb-top">
+      <div className="rb-chead"><div><b>Apply to all campaigns</b> <span className="mut small">· {ports.length} portfolios, {nCamps} campaigns, 90 days to {rb.window[1]}</span></div>
+        <span className="small mut">{top ? `${cap(top)} applied to all` : 'Nothing applied to all'}{own ? ` · ${own} own choice${own > 1 ? 's' : ''} below` : ''}</span></div>
+      <Grades value={top} own={!!ch.all} busy={busy} texts={texts} onPick={(k) => onSave({ all: k })} />
       <div className="rb-legend small">
-        {LAYERS.map((k) => <div key={k} className={'rb-o ' + k}><b>{rb.layers[k].label}</b> — {rb.layers[k].aim}. Reward: ahead by {Math.round((rb.layers[k].reward.orders_mult - 1) * 100)}%+ at ACoS ≤ {Math.round(rb.layers[k].reward.acos_tol * 100)}% of normal → budget +{rb.layers[k].reward.budget_up_pct}% (max +{rb.layers[k].reward.budget_day_max_pct}%). Slow: ≤ {Math.round(rb.layers[k].slow.orders_mult * 100)}% of normal for {rb.layers[k].slow.hours_in_a_row} h → bids −{rb.layers[k].slow.bid_down_pct}%.</div>)}
+        {GRADES.map((k) => <div key={k}><b className={'rb-trend ' + k}>{rb.levels[k].label}</b> — {rb.levels[k].sure}.</div>)}
       </div>
-      <p className="mut small" style={{ margin: '8px 0 0' }}>Normal = the campaign's own last 90 days (hourly judge: its own weekday-and-hour curve). ★ = the layer the numbers point to. Outcomes are estimates from the campaign's own days (a 10% bid cut ≈ −13% spend, −8% orders; extra budget only converts on days the budget ran out). {msg && <b>{msg}</b>}</p>
+      <p className="small mut rb-note">Every rule is drawn from the campaign's own two marks: the 90-day average and the last 30 days. Cuts sit under the lower mark, rewards above the higher one; the grade sets how far. Outcomes are what the rule would have done on the campaign's own last 90 days (a same-day rule catches about half the day). {msg && <b>{msg}</b>}</p>
     </div>
-    {ports.map((p, i) => <Portfolio key={p.pid} p={p} choices={d.choices} today={d.today} csrf={csrf} onSave={onSave} busy={busy} openDefault={!all || i === 0} />)}
-    <p className="mut small">Built {rb.as_of?.slice(0, 16).replace('T', ' ')} PT. Layers: <code>intel/_shared/rule_layers.json</code>. Only approvers and owners can apply a layer.</p>
+    {ports.map((p, i) => <Portfolio key={p.pid} p={p} choices={ch} above={top} today={d.today} onSave={onSave} busy={busy} openDefault={!all || i === 0} />)}
+    <p className="mut small">Built {rb.as_of?.slice(0, 16).replace('T', ' ')} PT. Hourly judge runs for {rb.hourly_families.join(', ') || 'no family yet'}; other families are checked on the day's numbers. Grades: <code>intel/_shared/rule_levels.json</code>. Only approvers and owners can apply.</p>
   </div>;
 }
