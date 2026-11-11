@@ -21,7 +21,7 @@ const NAV = [
   ['searchterms', 'Search terms'],
   ['top3', 'Top 3'],
   ['weekly', 'Weekly report'],
-  ['judge', 'Judge'],
+  ['judge', 'Rules'],
   ['audiences', 'Audiences'],
   ['history', 'History'],
 ];

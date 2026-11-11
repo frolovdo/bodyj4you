@@ -250,3 +250,9 @@ details.more>summary{padding:4px 0}
 .judge-strip{display:inline-flex;gap:2px}
 .judge-strip .js{display:inline-block;width:14px;height:16px;line-height:16px;text-align:center;font-size:10px;font-style:normal;font-weight:700;border-radius:3px;background:var(--line-2);color:var(--ink-2)}
 .judge-strip .js.ontrack{background:var(--good-tint);color:var(--good)}.judge-strip .js.notyet{background:var(--crit-tint);color:var(--crit)}.judge-strip .js.tooearly{background:var(--warn-tint);color:var(--warn)}.judge-strip .js.undone{opacity:.5}
+.rule-card{padding:14px 18px}
+.rule-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.rule-card .bench{margin:4px 0 2px}
+.rule-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.judge-strip .js.plain{background:transparent;color:var(--ink-2)}
+@media (max-width:760px){.rule-row{grid-template-columns:1fr}}
