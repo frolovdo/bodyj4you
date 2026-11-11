@@ -149,9 +149,12 @@ export default function Rules({ csrf, user }) {
   const ch = d.choices;
   const top = ch.all === 'off' ? null : ch.all || null;
   const nCamps = ports.reduce((n, p) => n + p.campaigns.length, 0);
+  const base = ports.reduce((b, p) => ({ spend: b.spend + (p.base_month?.spend || 0), sales: b.sales + (p.base_month?.sales || 0), orders: b.orders + (p.base_month?.orders || 0) }), { spend: 0, sales: 0, orders: 0 });
+  const aov = base.orders ? base.sales / base.orders : 0;
   const texts = Object.fromEntries(GRADES.map((k) => {
     const s = ports.reduce((n, p) => n + p.nets[k].spend_month, 0), o = ports.reduce((n, p) => n + p.nets[k].orders_month, 0);
-    return [k, moneyOrders(s, o)];
+    const after = base.sales + o * aov > 0 ? (base.spend + s) / (base.sales + o * aov) : null;
+    return [k, moneyOrders(s, o) + (base.sales ? `; ACoS ${pct(base.spend / base.sales)} → ${pct(after)}` : '')];
   }));
   const own = Object.keys(ch.portfolios || {}).length + Object.keys(ch.campaigns || {}).length + Object.values(ch.rules || {}).reduce((n, s) => n + Object.keys(s).length, 0);
   return <div className="rules">
