@@ -25,7 +25,8 @@ function Campaign({ c }) {
       </div>
       <div className="bst-grid">
         <div className="kpi"><div className="tl mut small">Budget today</div><div className="v">{money(c.budget_now)}</div>
-          <div className="d">{c.boosted ? <span>boosted from {money(c.base)} at {c.boosted_at}</span> : <span>base {money(c.base)}</span>}</div></div>
+          <div className="d">{c.boosted && c.budget_now === c.boosted ? <span>boosted from {money(c.base)} at {c.boosted_at}</span>
+            : c.boosted ? <span>shadow boost to {money(c.boosted)} at {c.boosted_at}; Amazon still {money(c.budget_now)}</span> : <span>base {money(c.base)}</span>}</div></div>
         <div className="kpi"><div className="tl mut small">Budget used (Amazon)</div><div className="v">{pct == null ? '–' : Math.round(pct) + '%'}</div>
           <div className="bst-bar"><i style={{ width: (pct || 0) + '%' }} className={pct >= 80 ? 'hot' : ''} /></div>
           <div className="d">{c.usage_at ? 'as of ' + hhmm(new Date(c.usage_at).toLocaleString('sv-SE', { timeZone: 'America/Los_Angeles' })) : ''}</div></div>
