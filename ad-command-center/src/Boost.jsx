@@ -5,14 +5,20 @@ import { api } from './App.jsx';
 // ACCOUNT/boost. The page refreshes itself every minute; a check older than 75 minutes is flagged (the Mac job did not run).
 const money = (v) => (v == null ? '–' : '$' + (Number.isInteger(+v) || +v >= 20 ? Math.round(+v) : (+v).toFixed(2)));
 const CODE = {
-  boost: ['Boosted', 'good'], boosted: ['Boosted', 'good'], below: ['Below average: nothing', 'crit'], room: ['Performing, budget left', 'ok'],
-  early: ['Too early', 'mut'], window: ['Outside window', 'mut'], nodata: ['No data', 'mut'], reset: ['Back to base', 'acc'],
+  boost: ['RAISED', 'good'], boosted: ['HOLDING', 'good'], below: ['NOTHING', 'crit'], room: ['WAITING', 'ok'],
+  early: ['EARLY', 'mut'], window: ['NIGHT', 'mut'], nodata: ['NO DATA', 'mut'], reset: ['RESET', 'acc'],
+};
+const failed = (e) => /FAILED/.test(e?.head || e?.text || '');
+// one log line: a signal, the bold headline, one plain reason (older entries only have the full text)
+const Line = ({ e }) => {
+  const [label, cls] = failed(e) ? ['FAILED', 'crit'] : (CODE[e.code] || ['–', 'mut']);
+  return <><span className={'bst-sig ' + cls} />{e.head ? <><b>{e.head}.</b> <span className="mut">{e.why}</span></> : e.text}{e.mode === 'shadow' && e.code === 'boost' ? <span className="pill">shadow</span> : null}<span className="sr">{label}</span></>;
 };
 const hhmm = (iso) => (iso ? iso.slice(11, 16) : '–');
 const mins = (a, b) => Math.round((new Date(b) - new Date(a)) / 60000);
 
 function Campaign({ c }) {
-  const [label, cls] = CODE[c.decision?.code] || ['–', 'mut'];
+  const [label, cls] = failed(c.decision) ? ['FAILED', 'crit'] : (CODE[c.decision?.code] || ['–', 'mut']);
   const t = c.today || {};
   const r90 = c.roas90 || {};
   const pct = c.usage_pct == null ? null : Math.max(0, Math.min(100, c.usage_pct));
@@ -36,7 +42,7 @@ function Campaign({ c }) {
         <div className="kpi"><div className="tl mut small">Today through {t.through || '–'}</div><div className="v">{money(t.cost)} <span className="mut">→ {money(t.sales)}</span></div>
           <div className="d"><span>{t.clicks ?? 0} clicks</span><span>{t.orders ?? 0} orders</span><span>{(t.impressions ?? 0).toLocaleString()} impr.</span></div></div>
       </div>
-      <p className="bst-why">{c.decision?.text}</p>
+      <p className="bst-why"><Line e={c.decision} /></p>
       {c.sent && <p className={'small ' + (c.sent.ok ? 'bst-good' : 'bst-crit')}>Sent to Amazon: {money(c.sent.from)} → {money(c.sent.to)} ({c.sent.note}).</p>}
       {c.note && <p className="small mut">{c.note}</p>}
     </div>
@@ -79,17 +85,13 @@ export default function Boost() {
             <p className="nav-eyebrow">{day}{day === b.day ? ' · today' : ''}</p>
             <table className="bst-log">
               <tbody>
-                {log.filter((e) => e.t.startsWith(day)).map((e, i) => {
-                  const [label, cls] = CODE[e.code] || ['–', 'mut'];
-                  return (
-                    <tr key={i} className={e.sent ? 'sent' : ''}>
-                      <td className="t">{hhmm(e.t)}</td>
-                      <td className="n">{e.name}</td>
-                      <td><span className={'pill st bst-' + cls}>{label}</span>{e.mode === 'shadow' && (e.code === 'boost') ? <span className="pill">shadow</span> : null}</td>
-                      <td className="w">{e.text}</td>
-                    </tr>
-                  );
-                })}
+                {log.filter((e) => e.t.startsWith(day)).map((e, i) => (
+                  <tr key={i} className={e.sent ? 'sent' : failed(e) ? 'fail' : ''}>
+                    <td className="t">{hhmm(e.t)}</td>
+                    <td className="n">{e.name}</td>
+                    <td className="w"><Line e={e} /></td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
