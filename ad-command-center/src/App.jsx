@@ -12,6 +12,7 @@ import Account from './Account.jsx';
 import Top3 from './Top3.jsx';
 import Weekly from './Weekly.jsx';
 import Rules from './Rules.jsx';
+import Boost from './Boost.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -22,6 +23,7 @@ const NAV = [
   ['top3', 'Top 3'],
   ['weekly', 'Weekly report'],
   ['judge', 'Rules'],
+  ['boost', 'Budget boost'],
   ['audiences', 'Audiences'],
   ['history', 'History'],
 ];
@@ -37,6 +39,7 @@ const ICON = {
   top3: sv(<><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></>),
   audiences: sv(<><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 21a7 7 0 0 0-4-6.3"/></>),
   judge: sv(<><path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></>),
+  boost: sv(<><path d="M12 19V5M5 12l7-7 7 7"/><path d="M5 21h14"/></>),
   weekly: sv(<><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h4M7 17h7"/></>),
   history: sv(<><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></>),
 };
@@ -55,7 +58,7 @@ export async function api(path, opts = {}) {
 function route() {
   let h = (location.hash || '#/dashboard').replace(/^#\/?/, '').split('?')[0];   // #/update?focus=... keeps its query for the page
   if (h === 'roadmap') h = 'audiences';   // old links
-  if (FAM.id === 'ACCOUNT') return h === 'weekly' || h === 'judge' ? h : 'dashboard';   // the whole-account page: dashboard + weekly reports
+  if (FAM.id === 'ACCOUNT') return h === 'weekly' || h === 'judge' || h === 'boost' ? h : 'dashboard';   // the whole-account page: dashboard + weekly reports
   return NAV.some(([k]) => k === h) ? h : 'dashboard';
 }
 
@@ -86,8 +89,8 @@ export default function App() {
 
   const signOut = async () => { await api('logout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ csrf }) }); setUser(null); };
 
-  const navItems = NAV.filter(([k]) => FAM.id !== 'ACCOUNT' || k === 'dashboard' || k === 'weekly' || k === 'judge').filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP');
-  const title = FAM.id === 'ACCOUNT' && page !== 'weekly' && page !== 'judge' ? 'Whole account' : (NAV.find(([k]) => k === page) || NAV[0])[1];
+  const navItems = NAV.filter(([k]) => FAM.id !== 'ACCOUNT' || k === 'dashboard' || k === 'weekly' || k === 'judge' || k === 'boost').filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP');
+  const title = FAM.id === 'ACCOUNT' && page !== 'weekly' && page !== 'judge' && page !== 'boost' ? 'Whole account' : (NAV.find(([k]) => k === page) || NAV[0])[1];
   const curFam = fams.find((f) => f.family && f.family === FAM.id);
 
   return (
@@ -125,7 +128,7 @@ export default function App() {
           <div className="topbar-act"><Kill csrf={csrf} user={user} /></div>
         </div>
         <main className="wrap">
-          {page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+          {page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : page === 'boost' ? <Boost key="boost" /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
         </main>
       </div>
     </div>
