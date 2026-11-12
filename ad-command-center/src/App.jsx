@@ -14,6 +14,7 @@ import Weekly from './Weekly.jsx';
 import Rules from './Rules.jsx';
 import Boost from './Boost.jsx';
 import NotSetUp from './NotSetUp.jsx';
+import AutoPage from './AutoPage.jsx';
 
 const NAV = [
   ['dashboard', 'Dashboard'],
@@ -129,7 +130,7 @@ export default function App() {
           <div className="topbar-act"><Kill csrf={csrf} user={user} /></div>
         </div>
         <main className="wrap">
-          {curFam?.setup === 'boost-only' && page !== 'boost' ? <NotSetUp key="nsu" fam={curFam} /> : page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : page === 'boost' ? <Boost key="boost" csrf={csrf} user={user} /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+          {curFam?.setup === 'boost-only' && page !== 'boost' ? <NotSetUp key="nsu" fam={curFam} /> : curFam?.setup === 'auto' && page !== 'boost' ? <AutoPage key="auto" fam={curFam} /> : page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : page === 'boost' ? <Boost key="boost" csrf={csrf} user={user} /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
         </main>
       </div>
     </div>
