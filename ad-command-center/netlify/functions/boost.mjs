@@ -4,7 +4,7 @@
 // a budget goes to Amazon right away (PUT /sp/campaigns) and is read back; the robot takes it as the new base next hour.
 import { json, err, body } from '../lib/http.mjs';
 import { currentUser, csrfOk, can } from '../lib/auth.mjs';
-import { db, dataset, audit } from '../lib/supabase.mjs';
+import { db, dataset, audit, FAMILY } from '../lib/supabase.mjs';
 import { send, spList } from '../lib/ads.mjs';
 
 const liveBudget = async (cid) => (await spList('/sp/campaigns/list', 'spCampaign', 'campaigns', { campaignIdFilter: { include: [cid] } }))[0]?.budget?.budget ?? null;
@@ -17,7 +17,16 @@ export default async (req) => {
   if (req.method === 'GET') {
     const [d, s] = await Promise.all([dataset('boost', 'ACCOUNT'), dataset('boost_settings', 'ACCOUNT')]);
     if (!d?.payload) return json({ ok: true, boost: null, settings: {} });
-    return json({ ok: true, boost: d.payload, settings: s?.payload || {}, can_edit: can(u, 'approver'), produced_at: d.produced_at, now: new Date().toISOString() });
+    // a family page shows only that family's campaigns (the robot tags each campaign with its family); Whole account shows all
+    const fam = FAMILY();
+    let boost = d.payload;
+    if (fam !== 'ACCOUNT') {
+      const mine = (x) => x.family === fam;
+      const ids = new Set((boost.campaigns || []).filter(mine).map((c) => c.cid));
+      boost = { ...boost, campaigns: (boost.campaigns || []).filter(mine), log: (boost.log || []).filter((e) => e.family === fam || ids.has(e.cid)),
+        empty_reason: (boost.campaigns || []).some(mine) ? null : `No campaign of ${fam} is on the boost list. The list is set on the Mac (intel/_shared/boost.json); Whole account shows every campaign.` };
+    }
+    return json({ ok: true, boost, settings: s?.payload || {}, can_edit: can(u, 'approver'), produced_at: d.produced_at, now: new Date().toISOString() });
   }
   const f = await body(req);
   if (!csrfOk(u, req, f)) return err('bad request', 403);
