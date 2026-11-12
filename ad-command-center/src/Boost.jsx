@@ -17,7 +17,47 @@ const Line = ({ e }) => {
 const hhmm = (iso) => (iso ? iso.slice(11, 16) : '–');
 const mins = (a, b) => Math.round((new Date(b) - new Date(a)) / 60000);
 
-function Campaign({ c }) {
+// Settings people change here: the ROAS level the robot compares against, and the base daily budget (sent to Amazon at once).
+// Next to them, the campaign's own 90-day ROAS and the last 30 days, so the level is set against what the campaign really does.
+function Settings({ c, csrf, canEdit, onSaved }) {
+  const [level, setLevel] = useState(c.level?.value ?? c.roas90?.value ?? '');
+  const [budget, setBudget] = useState(c.base ?? '');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const m = c.marks || {};
+  const trend = m.roas90 != null && m.roas30 != null ? (m.roas30 >= m.roas90 * 1.1 ? 'up' : m.roas30 <= m.roas90 * 0.9 ? 'down' : 'flat') : null;
+  const save = async () => {
+    setBusy(true); setMsg('');
+    const f = { csrf, cid: c.cid, name: c.name };
+    if (level !== '' && Number(level) !== (c.level?.value ?? null)) f.level = Number(level);
+    if (budget !== '' && Number(budget) !== Number(c.base)) f.budget = Number(budget);
+    if (f.level == null && f.budget == null) { setBusy(false); setMsg('Nothing changed.'); return; }
+    const r = await api('boost', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(f) });
+    setBusy(false);
+    if (!r.ok) { setMsg(r.error || 'could not save'); return; }
+    setMsg([f.level != null ? `Level ${f.level} saved; the robot uses it from its next check.` : '', f.budget != null ? `Budget on Amazon now $${r.budget}.` : '', r.warning || ''].filter(Boolean).join(' '));
+    onSaved && onSaved();
+  };
+  return (
+    <div className="bst-set">
+      <div className="bst-ref">
+        <span><b>90-day ROAS {m.roas90 == null ? '–' : m.roas90.toFixed(2)}</b> <span className="mut">({m.days90 || 0} active days)</span></span>
+        <span><b>last 30 days {m.roas30 == null ? '–' : m.roas30.toFixed(2)}</b> {trend && <span className={'bst-tr ' + trend}>{trend === 'up' ? '▲ trending up' : trend === 'down' ? '▼ trending down' : '■ steady'}</span>}</span>
+        {c.level?.value != null && <span className="mut">level {c.level.value} set {c.level.by ? 'by ' + c.level.by : 'in the config'}</span>}
+      </div>
+      {canEdit && (
+        <div className="bst-form">
+          <label>ROAS level <input type="number" step="0.1" min="0.1" value={level} onChange={(e) => setLevel(e.target.value)} /></label>
+          <label>Daily budget $ <input type="number" step="1" min="1" value={budget} onChange={(e) => setBudget(e.target.value)} /></label>
+          <button className="btn sm" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save'}</button>
+          {msg && <span className="small mut">{msg}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Campaign({ c, csrf, canEdit, onSaved }) {
   const [label, cls] = failed(c.decision) ? ['FAILED', 'crit'] : (CODE[c.decision?.code] || ['–', 'mut']);
   const t = c.today || {};
   const r90 = c.roas90 || {};
@@ -43,13 +83,14 @@ function Campaign({ c }) {
           <div className="d"><span>{t.clicks ?? 0} clicks</span><span>{t.orders ?? 0} orders</span><span>{(t.impressions ?? 0).toLocaleString()} impr.</span></div></div>
       </div>
       <p className="bst-why"><Line e={c.decision} /></p>
+      <Settings c={c} csrf={csrf} canEdit={canEdit} onSaved={onSaved} />
       {c.sent && <p className={'small ' + (c.sent.ok ? 'bst-good' : 'bst-crit')}>Sent to Amazon: {money(c.sent.from)} → {money(c.sent.to)} ({c.sent.note}).</p>}
       {c.note && <p className="small mut">{c.note}</p>}
     </div>
   );
 }
 
-export default function Boost() {
+export default function Boost({ csrf }) {
   const [d, setD] = useState(null);
   const [error, setError] = useState('');
   const [tick, setTick] = useState(0);
@@ -76,7 +117,7 @@ export default function Boost() {
         <p className="bst-rule">{b.rule}</p>
         {b.empty_reason && <p className="mut">{b.empty_reason}</p>}
       </div>
-      {(b.campaigns || []).map((c) => <Campaign key={c.cid} c={c} />)}
+      {(b.campaigns || []).map((c) => <Campaign key={c.cid} c={c} csrf={csrf} canEdit={!!d.can_edit} onSaved={load} />)}
       <div className="card">
         <h2 className="sec">Hourly log, last 7 days</h2>
         {!log.length && <p className="mut">No checks logged yet.</p>}

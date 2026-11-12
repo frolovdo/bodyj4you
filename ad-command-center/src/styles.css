@@ -302,3 +302,9 @@ details.more>summary{padding:4px 0}
 .bst-why b{font-weight:700}.bst-log td.w b{font-weight:700;color:var(--ink)}
 .bst-log tr.fail td{background:var(--crit-tint)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.bst-set{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.bst-ref{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:6px}
+.bst-tr{font-size:12px;margin-left:4px}.bst-tr.up{color:var(--good)}.bst-tr.down{color:var(--crit)}.bst-tr.flat{color:var(--ink-2)}
+.bst-form{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px}
+.bst-form label{display:inline-flex;gap:6px;align-items:center}
+.bst-form input{width:84px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit}
