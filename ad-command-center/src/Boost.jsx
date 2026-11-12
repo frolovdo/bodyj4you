@@ -30,9 +30,9 @@ function Campaign({ c }) {
         <div className="kpi"><div className="tl mut small">Budget used (Amazon)</div><div className="v">{pct == null ? '–' : Math.round(pct) + '%'}</div>
           <div className="bst-bar"><i style={{ width: (pct || 0) + '%' }} className={pct >= 80 ? 'hot' : ''} /></div>
           <div className="d">{c.usage_at ? 'as of ' + hhmm(new Date(c.usage_at).toLocaleString('sv-SE', { timeZone: 'America/Los_Angeles' })) : ''}</div></div>
-        <div className="kpi"><div className="tl mut small">ROAS today vs 90 days</div>
+        <div className="kpi"><div className="tl mut small">ROAS today (expected) vs mark</div>
           <div className={'v ' + (above == null ? '' : above ? 'bst-good' : 'bst-crit')}>{t.roas == null ? '–' : t.roas.toFixed(2)} <span className="mut">/ {r90.value == null ? '–' : r90.value.toFixed(2)}</span></div>
-          <div className="d">{r90.source}</div></div>
+          <div className="d">{t.roas_seen != null && <span>{t.roas_seen.toFixed(2)} seen so far, corrected with {t.lag_source || 'the lag curve'}</span>}<span>mark: {r90.source}</span></div></div>
         <div className="kpi"><div className="tl mut small">Today through {t.through || '–'}</div><div className="v">{money(t.cost)} <span className="mut">→ {money(t.sales)}</span></div>
           <div className="d"><span>{t.clicks ?? 0} clicks</span><span>{t.orders ?? 0} orders</span><span>{(t.impressions ?? 0).toLocaleString()} impr.</span></div></div>
       </div>
