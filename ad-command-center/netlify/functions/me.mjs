@@ -9,12 +9,14 @@ export default async (req) => {
   if (!u) return json({ ok: false, user: null }, 401);
   const [{ data: fams }, rank] = await Promise.all([db().from('families').select('family, managed').order('family'), dataset('parent_ranking', '_system').catch(() => null)]);
   const byFam = Object.fromEntries((fams || []).map((r) => [r.family, r]));
-  const meta = (f) => ({ label: byFam[f]?.managed?.terms?.label || (f === 'EO-ROSEHIP' ? 'Rosehip' : f), head: byFam[f]?.managed?.terms?.head || 'rosehip oil' });
+  const meta = (f) => ({ label: byFam[f]?.managed?.terms?.label || (f === 'EO-ROSEHIP' ? 'Rosehip' : f), head: byFam[f]?.managed?.terms?.head || 'rosehip oil', setup: byFam[f]?.managed?.status || 'full' });
   let families = (rank?.payload?.parents || []).filter((p) => !/needle|PN10G/i.test(p.parent_sku || '')).filter((p, i) => i < 20 || (p.family && byFam[p.family])).map((p) => ({
     rank: p.rank, parent_sku: p.parent_sku, name: p.name, sales_30d: p.sales_30d,
     family: p.family && byFam[p.family] ? p.family : null, ...(p.family ? meta(p.family) : { label: p.parent_sku, head: '' }),
   }));
   if (!families.length) families = (fams || []).map((r) => ({ family: r.family, parent_sku: r.family, ...meta(r.family) }));  // ranking not pushed yet
+  // set-up families outside the ranking (a boost-only family like FJ9804) are listed too, after the ranked ones
+  for (const r of fams || []) if (!families.some((f) => f.family === r.family)) families.push({ rank: null, parent_sku: r.family, name: r.managed?.terms?.label || r.family, family: r.family, ...meta(r.family) });
   // first entry: the whole account (daily brief for all families + one line per family), see account.mjs
   families.unshift({ rank: 0, parent_sku: 'Whole account', name: 'all families', family: 'ACCOUNT', label: 'Whole account', head: '' });
   return json({ ok: true, user: { name: u.name, role: u.role }, csrf: u.csrf, family: FAMILY(), families, ranking_window: rank?.payload?.window || null });
