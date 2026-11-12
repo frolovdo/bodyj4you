@@ -49,7 +49,7 @@ function Settings({ c, csrf, canEdit, onSaved }) {
         <div className="bst-form">
           <label>ROAS level <input type="number" step="0.1" min="0.1" value={level} onChange={(e) => setLevel(e.target.value)} /></label>
           <label>Daily budget $ <input type="number" step="1" min="1" value={budget} onChange={(e) => setBudget(e.target.value)} /></label>
-          <button className="btn sm" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save'}</button>
+          <button className="btn sm" disabled={busy} onClick={save}>{busy ? 'Sending…' : 'Send to Amazon'}</button>
           {msg && <span className="small mut">{msg}</span>}
         </div>
       )}
