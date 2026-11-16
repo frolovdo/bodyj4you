@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { api } from './App.jsx';
 
-// Budget boost: the hourly robot (Mac, adsops/ac_boost.py, every hour at :15 Pacific) and its reasoning. Data: dataset
-// ACCOUNT/boost. The page refreshes itself every minute; a check older than 75 minutes is flagged (the Mac job did not run).
+// Budget boost: the robot (Mac, adsops/ac_boost.py, every 2 hours at :15 Pacific) and its reasoning. Data: dataset
+// ACCOUNT/boost. The page refreshes itself every minute; a check older than the interval + 15 minutes is flagged.
+// History and day totals cover only the campaigns shown (the selected variation, or every campaign on Whole account).
 const money = (v) => (v == null ? '–' : '$' + (Number.isInteger(+v) || +v >= 20 ? Math.round(+v) : (+v).toFixed(2)));
 const CODE = {
   boost: ['RAISED', 'good'], boosted: ['HOLDING', 'good'], below: ['NOTHING', 'crit'], room: ['WAITING', 'ok'],
   early: ['EARLY', 'mut'], window: ['NIGHT', 'mut'], nodata: ['NO DATA', 'mut'], reset: ['RESET', 'acc'],
 };
+// budget usage ("53% of $50 used", "budget use unknown") in bold wherever it appears in a reason
+const USE = /(\d+% of \$[\d.,]+ used|budget use unknown)/;
+const boldUse = (t) => String(t || '').split(USE).map((p, i) => (i % 2 ? <b key={i}>{p}</b> : p));
 const failed = (e) => /FAILED/.test(e?.head || e?.text || '');
 // one log line: a signal, the bold headline, one plain reason (older entries only have the full text)
 const Line = ({ e }) => {
   const [label, cls] = failed(e) ? ['FAILED', 'crit'] : (CODE[e.code] || ['–', 'mut']);
-  return <><span className={'bst-sig ' + cls} />{e.head ? <><b>{e.head}.</b> <span className="mut">{e.why}</span></> : e.text}{e.mode === 'shadow' && e.code === 'boost' ? <span className="pill">shadow</span> : null}<span className="sr">{label}</span></>;
+  return <><span className={'bst-sig ' + cls} />{e.head ? <><b>{e.head}.</b> <span className="mut">{boldUse(e.why)}</span></> : boldUse(e.text)}{e.mode === 'shadow' && e.code === 'boost' ? <span className="pill">shadow</span> : null}<span className="sr">{label}</span></>;
 };
 const hhmm = (iso) => (iso ? iso.slice(11, 16) : '–');
 const mins = (a, b) => Math.round((new Date(b) - new Date(a)) / 60000);
@@ -101,9 +105,23 @@ export default function Boost({ csrf }) {
   const b = d.boost;
   if (!b) return <div className="card"><p className="mut">The boost robot has not reported yet. It runs on the Mac every hour at :15 (job "boost").</p></div>;
   const age = mins(b.as_of, d.now);
-  const stale = age > 75;
-  const log = [...(b.log || [])].reverse();
-  const days = [...new Set(log.map((e) => e.t.slice(0, 10)))];
+  const every = b.every_min || 60;
+  const stale = age > every + 15;
+  const shown = new Set((b.campaigns || []).map((c) => c.cid));
+  const log = [...(b.log || [])].reverse().filter((e) => shown.has(e.cid));
+  // each day's totals over the campaigns shown: spend, sales, orders, closing ROAS
+  const totals = {};
+  for (const x of b.days || []) {
+    const t = { cost: 0, sales: 0, orders: 0, status: x.status, rows: [] };
+    for (const [cid, v] of Object.entries(x.campaigns || {})) {
+      if (!shown.has(cid)) continue;
+      t.cost += v.cost; t.sales += v.sales; t.orders += v.orders;
+      t.rows.push({ cid, name: (b.campaigns.find((c) => c.cid === cid) || {}).name || cid, ...v });
+    }
+    t.roas = t.cost ? t.sales / t.cost : null;
+    totals[x.day] = t;
+  }
+  const days = [...new Set([...log.map((e) => e.t.slice(0, 10)), ...Object.keys(totals)])].sort().reverse();
   return (
     <div className="bst">
       <div className={'card bst-top' + (stale ? ' block' : '')}>
@@ -112,31 +130,48 @@ export default function Boost({ csrf }) {
             <span className={'pill st ' + (b.mode === 'live' ? 'bst-live' : 'bst-shadow')}>{b.mode === 'live' ? 'LIVE: sends budget changes' : 'SHADOW: decides, sends nothing'}</span>
             <span className="pill">campaigns matching “{b.match}”</span>
           </div>
-          <div className="small">Last check {hhmm(b.as_of)} Pacific · {age < 1 ? 'just now' : age + ' min ago'}{stale ? ' · the hourly job has not reported for over 75 minutes' : ''}</div>
+          <div className="small">Checks every {every >= 120 ? every / 60 + ' hours' : 'hour'} · last {hhmm(b.as_of)} Pacific · {age < 1 ? 'just now' : age + ' min ago'}{stale ? ` · the job has not reported for over ${every + 15} minutes` : ''}</div>
         </div>
         <p className="bst-rule">{b.rule}</p>
         {b.empty_reason && <p className="mut">{b.empty_reason}</p>}
       </div>
       {(b.campaigns || []).map((c) => <Campaign key={c.cid} c={c} csrf={csrf} canEdit={!!d.can_edit} onSaved={load} />)}
       <div className="card">
-        <h2 className="sec">Hourly log, last 7 days</h2>
-        {!log.length && <p className="mut">No checks logged yet.</p>}
-        {days.map((day) => (
-          <div key={day} className="bst-day">
-            <p className="nav-eyebrow">{day}{day === b.day ? ' · today' : ''}</p>
-            <table className="bst-log">
-              <tbody>
-                {log.filter((e) => e.t.startsWith(day)).map((e, i) => (
-                  <tr key={i} className={e.sent ? 'sent' : failed(e) ? 'fail' : ''}>
-                    <td className="t">{hhmm(e.t)}</td>
-                    <td className="n">{e.name}</td>
-                    <td className="w"><Line e={e} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
+        <h2 className="sec">Day by day, last 7 days</h2>
+        {!days.length && <p className="mut">No checks logged yet.</p>}
+        {days.map((day) => {
+          const t = totals[day];
+          const isToday = day === b.day;
+          return (
+            <details key={day} className="bst-day" open={isToday}>
+              <summary>
+                <span className="bst-date">{day}{isToday ? ' · today' : ''}</span>
+                {t ? <span className="bst-close">
+                  <span>{isToday ? 'ROAS so far' : 'closing ROAS'} <b>{t.roas == null ? '–' : t.roas.toFixed(2)}</b></span>
+                  <span><b>{t.orders}</b> order{t.orders === 1 ? '' : 's'}</span>
+                  <span className="mut">{money(t.cost)} spend → {money(t.sales)} sales</span>
+                  {t.status === 'updating' && <span className="mut small">late orders still landing</span>}
+                </span> : <span className="mut small">no day totals</span>}
+              </summary>
+              {t && t.rows.length > 1 && (
+                <table className="bst-log bst-sum"><tbody>
+                  {t.rows.map((r) => <tr key={r.cid}><td className="n">{r.name}</td><td>ROAS <b>{r.roas == null ? '–' : r.roas.toFixed(2)}</b></td><td><b>{r.orders}</b> orders</td><td className="mut">{money(r.cost)} → {money(r.sales)}</td></tr>)}
+                </tbody></table>
+              )}
+              <table className="bst-log">
+                <tbody>
+                  {log.filter((e) => e.t.startsWith(day)).map((e, i) => (
+                    <tr key={i} className={e.sent ? 'sent' : failed(e) ? 'fail' : ''}>
+                      <td className="t">{hhmm(e.t)}</td>
+                      <td className="n">{e.name}</td>
+                      <td className="w"><Line e={e} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
+          );
+        })}
       </div>
     </div>
   );
