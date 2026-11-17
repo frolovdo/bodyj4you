@@ -1295,8 +1295,9 @@ function candidates(line){
   const asins=new Set();if(line.asin)asins.add(line.asin);if(SKU_ASIN[line.sku])asins.add(SKU_ASIN[line.sku]);(BASE_ASINS[skuBase(line.sku)]||[]).forEach(a=>asins.add(a));
   const out=[];asins.forEach(a=>(SKUS[a]||[]).filter(x=>!/^amzn\.gr\./i.test(x[0])).forEach(x=>out.push({sku:x[0],fnsku:x[1],avail:x[2],inb:x[3],asin:a})));return out;
 }
-function expField(m){if(!m||!EXPIRY.has(m))return"";const v=ship.exp[m]||"",n=v?expDays(v):null;
-  return `<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="bc unk">Expiration date (on the box)</span><input type="date" data-exp="${esc(m)}" value="${esc(v)}" aria-label="expiration date for ${esc(m)}">${n==null?"":n<0?'<span style="color:var(--crit)">already expired</span>':n<105?`<span style="color:var(--warn)">${n} days left — Amazon wants 105+</span>`:`<span style="color:var(--ok, inherit)">${n} days left</span>`}</div>`;}
+const exp2y=()=>{const d=new Date();d.setFullYear(d.getFullYear()+2);return d.toISOString().slice(0,10);};
+function expField(m){if(!m||!EXPIRY.has(m))return"";if(!ship.exp[m])ship.exp[m]=exp2y();const v=ship.exp[m],n=expDays(v);
+  return `<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="bc unk">Expiration (auto: ship date + 2 years)</span><input type="date" data-exp="${esc(m)}" value="${esc(v)}" aria-label="expiration date for ${esc(m)}">${n==null?"":n<0?'<span style="color:var(--crit)">already expired</span>':n<105?`<span style="color:var(--warn)">${n} days left — Amazon wants 105+</span>`:`<span style="color:var(--ok, inherit)">${n} days left</span>`}</div>`;}
 function shipLineHtml(l,i){
   if(ship.source==="walmart")return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}</div><span class="bc upc">Walmart SKU · its own UPC/GTIN barcode</span></div><input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
   const opts=l.cands.map((c,j)=>{const [,lab]=barcode(c.fnsku,c.asin),lm=ship.last[c.sku+"|"+ship.source],lo=ship.last[c.sku+"|"+(ship.source==="miami"?"china":"miami")];
