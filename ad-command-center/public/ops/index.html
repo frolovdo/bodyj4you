@@ -1023,6 +1023,7 @@ function applySnapshot(snap){
   if(d.cogs&&typeof d.cogs==="object")for(const k in d.cogs)if(!(k in COGS)||!COGS[k])COGS[k]=d.cogs[k];
   if(d.family&&typeof d.family==="object")FAMILY=d.family;
   if(d.skus)indexSkus(d.skus);
+  if(d.expiry_skus)d.expiry_skus.forEach(x=>EXPIRY.add(x));
   RET_ERR=d.returns_error||null;if(d.returns&&Array.isArray(d.returns.reasons)){RETURNS=d.returns;RET_LIVE=true;}
   VOC_ERR=d.voc_error||null;if(d.voc&&Array.isArray(d.voc.issues))VOC=d.voc;renderVoc();if(VOC&&!VXA_LOADED)loadVocActions();
   CN_IN=Array.isArray(d.cn_inbound)?d.cn_inbound:null;CN_ERR=d.cn_inbound_error||null;renderPending();
@@ -1283,7 +1284,8 @@ document.getElementById("inbBody").addEventListener("click",e=>{
 });
 // ---- Create FBA shipment: pick ship-from address + the Amazon SKU each line ships under ----
 // SKUS: every seller SKU per ASIN from the last pull: [sku, fnsku, available, inbound]. FNSKU X00… = needs our label; FNSKU = ASIN = sells on its UPC.
-let SKUS={},SKU_ASIN={},BASE_ASINS={},ADDR=null,ship=null,shipBusy=false;
+let SKUS={},SKU_ASIN={},BASE_ASINS={},ADDR=null,ship=null,shipBusy=false,EXPIRY=new Set();
+const DAY=864e5,expDays=v=>Math.round((new Date(v+"T12:00:00")-new Date())/DAY);
 const skuBase=s=>String(s||"").replace(/_[A-Za-z]+$/,"").toUpperCase();
 function indexSkus(map){SKUS=map||{};SKU_ASIN={};BASE_ASINS={};
   for(const [a,list] of Object.entries(SKUS))for(const x of list){SKU_ASIN[x[0]]=a;(BASE_ASINS[skuBase(x[0])]=BASE_ASINS[skuBase(x[0])]||new Set()).add(a);}}
@@ -1293,23 +1295,22 @@ function candidates(line){
   const asins=new Set();if(line.asin)asins.add(line.asin);if(SKU_ASIN[line.sku])asins.add(SKU_ASIN[line.sku]);(BASE_ASINS[skuBase(line.sku)]||[]).forEach(a=>asins.add(a));
   const out=[];asins.forEach(a=>(SKUS[a]||[]).filter(x=>!/^amzn\.gr\./i.test(x[0])).forEach(x=>out.push({sku:x[0],fnsku:x[1],avail:x[2],inb:x[3],asin:a})));return out;
 }
+function expField(m){if(!m||!EXPIRY.has(m))return"";const v=ship.exp[m]||"",n=v?expDays(v):null;
+  return `<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="bc unk">Expiration date (on the box)</span><input type="date" data-exp="${esc(m)}" value="${esc(v)}" aria-label="expiration date for ${esc(m)}">${n==null?"":n<0?'<span style="color:var(--crit)">already expired</span>':n<105?`<span style="color:var(--warn)">${n} days left — Amazon wants 105+</span>`:`<span style="color:var(--ok, inherit)">${n} days left</span>`}</div>`;}
 function shipLineHtml(l,i){
   if(ship.source==="walmart")return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}</div><span class="bc upc">Walmart SKU · its own UPC/GTIN barcode</span></div><input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
   const opts=l.cands.map((c,j)=>{const [,lab]=barcode(c.fnsku,c.asin),lm=ship.last[c.sku+"|"+ship.source],lo=ship.last[c.sku+"|"+(ship.source==="miami"?"china":"miami")];
     return `<option value="${j}"${j===l.pick?" selected":""}>${esc(c.sku)} · ${lab.split(" —")[0]} · ${c.avail} in stock${c.inb?" +"+c.inb+" inbound":""}${lm?" · last "+ship.source+" "+dshort(lm):lo?" · last "+(ship.source==="miami"?"china":"miami")+" "+dshort(lo):""}</option>`;}).join("");
   const c=l.cands[l.pick],[bc,bl]=c?barcode(c.fnsku,c.asin):["unk","No Amazon SKU found — type the SKU"];
   const many=l.cands.length>1,cls="pick"+(many?(l.seen?" ok":""):" one");
-  return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}${many?`<span class="picknote${l.seen?" ok":""}">${l.seen?"✓ picked":l.cands.length+" Amazon SKUs — pick one"}</span>`:""}</div>${l.cands.length?`<select data-pick="${i}" class="${cls}">${opts}</select>`:`<input data-manual="${i}" placeholder="Amazon SKU" value="${esc(l.manual||"")}">`}<span class="bc ${bc}">${esc(bl)}</span></div>
+  return `<div class="sl" data-i="${i}"><div><div class="from">${esc(l.sku)}${many?`<span class="picknote${l.seen?" ok":""}">${l.seen?"✓ picked":l.cands.length+" Amazon SKUs — pick one"}</span>`:""}</div>${l.cands.length?`<select data-pick="${i}" class="${cls}">${opts}</select>`:`<input data-manual="${i}" placeholder="Amazon SKU" value="${esc(l.manual||"")}">`}<span class="bc ${bc}">${esc(bl)}</span>${expField(c?c.sku:(l.manual||""))}</div>
     <input class="q" data-sq="${i}" value="${l.qty}" inputmode="numeric" aria-label="quantity"><button class="x" data-srm="${i}" aria-label="remove line">&times;</button></div>`;
 }
 function renderShip(){
   const left=ship.source==="walmart"?0:ship.lines.filter(l=>l.cands.length>1&&!l.seen).length;
-  document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")+expHtml()||'<div class="ord-empty">No lines.</div>';
+  document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")||'<div class="ord-empty">No lines.</div>';
   document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";
 }
-function expHtml(){const n=Object.keys(ship.exp||{});if(!n.length)return"";
-  return `<div class="mstatus" style="margin:8px 0 4px;background:var(--warn-tint);color:var(--warn);padding:8px 10px;border-radius:7px"><b>Expiration date</b> — Amazon needs the date printed on the box (must be at least ~105 days away).`+
-  n.map(m=>`<div style="margin-top:6px;display:flex;gap:8px;align-items:center"><span class="mono" style="min-width:120px">${esc(m)}</span><input type="date" data-exp="${esc(m)}" value="${esc(ship.exp[m]||"")}"></div>`).join("")+`</div>`;}
 const SHIP_SUB=document.getElementById("shipSub").innerHTML;
 function shipStatus(msg,cls){document.getElementById("shipStatus").innerHTML=msg?`<div class="mstatus ${cls||""}" style="margin:0 0 10px">${msg}</div>`:"";}
 async function openShip(o){
@@ -1341,7 +1342,8 @@ document.getElementById("shipLines").addEventListener("change",e=>{disarmShip();
 document.getElementById("shipLines").addEventListener("input",e=>{const t=e.target;
   if(t.dataset.sq!=null){ship.lines[+t.dataset.sq].qty=Math.max(0,parseInt(t.value||"0",10)||0);document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";}
   if(t.dataset.manual!=null)ship.lines[+t.dataset.manual].manual=t.value.trim();
-  if(t.dataset.exp!=null)ship.exp[t.dataset.exp]=t.value;});
+});
+document.getElementById("shipLines").addEventListener("change",e=>{const t=e.target;if(t.dataset.exp!=null){ship.exp[t.dataset.exp]=t.value;renderShip();}});
 document.getElementById("shipLines").addEventListener("click",e=>{const x=e.target.closest("[data-srm]");if(!x)return;ship.lines.splice(+x.dataset.srm,1);renderShip();});
 const closeShip=()=>{if(!shipBusy)document.getElementById("shipScrim").classList.remove("open");};
 document.getElementById("shipCancel").addEventListener("click",closeShip);
@@ -1354,7 +1356,8 @@ document.getElementById("shipGo").addEventListener("click",async()=>{
   if(!addr){shipStatus("Pick a ship-from address.","err");return;}
   const bad=items.filter(i=>!i.msku);if(bad.length){shipStatus("Type the Amazon SKU for every line without one.","err");return;}
   if(!items.length){shipStatus("No lines with a quantity.","err");return;}
-  const noExp=Object.keys(ship.exp).filter(m=>!ship.exp[m]&&items.some(i=>i.msku===m));if(noExp.length){shipStatus("Enter the expiration date for "+esc(noExp.join(", "))+".","err");return;}
+  const noExp=items.filter(i=>EXPIRY.has(i.msku)&&!ship.exp[i.msku]).map(i=>i.msku);if(noExp.length){shipStatus("Enter the expiration date (printed on the box) for "+esc(noExp.join(", "))+".","err");return;}
+  const old=items.filter(i=>i.expiration&&expDays(i.expiration)<0).map(i=>i.msku);if(old.length){shipStatus("Expiration date is in the past for "+esc(old.join(", "))+".","err");return;}
   const dup=items.map(i=>i.msku).filter((m,i,a)=>a.indexOf(m)!==i);if(dup.length){shipStatus("Same Amazon SKU on two lines: "+esc([...new Set(dup)].join(", "))+" — merge them.","err");return;}
   const tot=items.reduce((a,b)=>a+b.qty,0);
   if(!go.dataset.armed){go.dataset.armed="1";go.textContent=`Yes — create it (${tot.toLocaleString()} units)`;go.style.background="var(--crit)";go.style.borderColor="var(--crit)";
@@ -1376,7 +1379,7 @@ document.getElementById("shipGo").addEventListener("click",async()=>{
       loadOrders();return;}
     if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();
       const mx=/NEEDS_EXPIRY:([^\s]+)/.exec(st.message||"");
-      if(mx){mx[1].split(",").forEach(m=>{if(!(m in ship.exp))ship.exp[m]="";});renderShip();shipStatus("Not created yet — enter the expiration date for "+esc(mx[1].replace(/,/g,", "))+" below, then create again.","err");return;}
+      if(mx){mx[1].split(",").forEach(m=>EXPIRY.add(m));renderShip();shipStatus("Not created yet — enter the expiration date for "+esc(mx[1].replace(/,/g,", "))+" below, then create again.","err");return;}
       shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
     shipStatus("Sending to "+PLAT()+"… "+(STEP[st.status]?esc(st.status):"")+" ("+Math.round((Date.now()-t0)/1000)+"s)");
   }
