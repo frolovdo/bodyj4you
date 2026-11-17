@@ -315,3 +315,11 @@ details.more>summary{padding:4px 0}
 .bst-form input{width:84px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:inherit}
 .nsu-t{width:100%;border-collapse:collapse;font-size:13px}.nsu-t th{text-align:left;font-weight:600;color:var(--ink-2);padding:6px 10px 6px 0;border-bottom:1px solid var(--line)}
 .nsu-t td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top}.nsu-t tr.on td{background:var(--good-tint)}
+
+/* History: change log */
+.cl-bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:6px}
+.cl-bar select{max-width:100%}
+.cl-day{border-top:1px solid var(--line)}
+.cl-day>summary{cursor:pointer;padding:9px 0}
+.cl-t td{vertical-align:top}.cl-t td:first-child{width:52px}
+.cl-ext{color:var(--warn,#b26b00)}

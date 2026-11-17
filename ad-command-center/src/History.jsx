@@ -4,6 +4,37 @@ import Popup from './Popup.jsx';
 
 const money = (v) => (v == null || isNaN(v) ? '-' : '$' + Math.round(v));
 
+// Change log: every change on this family's campaigns, day by day (newest day open), from Amazon's own history, with who made it.
+function ChangeLog({ log }) {
+  const [camp, setCamp] = useState('');
+  const [who, setWho] = useState('');
+  if (!log) return <div className="card"><p className="mut">The change log has not been built for this family yet. It is rebuilt every morning on the Mac.</p></div>;
+  const whos = [...new Set(log.days.flatMap((d) => d.groups.map((g) => g.who)))].sort();
+  const days = log.days.map((d) => ({ ...d, groups: d.groups.filter((g) => (!camp || g.cid === camp) && (!who || g.who === who)) })).filter((d) => d.groups.length);
+  return (
+    <div className="card">
+      <div className="cl-bar">
+        <select value={camp} onChange={(e) => setCamp(e.target.value)}><option value="">All {log.campaigns.length} campaigns</option>{log.campaigns.map((c) => <option key={c.cid} value={c.cid}>{c.name}</option>)}</select>
+        <select value={who} onChange={(e) => setWho(e.target.value)}><option value="">Anyone</option>{whos.map((w) => <option key={w}>{w}</option>)}</select>
+        <span className="mut small">Last {log.days_back} days · updated {log.as_of.slice(0, 16).replace('T', ' ')} PT</span>
+      </div>
+      {!days.length && <p className="mut">No changes match.</p>}
+      {days.map((d, i) => (
+        <details key={d.day} className="cl-day" open={i === 0}>
+          <summary><b>{d.day}</b> <span className="mut small">{d.groups.length} change{d.groups.length === 1 ? '' : 's'} · {[...new Set(d.groups.map((g) => g.campaign))].length} campaign{[...new Set(d.groups.map((g) => g.campaign))].length === 1 ? '' : 's'}</span></summary>
+          <table className="kt cl-t"><tbody>
+            {d.groups.map((g, j) => (
+              <tr key={j}><td className="mut" style={{ whiteSpace: 'nowrap' }}>{g.t}</td><td>{g.campaign}</td>
+                <td><b>{g.what}</b>{g.items?.length ? <details><summary className="small mut">{g.items.length} item{g.items.length === 1 ? '' : 's'}</summary><ul className="small">{g.items.map((x, k) => <li key={k}>{x}</li>)}</ul></details> : null}
+                  {g.why && <div className="small mut">{g.why}</div>}</td>
+                <td className={'small ' + (g.who.startsWith('Amazon console') ? 'cl-ext' : '')}>{g.who}</td></tr>))}
+          </tbody></table>
+        </details>
+      ))}
+    </div>
+  );
+}
+
 export default function History({ csrf }) {
   const [d, setD] = useState(null);
   const [error, setError] = useState('');
@@ -51,6 +82,9 @@ export default function History({ csrf }) {
             <td className="small">{b.why}</td>
             <td>{b.restorable && d.can_send ? <button className="btn alt sm" onClick={() => restore(b.time)}>Restore to before {b.time.slice(5)}</button> : <span className="mut small">{b.restorable ? '' : b.ok ? "can't be undone" : 'nothing to undo'}</span>}</td></tr>))}
       </tbody></table></div></div>
+      <h2>Change log: every change on these campaigns</h2>
+      <p className="mut small">From Amazon's own change history, refreshed every morning: changes made in the Amazon console, by other tools, by Amazon's budget rules, by the robots and from here. Each one is matched to our send records to say who made it.</p>
+      <ChangeLog log={d.changelog} />
       <h2>Hypotheses and benchmarks</h2>
       <div className="card"><div className="wrap"><table className="kt"><thead><tr><th>Saved</th><th>By</th><th>Campaign</th><th>Hypothesis</th><th>Benchmark then</th><th>Verdict now</th></tr></thead><tbody>
         {d.hypotheses.map((h) => (

@@ -1,5 +1,7 @@
 // History: every change set sent (online and, through the bridge, the earlier ones from the Mac), who, what, and whether it can be restored;
-// plus the hypotheses with a verdict against the numbers in the model.
+// plus the hypotheses with a verdict against the numbers in the model, and the daily change log (dataset <FAM>/change_log, built on the
+// Mac by adsops/ac_change_log.py: every change on the family's campaigns from Amazon's own history, whoever made it).
+// Only the selected family's campaigns are shown (owner 2026-11-17): sends are filtered to the family's campaign names.
 import { json, err } from '../lib/http.mjs';
 import { currentUser } from '../lib/auth.mjs';
 import { db, FAMILY, dataset } from '../lib/supabase.mjs';
@@ -28,13 +30,15 @@ export default async (req) => {
   const u = await currentUser(req);
   if (!u) return err('not signed in', 401);
   const fam = FAMILY();
-  const [{ data: items }, { data: logs }, { data: backs }, { data: hyps }, M] = await Promise.all([
+  const [CL, M0] = await Promise.all([dataset('change_log'), dataset('campaign_model')]);
+  const names = [...new Set([...(CL?.payload?.campaigns || []).map((c) => c.name), ...(M0?.payload?.campaigns || []).map((c) => c.name)].filter(Boolean))];
+  const [{ data: items }, { data: logs }, { data: backs }, { data: hyps }] = await Promise.all([
     db().from('queue_items').select('id, title, status, proposed_by, approver, applied_at, result, hypothesis, lever, undoes').eq('family', fam).in('status', ['applied', 'failed']).order('applied_at', { ascending: false }).limit(60),
-    db().from('applied_log').select('at, item_id, campaign, change, status, why, error').order('at', { ascending: false }).limit(400),
+    names.length ? db().from('applied_log').select('at, item_id, campaign, change, status, why, error').in('campaign', names).order('at', { ascending: false }).limit(400) : Promise.resolve({ data: [] }),
     db().from('backups').select('item_id'),
     db().from('hypotheses').select('*').eq('family', fam).order('at', { ascending: false }).limit(60),
-    dataset('campaign_model'),
   ]);
+  const M = M0;
   const hasBackup = new Set((backs || []).map((b) => b.item_id));
   const byItem = {};
   for (const l of logs || []) (byItem[l.item_id || 'cli:' + toPT(l.at)] ||= []).push(l);
@@ -57,5 +61,7 @@ export default async (req) => {
   const nowk = Object.fromEntries((M?.payload?.campaigns || []).map((c) => [c.name, c.k0]));
   const be = M?.payload?.be || 51.8;
   const hy = (hyps || []).map((h) => { const [label, detail] = verdict(h, nowk[h.campaign], be); return { ...h, at: toPT(h.at), label, detail }; });
-  return json({ ok: true, batches, hypotheses: hy, can_send: ['approver', 'owner'].includes(u.role) });
+  const inFam = new Set(names);
+  const hy2 = names.length ? hy.filter((h) => !h.campaign || inFam.has(h.campaign)) : hy;
+  return json({ ok: true, batches: batches.filter((b) => b.camps.length || b.err || b.already), hypotheses: hy2, changelog: CL?.payload || null, can_send: ['approver', 'owner'].includes(u.role) });
 };
