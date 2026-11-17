@@ -1304,14 +1304,17 @@ function shipLineHtml(l,i){
 }
 function renderShip(){
   const left=ship.source==="walmart"?0:ship.lines.filter(l=>l.cands.length>1&&!l.seen).length;
-  document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")||'<div class="ord-empty">No lines.</div>';
+  document.getElementById("shipLines").innerHTML=(left?`<div class="mstatus" style="margin:4px 0 6px;background:var(--warn-tint);color:var(--warn);font-weight:600;padding:8px 10px;border-radius:7px">${left} line${left>1?"s have":" has"} more than one Amazon SKU — check the orange dropdowns. FNSKU = needs your Amazon label · UPC = its own barcode.</div>`:"")+ship.lines.map(shipLineHtml).join("")+expHtml()||'<div class="ord-empty">No lines.</div>';
   document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";
 }
+function expHtml(){const n=Object.keys(ship.exp||{});if(!n.length)return"";
+  return `<div class="mstatus" style="margin:8px 0 4px;background:var(--warn-tint);color:var(--warn);padding:8px 10px;border-radius:7px"><b>Expiration date</b> — Amazon needs the date printed on the box (must be at least ~105 days away).`+
+  n.map(m=>`<div style="margin-top:6px;display:flex;gap:8px;align-items:center"><span class="mono" style="min-width:120px">${esc(m)}</span><input type="date" data-exp="${esc(m)}" value="${esc(ship.exp[m]||"")}"></div>`).join("")+`</div>`;}
 const SHIP_SUB=document.getElementById("shipSub").innerHTML;
 function shipStatus(msg,cls){document.getElementById("shipStatus").innerHTML=msg?`<div class="mstatus ${cls||""}" style="margin:0 0 10px">${msg}</div>`:"";}
 async function openShip(o){
   if(!INB.loaded)await loadInbound();
-  ship={source:o.source,hold:o.hold||null,last:lastShipped(),lines:o.lines.map(l=>({...l}))};
+  ship={source:o.source,hold:o.hold||null,last:lastShipped(),lines:o.lines.map(l=>({...l})),exp:{}};
   for(const l of ship.lines){l.cands=o.source==="walmart"?[]:candidates(l);
     let best=-1,bt="";l.cands.forEach((c,j)=>{const t=ship.last[c.sku+"|"+ship.source]||"";if(t>bt){bt=t;best=j;}});
     if(best<0)l.cands.forEach((c,j)=>{if(best<0||c.avail+c.inb>l.cands[best].avail+l.cands[best].inb)best=j;});
@@ -1337,7 +1340,8 @@ document.getElementById("shipLines").addEventListener("change",e=>{disarmShip();
   if(t.dataset.pick!=null){const l=ship.lines[+t.dataset.pick];l.pick=+t.value;l.seen=true;renderShip();}});
 document.getElementById("shipLines").addEventListener("input",e=>{const t=e.target;
   if(t.dataset.sq!=null){ship.lines[+t.dataset.sq].qty=Math.max(0,parseInt(t.value||"0",10)||0);document.getElementById("shipUnits").textContent=ship.lines.reduce((a,b)=>a+(+b.qty||0),0).toLocaleString()+" units · "+ship.lines.length+" SKUs";}
-  if(t.dataset.manual!=null)ship.lines[+t.dataset.manual].manual=t.value.trim();});
+  if(t.dataset.manual!=null)ship.lines[+t.dataset.manual].manual=t.value.trim();
+  if(t.dataset.exp!=null)ship.exp[t.dataset.exp]=t.value;});
 document.getElementById("shipLines").addEventListener("click",e=>{const x=e.target.closest("[data-srm]");if(!x)return;ship.lines.splice(+x.dataset.srm,1);renderShip();});
 const closeShip=()=>{if(!shipBusy)document.getElementById("shipScrim").classList.remove("open");};
 document.getElementById("shipCancel").addEventListener("click",closeShip);
@@ -1346,10 +1350,11 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-shiphold]"
   openShip({source:"china",hold:o.id,name:(o.subject||"").slice(0,40),lines:(o.lines||[]).slice().sort(skuSort).map(l=>({sku:l.sku,qty:+l.qty||0}))});});
 document.getElementById("shipGo").addEventListener("click",async()=>{
   if(shipBusy||!ship)return;const go=document.getElementById("shipGo");
-  const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:ship.source==="walmart"?l.sku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty}));
+  const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:ship.source==="walmart"?l.sku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty})).map(i=>ship.exp[i.msku]?{...i,expiration:ship.exp[i.msku]}:i);
   if(!addr){shipStatus("Pick a ship-from address.","err");return;}
   const bad=items.filter(i=>!i.msku);if(bad.length){shipStatus("Type the Amazon SKU for every line without one.","err");return;}
   if(!items.length){shipStatus("No lines with a quantity.","err");return;}
+  const noExp=Object.keys(ship.exp).filter(m=>!ship.exp[m]&&items.some(i=>i.msku===m));if(noExp.length){shipStatus("Enter the expiration date for "+esc(noExp.join(", "))+".","err");return;}
   const dup=items.map(i=>i.msku).filter((m,i,a)=>a.indexOf(m)!==i);if(dup.length){shipStatus("Same Amazon SKU on two lines: "+esc([...new Set(dup)].join(", "))+" — merge them.","err");return;}
   const tot=items.reduce((a,b)=>a+b.qty,0);
   if(!go.dataset.armed){go.dataset.armed="1";go.textContent=`Yes — create it (${tot.toLocaleString()} units)`;go.style.background="var(--crit)";go.style.borderColor="var(--crit)";
@@ -1369,7 +1374,10 @@ document.getElementById("shipGo").addEventListener("click",async()=>{
       shipStatus(ship.source==="walmart"?`✓ ${esc(st.message||"WFS inbound order created")}.${(st.result.shipments||[]).map(x=>`<br>Shipment <b class="mono">${esc(x.id||"")}</b> → ${esc(x.fc||"")} · ${x.units} units`).join("")}<br><a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open Walmart Seller Center ↗</b></a> → WFS → Inbound shipments to print labels and set the carrier.`:`✓ ${esc(st.message||"Plan created")}. <a href="${esc(st.result.link)}" target="_blank" rel="noopener"><b>Open in Send to Amazon ↗</b></a> to finish boxes, placement and carrier.`,"ok");
       if(ship.source==="miami"||ship.source==="walmart"){carts[ship.source].clear();renderWare(ship.source);renderCart();}
       loadOrders();return;}
-    if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
+    if(st.status==="failed"){shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();
+      const mx=/NEEDS_EXPIRY:([^\s]+)/.exec(st.message||"");
+      if(mx){mx[1].split(",").forEach(m=>{if(!(m in ship.exp))ship.exp[m]="";});renderShip();shipStatus("Not created yet — enter the expiration date for "+esc(mx[1].replace(/,/g,", "))+" below, then create again.","err");return;}
+      shipStatus("Not created: "+esc(st.message||"no detail"),"err");return;}
     shipStatus("Sending to "+PLAT()+"… "+(STEP[st.status]?esc(st.status):"")+" ("+Math.round((Date.now()-t0)/1000)+"s)");
   }
   shipBusy=false;go.disabled=false;delete go.dataset.armed;go.textContent=GO_TXT();shipStatus("No answer after 6 minutes — check "+(ship.source==="walmart"?"Walmart Seller Center":"Send to Amazon")+" before trying again, it may have been created.","err");
