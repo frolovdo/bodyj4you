@@ -13,7 +13,6 @@ import Top3 from './Top3.jsx';
 import Weekly from './Weekly.jsx';
 import Rules from './Rules.jsx';
 import Boost from './Boost.jsx';
-import Equalizer from './Equalizer.jsx';
 import NotSetUp from './NotSetUp.jsx';
 import AutoPage from './AutoPage.jsx';
 
@@ -63,7 +62,7 @@ export async function api(path, opts = {}) {
 function route() {
   let h = (location.hash || '#/dashboard').replace(/^#\/?/, '').split('?')[0];   // #/update?focus=... keeps its query for the page
   if (h === 'roadmap') h = 'audiences';   // old links
-  if (FAM.id === 'ACCOUNT') return h === 'weekly' || h === 'judge' || h === 'boost' || h === 'equalizer' ? h : 'dashboard';   // the whole-account page: dashboard + weekly reports
+  if (FAM.id === 'ACCOUNT') return h === 'weekly' || h === 'judge' || h === 'boost' ? h : 'dashboard';   // the whole-account page: dashboard + weekly reports
   return NAV.some(([k]) => k === h) ? h : 'dashboard';
 }
 
@@ -95,7 +94,7 @@ export default function App() {
   const signOut = async () => { await api('logout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ csrf }) }); setUser(null); };
 
   const navItems = NAV.filter(([k]) => FAM.id !== 'ACCOUNT' || k === 'dashboard' || k === 'weekly' || k === 'judge' || k === 'boost' || k === 'equalizer').filter(([k]) => k !== 'audiences' || (FAM.id || 'EO-ROSEHIP') === 'EO-ROSEHIP');
-  const title = FAM.id === 'ACCOUNT' && page !== 'weekly' && page !== 'judge' && page !== 'boost' && page !== 'equalizer' ? 'Whole account' : (NAV.find(([k]) => k === page) || NAV[0])[1];
+  const title = FAM.id === 'ACCOUNT' && page !== 'weekly' && page !== 'judge' && page !== 'boost' ? 'Whole account' : (NAV.find(([k]) => k === page) || NAV[0])[1];
   const curFam = fams.find((f) => f.family && f.family === FAM.id);
 
   return (
@@ -114,7 +113,7 @@ export default function App() {
         </div>
         <nav>
           <p className="nav-eyebrow">Ads</p>
-          {navItems.map(([k, label]) => <a key={k} href={'#/' + k} className={'nav-item' + (page === k ? ' active' : '')} aria-current={page === k ? 'page' : undefined}>{ICON[k]}{label}</a>)}
+          {navItems.map(([k, label]) => <a key={k} href={k === 'equalizer' ? '/api/equalizer' : '#/' + k} className={'nav-item' + (page === k ? ' active' : '')} aria-current={page === k ? 'page' : undefined}>{ICON[k]}{label}</a>)}
         </nav>
         <div className="side-foot">
           <span>{user.name} · {user.role}</span>
@@ -133,7 +132,7 @@ export default function App() {
           <div className="topbar-act"><Kill csrf={csrf} user={user} /></div>
         </div>
         <main className="wrap">
-          {curFam?.setup === 'boost-only' && page !== 'boost' ? <NotSetUp key="nsu" fam={curFam} /> : curFam?.setup === 'auto' && page !== 'boost' ? <AutoPage key="auto" fam={curFam} /> : page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : page === 'boost' ? <Boost key="boost" csrf={csrf} user={user} /> : page === 'equalizer' ? <Equalizer key="equalizer" /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
+          {curFam?.setup === 'boost-only' && page !== 'boost' ? <NotSetUp key="nsu" fam={curFam} /> : curFam?.setup === 'auto' && page !== 'boost' ? <AutoPage key="auto" fam={curFam} /> : page === 'weekly' ? <Weekly key="weekly" /> : page === 'judge' ? <Rules key="judge" csrf={csrf} user={user} /> : page === 'boost' ? <Boost key="boost" csrf={csrf} user={user} /> : FAM.id === 'ACCOUNT' ? <Account key="account" /> : page === 'update' ? <Update key="update" csrf={csrf} user={user} /> : page === 'history' ? <History key="history" csrf={csrf} user={user} /> : page === 'keywords' ? <Keywords key="keywords" csrf={csrf} user={user} /> : page === 'hourly' ? <Hourly key="hourly" csrf={csrf} user={user} /> : page === 'searchterms' ? <SearchTerms key="searchterms" csrf={csrf} user={user} /> : page === 'audiences' ? <Audiences key="audiences" /> : page === 'top3' ? <Top3 key="top3" /> : page === 'weekly' ? <Weekly key="weekly" /> : <EnginePage key={page} name={page} csrf={csrf} user={user} />}
         </main>
       </div>
     </div>
