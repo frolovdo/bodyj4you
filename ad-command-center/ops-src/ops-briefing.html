@@ -502,6 +502,9 @@ let ONORDER={cn:new Map(),mia:new Map()};
 // open = pending at Bony; shipped = Bony shipped, waiting to be matched to its FBA inbound shipment;
 // matched = tied to that FBA plan, so Amazon's own inbound now counts the units (no longer "on order")
 const LIVE=o=>o.status==="open"||o.status==="shipped";
+// Lines still held: a line that is already on an FBA plan carries l.shipped (ops_refresh.py release_holds).
+const HELD=o=>(o.lines||[]).filter(l=>!l.shipped);
+const heldUnits=o=>HELD(o).reduce((a,l)=>a+(+l.qty||0),0);
 const onQty=(k,f)=>(ONORDER[f].get(k)||{qty:0}).qty;
 const shortDay=t=>new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"});
 const onDates=(k,f)=>[...new Set((ONORDER[f].get(k)||{orders:[]}).orders.map(o=>shortDay(o.at)))].join(", ");
@@ -1136,7 +1139,7 @@ async function loadOrders(){
     document.getElementById("ordErr").innerHTML=`<div class="mstatus err" style="margin:0 0 14px">Couldn't load orders and log: ${esc(sqlErrText(e))}</div>`;
   }
   ONORDER={cn:new Map(),mia:new Map()};
-  for(const o of ORDERS.filter(o=>LIVE(o))){const M=ONORDER[flowOf(o)];for(const l of (o.lines||[])){const m=M.get(l.sku)||{qty:0,orders:[]};m.qty+=+l.qty||0;m.orders.push({id:o.id,at:o.sent_at,qty:l.qty});M.set(l.sku,m);}}
+  for(const o of ORDERS.filter(o=>LIVE(o))){const M=ONORDER[flowOf(o)];for(const l of HELD(o)){const m=M.get(l.sku)||{qty:0,orders:[]};m.qty+=+l.qty||0;m.orders.push({id:o.id,at:o.sent_at,qty:l.qty});M.set(l.sku,m);}}
   renderOrders();renderPending();renderWare("miami");renderWare("china");
   renderProv(document.querySelector(".nav-item.active")?.dataset.view||"today");
 }
@@ -1158,8 +1161,8 @@ function renderPending(){
   const title=f==="cn"?"On hold for Bony — China → FBA":"On the way to Miami — from Bony";
   const foot=f==="cn"?"A hold is not a shipment. It clears by itself once Bony's FBA shipment shows up on Amazon; from then on Amazon's inbound counts what actually shipped."
     :"UV and steel base kits ordered from Bony with Send to Bony. They count against the UV / Steel lines until you click <b>Received in Miami</b>.";
-  box.innerHTML=`<div class="block-h"><h3>${title}</h3><span class="count">${L.length} · ${L.reduce((a,b)=>a+(+b.units||0),0).toLocaleString()} units</span></div>`+
-    (L.length?L.map(o=>`<div class="pend-o"><div class="t">${esc(o.subject)}</div><div class="m">#${o.id} · sent ${shortDay(o.sent_at)} · ${(o.lines||[]).length} SKUs · ${(+o.units).toLocaleString()} units</div><span class="stp open">${stLabel(o)}</span>${o.note?`<div class="m">${esc(o.note)}</div>`:""}<div class="a">${ordActs(o,"btn")}</div><details style="margin-top:6px"><summary style="cursor:pointer;font-size:11.5px;color:var(--accent-ink);font-weight:600">Items</summary>${(o.lines||[]).slice().sort(skuSort).map(l=>`<div class="m" style="display:flex;justify-content:space-between"><span class="mono">${esc(l.sku)}</span><span class="num">${l.qty}</span></div>`).join("")}</details></div>`).join("")
+  box.innerHTML=`<div class="block-h"><h3>${title}</h3><span class="count">${L.length} · ${L.reduce((a,b)=>a+heldUnits(b),0).toLocaleString()} units</span></div>`+
+    (L.length?L.map(o=>`<div class="pend-o"><div class="t">${esc(o.subject)}</div><div class="m">#${o.id} · sent ${shortDay(o.sent_at)} · ${HELD(o).length} SKUs · ${heldUnits(o).toLocaleString()} units on hold${HELD(o).length<(o.lines||[]).length?` <span style="color:var(--ink-3)">(${(o.lines||[]).length-HELD(o).length} of ${(o.lines||[]).length} SKUs already shipped)</span>`:""}</div><span class="stp open">${stLabel(o)}</span>${o.note?`<div class="m">${esc(o.note)}</div>`:""}<div class="a">${ordActs(o,"btn")}</div><details style="margin-top:6px"><summary style="cursor:pointer;font-size:11.5px;color:var(--accent-ink);font-weight:600">Items</summary>${(o.lines||[]).slice().sort(skuSort).map(l=>`<div class="m" style="display:flex;justify-content:space-between${l.shipped?";opacity:.5":""}"><span class="mono">${esc(l.sku)}${l.shipped?" · shipped":""}</span><span class="num">${l.qty}</span></div>`).join("")}</details></div>`).join("")
       :`<div class="cart-empty" style="padding:18px">${f==="cn"?"Nothing on hold. Send to Bony puts a China list on hold here.":"Nothing on the way. Send to Bony on the UV / Steel lists shows up here."}</div>`)+
     `<div class="m" style="padding:10px 16px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--line-2)">${foot}</div>`;
 }
@@ -1168,7 +1171,7 @@ function orderHtml(o){
   const st=` · <b>${stLabel(o)}</b>`+(o.status==="shipped"&&o.shipped_at?" "+fmtWhen(o.shipped_at):o.closed_at?" "+fmtWhen(o.closed_at):"")+(o.fba_plan?` · ${esc(o.fba_plan)} (${(o.fba_ids||[]).length} FBA shipments)`:"");
   const acts=ordActs(o,"btn");
   return `<div class="ord"><div class="ord-h"><div><div class="ord-t">${esc(o.subject)}</div><div class="ord-m">#${o.id} · sent ${fmtWhen(o.sent_at)} · ${KIND[o.kind]||esc(o.kind)} · ${lines.length} SKUs · ${(+o.units).toLocaleString()} units${+o.total?" · "+usd2(+o.total):""}${st}</div>${o.note?`<div class="ord-m">${esc(o.note)}</div>`:""}</div><div class="ord-a">${acts}</div></div>
-    <details><summary>Show items</summary><table><thead><tr><th>SKU</th><th class="r">Qty</th>${hasCost?'<th class="r">Unit cost</th>':""}</tr></thead><tbody>${lines.slice().sort(skuSort).map(l=>`<tr><td class="mono">${esc(l.sku)}</td><td class="r num">${l.qty}</td>${hasCost?`<td class="r num">${l.cost!=null?usd2(+l.cost):"—"}</td>`:""}</tr>`).join("")}</tbody></table></details></div>`;
+    <details><summary>Show items</summary><table><thead><tr><th>SKU</th><th class="r">Qty</th>${hasCost?'<th class="r">Unit cost</th>':""}</tr></thead><tbody>${lines.slice().sort(skuSort).map(l=>`<tr${l.shipped?' style="opacity:.55"':""}><td class="mono">${esc(l.sku)}${l.shipped?` <span style="font-size:11px">· shipped ${esc(l.shipped)}</span>`:""}</td><td class="r num">${l.qty}</td>${hasCost?`<td class="r num">${l.cost!=null?usd2(+l.cost):"—"}</td>`:""}</tr>`).join("")}</tbody></table></details></div>`;
 }
 function renderOrders(){
   const open=ORDERS.filter(LIVE),hist=ORDERS.filter(o=>!LIVE(o));
@@ -1350,7 +1353,7 @@ const closeShip=()=>{if(!shipBusy)document.getElementById("shipScrim").classList
 document.getElementById("shipCancel").addEventListener("click",closeShip);
 document.getElementById("shipScrim").addEventListener("click",e=>{if(e.target.id==="shipScrim")closeShip();});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-shiphold]");if(!b)return;const o=ORDERS.find(x=>x.id===+b.dataset.shiphold);if(!o)return;
-  openShip({source:"china",hold:o.id,name:(o.subject||"").slice(0,40),lines:(o.lines||[]).slice().sort(skuSort).map(l=>({sku:l.sku,qty:+l.qty||0}))});});
+  openShip({source:"china",hold:o.id,name:(o.subject||"").slice(0,40),lines:HELD(o).slice().sort(skuSort).map(l=>({sku:l.sku,qty:+l.qty||0}))});});
 document.getElementById("shipGo").addEventListener("click",async()=>{
   if(shipBusy||!ship)return;const go=document.getElementById("shipGo");
   const addr=document.getElementById("shipFrom").value,items=ship.lines.filter(l=>l.qty>0).map(l=>({msku:ship.source==="walmart"?l.sku:l.cands.length?l.cands[l.pick].sku:(l.manual||""),qty:l.qty})).map(i=>ship.exp[i.msku]?{...i,expiration:ship.exp[i.msku]}:i);
