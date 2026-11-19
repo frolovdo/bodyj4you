@@ -7,7 +7,7 @@ import { api } from './App.jsx';
 const money = (v) => (v == null ? '–' : '$' + (Number.isInteger(+v) || +v >= 20 ? Math.round(+v) : (+v).toFixed(2)));
 const CODE = {
   boost: ['RAISED', 'good'], boosted: ['HOLDING', 'good'], below: ['NOTHING', 'crit'], room: ['WAITING', 'ok'],
-  early: ['EARLY', 'mut'], window: ['NIGHT', 'mut'], nodata: ['NO DATA', 'mut'], reset: ['RESET', 'acc'],
+  early: ['EARLY', 'mut'], window: ['NIGHT', 'mut'], paused: ['PAUSED', 'mut'], nodata: ['NO DATA', 'mut'], reset: ['RESET', 'acc'],
 };
 // budget usage ("53% of $50 used", "budget use unknown") in bold wherever it appears in a reason
 const USE = /(\d+% of \$[\d.,]+ used|budget use unknown)/;
