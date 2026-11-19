@@ -145,6 +145,11 @@ img{max-width:100%}[hidden]{display:none!important}
 </section>
 
 
+<section id="s-cats">
+  <div class="sec-head"><h2>Sales by category</h2><span class="range">Catalog categories, same groups as the Monday Brief · order subtotal, mixed orders split evenly</span></div>
+  <div class="tablewrap"><table class="months" id="cats"><thead></thead><tbody></tbody></table></div>
+</section>
+
 <section id="s-months">
   <div class="sec-head"><h2>Monthly performance</h2><span class="range" id="months-range"></span>
     <label style="margin-left:auto" class="sub"><input type="checkbox" id="newest" checked> Newest first</label></div>
@@ -309,7 +314,16 @@ function renderMonths(){
   window.__tsv=lines.join('\n');
 }
 
-function renderAll(){renderTiles();renderCards();renderMonths();}
+function renderCats(){
+  const C=DATA.categories; const box=$('#s-cats'); if(!C){box.style.display='none';return;}
+  const p7=C.periods['7'],p30=C.periods['30'];
+  $('#cats thead').innerHTML='<tr><th>Category</th><th>Sales, last 7 days</th><th>Orders, 7 days</th><th>Sales, last 30 days</th><th>Orders, 30 days</th></tr>';
+  $('#cats tbody').innerHTML=C.order.map(c=>{const a=p7[c],b=p30[c];if(!a||!b||(!b.sales&&!b.prev_sales))return'';
+    return '<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;background:'+C.colors[c]+'"></span>'+c+' · '+C.labels[c]+'</td>'+
+      '<td class="num">'+money(a.sales,0)+'<span class="d">'+deltaHTML(a.sales,a.prev_sales,1)+'</span></td><td class="num">'+int(a.orders)+'</td>'+
+      '<td class="num">'+money(b.sales,0)+'<span class="d">'+deltaHTML(b.sales,b.prev_sales,1)+'</span></td><td class="num">'+int(b.orders)+'</td></tr>';}).join('');
+}
+function renderAll(){renderTiles();renderCards();renderCats();renderMonths();}
 async function load(){
   try{
     const r=await fetch('data/dashboard.json',{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Bundles · BodyJ4You OS</title>
+<!-- BodyJ4You OS design language (os.css + os.js), inlined at build time so the file stays self-contained -->
+<style>__OSCSS__</style>
+<script>__OSJS__</script>
+<style>
+/* Bundle report: only what os.css has no component for (threshold switch, product cards). Tokens only, no new colours. */
+.os-kpis>li{display:flex}.os-kpis>li>.os-kpi{width:100%}
+.br-bar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap;margin-top:var(--sp-5);
+  padding:var(--sp-3) var(--sp-4);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-2);box-shadow:var(--shadow)}
+.br-bar__lab{font-size:var(--fs-2);color:var(--text-2)}
+.br-bar__lab b{color:var(--text)}
+.br-seg{display:flex;gap:4px;padding:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-1)}
+.br-seg button{all:unset;box-sizing:border-box;min-height:36px;min-width:44px;padding:0 var(--sp-3);display:inline-flex;align-items:center;justify-content:center;
+  border-radius:6px;font-size:var(--fs-2);font-weight:700;color:var(--text-2);cursor:pointer}
+.br-seg button:hover{color:var(--text);background:var(--surface)}
+.br-seg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.br-seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.br-count{font-size:var(--fs-2);color:var(--text-3)}
+.br-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+.br-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:var(--sp-3);margin-top:var(--sp-4)}
+.br-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-2);box-shadow:var(--shadow);
+  overflow:hidden;text-decoration:none;color:inherit}
+.br-card:hover{border-color:var(--accent)}
+.br-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.br-ph{position:relative;aspect-ratio:1/1;background:#fff;border-bottom:1px solid var(--line)}
+:root[data-theme="dark"] .br-ph{background:var(--surface-2)}
+.br-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:var(--sp-2)}
+.br-rank{position:absolute;top:var(--sp-2);left:var(--sp-2);z-index:2;min-width:28px;height:28px;padding:0 8px;border-radius:var(--r-pill);
+  display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-1);font-weight:800;background:var(--surface);color:var(--text-2);border:1px solid var(--line-2)}
+.br-podium .br-rank{min-width:34px;height:34px;font-size:var(--fs-3);background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.br-tile{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--surface-2)}
+.br-tile__cat{font-size:var(--fs-1);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tc)}
+.br-tile__sku{font-family:var(--mono);font-weight:700;font-size:var(--fs-5);color:var(--text)}
+.br-tile__asin{font-size:var(--fs-1);color:var(--text-3)}
+.br-tile::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--tc)}
+.br-body{padding:var(--sp-3) var(--sp-3) var(--sp-4)}
+.br-podium .br-body{padding:var(--sp-4)}
+.br-sku{font-family:var(--mono);font-weight:700;font-size:var(--fs-2);color:var(--text)}
+.br-cmp{font-size:var(--fs-1);color:var(--text-3);margin:2px 0 var(--sp-3);line-height:1.4;min-height:2.8em;overflow-wrap:anywhere}
+.br-row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-2)}
+.br-u{font-size:var(--fs-6);font-weight:800;line-height:1;color:var(--text)}
+.br-podium .br-u{font-size:var(--fs-7)}
+.br-u small{font-size:var(--fs-1);font-weight:600;color:var(--text-3);margin-left:4px}
+.br-s{text-align:right;font-weight:800;font-size:var(--fs-3);color:var(--text)}
+.br-s small{display:block;font-size:var(--fs-1);font-weight:400;color:var(--text-3)}
+.br-meter{height:6px;margin-top:var(--sp-3);border-radius:3px;background:var(--line);overflow:hidden}
+.br-meter i{display:block;height:100%;background:var(--accent)}
+@media(max-width:760px){.br-podium{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="os" data-family="reports">
+<div class="os-page os-page--wide">
+<div class="os-topbar"><a class="os-back" href="https://bodyj4you-ceo-dashboard.netlify.app/">&larr; BodyJ4You OS</a>
+  <div class="os-topbar__meta"><a class="os-small" href="https://bodyj4you-ceo-dashboard.netlify.app/bundles/health.html">Listing health</a><a class="os-small" href="https://sellercentral.amazon.com/bundles" target="_blank" rel="noopener">Seller Central → Bundles</a><button class="os-btn os-btn--ghost os-btn--sm" data-os-theme>Dark mode</button></div></div>
+<header class="os-head" style="margin-top:var(--sp-3)">
+  <div class="os-head__row"><h1 class="os-title">Bundles</h1><span class="os-period">__DATELABEL__</span>
+  <span class="os-fresh" id="fresh" data-date="__DATAEND__">Data to <span id="freshDay">__DATAEND__</span></span>
+  <span class="os-src">Amazon virtual bundle sales report</span></div>
+</header>
+<div class="os-verdict" id="verdict"><p class="os-verdict__text" id="verdictText"></p></div>
+
+<section class="os-sec" data-os-group>
+<ul class="os-kpis">
+  <li><button class="os-kpi" aria-controls="dig-u" aria-expanded="false"><span class="os-kpi__label">Bundles sold</span><span class="os-kpi__value" id="kU">0</span><span class="os-kpi__delta"><span class="os-vs" id="kUn"></span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-s" aria-expanded="false"><span class="os-kpi__label">Bundle sales</span><span class="os-kpi__value" id="kS">$0</span><span class="os-kpi__delta"><span class="os-vs">what customers paid, tax not deducted</span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-n" aria-expanded="false"><span class="os-kpi__label">Shown</span><span class="os-kpi__value" id="kN">0</span><span class="os-kpi__delta"><span class="os-vs" id="kNn"></span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-a" aria-expanded="false"><span class="os-kpi__label">Average price</span><span class="os-kpi__value" id="kA">$0</span><span class="os-kpi__delta"><span class="os-vs">bundles shown</span></span></button></li>
+</ul>
+<div class="os-dig" id="dig-u" hidden><p class="os-dig__because" id="dU"></p></div>
+<div class="os-dig" id="dig-s" hidden><p class="os-dig__because" id="dS"></p><p class="os-small os-muted">Sales = sum of TOTAL_SALES in Amazon's export for bundles mapped to a VB SKU.</p></div>
+<div class="os-dig" id="dig-n" hidden><p class="os-dig__because" id="dN"></p></div>
+<div class="os-dig" id="dig-a" hidden><p class="os-dig__because" id="dA"></p><p class="os-small os-muted">Average price = sales ÷ bundles sold.</p></div>
+</section>
+
+<div class="br-bar">
+  <div class="br-bar__lab">Show bundles with <b id="thLab">3+ sold</b></div>
+  <div class="br-seg" id="seg" role="group" aria-label="Minimum bundles sold">
+    <button data-t="1" aria-pressed="false">1+</button><button data-t="2" aria-pressed="false">2+</button>
+    <button data-t="3" aria-pressed="true">3+</button><button data-t="5" aria-pressed="false">5+</button><button data-t="10" aria-pressed="false">10+</button>
+  </div>
+  <div class="br-count"><span id="cShown">0</span> of __SOLDCOUNT__ sold · <span id="cUnits">0</span> bundles (<span id="cPct">0</span>% of all)</div>
+</div>
+
+<section class="os-sec" id="top"><h2 class="os-sec__title">Top 3 <span class="os-sec__count">tap a product to open its Amazon page</span></h2>
+<div class="br-podium" id="podium"></div></section>
+<section class="os-sec" id="rest"><h2 class="os-sec__title">Ranked by bundles sold <span class="os-sec__count" id="restCount"></span></h2>
+<div class="br-grid" id="grid"></div></section>
+
+<p class="os-small os-muted" style="margin-top:var(--sp-6)"><b>Method.</b> Amazon's export summed by BUNDLE_ASIN (bundles sold = BUNDLES_SOLD, sales = TOTAL_SALES), mapped to the VB SKU and its components through the BUNDLES master. Average price = sales ÷ bundles sold. Products without a photo show a category tile.</p>
+</div>
+
+<script>
+const DATA = __DATA__;
+const IMAGES = __IMAGES__;   // ASIN -> data-URI; missing = category tile
+const TOTAL_U = DATA.reduce((a,d)=>a+d.units,0);
+const TOTAL_S = DATA.reduce((a,d)=>a+d.sales,0);
+const fmt = n => n.toLocaleString('en-US');
+const usd = n => '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const usd0 = n => '$'+Math.round(n).toLocaleString('en-US');
+const link = a => 'https://www.amazon.com/dp/'+a;
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $ = id => document.getElementById(id);
+
+// category = catalog family colour from os.css (--cat-pa aftercare, --cat-eo oils, --cat-nc chokers, --cat-gk gauges, --cat-pj piercing)
+function cat(t){
+  t=(t||'').toLowerCase();
+  if(t.includes('roll on')||t.includes('roll-on')) return ['Roll-on','var(--cat-eo)'];
+  if(t.includes('body piercing kit')) return ['Piercing kit','var(--cat-pj)'];
+  if(t.includes('ear stretching')||t.includes('gauge')||t.includes('stretch')||t.includes('plugs')) return ['Ear stretching','var(--cat-gk)'];
+  if(t.includes('choker')||t.includes('necklace')) return ['Choker','var(--cat-nc)'];
+  if(t.includes('aftercare')||t.includes('bump')||t.includes('saline')||t.includes('keloid')) return ['Aftercare','var(--cat-pa)'];
+  if(t.includes('tea tree')||t.includes('jojoba')||t.includes('castor')||t.includes('oil')) return ['Oil set','var(--cat-eo)'];
+  return ['Bundle','var(--text-3)'];
+}
+function media(d){
+  if(IMAGES[d.asin]) return '<img loading="lazy" src="'+IMAGES[d.asin]+'" alt="'+esc(d.sku||d.asin)+'">';
+  const c=cat(d.title);
+  return '<div class="br-tile" style="--tc:'+c[1]+'"><span class="br-tile__cat">'+c[0]+'</span><span class="br-tile__sku">'+esc(d.sku||'—')+'</span><span class="br-tile__asin">'+esc(d.asin)+'</span></div>';
+}
+function card(d,rank,maxU,hero){
+  const a=document.createElement('a');a.href=link(d.asin);a.target='_blank';a.rel='noopener';a.className='br-card';
+  a.title=d.title||'';
+  a.innerHTML='<div class="br-ph"><span class="br-rank">'+(hero?rank:'#'+rank)+'</span>'+media(d)+'</div>'+
+    '<div class="br-body"><div class="br-sku">'+esc(d.sku||'—')+'</div><div class="br-cmp">'+(esc(d.comps)||'&nbsp;')+'</div>'+
+    '<div class="br-row"><div class="br-u">'+fmt(d.units)+'<small>sold</small></div>'+
+    '<div class="br-s">'+usd0(d.sales)+'<small>'+usd(d.avg)+' avg</small></div></div>'+
+    (hero?'':'<div class="br-meter"><i style="width:'+Math.max(2,100*d.units/maxU)+'%"></i></div>')+'</div>';
+  return a;
+}
+function render(thr){
+  const list=DATA.filter(d=>d.units>=thr);
+  const maxU=list.length?list[0].units:1;
+  const sU=list.reduce((a,d)=>a+d.units,0), sS=list.reduce((a,d)=>a+d.sales,0);
+  const top3=DATA.slice(0,3).reduce((a,d)=>a+d.units,0);
+  $('kU').textContent=fmt(TOTAL_U); $('kUn').textContent=DATA.length+' bundles sold at least one';
+  $('kS').textContent=usd0(TOTAL_S);
+  $('kN').textContent=list.length; $('kNn').textContent='with '+thr+'+ sold · '+Math.round(100*sU/Math.max(TOTAL_U,1))+'% of bundles sold';
+  $('kA').textContent=sU?usd(sS/sU):'$0';
+  $('thLab').textContent=thr+'+ sold';
+  $('cShown').textContent=list.length; $('cUnits').textContent=fmt(sU); $('cPct').textContent=Math.round(100*sU/Math.max(TOTAL_U,1));
+  $('restCount').textContent=Math.max(0,list.length-3)+' more';
+  $('dU').textContent=fmt(TOTAL_U)+' bundles sold across '+DATA.length+' bundle listings; the top 3 ('+DATA.slice(0,3).map(d=>d.sku).join(', ')+') make '+fmt(top3)+' of them ('+Math.round(100*top3/Math.max(TOTAL_U,1))+'%).';
+  $('dS').textContent=usd(TOTAL_S)+' from '+fmt(TOTAL_U)+' bundles in __DATELABEL__.';
+  $('dN').textContent=list.length+' of '+DATA.length+' sold bundles reached '+thr+'+ sold; they make '+fmt(sU)+' of '+fmt(TOTAL_U)+' bundles sold. Change the cut with the switch below.';
+  const avgs=list.map(d=>d.avg).sort((a,b)=>a-b);
+  $('dA').textContent=avgs.length?('Bundles shown sell from '+usd(avgs[0])+' to '+usd(avgs[avgs.length-1])+' on average; middle '+usd(avgs[Math.floor(avgs.length/2)])+'.'):'No bundles at this cut.';
+  const podium=$('podium'), grid=$('grid'); podium.innerHTML=''; grid.innerHTML='';
+  list.slice(0,3).forEach((d,i)=>podium.appendChild(card(d,i+1,maxU,true)));
+  list.slice(3).forEach((d,i)=>grid.appendChild(card(d,i+4,maxU,false)));
+}
+(function(){
+  const top=DATA[0];
+  $('verdictText').textContent=fmt(TOTAL_U)+' bundles sold for '+usd0(TOTAL_S)+' in __DATELABEL__'+(top?'; the best seller is '+top.sku+' with '+fmt(top.units)+' sold ('+usd0(top.sales)+').':'.');
+  const f=$('fresh'), d=f.getAttribute('data-date');
+  if(d&&window.OS){ f.setAttribute('data-state',OS.state(d,'weekly')); $('freshDay').textContent=OS.day(d); }
+})();
+$('seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  [...$('seg').children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');render(+b.dataset.t);});
+render(__THRESHOLD__);
+document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.t===__THRESHOLD__)));
+</script>
+</body>
+</html>

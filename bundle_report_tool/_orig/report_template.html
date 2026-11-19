@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BodyJ4You — Bundle Performance Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0d11; --panel:#15171e; --panel2:#1b1e27; --line:#272b36;
+  --ink:#f4f1ea; --mut:#9aa0ad; --dim:#6b7180;
+  --accent:#ff5a36; --accent2:#19c2a3; --gold:#f4b740;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(255,90,54,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(25,194,163,.07), transparent 55%),
+    var(--bg);
+  color:var(--ink); font-family:'Hanken Grotesk',sans-serif;
+  font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased;
+  padding:38px 26px 80px; min-height:100vh;
+}
+.wrap{max-width:1180px;margin:0 auto;position:relative;z-index:1}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.eyebrow{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(34px,5vw,56px);line-height:1.02;letter-spacing:-.02em;margin:10px 0 8px}
+h1 em{font-style:italic;color:var(--gold)}
+.sub{color:var(--mut);font-size:15px;max-width:660px;line-height:1.5}
+.sub b{color:var(--ink);font-weight:600}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0 14px}
+.kpi{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.85}
+.kpi .l{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.kpi .v{font-family:'Fraunces',serif;font-weight:600;font-size:32px;margin-top:8px;letter-spacing:-.01em}
+.kpi .n{font-size:12.5px;color:var(--mut);margin-top:2px}
+.kpi:nth-child(2):before{background:var(--accent2)}
+.kpi:nth-child(3):before{background:var(--gold)}
+.kpi:nth-child(4):before{background:#7c8bff}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin:26px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.bar .lab{font-size:12.5px;color:var(--mut);font-weight:600}
+.bar .lab b{color:var(--ink)}
+.seg{display:flex;gap:4px;background:#0e1016;border:1px solid var(--line);padding:4px;border-radius:11px}
+.seg button{font-family:inherit;font-weight:700;font-size:13px;color:var(--mut);background:transparent;
+  border:0;padding:7px 14px;border-radius:8px;cursor:pointer;transition:.18s}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--accent);color:#1a0a06}
+.count{font-size:12.5px;color:var(--dim);font-weight:600}
+
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.hero{position:relative;background:linear-gradient(165deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;transition:transform .22s,border-color .22s,box-shadow .22s}
+.hero:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 18px 40px -22px rgba(255,90,54,.6)}
+.hero .ph{position:relative;aspect-ratio:1/1}
+.medal{position:absolute;top:12px;left:12px;font-family:'Fraunces',serif;font-weight:700;font-size:18px;
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--gold);color:#1a1205;z-index:3}
+.hero:nth-child(2) .medal{background:#cfd3dc}
+.hero:nth-child(3) .medal{background:#d8975a}
+.hero .body{padding:15px 16px 17px}
+.hero .sku{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--accent)}
+.hero .cmp{font-size:13px;color:var(--mut);margin:3px 0 12px;min-height:18px}
+.hero .row{display:flex;align-items:baseline;justify-content:space-between}
+.hero .u{font-family:'Fraunces',serif;font-size:40px;font-weight:600;line-height:1}
+.hero .u s{font-size:14px;font-family:'Hanken Grotesk';text-decoration:none;color:var(--dim);font-weight:600;margin-left:5px}
+.hero .s{text-align:right}
+.hero .s .big{font-size:20px;font-weight:800}
+.hero .s .sm{font-size:12px;color:var(--dim)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent2)}
+.card .ph{position:relative;aspect-ratio:1/1}
+.rk{position:absolute;top:8px;left:8px;font-size:11px;font-weight:800;color:var(--dim);
+  background:rgba(12,13,17,.8);border:1px solid var(--line);padding:2px 7px;border-radius:7px;z-index:3}
+.card .body{padding:11px 12px 13px}
+.card .sku{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--accent2)}
+.card .cmp{font-size:11.5px;color:var(--dim);margin:2px 0 9px;line-height:1.35;min-height:30px}
+.mrow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.mrow .u{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1}
+.mrow .u span{font-size:11px;color:var(--dim);font-family:'Hanken Grotesk';font-weight:600}
+.mrow .money{text-align:right;font-size:13px;font-weight:800}
+.mrow .money span{display:block;font-size:10.5px;color:var(--dim);font-weight:600}
+.barwrap{height:5px;background:#0e1016;border-radius:4px;overflow:hidden}
+.barfill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:4px}
+
+/* photo */
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10px;background:#0e1016}
+
+/* designed tile (no photo) */
+.tile{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+  background:radial-gradient(120% 90% at 50% 0%, var(--tc,#1b2230), #0e1016 70%);overflow:hidden}
+.tile:before{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);background-size:14px 14px}
+.tile .ic{font-size:40px;line-height:1;color:var(--ta,#9aa0ad);filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));z-index:1}
+.tile .cat{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:800;color:var(--ta,#9aa0ad);z-index:1}
+.tile .ts{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);z-index:1;letter-spacing:.01em}
+.tile .tu{font-size:11px;color:var(--dim);font-weight:600;z-index:1}
+.hero .tile .ts{font-size:34px}
+.hero .tile .ic{font-size:54px}
+
+.foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;line-height:1.7}
+.foot b{color:var(--mut)}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.podium{grid-template-columns:1fr}}
+.reveal{opacity:0;transform:translateY(12px);animation:rise .5s forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="eyebrow">BodyJ4You · Amazon Virtual Bundles</div>
+  <h1>Bundle Performance <em>Report</em></h1>
+  <p class="sub">Sales window <b>__DATELABEL__</b>. Showing bundles that moved a noticeable volume, ranked by units. Tap any product to open its Amazon listing.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">Total Units</div><div class="v" id="kU">0</div><div class="n">across all sold bundles</div></div>
+    <div class="kpi"><div class="l">Total Sales</div><div class="v" id="kS">$0</div><div class="n">tax not deducted</div></div>
+    <div class="kpi"><div class="l">Shown</div><div class="v" id="kN">0</div><div class="n" id="kNn">bundles at threshold</div></div>
+    <div class="kpi"><div class="l">Avg Price</div><div class="v" id="kA">$0</div><div class="n">shown bundles</div></div>
+  </div>
+
+  <div class="bar">
+    <div class="lab">Noticeable threshold: <b id="thLab">3+ units</b></div>
+    <div class="seg" id="seg">
+      <button data-t="1">1+</button><button data-t="2">2+</button>
+      <button data-t="3" class="on">3+</button><button data-t="5">5+</button><button data-t="10">10+</button>
+    </div>
+    <div class="count"><span id="cShown">0</span> of __SOLDCOUNT__ sold · <span id="cUnits">0</span> units (<span id="cPct">0</span>%)</div>
+  </div>
+
+  <div class="podium" id="podium"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="foot">
+    <b>Method.</b> Amazon export aggregated by BUNDLE_ASIN (units = sum of BUNDLES_SOLD, sales = sum of TOTAL_SALES), mapped to SKU and components via the BUNDLES master. Avg Price = Sales / Units. Clicking a product opens amazon.com/dp/&lt;ASIN&gt; in a new tab.<br>
+    <b>Photos.</b> Product images embed once supplied; tiles below are category-coded placeholders until then.
+  </div>
+</div>
+
+<script>
+const DATA = __DATA__;
+// ASIN -> image URL or data-URI. Populated when images are provided; empty = show designed tile.
+const IMAGES = __IMAGES__;
+
+const TOTAL_U = DATA.reduce((a,d)=>a+d.units,0);
+const TOTAL_S = DATA.reduce((a,d)=>a+d.sales,0);
+const fmt = n => n.toLocaleString('en-US');
+const usd = n => '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const usd0 = n => '$'+Math.round(n).toLocaleString('en-US');
+const link = a => 'https://www.amazon.com/dp/'+a;
+
+function cat(t){
+  t=(t||'').toLowerCase();
+  if(t.includes('roll on')||t.includes('roll-on')) return ['ROLL-ON','✦','#f4b740'];
+  if(t.includes('aftercare')||t.includes('bump')||t.includes('saline')||t.includes('keloid')) return ['AFTERCARE','❍','#19c2a3'];
+  if(t.includes('choker')||t.includes('necklace')) return ['CHOKER','◈','#c08bff'];
+  if(t.includes('body piercing kit')) return ['PIERCING KIT','✛','#7c8bff'];
+  if(t.includes('ear stretching')||t.includes('gauge')||t.includes('stretch')) return ['EAR STRETCHING','◎','#ff5a36'];
+  if(t.includes('tea tree')||t.includes('jojoba')||t.includes('castor')||t.includes('oil')) return ['OIL SET','♢','#f4b740'];
+  return ['BUNDLE','▣','#9aa0ad'];
+}
+function media(d,hero){
+  const c=cat(d.title);
+  if(IMAGES[d.asin]) return '<img loading="lazy" src="'+IMAGES[d.asin]+'" alt="'+(d.sku||d.asin)+'">';
+  return '<div class="tile" style="--tc:'+c[2]+'22;--ta:'+c[2]+'">'+
+    '<div class="ic">'+c[1]+'</div><div class="cat">'+c[0]+'</div>'+
+    '<div class="ts">'+(d.sku||'—')+'</div><div class="tu">'+d.asin+'</div></div>';
+}
+
+function render(thr){
+  const list=DATA.filter(d=>d.units>=thr);
+  const maxU=list.length?list[0].units:1;
+  const sU=list.reduce((a,d)=>a+d.units,0), sS=list.reduce((a,d)=>a+d.sales,0);
+  kU.textContent=fmt(TOTAL_U); kS.textContent=usd(TOTAL_S);
+  kN.textContent=list.length; kNn.textContent=thr+'+ units';
+  kA.textContent=sU?usd(sS/sU):'$0'; thLab.textContent=thr+'+ units';
+  cShown.textContent=list.length; cUnits.textContent=fmt(sU); cPct.textContent=Math.round(100*sU/TOTAL_U);
+  podium.innerHTML=''; grid.innerHTML='';
+  list.slice(0,3).forEach((d,i)=>{
+    const a=document.createElement('a');a.href=link(d.asin);a.target='_blank';a.rel='noopener';
+    a.className='hero reveal';a.style.animationDelay=(i*60)+'ms';
+    a.innerHTML='<div class="ph"><span class="medal">'+(i+1)+'</span>'+media(d,1)+'</div>'+
+      '<div class="body"><div class="sku">'+(d.sku||'—')+'</div><div class="cmp">'+(d.comps||'&nbsp;')+'</div>'+
+      '<div class="row"><div class="u">'+d.units+'<s>units</s></div>'+
+      '<div class="s"><div class="big">'+usd0(d.sales)+'</div><div class="sm">'+usd(d.avg)+' avg</div></div></div></div>';
+    podium.appendChild(a);
+  });
+  list.slice(3).forEach((d,i)=>{
+    const a=document.createElement('a');a.href=link(d.asin);a.target='_blank';a.rel='noopener';
+    a.className='card reveal';a.style.animationDelay=(120+i*28)+'ms';
+    a.innerHTML='<div class="ph"><span class="rk">#'+(i+4)+'</span>'+media(d,0)+'</div>'+
+      '<div class="body"><div class="sku">'+(d.sku||'—')+'</div><div class="cmp">'+(d.comps||'&nbsp;')+'</div>'+
+      '<div class="mrow"><div class="u">'+d.units+' <span>u</span></div>'+
+      '<div class="money">'+usd0(d.sales)+'<span>'+usd(d.avg)+' avg</span></div></div>'+
+      '<div class="barwrap"><div class="barfill" style="width:'+(100*d.units/maxU)+'%"></div></div></div>';
+    grid.appendChild(a);
+  });
+}
+seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  [...seg.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');render(+b.dataset.t);});
+render(3);
+</script>
+</body>
+</html>
