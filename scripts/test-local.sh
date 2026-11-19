@@ -5,7 +5,7 @@
 # Exits non-zero if any check fails.
 set -u
 cd "$(dirname "$0")/.."
-APPS=(ad-command-center bodyj4you-return-dashboard china-dashboard miami-dashboard supply-chain-dashboard)
+APPS=(ad-command-center china-dashboard miami-dashboard supply-chain-dashboard)
 want=("$@")
 picked() { [ ${#want[@]} -eq 0 ] && return 0; for w in "${want[@]}"; do [[ "$1" == "$w"* ]] && return 0; done; return 1; }
 fail=0
