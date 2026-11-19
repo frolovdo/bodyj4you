@@ -54,7 +54,7 @@ def test_bleed_never_proposes_higher_bid():
              report_advertised_products=[dict(campaignId=1, adGroupId=10, advertisedAsin="B0PARENT01", impressions=5000,
                                               clicks=200, cost=100, purchases7d=60, sales7d=1800)],
              report_targeting=[dict(campaignId=1, adGroupId=10, keywordId=7, keyword="k", keywordBid=1.00, impressions=900,
-                                    clicks=12, cost=20.0, purchases7d=0, sales7d=0)])
+                                    clicks=12, cost=20.0, purchases7d=1, sales7d=10.0)])  # 1 sale at 200% ACoS: bleed, not pause (pause needs 0 orders since 4a626b5)
     ix = audit.Index(s, cfg_with(PARENTS))
     out = []
     audit.rule_targets(s, ix, out)
