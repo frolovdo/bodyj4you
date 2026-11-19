@@ -161,6 +161,7 @@
   .vx-hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
   .vx-hd .t{font-weight:700;font-size:14.5px}
   .vx-cause{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:5px;background:var(--crit-tint);color:var(--crit)}
+  .vx-cause.c-amazon{background:var(--warn-tint);color:var(--warn)}.vx-badge.amz{background:var(--warn-tint);color:var(--warn)}.vx-verdict{font-weight:800;font-size:15px;margin:2px 0 8px}.vx-full{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .vx-cause.c-review{background:var(--uv-tint);color:var(--uv)}.vx-cause.c-delivery,.vx-cause.c-money{background:var(--warn-tint);color:var(--warn)}.vx-cause.c-health,.vx-cause.c-feedback{background:var(--steel-tint);color:var(--steel)}
   .vx-badge{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:5px;background:var(--crit);color:#fff}.vx-badge.new{background:var(--uv)}.vx-badge.doing{background:var(--warn)}
   .vx-name{font-size:12.5px;color:var(--ink-2);margin-top:2px}
@@ -351,7 +352,7 @@
     <section class="view" id="view-customer">
       <div id="vxErr"></div>
       <div class="vx-hero card">
-        <div class="vx-big"><div class="vx-n num" id="vxOpen">—</div><div class="vx-nl">issues to act on</div><div class="vx-sub" id="vxSub">Click <b>Pull fresh data</b> to load returns, reviews and feedback from every channel.</div></div>
+        <div class="vx-big"><div class="vx-verdict" id="vxVerdict"></div><div class="vx-n num" id="vxOpen">—</div><div class="vx-nl">issues to act on</div><div class="vx-sub" id="vxSub">Click <b>Pull fresh data</b> to load returns, reviews and feedback from every channel.</div></div>
         <div class="vx-tiles" id="vxTiles"></div>
       </div>
       <div class="block">
@@ -366,16 +367,10 @@
         <div class="block-h"><h3>All open issues</h3><div class="vx-chips" id="vxChips"></div></div>
         <div style="overflow-x:auto"><table class="vx-tbl"><thead><tr><th>Issue</th><th class="r">90d</th><th class="r">14d</th><th class="r">% of sold</th><th>12 weeks</th><th></th></tr></thead><tbody id="vxAll"></tbody></table></div>
       </div>
-      <div class="block">
-        <div class="block-h"><h3>What reviews complain about</h3><span class="count">Amazon review topics · this product vs its category</span></div>
-        <div id="vxTopics"></div>
-      </div>
-      <div class="block">
-        <div class="block-h"><h3>Customers' own words</h3><span class="count">newest return comments (not "changed mind" or delivery)</span></div>
-        <div id="vxQuotes"></div>
-      </div>
+      <div class="block vx-full"><div><h3 style="margin:0">Full report: Returns &amp; Customers</h3><div class="count" style="margin-top:4px">Same data, in depth: refunds week by week, every product, why they return, every channel, what reviews say, Amazon's monthly return report and its fixes, customers' own words.</div></div><a class="btn primary" href="https://bodyj4you-ceo-dashboard.netlify.app/returns/" target="_blank" rel="noopener">Open full report ↗</a></div>
+      <div id="vxTopics" hidden></div><div id="vxQuotes" hidden></div>
       <details class="vx-dismissed" id="vxDisWrap"><summary>Dismissed issues <span id="vxDisN"></span></summary><div id="vxDis"></div></details>
-      <p class="footnote" id="vxFoot">Sources, refreshed on every <b>Pull fresh data</b>: Amazon FBA customer returns (reason + comment) and units sold (last 90 days), Amazon review topics (Amazon's Customer Feedback API, top sellers, about weekly), Amazon account health, Walmart returns, TikTok returns, eBay feedback. Not available by API: individual Amazon reviews, Amazon seller feedback, eBay returns. Products are matched across channels by SKU and summed per ASIN. Delivery problems count only on Walmart and TikTok (we ship those through Amazon MCF); Amazon FBA delivery is Amazon's. <b>Done</b> starts tracking: returns can lag a sale by 2–4 weeks, so give a fix about 3 weeks before judging it.</p>
+      <p class="footnote" id="vxFoot">Short version of the <a href="https://bodyj4you-ceo-dashboard.netlify.app/returns/" target="_blank" rel="noopener">Returns &amp; Customers report</a> (same data, rebuilt on every Pull). Sources: Amazon FBA customer returns (reason + comment) and units sold (last 90 days), Amazon All Orders (refund $ estimate, return rate), Amazon review topics, Amazon account health, Amazon's monthly return report (high-return flags), Walmart returns, TikTok returns, eBay feedback. Not available by API: individual Amazon reviews, Amazon seller feedback, eBay returns. Products are matched across channels by SKU and summed per ASIN. Delivery problems count only on Walmart and TikTok (we ship those through Amazon MCF); Amazon FBA delivery is Amazon's. <b>Done</b> starts tracking: returns can lag a sale by 2–4 weeks, so give a fix about 3 weeks before judging it.</p>
     </section>
 
     <section class="view" id="view-orders">
@@ -878,7 +873,7 @@ function vxAdd(d,k){const x=new Date(d+"T12:00:00");x.setDate(x.getDate()+k);ret
 function vxWeeks(key){const t=vxToday(),w=Array(12).fill(0),L=(VOC.series||{})[key]||[];for(const [d,c] of L){const k=Math.floor((new Date(t+"T12:00:00")-new Date(d+"T12:00:00"))/864e5/7);if(k>=0&&k<12)w[11-k]+=c;}return w;}
 function vxSpark(w,col){const m=Math.max(1,...w);return `<svg width="${w.length*7}" height="26" viewBox="0 0 ${w.length*7} 26" aria-hidden="true">${w.map((v,i)=>`<rect x="${i*7}" y="${26-Math.max(v?2:1,Math.round(v/m*24))}" width="5" height="${Math.max(v?2:1,Math.round(v/m*24))}" rx="1" fill="${v?(col||(i>=10?"var(--crit)":"#c9cfd4")):"#e8ecef"}"/>`).join("")}</svg>`;}
 function vxTrendTxt(i){if(i.n14==null)return"";if(i.new)return'<span class="vx-badge new">NEW</span>';if(i.rising)return`<span class="vx-badge">RISING · ${i.n14} in 14d vs ~${Math.round(i.exp14)} usual</span>`;return"";}
-function vxTitle(i){if(i.type==="product")return(i.sku||"")+" · "+i.cause;return i.cause==="Account health"?i.name:i.cause;}
+function vxTitle(i){if(i.type==="product"||i.type==="amazon")return(i.sku||"")+" · "+i.cause;return i.cause==="Account health"?i.name:i.cause;}
 function vxLinks(i){
   const L=[];
   if(i.asin){L.push(["Amazon page ↗","https://www.amazon.com/dp/"+i.asin]);if(i.type==="review"||i.bucket==="defect"||i.bucket==="not_described")L.push(["Critical reviews ↗","https://www.amazon.com/product-reviews/"+i.asin+"?filterByStar=critical"]);}
@@ -902,6 +897,7 @@ function vxStatusBtns(i){
 function vxNums(i){
   const N=[];
   if(i.type==="review"){N.push([Math.round(i.pct)+"%","of negative reviews"],[Math.round(i.catpct||0)+"%","in the category"]);if(i.impact)N.push([(i.impact>0?"+":"")+i.impact.toFixed(2)+"★","effect on rating"]);}
+  else if(i.type==="amazon"){N.push([vxFmt(i.n90),"returned · Amazon, 3 months"],[(i.amazon.rate*100).toFixed(1)+"%","Amazon's rate"],[(i.amazon.bm*100).toFixed(1)+"%","category"]);}
   else{N.push([vxFmt(i.n90),i.type==="health"?"open":"returns · 90 days"]);if(i.n14!=null)N.push([vxFmt(i.n14),"last 14 days"]);if(i.rate)N.push([i.rate+"%","of units sold (Amazon)"]);}
   const ch=Object.entries(i.ch||{}).filter(([c])=>c!=="review").map(([c,n])=>VX_CH[c]+" "+n).join(" · ");
   return `<div class="vx-nums">${N.map(([b,l])=>`<div><div class="b num">${b}</div><div class="l">${l}</div></div>`).join("")}${i.type!=="review"&&i.type!=="health"&&(VOC.series||{})[i.key]?`<div>${vxSpark(vxWeeks(i.key))}<div class="l">12 weeks</div></div>`:""}${ch?`<div class="l" style="align-self:flex-end">${ch}</div>`:""}</div>`;
@@ -909,8 +905,8 @@ function vxNums(i){
 function vxCard(i,rank,more){
   const s=vxState(i);
   return `<div class="vx-card ${s}"><div class="vx-rank">${rank}</div><div>
-   <div class="vx-hd"><span class="vx-cause c-${escH(i.type==="product"?i.bucket:i.type==="channel"?"delivery":i.type)}">${escH(i.cause)}</span><span class="t">${escH(i.type==="product"||i.type==="review"?(i.sku||i.asin):i.name)}</span>${vxTrendTxt(i)}${s==="doing"?'<span class="vx-badge doing">ON IT</span>':""}</div>
-   ${i.type==="product"||i.type==="review"?`<div class="vx-name">${escH(i.name)}</div>`:""}
+   <div class="vx-hd"><span class="vx-cause c-${escH(i.type==="product"?i.bucket:i.type==="channel"?"delivery":i.type)}">${escH(i.cause)}</span><span class="t">${escH(i.type==="product"||i.type==="review"||i.type==="amazon"?(i.sku||i.asin):i.name)}</span>${vxTrendTxt(i)}${i.amazon&&i.type!=="amazon"?`<span class="vx-badge amz">AMAZON: ${i.amazon.flag==="high"?"HIGH RETURNS":"AT RISK"}</span>`:""}${s==="doing"?'<span class="vx-badge doing">ON IT</span>':""}</div>
+   ${i.type==="product"||i.type==="review"||i.type==="amazon"?`<div class="vx-name">${escH(i.name)}</div>`:""}
    ${vxNums(i)}
    ${i.type==="channel"?`<div class="vx-name">${(i.quotes||[]).map(q=>escH(q.t)).join(" · ")}</div>`:(i.quotes||[]).slice(0,3).map(q=>`<div class="vx-q">&ldquo;${escH(q.t)}&rdquo;${q.d?` <span class="m" style="font-style:normal;color:var(--ink-3);font-size:11px">${fmtDay(q.d)}</span>`:""}</div>`).join("")}
    <div class="vx-do">${escH(i.action)}</div>
@@ -939,7 +935,15 @@ function renderVoc(){
   let T="";for(const ch of ["amazon","walmart","tiktok"]){const c=C[ch];if(!c)continue;T+=tile(VX_CH[ch]+" returns · 14d",vxFmt(c.n14),`${arrow(c.n14,c.prev14)} vs ${vxFmt(c.prev14)} the 2 weeks before<div style="margin-top:4px">${vxSpark(c.weeks.slice(-12),"#9aa5ad")}</div>`);}
   if(VOC.ebay)T+=tile("eBay feedback · 90d",(VOC.ebay.bad||[]).length+" bad",`of ${VOC.ebay.total90} left`);
   const H=VOC.health;if(H)T+=tile("Amazon account health",H.ahr!=null?Math.round(H.ahr):"—",`${escH((H.ahr_status||"").toLowerCase())}${(H.violations||[]).length?` · <span class="vx-up">${H.violations.reduce((a,v)=>a+v[1],0)} violations</span>`:""}`);
+  const K=VOC.kpis;
+  if(K&&K.refunds4!=null){const P=x=>x==null?"—":(x*100).toFixed(1)+"%",D=(a,b)=>!b?"":(a>=b?`<span class="vx-up">▲ ${Math.round((a/b-1)*100)}%</span>`:`<span class="vx-down">▼ ${Math.round((1-a/b)*100)}%</span>`);
+    const dpp=(K.rate4!=null&&K.rate_prev!=null)?(K.rate4-K.rate_prev)*100:null;
+    T=tile("Refunded · last 4 weeks (est.)","$"+Math.round(K.refunds4).toLocaleString(),`${D(K.refunds4,K.refunds_prev)} vs $${Math.round(K.refunds_prev||0).toLocaleString()} the 4 weeks before`)
+     +tile("Return rate · last 4 weeks",P(K.rate4),`${dpp==null?"":(dpp>=0?'<span class="vx-up">▲ ':'<span class="vx-down">▼ ')+Math.abs(dpp).toFixed(1)+" pp</span>"} vs ${P(K.rate_prev)}`)
+     +tile("Returns we can fix",K.fixable==null?"—":Math.round(K.fixable*100)+"%","packing, listing or product")
+     +tile("Amazon flags high returns",K.amazon_high+" products",`+${K.amazon_risk} more at risk${K.cases_waiting?` · <span class="vx-up">${K.cases_waiting} case replies waiting</span>`:""}`);}
   el("vxTiles").innerHTML=T;
+  el("vxVerdict").textContent=VOC.verdict||"";
   // today: top 5 open, one per product
   const seen=new Set(),top=[],extra={};
   for(const i of open.slice().sort((a,b)=>(vxState(b)==="doing")-(vxState(a)==="doing")||b.score-a.score)){const p=i.asin||i.key;if(seen.has(p)){extra[p]=(extra[p]||0)+1;continue;}seen.add(p);if(top.length<5)top.push(i);}
