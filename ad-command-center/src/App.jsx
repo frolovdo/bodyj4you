@@ -100,7 +100,7 @@ export default function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="brand"><div className="mark"><span className="dot"></span>BodyJ4You Ads</div><div className="sub">ACTION CENTER</div></div>
+        <div className="brand"><div className="mark"><span className="dot"></span>BodyJ4You Advertising</div><div className="sub">BUDGETS · BIDS · KEYWORDS</div></div>
         <div className="side-fam">
           <p className="nav-eyebrow">Product family</p>
           {fams.length > 0

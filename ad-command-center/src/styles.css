@@ -4,7 +4,7 @@
   --ground:#f5f7f8;--panel:#ffffff;--panel-2:#fbfcfd;
   --ink:#141b21;--ink-2:#4d5962;--ink-3:#808b94;
   --line:#e4e8eb;--line-2:#eef1f3;
-  --accent:#0e7c72;--accent-ink:#0a5e56;--accent-tint:#e6f2f0;
+  --accent:#2a5fa8;--accent-ink:#1f4a86;--accent-tint:#e9f0fa;  /* Advertising blue (Operations = teal #0e7c72); one OS, one colour per tool */
   --crit:#c23a2e;--crit-tint:#fbecea;--warn:#a9721a;--warn-tint:#fbf2df;--good:#1e8a57;--good-tint:#e7f4ed;
   --shadow:0 1px 2px rgba(20,27,33,.04),0 1px 3px rgba(20,27,33,.06);
   --radius:10px;
@@ -14,18 +14,18 @@
   /* Action Center names */
   --bg:var(--ground);--fg:var(--ink);--mut:var(--ink-2);--card:var(--panel);--bd:var(--line);--surface:var(--line-2);
   --bad:var(--crit);--btn:var(--accent);--btn-ink:var(--accent-ink);--btn-no:var(--crit);--btnfg:#ffffff;--goodfg:#ffffff;
-  --c1:var(--accent);--c2:#2a5fa8;--c3:#a9721a;--c4:#808b94;
+  --c1:var(--accent);--c2:#0e7c72;--c3:#a9721a;--c4:#808b94;
 }
 :root[data-theme="dark"]{
   --ground:#0c1417;--panel:#141f23;--panel-2:#19262b;
   --ink:#e4ebed;--ink-2:#a7b4b9;--ink-3:#7c8a90;
   --line:#26353b;--line-2:#1d2a2f;
-  --accent:#2aa597;--accent-ink:#5ccdbf;--accent-tint:#123430;
+  --accent:#5b8fd6;--accent-ink:#8db8f2;--accent-tint:#17283d;
   --crit:#ef7d72;--crit-tint:#3a201d;--warn:#e2ac52;--warn-tint:#352a15;--good:#52c48d;--good-tint:#16301f;
   --shadow:none;
   --side:#081013;--side-hover:#152327;--side-line:#1a272b;
-  --btn:#17877b;--btn-ink:#126e64;--btn-no:#c23a2e;--btnfg:#ffffff;--goodfg:#06210f;
-  --c2:#8db8f2;--c3:#e2ac52;--c4:#9aa4ba;
+  --btn:#3b6fb8;--btn-ink:#2f5d9c;--btn-no:#c23a2e;--btnfg:#ffffff;--goodfg:#06210f;
+  --c2:#2aa597;--c3:#e2ac52;--c4:#9aa4ba;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
