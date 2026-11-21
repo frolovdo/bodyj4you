@@ -36,5 +36,5 @@ connectors: [supabase]
 ## Do not break
 - The Advertising and Operations sites are used daily by the owner; the Mac jobs in `~/sp-api` push data into their Supabase tables.
 - Do not add or re-enable GitHub workflows (rule in `CLAUDE.md`). The two existing ones are legacy, started by the Sync buttons of the old Miami and China dashboards.
-- `daypart-run` duplicates the Mac job `com.bodyj4you.ads-daypart`; whether it is live on Netlify was not checked.
+- `daypart-run` is the only hourly bid-schedule runner: the Mac copy `com.bodyj4you.ads-daypart` was switched off on 2026-11-20 (it logged "no schedule" on every run). Whether the function is live on Netlify today was not confirmed.
 - Netlify deploys cost credits: preview locally and publish once (memory `netlify-publish-sparingly`).
