@@ -52,6 +52,11 @@
 .br-meter{height:6px;margin-top:var(--sp-3);border-radius:3px;background:var(--line);overflow:hidden}
 .br-meter i{display:block;height:100%;background:var(--accent)}
 @media(max-width:760px){.br-podium{grid-template-columns:1fr}}
+.br-card.br-top{border:2px solid var(--warn,#c98a1b)}
+.br-card.br-top .br-rank{background:var(--warn,#c98a1b);color:#fff;border-color:var(--warn,#c98a1b)}
+.br-lw{margin-top:var(--sp-2);font-size:var(--fs-1);color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br-lw b{color:var(--text);font-weight:700}
+.br-u small,.br-s small{white-space:nowrap}
 </style>
 </head>
 <body class="os" data-family="reports">
@@ -68,10 +73,10 @@
 
 <section class="os-sec" data-os-group>
 <ul class="os-kpis">
-  <li><button class="os-kpi" aria-controls="dig-u" aria-expanded="false"><span class="os-kpi__label">Bundles sold</span><span class="os-kpi__value" id="kU">0</span><span class="os-kpi__delta"><span class="os-vs" id="kUn"></span></span></button></li>
-  <li><button class="os-kpi" aria-controls="dig-s" aria-expanded="false"><span class="os-kpi__label">Bundle sales</span><span class="os-kpi__value" id="kS">$0</span><span class="os-kpi__delta"><span class="os-vs">what customers paid, tax not deducted</span></span></button></li>
-  <li><button class="os-kpi" aria-controls="dig-n" aria-expanded="false"><span class="os-kpi__label">Shown</span><span class="os-kpi__value" id="kN">0</span><span class="os-kpi__delta"><span class="os-vs" id="kNn"></span></span></button></li>
-  <li><button class="os-kpi" aria-controls="dig-a" aria-expanded="false"><span class="os-kpi__label">Average price</span><span class="os-kpi__value" id="kA">$0</span><span class="os-kpi__delta"><span class="os-vs">bundles shown</span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-u" aria-expanded="false"><span class="os-kpi__label">Bundles sold, 90 days</span><span class="os-kpi__value" id="kU">0</span><span class="os-kpi__delta"><span class="os-vs" id="kUn"></span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-s" aria-expanded="false"><span class="os-kpi__label">Bundle sales, 90 days</span><span class="os-kpi__value" id="kS">$0</span><span class="os-kpi__delta"><span class="os-vs">what customers paid, tax not deducted</span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-n" aria-expanded="false"><span class="os-kpi__label">Shown below</span><span class="os-kpi__value" id="kN">0</span><span class="os-kpi__delta"><span class="os-vs" id="kNn"></span></span></button></li>
+  <li><button class="os-kpi" aria-controls="dig-a" aria-expanded="false"><span class="os-kpi__label">Average price, 90 days</span><span class="os-kpi__value" id="kA">$0</span><span class="os-kpi__delta"><span class="os-vs">bundles shown</span></span></button></li>
 </ul>
 <div class="os-dig" id="dig-u" hidden><p class="os-dig__because" id="dU"></p></div>
 <div class="os-dig" id="dig-s" hidden><p class="os-dig__because" id="dS"></p><p class="os-small os-muted">Sales = sum of TOTAL_SALES in Amazon's export for bundles mapped to a VB SKU.</p></div>
@@ -85,12 +90,12 @@
     <button data-t="1" aria-pressed="false">1+</button><button data-t="2" aria-pressed="false">2+</button>
     <button data-t="3" aria-pressed="true">3+</button><button data-t="5" aria-pressed="false">5+</button><button data-t="10" aria-pressed="false">10+</button>
   </div>
+  <div class="br-seg" id="rk" role="group" aria-label="Rank by"><button data-r="90" aria-pressed="true">Rank: 90 days</button><button data-r="lw" aria-pressed="false" id="rkLw">Last week</button></div>
   <div class="br-count"><span id="cShown">0</span> of __SOLDCOUNT__ sold · <span id="cUnits">0</span> bundles (<span id="cPct">0</span>% of all)</div>
 </div>
 
-<section class="os-sec" id="top"><h2 class="os-sec__title">Top 3 <span class="os-sec__count">tap a product to open its Amazon page</span></h2>
-<div class="br-podium" id="podium"></div></section>
-<section class="os-sec" id="rest"><h2 class="os-sec__title">Ranked by bundles sold <span class="os-sec__count" id="restCount"></span></h2>
+<section class="os-sec" id="top"><h2 class="os-sec__title" id="gridTitle">Bundles, ranked by sold in 90 days <span class="os-sec__count" id="restCount"></span></h2>
+<p class="os-small os-muted" style="margin:0">Big number = 90 days (__DATELABEL__). Line under it = last full week. Top 3 framed in orange. Tap a product to open its Amazon page.</p>
 <div class="br-grid" id="grid"></div></section>
 
 <p class="os-small os-muted" style="margin-top:var(--sp-6)"><b>Method.</b> Amazon's export summed by BUNDLE_ASIN (bundles sold = BUNDLES_SOLD, sales = TOTAL_SALES), mapped to the VB SKU and its components through the BUNDLES master. Average price = sales ÷ bundles sold. Products without a photo show a category tile.</p>
@@ -99,6 +104,9 @@
 <script>
 const DATA = __DATA__;
 const IMAGES = __IMAGES__;   // ASIN -> data-URI; missing = category tile
+const LW = window.BR_LASTWK || {};          // ASIN -> [units, sales] in the last full week (added by the hub build)
+const LWL = window.BR_LASTWK_LABEL || '';
+let RANK = '90';
 const TOTAL_U = DATA.reduce((a,d)=>a+d.units,0);
 const TOTAL_S = DATA.reduce((a,d)=>a+d.sales,0);
 const fmt = n => n.toLocaleString('en-US');
@@ -124,19 +132,22 @@ function media(d){
   const c=cat(d.title);
   return '<div class="br-tile" style="--tc:'+c[1]+'"><span class="br-tile__cat">'+c[0]+'</span><span class="br-tile__sku">'+esc(d.sku||'—')+'</span><span class="br-tile__asin">'+esc(d.asin)+'</span></div>';
 }
-function card(d,rank,maxU,hero){
-  const a=document.createElement('a');a.href=link(d.asin);a.target='_blank';a.rel='noopener';a.className='br-card';
+function card(d,rank,maxU,top){
+  const a=document.createElement('a');a.href=link(d.asin);a.target='_blank';a.rel='noopener';a.className='br-card'+(top?' br-top':'');
   a.title=d.title||'';
-  a.innerHTML='<div class="br-ph"><span class="br-rank">'+(hero?rank:'#'+rank)+'</span>'+media(d)+'</div>'+
+  const lw=LW[d.asin];
+  a.innerHTML='<div class="br-ph"><span class="br-rank">#'+rank+'</span>'+media(d)+'</div>'+
     '<div class="br-body"><div class="br-sku">'+esc(d.sku||'—')+'</div><div class="br-cmp">'+(esc(d.comps)||'&nbsp;')+'</div>'+
-    '<div class="br-row"><div class="br-u">'+fmt(d.units)+'<small>sold</small></div>'+
+    '<div class="br-row"><div class="br-u">'+fmt(d.units)+'<small>sold · 90d</small></div>'+
     '<div class="br-s">'+usd0(d.sales)+'<small>'+usd(d.avg)+' avg</small></div></div>'+
-    (hero?'':'<div class="br-meter"><i style="width:'+Math.max(2,100*d.units/maxU)+'%"></i></div>')+'</div>';
+    (LWL?'<div class="br-lw">'+esc(LWL)+': '+(lw?'<b>'+fmt(lw[0])+' sold</b> · '+usd0(lw[1]):'none sold')+'</div>':'')+
+    '<div class="br-meter"><i style="width:'+Math.max(2,100*(RANK==='lw'?((lw||[0])[0]):d.units)/maxU)+'%"></i></div></div>';
   return a;
 }
 function render(thr){
-  const list=DATA.filter(d=>d.units>=thr);
-  const maxU=list.length?list[0].units:1;
+  let list=DATA.filter(d=>d.units>=thr);
+  if(RANK==='lw') list=DATA.filter(d=>LW[d.asin]).sort((x,y)=>LW[y.asin][0]-LW[x.asin][0]||LW[y.asin][1]-LW[x.asin][1]);
+  const maxU=list.length?(RANK==='lw'?LW[list[0].asin][0]:list[0].units):1;
   const sU=list.reduce((a,d)=>a+d.units,0), sS=list.reduce((a,d)=>a+d.sales,0);
   const top3=DATA.slice(0,3).reduce((a,d)=>a+d.units,0);
   $('kU').textContent=fmt(TOTAL_U); $('kUn').textContent=DATA.length+' bundles sold at least one';
@@ -145,15 +156,15 @@ function render(thr){
   $('kA').textContent=sU?usd(sS/sU):'$0';
   $('thLab').textContent=thr+'+ sold';
   $('cShown').textContent=list.length; $('cUnits').textContent=fmt(sU); $('cPct').textContent=Math.round(100*sU/Math.max(TOTAL_U,1));
-  $('restCount').textContent=Math.max(0,list.length-3)+' more';
+  $('restCount').textContent=list.length+(RANK==='lw'?' sold last week':' shown');
+  $('gridTitle').firstChild.textContent=RANK==='lw'?'Bundles, ranked by sold in '+LWL+' ':'Bundles, ranked by sold in 90 days ';
   $('dU').textContent=fmt(TOTAL_U)+' bundles sold across '+DATA.length+' bundle listings; the top 3 ('+DATA.slice(0,3).map(d=>d.sku).join(', ')+') make '+fmt(top3)+' of them ('+Math.round(100*top3/Math.max(TOTAL_U,1))+'%).';
   $('dS').textContent=usd(TOTAL_S)+' from '+fmt(TOTAL_U)+' bundles in __DATELABEL__.';
   $('dN').textContent=list.length+' of '+DATA.length+' sold bundles reached '+thr+'+ sold; they make '+fmt(sU)+' of '+fmt(TOTAL_U)+' bundles sold. Change the cut with the switch below.';
   const avgs=list.map(d=>d.avg).sort((a,b)=>a-b);
   $('dA').textContent=avgs.length?('Bundles shown sell from '+usd(avgs[0])+' to '+usd(avgs[avgs.length-1])+' on average; middle '+usd(avgs[Math.floor(avgs.length/2)])+'.'):'No bundles at this cut.';
-  const podium=$('podium'), grid=$('grid'); podium.innerHTML=''; grid.innerHTML='';
-  list.slice(0,3).forEach((d,i)=>podium.appendChild(card(d,i+1,maxU,true)));
-  list.slice(3).forEach((d,i)=>grid.appendChild(card(d,i+4,maxU,false)));
+  const grid=$('grid'); grid.innerHTML='';
+  list.forEach((d,i)=>grid.appendChild(card(d,i+1,maxU,i<3)));
 }
 (function(){
   const top=DATA[0];
@@ -162,7 +173,11 @@ function render(thr){
   if(d&&window.OS){ f.setAttribute('data-state',OS.state(d,'weekly')); $('freshDay').textContent=OS.day(d); }
 })();
 $('seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-  [...$('seg').children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');render(+b.dataset.t);});
+  [...$('seg').children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');TH=+b.dataset.t;render(TH);});
+let TH=__THRESHOLD__;
+$('rk').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  [...$('rk').children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');RANK=b.dataset.r;render(TH);});
+if(!LWL) $('rk').hidden=true; else $('rkLw').textContent=LWL;
 render(__THRESHOLD__);
 document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.t===__THRESHOLD__)));
 </script>
