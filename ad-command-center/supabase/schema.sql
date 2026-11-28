@@ -188,3 +188,31 @@ alter table datasets enable row level security;
 alter table refresh_status enable row level security;
 alter table families enable row level security;
 alter table login_attempts enable row level security;
+
+-- My Desk (BodyJ4You CEO OS, /desk): the owner's daily tasks. Written by the Workshop sync on the Mac
+-- (~/command-center/collect/desk_sync.py, service key) and by /api/desk behind the PIN login (owner role).
+-- Row level security on, no policies: a browser can never read it directly. Added 2026-11-28.
+create table if not exists desk_tasks (
+  key text primary key,
+  workspace text not null default 'bodyj4you',
+  assignee text not null default 'owner',
+  source text not null default 'agent_session',
+  kind text,
+  text text not null,
+  project text,
+  project_name text,
+  area text,
+  due date,
+  since date,
+  mentions int not null default 1,
+  alias_keys jsonb not null default '[]'::jsonb,
+  state text not null default 'open' check (state in ('open','done','later','moved','gone')),
+  snooze_until date,
+  done_at timestamptz,
+  state_at timestamptz,
+  seen_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  tab text not null default 'business' check (tab in ('business','personal'))
+);
+create index if not exists desk_tasks_open on desk_tasks (workspace, assignee, state);
+alter table desk_tasks enable row level security;

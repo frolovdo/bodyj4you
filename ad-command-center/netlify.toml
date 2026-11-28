@@ -25,6 +25,12 @@
   to = "/ops/index.html"
   status = 200
 
+# My Desk (public/desk/index.html): the owner's daily tasks, behind the Advertising PIN login, owner role (/api/desk)
+[[redirects]]
+  from = "/desk"
+  to = "/desk/index.html"
+  status = 200
+
 # SPA fallback
 [[redirects]]
   from = "/*"

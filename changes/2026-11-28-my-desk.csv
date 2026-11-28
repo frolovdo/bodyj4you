@@ -1,0 +1,6 @@
+site,item,field,before,after
+bodyj4you-ad-command-center.netlify.app,netlify/functions/desk.mjs,file,(did not exist),new endpoint /api/desk (owner role only)
+bodyj4you-ad-command-center.netlify.app,public/desk/index.html,file,(did not exist),new page /desk (My Desk)
+bodyj4you-ad-command-center.netlify.app,netlify.toml,redirect,(none for /desk),/desk -> /desk/index.html 200
+supabase ad-command-center,desk_tasks,table,(did not exist),created 2026-11-28 with RLS on and no policies
+supabase ad-command-center,datasets _system/desk_status,row,(did not exist),failing jobs + time of last sync

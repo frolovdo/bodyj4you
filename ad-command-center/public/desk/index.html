@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>My Desk · BodyJ4You OS</title>
+<style>
+/* BodyJ4You OS look (DESIGN.md): light ground, white cards, 10px corners, system font, dark band. Colour only for status. */
+:root { --ground:#eef1ef; --card:#fff; --ink:#14201f; --ink2:#5b6a69; --ink3:#687776; --line:#dde3e1; --band:#0f1a1e; --accent:#0e7c72;
+  --bad:#b3261e; --warn:#8a5c10; --ok:#1f8a4c; --shadow:0 1px 2px rgba(15,26,30,.06),0 4px 14px rgba(15,26,30,.05); }
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.band{background:var(--band);color:#fff;padding:0 20px;display:flex;align-items:center;gap:14px}
+.band a{color:#b8c7c5;text-decoration:none;font-size:13px}.band a:hover{color:#fff}
+.band b{font-weight:600}.band .sp{margin-left:auto}
+.wrap{max-width:760px;margin:0 auto;padding:26px 18px 80px}
+.hero{display:flex;align-items:center;gap:18px;margin:6px 2px 22px}
+.hero h1{font-size:28px;line-height:1.15;margin:0;letter-spacing:-.01em}
+.hero p{margin:6px 0 0;color:var(--ink2);font-size:14px}
+.ring{transform:rotate(-90deg);flex:none}.ring circle{fill:none;stroke-width:6}.ring .tr{stroke:var(--line)}.ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .5s ease-in-out}
+.ring.pulse{animation:pulse .6s cubic-bezier(.2,.8,.2,1)}@keyframes pulse{50%{transform:rotate(-90deg) scale(1.08)}}
+.week{display:flex;gap:6px;align-items:center;margin-top:10px;color:var(--ink3);font-size:12px}
+.week i{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);display:block}.week i.on{background:var(--accent);border-color:var(--accent)}.week i.now{border-color:var(--ink2)}
+.card{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px;transition:opacity .25s,max-height .3s,margin .3s,padding .3s;max-height:600px;overflow:hidden}
+.card.gone{opacity:0;max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0}
+.card.done .t{opacity:.45;text-decoration:line-through}
+.t{font-size:16px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.m{color:var(--ink2);font-size:13px;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 10px}
+.m .over{color:var(--bad);font-weight:600}.m .today{color:var(--warn);font-weight:600}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btn{min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:14px}
+.btn:hover{background:#f6f8f7}.btn:active{transform:scale(.98)}
+.btn.p{background:var(--band);border-color:var(--band);color:#fff}.btn.p:hover{background:#1b2b30}
+.btn.q{border-color:transparent;color:var(--ink2);font-weight:500}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin:26px 2px 10px;font-weight:600}
+.fold{width:100%;text-align:left;background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:0 18px;min-height:48px;display:flex;align-items:center;gap:10px;font-weight:600;margin-bottom:12px}
+.fold span{color:var(--ink2);font-weight:400}.fold:after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--ink3);border-bottom:2px solid var(--ink3);transform:rotate(45deg);transition:transform .2s}
+.fold.open:after{transform:rotate(-135deg)}
+.row{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px 12px 18px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.row .x{flex:1;min-width:0}.row .t{font-size:14px;font-weight:500}.row .m{margin-top:3px;font-size:12px}
+.row .btn{min-height:44px;padding:0 12px;font-size:13px;flex:none}
+.note{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:12px 18px;margin-bottom:18px;font-size:14px;display:flex;gap:10px;align-items:baseline}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--bad);flex:none;transform:translateY(-1px)}
+.calm{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:22px 18px;color:var(--ink2)}
+.login{max-width:340px;margin:12vh auto 0;background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:26px}
+.login h1{font-size:20px;margin:0 0 6px}.login p{color:var(--ink2);margin:0 0 16px;font-size:14px}
+.login input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font:inherit;font-size:18px;letter-spacing:.2em;margin-bottom:12px}
+.login .btn{width:100%}.msg{color:var(--bad);font-size:13px;min-height:18px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--band);color:#fff;border-radius:10px;padding:10px 16px;font-size:14px;display:flex;gap:16px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.25);max-width:92vw}
+.toast button{color:#fff;font-weight:600;text-decoration:underline;min-height:44px;padding:0 6px}
+.tabs{display:inline-flex;background:#dfe5e3;border-radius:9px;padding:3px;gap:3px;margin:0 2px 18px}
+.tabs button{min-height:44px;padding:0 16px;border-radius:7px;font-weight:600;font-size:14px;color:var(--ink2)}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,26,30,.12)}
+.tabs button span{font-weight:400;color:var(--ink3);margin-left:4px}
+.card.busy{pointer-events:none;opacity:.6}
+.band a{display:inline-flex;align-items:center;min-height:44px}
+.foot{color:var(--ink3);font-size:12px;margin:26px 2px 0;line-height:1.6}
+@media (max-width:560px){.hero h1{font-size:23px}.row{flex-wrap:wrap}.row .x{flex-basis:100%}.wrap{padding:18px 12px 80px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div class="band"><a href="https://bodyj4you-ceo-dashboard.netlify.app/">&larr; Back to OS</a><b>My Desk</b><span class="sp"></span><a href="#" id="out" hidden>Sign out</a></div>
+
+<div class="login" id="login" hidden>
+  <h1>My Desk</h1><p>Your daily decisions and things to check. Sign in with your Advertising PIN.</p>
+  <form id="lf"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN" aria-label="PIN"><button class="btn p" type="submit">Sign in</button></form>
+  <div class="msg" id="lmsg" role="alert"></div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <div class="tabs" id="tabs" hidden></div>
+  <div class="hero"><div id="ring"></div><div><h1 id="head"></h1><p id="sub"></p><div class="week" id="week"></div></div></div>
+  <div id="status"></div>
+  <div id="today"></div>
+  <div id="more"></div>
+  <p class="foot" id="foot"></p>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+"use strict";
+var S = { csrf: "", tasks: [], done: [], status: null }, open = {}, TOP = 3, TAB = "business";
+function $(i) { return document.getElementById(i); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function shortDate(s) { var d = new Date(s + "T12:00:00"); return isNaN(d) ? "" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); }
+function api(method, payload) {
+  var o = { method: method, headers: { "content-type": "application/json", "x-csrf": S.csrf }, credentials: "same-origin", cache: "no-store" };
+  if (payload) o.body = JSON.stringify(payload);
+  return fetch("/api/desk", o).then(function (r) { return r.json().then(function (j) { j.status_code = r.status; return j; }); });
+}
+var tt = null;
+function toast(msg, undo) {
+  var t = $("toast"); t.innerHTML = "<span>" + esc(msg) + "</span>" + (undo ? "<button>Undo</button>" : ""); t.hidden = false;
+  if (undo) t.querySelector("button").onclick = function () { t.hidden = true; undo(); };
+  clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, undo ? 7000 : 3500);
+}
+function ring(frac, size, pulse) {
+  var r = (size - 8) / 2, c = 2 * Math.PI * r, f = Math.max(0, Math.min(1, frac));
+  return '<svg class="ring' + (pulse ? " pulse" : "") + '" width="' + size + '" height="' + size + '"><circle class="tr" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '"/><circle class="fg" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - f)).toFixed(1) + '"/></svg>';
+}
+function inTab(t) { return (t.tab || "business") === TAB; }
+function sorted() {
+  return S.tasks.filter(inTab).sort(function (a, b) { var x = a.due || "9999", y = b.due || "9999"; return x < y ? -1 : x > y ? 1 : (b.since || "") < (a.since || "") ? -1 : (b.since || "") > (a.since || "") ? 1 : a.key < b.key ? -1 : 1; });
+}
+function dueHtml(t) {
+  if (!t.due) return ""; var td = ymd(new Date()), tm = ymd(new Date(Date.now() + 864e5));
+  if (t.due < td) return '<span class="over">Overdue since ' + shortDate(t.due) + "</span>";
+  if (t.due === td) return '<span class="today">Due today</span>'; if (t.due === tm) return "<span>Due tomorrow</span>";
+  return "<span>Due " + shortDate(t.due) + "</span>";
+}
+function meta(t) {
+  return '<div class="m">' + dueHtml(t) + (t.project_name ? "<span>" + esc(t.project_name) + "</span>" : "") + (t.mentions > 1 ? "<span>Came up in " + t.mentions + " sessions</span>" : "") + "</div>";
+}
+function card(t) {
+  return '<div class="card" data-key="' + esc(t.key) + '"><div class="t">' + esc(t.text) + "</div>" + meta(t) +
+    '<div class="acts"><button class="btn p" data-act="done">Done</button><button class="btn" data-act="later" title="Hide for 7 days">Later</button><button class="btn q" data-act="move" title="This needs a terminal or does not belong here: send it to the Workshop">Not for this page</button></div></div>';
+}
+function row(t) {
+  return '<div class="row card" data-key="' + esc(t.key) + '"><div class="x"><div class="t">' + esc(t.text) + "</div>" + meta(t) + '</div><button class="btn" data-act="done">Done</button><button class="btn q" data-act="later">Later</button></div>';
+}
+function doneToday() { var td = ymd(new Date()); return S.done.filter(function (d) { return inTab(d) && d.done_at && ymd(new Date(d.done_at)) === td; }); }
+function render(pulse) {
+  var all = sorted(), top = all.slice(0, TOP), rest = all.slice(TOP), dt = doneToday(), total = dt.length + top.length;
+  var week = ymd(new Date(Date.now() + 7 * 864e5)), soon = rest.filter(function (t) { return t.due && t.due <= week; }), later = rest.filter(function (t) { return !t.due || t.due > week; });
+  var td = ymd(new Date()), overRest = rest.filter(function (t) { return t.due && t.due < td; }).length;
+  var np = S.tasks.filter(function (t) { return t.tab === "personal"; }).length, nb = S.tasks.length - np;
+  $("tabs").hidden = !np && TAB === "business";
+  $("tabs").innerHTML = '<button data-tab="business" class="' + (TAB === "business" ? "on" : "") + '">Business<span>' + nb + '</span></button><button data-tab="personal" class="' + (TAB === "personal" ? "on" : "") + '">Personal<span>' + np + "</span></button>";
+  $("ring").innerHTML = ring(total ? dt.length / total : 1, 72, pulse);
+  $("head").textContent = top.length ? (top.length === 1 ? "1 thing needs you today" : top.length + " things need you today") : "Clear for today";
+  $("sub").textContent = (total ? dt.length + " of " + total + " done today" : "Nothing due today") + (overRest ? " · " + overRest + " more overdue" : "") + (rest.length - overRest > 0 ? " · " + (rest.length - overRest) + " waiting" : "");
+  if (overRest && open.soon === undefined) open.soon = true;      /* overdue tasks are never hidden in a closed fold */
+  var now = new Date(), dow = (now.getDay() + 6) % 7, days = {}, names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], w = "";
+  S.done.forEach(function (d) { if (inTab(d) && d.done_at) days[ymd(new Date(d.done_at))] = 1; });
+  for (var i = 0; i < 7; i++) { var dd = ymd(new Date(now.getTime() + (i - dow) * 864e5)); w += '<i class="' + (days[dd] ? "on" : "") + (i === dow ? " now" : "") + '" title="' + names[i] + (days[dd] ? ": something done" : "") + '"></i>'; }
+  $("week").innerHTML = w + "<span>this week</span>";
+  var f = (S.status && S.status.failing) || [];
+  $("status").innerHTML = f.length ? '<div class="note"><span class="dot"></span><span><b>' + (f.length === 1 ? "1 automation is not running" : f.length + " automations are not running") + ":</b> " + esc(f.map(function (x) { return x.name; }).join(", ")) + ". The fix is in the Workshop on your Mac.</span></div>" : "";
+  $("today").innerHTML = top.length ? top.map(card).join("") : '<div class="calm">Nothing needs you right now.' + (rest.length ? "" : " New decisions show up here as your sessions and reports raise them.") + "</div>";
+  var h = "", fold = function (id, title, list, fn) {
+    if (!list.length) return;
+    h += '<button class="fold' + (open[id] ? " open" : "") + '" data-fold="' + id + '">' + title + " <span>" + list.length + "</span></button>" + (open[id] ? list.map(fn).join("") : "");
+  };
+  fold("soon", overRest ? "Overdue and this week" : "This week", soon, row); fold("later", "Not this week", later, row);
+  fold("done", "Done today", dt, function (d) { return '<div class="row"><div class="x"><div class="t" style="opacity:.6">' + esc(d.text) + '</div></div><button class="btn q" data-undo="' + esc(d.key) + '">Put back</button></div>'; });
+  $("more").innerHTML = h;
+  var at = S.status && S.status.at ? new Date(S.status.at) : null, mins = at ? Math.round((Date.now() - at) / 60000) : null;
+  $("foot").textContent = "Tasks come from your work sessions. " + (mins == null ? "" : mins > 90 ? "Not refreshed for " + Math.round(mins / 60) + " hours: the Mac that sends them may be asleep. " : "Refreshed " + (mins < 2 ? "just now" : mins + " minutes ago") + ". ") + "Only you can open this page.";
+}
+function load(pulse) {
+  return api("GET").then(function (j) {
+    if (j.status_code === 401) { S.tasks = []; S.done = []; $("today").innerHTML = ""; $("more").innerHTML = ""; $("app").hidden = true; $("out").hidden = true; $("login").hidden = false; $("pin").focus(); return; }
+    if (!j.ok) { if (!$("app").hidden) return toast(j.error || "My Desk could not be refreshed."); $("login").hidden = false; $("lmsg").textContent = j.error || "My Desk could not be opened."; return; }
+    S = { csrf: j.csrf, tasks: j.tasks || [], done: j.done || [], status: j.status };
+    $("login").hidden = true; $("app").hidden = false; $("out").hidden = false; render(pulse);
+  }).catch(function () { if (!$("app").hidden) return toast("No connection. Showing the last list."); $("login").hidden = false; $("lmsg").textContent = "No connection. Try again."; });
+}
+function act(key, action, el) {
+  var before = sorted().slice(0, TOP).length;
+  if (el) { if (el.classList.contains("busy")) return; el.classList.add("busy"); if (action === "done") el.classList.add("done"); setTimeout(function () { el.classList.add("gone"); }, action === "done" ? 450 : 0); }
+  api("POST", { key: key, action: action }).then(function (j) {
+    if (!j.ok) { toast(j.error || "That could not be saved."); return load(); }
+    setTimeout(function () {
+      load(action === "done" && before === 1).then(function () {
+        toast({ done: "Done.", later: "Hidden for 7 days.", move: "Sent to the Workshop: it needs a terminal or is not a task for this page.", undo: "Back on your desk." }[action],
+          action === "undo" ? null : function () { act(key, "undo"); });
+      });
+    }, el ? 500 : 0);
+  }).catch(function () { toast("No connection. Nothing was saved."); load(); });
+}
+document.addEventListener("click", function (e) {
+  var b = e.target.closest("[data-act],[data-undo],[data-fold],[data-tab]"); if (!b) return;
+  if (b.dataset.tab) { TAB = b.dataset.tab; open = {}; return render(); }
+  if (b.dataset.fold) { open[b.dataset.fold] = !open[b.dataset.fold]; return render(); }
+  if (b.dataset.undo) return act(b.dataset.undo, "undo");
+  var c = b.closest("[data-key]"); act(c.dataset.key, b.dataset.act, c);
+});
+$("lf").addEventListener("submit", function (e) {
+  e.preventDefault(); $("lmsg").textContent = "";
+  fetch("/api/login", { method: "POST", headers: { "content-type": "application/json" }, credentials: "same-origin", body: JSON.stringify({ pin: $("pin").value }) })
+    .then(function (r) { return r.json(); }).then(function (j) { $("pin").value = ""; if (!j.ok) { $("lmsg").textContent = j.error || "Wrong PIN."; return; } load(); })
+    .catch(function () { $("lmsg").textContent = "No connection. Try again."; });
+});
+$("out").addEventListener("click", function (e) {
+  e.preventDefault();
+  fetch("/api/logout", { method: "POST", headers: { "content-type": "application/json", "x-csrf": S.csrf }, credentials: "same-origin", body: JSON.stringify({ csrf: S.csrf }) }).then(function () { location.reload(); });
+});
+document.addEventListener("visibilitychange", function () { if (!document.hidden && !$("app").hidden) load(); });
+load();
+</script>
+</body>
+</html>
