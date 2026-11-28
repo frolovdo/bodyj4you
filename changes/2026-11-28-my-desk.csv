@@ -4,3 +4,5 @@ bodyj4you-ad-command-center.netlify.app,public/desk/index.html,file,(did not exi
 bodyj4you-ad-command-center.netlify.app,netlify.toml,redirect,(none for /desk),/desk -> /desk/index.html 200
 supabase ad-command-center,desk_tasks,table,(did not exist),created 2026-11-28 with RLS on and no policies
 supabase ad-command-center,datasets _system/desk_status,row,(did not exist),failing jobs + time of last sync
+supabase ad-command-center,users Denis (owner),pin_hash + pin_salt,old PIN (value never stored),new random 6-digit PIN set on the owner's request 2026-11-28 (Operator PIN and Operations page PIN unchanged)
+supabase ad-command-center,users Denis (owner),pin_hash + pin_salt,random PIN set earlier today,PIN chosen by the owner 2026-11-28
