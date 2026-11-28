@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>To do · BodyJ4You OS</title>
+<title>Catalog · BodyJ4You OS</title>
 <style>
 /* BodyJ4You OS look (DESIGN.md): light ground, white cards, 10px corners, system font, dark band. Colour only for status. */
 :root { --ground:#eef1ef; --card:#fff; --ink:#14201f; --ink2:#5b6a69; --ink3:#687776; --line:#dde3e1; --band:#0f1a1e; --accent:#0e7c72;
@@ -74,10 +74,10 @@ h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2
 </style>
 </head>
 <body>
-<div class="band"><a href="https://bodyj4you-ceo-dashboard.netlify.app/">&larr; Back to OS</a><b>To do</b><span class="sp"></span><a href="#" id="out" hidden>Sign out</a></div>
+<div class="band"><a href="https://bodyj4you-ceo-dashboard.netlify.app/">&larr; Back to OS</a><b>Catalog</b><span class="sp"></span><a href="#" id="out" hidden>Sign out</a></div>
 
 <div class="login" id="login" hidden>
-  <h1>To do</h1><p>What needs attention at each workstation: Operations, Catalog, Advertising. Sign in with your PIN.</p>
+  <h1>Catalog</h1><p>What needs attention in the catalog: account health and listings to fix. Sign in with your PIN.</p>
   <form id="lf"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN" aria-label="PIN"><button class="btn p" type="submit">Sign in</button></form>
   <div class="msg" id="lmsg" role="alert"></div>
 </div>
@@ -95,7 +95,7 @@ h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2
 /* One shared list per workstation, the same for everyone who signs in: biggest first, On it / Done / Later / Not relevant.
    The PIN says who acted (shown on the task and in the log). Built after the Operations "Today" page. */
 var S = { csrf: "", role: "operator", user: "", tasks: [], done: [], log: [], status: null }, open = {}, TOP = 5, TAB = null;
-var STATIONS = [["operations", "Operations"], ["catalog", "Catalog"], ["advertising", "Advertising"], ["personal", "Personal"]];
+var STATIONS = [["catalog", "Catalog"], ["personal", "Personal"]];   /* Operations and Advertising keep their lists inside their own tools */
 function $(i) { return document.getElementById(i); }
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
@@ -159,6 +159,7 @@ function render(pulse) {
   var main = (personal ? mineOnly : S.tasks.filter(function (t) { return inTab(t) && shared(t); })).sort(order);
   var top = main.slice(0, TOP), rest = main.slice(TOP), dt = doneToday(), total = dt.length + main.length;
   var name = (STATIONS.filter(function (x) { return x[0] === TAB; })[0] || ["", ""])[1];
+  $("tabs").hidden = !owner;      /* one list for everyone; the owner PIN also gets his Personal tab */
   $("tabs").innerHTML = STATIONS.filter(function (x) { return x[0] !== "personal" || owner; }).map(function (x) {
     var n = S.tasks.filter(function (t) { return tabOf(t) === x[0] && (x[0] === "personal" || shared(t)); }).length;
     return '<button data-tab="' + x[0] + '" class="' + (TAB === x[0] ? "on" : "") + '">' + x[1] + "<span>" + n + "</span></button>";
@@ -184,7 +185,7 @@ function render(pulse) {
     return "<div><span>" + esc(when(l.at)) + "</span><b>" + esc(l.user_name || "") + "</b><span><b>" + (WORD[l.action] || esc(l.action)) + "</b> · " + esc(l.detail || "") + "</span></div>"; }).join("") + "</div>" : "");
   $("list").innerHTML = h;
   var at = S.status && S.status.at ? new Date(S.status.at) : null, mins = at ? Math.round((Date.now() - at) / 60000) : null;
-  $("foot").textContent = "Signed in as " + S.user + ". The list comes from the daily checks: account health, suppressed listings, ads, stock. " +
+  $("foot").textContent = "Signed in as " + S.user + ". The list comes from the daily checks of account health and suppressed listings. " +
     (mins == null ? "" : mins > 90 ? "Not refreshed for " + Math.round(mins / 60) + " hours: the Mac that runs the checks may be asleep." : "Refreshed " + (mins < 2 ? "just now" : mins + " minutes ago") + ".");
 }
 function load(pulse) {

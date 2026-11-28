@@ -10,3 +10,4 @@ bodyj4you-ad-command-center.netlify.app,/desk + /api/desk,page and endpoint,My D
 supabase ad-command-center,desk_tasks,columns,(none),station audience detail link rule added; scanner rows source=system_rule
 bodyj4you-ceo-dashboard.netlify.app,index.html,hub tiles,My Desk tile + Catalog pending,My Desk tile removed; Catalog tile live (to-do list); to-do links on Operations and Advertising tiles
 bodyj4you-ad-command-center.netlify.app,/desk + /api/desk,page and endpoint,owner section on top + shared list,one shared list per workstation (Operations Today style); PIN name kept on each press; owner session notes in a closed owner-only fold
+bodyj4you-ad-command-center.netlify.app,/desk,page,three workstation tabs,Catalog tool's own list only (Operations and Advertising keep their own Today lists); owner notes no longer sent to the page

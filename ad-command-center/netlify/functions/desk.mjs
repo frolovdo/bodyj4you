@@ -1,4 +1,5 @@
-// To-do lists (/desk): one shared list per workstation (Operations, Catalog, Advertising), behind the PIN login.
+// Catalog to-do list (/desk): the Catalog tool's own list, behind the PIN login. (Operations and Advertising keep their
+// own Today lists inside their tools; owner 2026-11-28: a tool's list is the same for everyone who opens the tool.)
 // Built like the Operations "Today" page: the same list for everyone, biggest first, with On it / Done / Later / Not relevant.
 // The PIN says who acted: the user's name is kept on the task (actor) and every press goes to the audit table.
 // Rows: audience "operator" = shared (written by the scanner, ~/command-center/collect/desk_scan.py); audience "owner" =
