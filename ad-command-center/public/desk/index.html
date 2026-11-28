@@ -61,38 +61,48 @@ h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2
 .foot{color:var(--ink3);font-size:12px;margin:26px 2px 0;line-height:1.6}
 @media (max-width:560px){.hero h1{font-size:23px}.row{flex-wrap:wrap}.row .x{flex-basis:100%}.wrap{padding:18px 12px 80px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+.num{width:26px;height:26px;border-radius:50%;background:var(--band);color:#fff;font-size:13px;font-weight:600;display:inline-grid;place-items:center;flex:none;margin-right:10px}
+.card .top{display:flex;align-items:flex-start}
+.card .d{color:var(--ink2);font-size:14px;margin:6px 0 0 36px;line-height:1.45}
+.card .m{margin-left:36px}.card .acts{margin-left:36px}
+.onit{color:var(--accent);font-weight:600}
+.acts a.btn{display:inline-flex;align-items:center;text-decoration:none}
+.log{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px 18px;margin-bottom:12px;font-size:13px}
+.log div{display:grid;grid-template-columns:118px 84px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);color:var(--ink2)}
+.log div:first-child{border-top:0}.log b{color:var(--ink);font-weight:600}
+@media (max-width:560px){.card .d,.card .m,.card .acts{margin-left:0}.log div{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="band"><a href="https://bodyj4you-ceo-dashboard.netlify.app/">&larr; Back to OS</a><b>To do</b><span class="sp"></span><a href="#" id="out" hidden>Sign out</a></div>
 
 <div class="login" id="login" hidden>
-  <h1>To do</h1><p>The to-do list of each workstation: Operations, Catalog, Advertising. Sign in with your PIN.</p>
+  <h1>To do</h1><p>What needs attention at each workstation: Operations, Catalog, Advertising. Sign in with your PIN.</p>
   <form id="lf"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN" aria-label="PIN"><button class="btn p" type="submit">Sign in</button></form>
   <div class="msg" id="lmsg" role="alert"></div>
 </div>
 
 <div class="wrap" id="app" hidden>
-  <div class="tabs" id="tabs" hidden></div>
+  <div class="tabs" id="tabs"></div>
   <div class="hero"><div id="ring"></div><div><h1 id="head"></h1><p id="sub"></p><div class="week" id="week"></div></div></div>
-  <div id="status"></div>
-  <div id="today"></div>
-  <div id="more"></div>
-  <div id="todo"></div>
+  <div id="list"></div>
   <p class="foot" id="foot"></p>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script>
 "use strict";
-var S = { csrf: "", role: "operator", tasks: [], done: [], status: null }, open = {}, TOP = 3, TAB = null;
+/* One shared list per workstation, the same for everyone who signs in: biggest first, On it / Done / Later / Not relevant.
+   The PIN says who acted (shown on the task and in the log). Built after the Operations "Today" page. */
+var S = { csrf: "", role: "operator", user: "", tasks: [], done: [], log: [], status: null }, open = {}, TOP = 5, TAB = null;
 var STATIONS = [["operations", "Operations"], ["catalog", "Catalog"], ["advertising", "Advertising"], ["personal", "Personal"]];
-function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
 function $(i) { return document.getElementById(i); }
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
 function pad(n) { return (n < 10 ? "0" : "") + n; }
 function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
 function shortDate(s) { var d = new Date(s + "T12:00:00"); return isNaN(d) ? "" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); }
+function when(iso) { var d = new Date(iso); if (isNaN(d)) return ""; return (ymd(d) === ymd(new Date()) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + " ") + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }
 function api(method, payload) {
   var o = { method: method, headers: { "content-type": "application/json", "x-csrf": S.csrf }, credentials: "same-origin", cache: "no-store" };
   if (payload) o.body = JSON.stringify(payload);
@@ -110,94 +120,95 @@ function ring(frac, size, pulse) {
 }
 function tabOf(t) { return t.tab === "personal" ? "personal" : (t.station || "catalog"); }
 function inTab(t) { return tabOf(t) === TAB; }
-function forOwner(t) { return t.audience !== "operator"; }
-function sorted() {
-  return S.tasks.filter(function (t) { return inTab(t) && forOwner(t); }).sort(function (a, b) { var x = a.due || "9999", y = b.due || "9999"; return x < y ? -1 : x > y ? 1 : (b.since || "") < (a.since || "") ? -1 : (b.since || "") > (a.since || "") ? 1 : a.key < b.key ? -1 : 1; });
+function shared(t) { return t.audience === "operator"; }
+/* biggest first (rank = dollars a day at stake where the check knows it), then the emptiest stock, "N more" lines last */
+function order(a, b) {
+  var more = function (t) { return /^\d+ more /.test(t.text) ? 1 : 0; }, due = function (t) { return t.due || "9999"; };
+  return more(a) - more(b) || (+b.rank || 0) - (+a.rank || 0) || (due(a) < due(b) ? -1 : due(a) > due(b) ? 1 : 0) || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0);
 }
 function dueHtml(t) {
-  if (!t.due) return ""; var td = ymd(new Date()), tm = ymd(new Date(Date.now() + 864e5));
+  if (!t.due) return ""; var td = ymd(new Date());
   if (t.due < td) return '<span class="over">Overdue since ' + shortDate(t.due) + "</span>";
-  if (t.due === td) return '<span class="today">Due today</span>'; if (t.due === tm) return "<span>Due tomorrow</span>";
+  if (t.due === td) return '<span class="today">Due today</span>';
   return "<span>Due " + shortDate(t.due) + "</span>";
 }
 function meta(t) {
-  return '<div class="m">' + dueHtml(t) + (t.project_name ? "<span>" + esc(t.project_name) + "</span>" : "") + (t.mentions > 1 ? "<span>Came up in " + t.mentions + " sessions</span>" : "") + "</div>";
+  var bits = dueHtml(t) + (t.state === "doing" ? '<span class="onit">' + esc(t.actor || "Someone") + " is on it" + (t.state_at ? " · since " + esc(when(t.state_at)) : "") + "</span>" : "") +
+    (t.project_name ? "<span>" + esc(t.project_name) + "</span>" : "") + (t.mentions > 1 ? "<span>Came up in " + t.mentions + " sessions</span>" : "");
+  return bits ? '<div class="m">' + bits + "</div>" : "";
 }
-function card(t) {
-  return '<div class="card" data-key="' + esc(t.key) + '"><div class="t">' + esc(t.text) + "</div>" + meta(t) +
-    '<div class="acts"><button class="btn p" data-act="done">Done</button><button class="btn" data-act="later" title="Hide for 7 days">Later</button><button class="btn q" data-act="move" title="This needs a terminal or does not belong here: send it to the Workshop">Not for this page</button></div></div>';
+function buttons(t, small) {
+  var u = safeUrl(t.link), c = small ? "btn q" : "btn";
+  return (t.state === "doing" ? "" : '<button class="btn' + (small ? "" : " p") + '" data-act="doing">On it</button>') +
+    '<button class="btn' + (t.state === "doing" && !small ? " p" : "") + '" data-act="done">Done</button>' +
+    '<button class="' + c + '" data-act="later" title="Hide for 7 days">Later</button>' +
+    (small ? "" : '<button class="btn q" data-act="move" title="Take it off the list for good">Not relevant</button>') +
+    (u ? '<a class="btn q" href="' + esc(u) + '" target="_blank" rel="noopener">Open &rarr;</a>' : "");
+}
+function card(t, n) {
+  return '<div class="card" data-key="' + esc(t.key) + '"><div class="top"><span class="num">' + n + '</span><div class="t">' + esc(t.text) + "</div></div>" +
+    (t.detail ? '<div class="d">' + esc(t.detail) + "</div>" : "") + meta(t) + '<div class="acts">' + buttons(t) + "</div></div>";
 }
 function row(t) {
-  return '<div class="row card" data-key="' + esc(t.key) + '"><div class="x"><div class="t">' + esc(t.text) + "</div>" + meta(t) + '</div><button class="btn" data-act="done">Done</button><button class="btn q" data-act="later">Later</button></div>';
+  return '<div class="row card" data-key="' + esc(t.key) + '"><div class="x"><div class="t">' + esc(t.text) + "</div>" + (t.detail ? '<div class="m"><span>' + esc(t.detail) + "</span></div>" : "") + meta(t) + "</div>" + buttons(t, true) + "</div>";
 }
-function todoRow(t) {
-  var u = safeUrl(t.link);
-  return '<div class="row card" data-key="' + esc(t.key) + '"><div class="x"><div class="t">' + esc(t.text) + "</div>" + (t.detail ? '<div class="m"><span>' + esc(t.detail) + "</span></div>" : "") + "</div>" +
-    (u ? '<a class="btn q" href="' + esc(u) + '" target="_blank" rel="noopener">Open</a>' : "") + '<button class="btn" data-act="done">Done</button><button class="btn q" data-act="later" title="Hide for 7 days">Later</button></div>';
-}
-function doneToday() { var td = ymd(new Date()); return S.done.filter(function (d) { return inTab(d) && d.done_at && ymd(new Date(d.done_at)) === td; }); }
+function doneToday() { var td = ymd(new Date()); return S.done.filter(function (d) { return inTab(d) && (TAB === "personal" || shared(d)) && d.done_at && ymd(new Date(d.done_at)) === td; }); }
 function render(pulse) {
-  var all = sorted(), top = all.slice(0, TOP), rest = all.slice(TOP), dt = doneToday(), total = dt.length + top.length;
-  var week = ymd(new Date(Date.now() + 7 * 864e5)), soon = rest.filter(function (t) { return t.due && t.due <= week; }), later = rest.filter(function (t) { return !t.due || t.due > week; });
-  var td = ymd(new Date()), overRest = rest.filter(function (t) { return t.due && t.due < td; }).length;
-  var owner = S.role === "owner", todo = S.tasks.filter(function (t) { return inTab(t) && !forOwner(t); });
-  var rank = function (t) { var m = /: ([\d.]+) days of cover/.exec(t.text); return /^\d+ more /.test(t.text) ? 1e6 : m ? +m[1] : 500; };   /* lowest stock first, "N more" lines last */
-  var vel = function (t) { var m = /sells ([\d.]+) a day/.exec(t.detail || ""); return m ? +m[1] : 0; };
-  todo.sort(function (a, b) { return rank(a) - rank(b) || vel(b) - vel(a) || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0); });   /* same cover: the faster seller first */
-  $("tabs").hidden = false;
+  var owner = S.role === "owner", personal = TAB === "personal";
+  var mineOnly = S.tasks.filter(function (t) { return inTab(t) && !shared(t); }).sort(order);            /* owner PIN only: notes from his own sessions */
+  var main = (personal ? mineOnly : S.tasks.filter(function (t) { return inTab(t) && shared(t); })).sort(order);
+  var top = main.slice(0, TOP), rest = main.slice(TOP), dt = doneToday(), total = dt.length + main.length;
+  var name = (STATIONS.filter(function (x) { return x[0] === TAB; })[0] || ["", ""])[1];
   $("tabs").innerHTML = STATIONS.filter(function (x) { return x[0] !== "personal" || owner; }).map(function (x) {
-    var n = S.tasks.filter(function (t) { return tabOf(t) === x[0]; }).length;
+    var n = S.tasks.filter(function (t) { return tabOf(t) === x[0] && (x[0] === "personal" || shared(t)); }).length;
     return '<button data-tab="' + x[0] + '" class="' + (TAB === x[0] ? "on" : "") + '">' + x[1] + "<span>" + n + "</span></button>";
   }).join("");
-  total = dt.length + top.length + todo.length;
   $("ring").innerHTML = ring(total ? dt.length / total : 1, 72, pulse);
-  var name = (STATIONS.filter(function (x) { return x[0] === TAB; })[0] || ["", ""])[1];
-  $("head").textContent = top.length ? (top.length === 1 ? "1 thing needs you today" : top.length + " things need you today")
-    : todo.length ? todo.length + (todo.length === 1 ? " thing to do in " : " things to do in ") + name : "Clear for today";
-  $("sub").textContent = (total ? dt.length + " of " + total + " done today" : "Nothing due today") + (overRest ? " · " + overRest + " more overdue" : "") + (rest.length - overRest > 0 ? " · " + (rest.length - overRest) + " waiting" : "") + (top.length && todo.length ? " · " + todo.length + " on the to-do list" : "");
-  if (overRest && open.soon === undefined) open.soon = true;      /* overdue tasks are never hidden in a closed fold */
+  $("head").textContent = main.length ? main.length + (main.length === 1 ? " thing needs attention in " : " things need attention in ") + name : name + ": all clear";
+  $("sub").textContent = (total ? dt.length + " of " + total + " done today" : "Nothing open") + (main.length ? " · biggest first" : "");
   var now = new Date(), dow = (now.getDay() + 6) % 7, days = {}, names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], w = "";
   S.done.forEach(function (d) { if (inTab(d) && d.done_at) days[ymd(new Date(d.done_at))] = 1; });
   for (var i = 0; i < 7; i++) { var dd = ymd(new Date(now.getTime() + (i - dow) * 864e5)); w += '<i class="' + (days[dd] ? "on" : "") + (i === dow ? " now" : "") + '" title="' + names[i] + (days[dd] ? ": something done" : "") + '"></i>'; }
   $("week").innerHTML = w + "<span>this week</span>";
-  var f = (S.status && S.status.failing) || [];
-  $("status").innerHTML = f.length && owner ? '<div class="note"><span class="dot"></span><span><b>' + (f.length === 1 ? "1 automation is not running" : f.length + " automations are not running") + ":</b> " + esc(f.map(function (x) { return x.name; }).join(", ")) + ". The fix is in the Workshop on your Mac.</span></div>" : "";
-  $("today").innerHTML = top.length ? (owner && todo.length ? "<h2>Needs you</h2>" : "") + top.map(card).join("") : todo.length ? "" : '<div class="calm">Nothing to do here right now. New tasks show up as the daily checks find them.</div>';
-  var nshow = open.todo ? 400 : 8;
-  $("todo").innerHTML = todo.length ? "<h2>To do · anyone at this workstation</h2>" + todo.slice(0, nshow).map(todoRow).join("") + (todo.length > nshow ? '<button class="fold" data-fold="todo">Show all <span>' + todo.length + "</span></button>" : "") : "";
-  var h = "", fold = function (id, title, list, fn) {
+  var h = "", fold = function (id, title, list, fn, note) {
     if (!list.length) return;
-    h += '<button class="fold' + (open[id] ? " open" : "") + '" data-fold="' + id + '">' + title + " <span>" + list.length + "</span></button>" + (open[id] ? list.map(fn).join("") : "");
+    h += '<button class="fold' + (open[id] ? " open" : "") + '" data-fold="' + id + '">' + title + " <span>" + list.length + (note ? " · " + note : "") + "</span></button>" + (open[id] ? list.map(fn).join("") : "");
   };
-  fold("soon", overRest ? "Overdue and this week" : "This week", soon, row); fold("later", "Not this week", later, row);
-  fold("done", "Done today", dt, function (d) { return '<div class="row"><div class="x"><div class="t" style="opacity:.6">' + esc(d.text) + '</div></div><button class="btn q" data-undo="' + esc(d.key) + '">Put back</button></div>'; });
-  $("more").innerHTML = h;
+  h += top.length ? "<h2>Do these today</h2>" + top.map(function (t, n) { return card(t, n + 1); }).join("") : '<div class="calm">Nothing needs attention here right now. New items show up as the daily checks find them.</div>';
+  fold("rest", "Also open", rest, row);
+  if (owner && !personal) fold("mine", "From your work sessions", mineOnly, row, "only your PIN sees these");
+  fold("done", "Done today", dt, function (d) { return '<div class="row"><div class="x"><div class="t" style="opacity:.6">' + esc(d.text) + '</div><div class="m"><span>' + esc(d.actor || "") + (d.done_at ? " · " + esc(when(d.done_at)) : "") + '</span></div></div><button class="btn q" data-undo="' + esc(d.key) + '">Put back</button></div>'; });
+  var WORD = { todo_doing: "On it", todo_done: "Done", todo_later: "Later", todo_move: "Not relevant", todo_undo: "Put back" };
+  var lines = (S.log || []).filter(function (l) { var it = String(l.item || ""); return personal ? it === "owner:personal" : (it === TAB || it === "owner:" + TAB); });
+  if (lines.length) h += '<button class="fold' + (open.log ? " open" : "") + '" data-fold="log">Who did what <span>' + lines.length + "</span></button>" + (open.log ? '<div class="log">' + lines.map(function (l) {
+    return "<div><span>" + esc(when(l.at)) + "</span><b>" + esc(l.user_name || "") + "</b><span><b>" + (WORD[l.action] || esc(l.action)) + "</b> · " + esc(l.detail || "") + "</span></div>"; }).join("") + "</div>" : "");
+  $("list").innerHTML = h;
   var at = S.status && S.status.at ? new Date(S.status.at) : null, mins = at ? Math.round((Date.now() - at) / 60000) : null;
-  $("foot").textContent = "Tasks come from the daily checks (account health, suppressed listings, ads, stock)" + (S.role === "owner" ? " and from your work sessions. " : ". ") + (mins == null ? "" : mins > 90 ? "Not refreshed for " + Math.round(mins / 60) + " hours: the Mac that sends them may be asleep. " : "Refreshed " + (mins < 2 ? "just now" : mins + " minutes ago") + ". ") + (S.role === "owner" ? "“Needs you” and Personal are shown to the owner only." : "");
+  $("foot").textContent = "Signed in as " + S.user + ". The list comes from the daily checks: account health, suppressed listings, ads, stock. " +
+    (mins == null ? "" : mins > 90 ? "Not refreshed for " + Math.round(mins / 60) + " hours: the Mac that runs the checks may be asleep." : "Refreshed " + (mins < 2 ? "just now" : mins + " minutes ago") + ".");
 }
 function load(pulse) {
   return api("GET").then(function (j) {
-    if (j.status_code === 401) { S.tasks = []; S.done = []; $("today").innerHTML = ""; $("more").innerHTML = ""; $("todo").innerHTML = ""; $("app").hidden = true; $("out").hidden = true; $("login").hidden = false; $("pin").focus(); return; }
+    if (j.status_code === 401) { S.tasks = []; S.done = []; S.log = []; $("list").innerHTML = ""; $("app").hidden = true; $("out").hidden = true; $("login").hidden = false; $("pin").focus(); return; }
     if (!j.ok) { if (!$("app").hidden) return toast(j.error || "The list could not be refreshed."); $("login").hidden = false; $("lmsg").textContent = j.error || "The list could not be opened."; return; }
-    S = { csrf: j.csrf, role: j.role || "operator", tasks: j.tasks || [], done: j.done || [], status: j.status };
+    S = { csrf: j.csrf, role: j.role || "operator", user: j.user || "", tasks: j.tasks || [], done: j.done || [], log: j.log || [], status: j.status };
     if (!TAB) {      /* first open: the tab named in the link (#catalog), else the first workstation with something in it */
-      var want = location.hash.replace("#", ""), has = function (id) { return S.tasks.some(function (t) { return tabOf(t) === id; }); };
+      var want = location.hash.replace("#", ""), has = function (id) { return S.tasks.some(function (t) { return tabOf(t) === id && shared(t); }); };
       TAB = STATIONS.some(function (x) { return x[0] === want && (want !== "personal" || S.role === "owner"); }) ? want : (STATIONS.filter(function (x) { return x[0] !== "personal" && has(x[0]); })[0] || STATIONS[0])[0];
     }
     $("login").hidden = true; $("app").hidden = false; $("out").hidden = false; render(pulse);
   }).catch(function () { if (!$("app").hidden) return toast("No connection. Showing the last list."); $("login").hidden = false; $("lmsg").textContent = "No connection. Try again."; });
 }
 function act(key, action, el) {
-  var before = sorted().slice(0, TOP).length + S.tasks.filter(function (t) { return inTab(t) && !forOwner(t); }).length;
-  if (el) { if (el.classList.contains("busy")) return; el.classList.add("busy"); if (action === "done") el.classList.add("done"); setTimeout(function () { el.classList.add("gone"); }, action === "done" ? 450 : 0); }
+  var left = S.tasks.filter(function (t) { return inTab(t) && (TAB === "personal" || shared(t)); }).length, leaves = action !== "doing" && action !== "undo";
+  if (el) { if (el.classList.contains("busy")) return; el.classList.add("busy"); if (action === "done") el.classList.add("done"); if (leaves) setTimeout(function () { el.classList.add("gone"); }, action === "done" ? 450 : 0); }
   api("POST", { key: key, action: action }).then(function (j) {
     if (!j.ok) { toast(j.error || "That could not be saved."); return load(); }
     setTimeout(function () {
-      load(action === "done" && before === 1).then(function () {
-        toast({ done: "Done.", later: "Hidden for 7 days.", move: "Taken off this page.", undo: "Back on the list." }[action],
-          action === "undo" ? null : function () { act(key, "undo"); });
+      load(action === "done" && left === 1).then(function () {
+        toast({ doing: "Marked: you are on it.", done: "Done.", later: "Hidden for 7 days.", move: "Taken off the list.", undo: "Back on the list." }[action], action === "undo" ? null : function () { act(key, "undo"); });
       });
-    }, el ? 500 : 0);
+    }, el && leaves ? 500 : 0);
   }).catch(function () { toast("No connection. Nothing was saved."); load(); });
 }
 document.addEventListener("click", function (e) {

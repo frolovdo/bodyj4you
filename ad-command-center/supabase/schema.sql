@@ -226,3 +226,10 @@ alter table desk_tasks add column if not exists detail text;
 alter table desk_tasks add column if not exists link text;
 alter table desk_tasks add column if not exists rule text;
 create index if not exists desk_tasks_station on desk_tasks (workspace, station, audience, state);
+
+-- To-do lists follow the Operations "Today" pattern (2026-11-28): one shared list per workstation, "doing" = on it,
+-- "moved" = not relevant; actor = name of the PIN that last acted (every press also goes to the audit table as todo_*).
+alter table desk_tasks drop constraint if exists desk_tasks_state_check;
+alter table desk_tasks add constraint desk_tasks_state_check check (state in ('open','doing','done','later','moved','gone'));
+alter table desk_tasks add column if not exists actor text;
+alter table desk_tasks add column if not exists rank numeric;
