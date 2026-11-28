@@ -216,3 +216,13 @@ create table if not exists desk_tasks (
 );
 create index if not exists desk_tasks_open on desk_tasks (workspace, assignee, state);
 alter table desk_tasks enable row level security;
+
+-- Workstation to-do lists (2026-11-28): one list per workstation, nameless. audience 'owner' = only the owner role
+-- receives the row; 'operator' = any signed-in user. Rows with source 'system_rule' come from the scanner
+-- (~/command-center/collect/desk_scan.py).
+alter table desk_tasks add column if not exists station text check (station in ('operations','catalog','advertising'));
+alter table desk_tasks add column if not exists audience text not null default 'owner' check (audience in ('owner','operator'));
+alter table desk_tasks add column if not exists detail text;
+alter table desk_tasks add column if not exists link text;
+alter table desk_tasks add column if not exists rule text;
+create index if not exists desk_tasks_station on desk_tasks (workspace, station, audience, state);
